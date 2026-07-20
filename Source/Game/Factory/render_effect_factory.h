@@ -17,12 +17,14 @@ class SceneBase;
 namespace RenderEffectFactory {
     // デカールエフェクト生成
     GameObject* CreateDecalEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
+    
+    // パーティクルエフェクト生成
+    // FIX: 将来的にはこれら情報はアセットとして外部化するべき
     GameObject* CreateParticleEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
     GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName);
     GameObject* CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position);
     GameObject* CreateHitEffect(IScene* scene, const XMFLOAT3& position);
     GameObject* CreateExplosionEffect(IScene* scene, const XMFLOAT3& position);
-
 };
 
 #endif // !RENDER_EFFECT_FACTORY_H

@@ -71,13 +71,4 @@ namespace PrefabFactory
         }
         return prefab;
     }
-
-    EnemyPrefab PrefabFactory::CreateEnemyPrefab(SceneBase* scene, const XMFLOAT3& position)
-    {
-        EnemyPrefab prefab;
-        prefab.enemy = ActorFactory::CreateSimpleEnemy(scene, position);
-        prefab.healthBar = nullptr;
-
-        return prefab;
-    }
 }

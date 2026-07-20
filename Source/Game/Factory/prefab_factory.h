@@ -7,18 +7,15 @@ class SceneBase;
 
 namespace PrefabFactory
 {
-    // プレイヤープレハブ生成
+    /// @brief PlayerPrefab構造体
     struct PlayerPrefab {
         GameObject* player;
         GameObject* runDustParticle;
         GameObject* chargeEffectParticle;
         GameObject* chargeLight;
     };
-    PlayerPrefab CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position);
 
-    struct EnemyPrefab {
-        GameObject* enemy;
-        GameObject* healthBar;
-    };
-    EnemyPrefab CreateEnemyPrefab(SceneBase* scene, const XMFLOAT3& position);
+    /// @brief PlayerPrefabを生成する関数
+    /// @param position 生成位置
+    PlayerPrefab CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position);
 }

@@ -23,7 +23,6 @@ namespace ProjectileFactory
         const char* modelPath = "asset\\Model\\bullet.fbx";
         const char* materialName = "BulletHologramMaterial";
     };
-
     // 弾の生成
     GameObject* CreateBullet(IScene* scene, const BulletCreateDesc& desc);
 }
