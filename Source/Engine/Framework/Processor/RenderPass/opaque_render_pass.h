@@ -1,0 +1,40 @@
+//---------------------------------------------------
+// opaque_render_pass.h
+// 
+// Author：Miu Kitamura
+// Date  ：2026/03/11
+//---------------------------------------------------
+#ifndef OPAQUE_RENDER_PASS_H
+#define OPAQUE_RENDER_PASS_H
+#include "Engine/Core/pass.h"
+#include <vector>
+
+#include "Engine/Graphics/texture_resource.h"
+#include "Engine/Graphics/model_resource.h"
+
+#include "Engine/Device/direct3d.h"
+using namespace DirectX;
+
+class OpaqueRenderPass : public Pass {
+private:
+    ID3D11Device* m_pDevice = nullptr;
+    ID3D11DeviceContext* m_pContext = nullptr;
+
+    // デフォルトテクスチャ
+    TextureResource* m_defaultTexture = nullptr;
+
+    // SpriteRenderer用の頂点バッファ
+    ID3D11Buffer* m_pSpriteVertexBuffer = nullptr;
+
+public:
+    void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+    void    Finalize() override;
+    void    Process(IScene* pScene, const RenderView& view) override;
+
+private:
+    // Meshリストの描画
+    void DrawMeshList(const std::vector<ModelMesh>& meshes, const std::vector<MaterialInstance>& materialSlots);
+
+};
+
+#endif // OPAQUE_RENDER_PASS_H
