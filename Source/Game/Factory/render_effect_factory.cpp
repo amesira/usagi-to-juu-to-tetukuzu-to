@@ -14,7 +14,7 @@
 #include "Engine/Framework/Component/decal_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
 
-#include "Game/Behavior/transform_constraint_behavior.h"
+#include "Game/ActorBehavior/transform_constraint_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()

@@ -11,15 +11,11 @@
 
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/line_renderer_component.h"
 #include "Engine/Framework/Component/transform_component.h"
 
-#include "Game/Behavior/BulletBehavior/bullet_behavior.h"
-#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
-#include "Game/Behavior/BulletBehavior/missile_behavior.h"
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
-#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
+#include "Game/ActorBehavior/Bullet/bullet_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Base/blinker_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/model_repository.h"
@@ -151,7 +147,6 @@ namespace
         }
     }
 }
-
 // 弾の生成
 GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDesc& desc)
 {
@@ -168,7 +163,6 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     BulletBehavior* bulletBehavior = bullet->AddComponent<BulletBehavior>();
     
     bullet->AddComponent<HitStopBehavior>();
-    bullet->AddComponent<ShakeObjectBehavior>();
     bullet->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(desc.position);
@@ -186,78 +180,4 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
 
     return bullet;
-}
-
-// ミサイル弾の生成
-GameObject* ProjectileFactory::CreateMissile(IScene* scene, const MissileCreateDesc& desc)
-{
-    if (!scene) return nullptr;
-
-    GameObject* missile = scene->CreateGameObject();
-    missile->SetName("Missile");
-    missile->SetRenderLayer(RenderLayer::Bullet);
-
-    TransformComponent* transform = missile->AddComponent<TransformComponent>();
-    ModelComponent* modelComponent = missile->AddComponent<ModelComponent>();
-    ParticleSystemComponent* particleSystem = missile->AddComponent<ParticleSystemComponent>();
-    MissileBehavior* missileBehavior = missile->AddComponent<MissileBehavior>();
-
-    missile->AddComponent<HitStopBehavior>();
-    missile->AddComponent<ShakeObjectBehavior>();
-    missile->AddComponent<BlinkerBehavior>();
-
-    transform->SetPosition(desc.startPosition);
-    transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
-
-    XMFLOAT3 initialDirection = MiMath::Subtract(desc.controlPoint1, desc.startPosition);
-    if (MiMath::Length(initialDirection) <= 0.0001f) {
-        initialDirection = MiMath::Subtract(desc.targetPosition, desc.startPosition);
-    }
-    if (MiMath::Length(initialDirection) > 0.0001f) {
-        XMFLOAT3 forward = MiMath::Multiply(MiMath::Normalize(initialDirection), -1.0f);
-        XMFLOAT4 rotation = MiMath::QuaternionFromDirection(forward, { 0.0f, 1.0f, 0.0f });
-        transform->SetRotation(rotation);
-    }
-
-    BulletCreateDesc visualDesc;
-    visualDesc.position = desc.startPosition;
-    visualDesc.radius = desc.radius;
-    visualDesc.modelPath = desc.modelPath;
-    visualDesc.materialName = desc.materialName;
-
-    SetupBulletModel(modelComponent, visualDesc);
-    SetupBulletParticle(particleSystem, visualDesc);
-
-    missileBehavior->Initialize(
-        desc.startPosition,
-        desc.controlPoint1,
-        desc.controlPoint2,
-        desc.targetPosition,
-        desc.duration,
-        desc.radius,
-        desc.layerMask);
-
-    return missile;
-}
-
-GameObject* ProjectileFactory::CreateBezierLinePreview(IScene* scene, const BezierLinePreviewCreateDesc& desc)
-{
-    if (!scene) return nullptr;
-
-    GameObject* previewLine = scene->CreateGameObject();
-    previewLine->SetName(desc.name ? desc.name : "BezierLinePreview");
-    previewLine->SetRenderLayer(RenderLayer::Particle);
-
-    previewLine->AddComponent<TransformComponent>();
-
-    LineRendererComponent* lineRenderer = previewLine->AddComponent<LineRendererComponent>();
-    lineRenderer->SetLineType(LineRendererComponent::LineType::LineStrip);
-    lineRenderer->SetLineWidth(desc.lineWidth);
-    lineRenderer->SetLineColor(desc.lineColor);
-    lineRenderer->SetEnable(desc.visibleOnCreate);
-
-    BezierLinePreviewBehavior* previewBehavior = previewLine->AddComponent<BezierLinePreviewBehavior>();
-    previewBehavior->SetSampleCount(desc.sampleCount);
-
-    return previewLine;
 }

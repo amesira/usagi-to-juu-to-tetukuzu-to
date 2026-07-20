@@ -7,7 +7,7 @@
 #ifndef PLAYER_MOVE_BEHAVIOR_H
 #define PLAYER_MOVE_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
-#include "Game/Behavior/PlayerBehavior/player_context.h"
+#include "Game/ActorBehavior/Player/player_context.h"
 
 class TransformComponent;
 class RigidbodyComponent;

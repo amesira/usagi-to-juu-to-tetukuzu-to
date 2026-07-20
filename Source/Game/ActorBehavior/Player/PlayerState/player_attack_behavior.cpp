@@ -10,13 +10,11 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/camera_component.h"
 
-#include "Game/Behavior/PlayerBehavior/player_behavior.h"
+#include "Game/ActorBehavior/Player/player_behavior.h"
 
 #include "Utility/mi_math.h"
 
 #include "Game/Factory/projectile_factory.h"
-
-#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
 
 void PlayerAttackBehavior::Start()
 {
@@ -139,12 +137,6 @@ void PlayerAttackBehavior::StartCharge(PlayerContext& context)
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeStart);
     }
 
-    for (int i = 0; i < MISSILE_PREVIEW_LINE_COUNT; i++) {
-        if (m_missilePreviewLines[i]) {
-            m_missilePreviewLines[i]->SetEnable(true);
-            m_missilePreviewLines[i]->SetLineEnable(true);
-        }
-    }
 }
 
 // チャージ更新処理
@@ -155,87 +147,24 @@ void PlayerAttackBehavior::UpdateCharge(PlayerContext& context, float deltaTime,
         m_chargeTimer = m_maxChargeTime;
     }
 
-    XMFLOAT3 startPosition = MiMath::Add(m_transform->GetPosition(), MiMath::Multiply(m_transform->GetRight(), 0.5f));
-    XMFLOAT3 targetPosition = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 40.0f));
-
-    // ミサイルプレビューラインの更新
-    for (int i = 0; i < MISSILE_PREVIEW_LINE_COUNT; i++) {
-        if (m_missilePreviewLines[i]) {
-            XMFLOAT3 controlPoint1, controlPoint2;
-            GetMissilePoints(i, startPosition, targetPosition, controlPoint1, controlPoint2);
-
-            m_missilePreviewLines[i]->SetControlPoints(startPosition, controlPoint1, controlPoint2, targetPosition);
-        }
-    }
 }
 
 // チャージ攻撃処理
 void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
 {
-    // === ミサイル弾を生成 ===
-    ProjectileFactory::MissileCreateDesc missileDesc;
-    missileDesc.startPosition = MiMath::Add(m_transform->GetPosition(), MiMath::Multiply(m_transform->GetRight(), 0.5f));
-    missileDesc.targetPosition = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 40.0f));
-    missileDesc.duration = 1.5f;
-    missileDesc.layerMask = (int)CollisionLayer::Bullet;
+    ProjectileFactory::BulletCreateDesc bulletDesc;
+    bulletDesc.position = MiMath::Add(m_transform->GetPosition(), MiMath::Multiply(m_transform->GetRight(), 0.5f));
+    bulletDesc.radius = 0.5f;
+    bulletDesc.lifeTime = 5.0f;
+    bulletDesc.layerMask = static_cast<int>(CollisionLayer::Bullet);
 
-    for (int i = 0; i < 5; i++) {
-        XMFLOAT3 controlPoint1, controlPoint2;
-        GetMissilePoints(i, missileDesc.startPosition, missileDesc.targetPosition, controlPoint1, controlPoint2);
-        missileDesc.controlPoint1 = controlPoint1;
-        missileDesc.controlPoint2 = controlPoint2;
-
-        ProjectileFactory::CreateMissile(GetOwner()->GetScene(), missileDesc);
-    }
+    XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
+    bulletEnd.y = bulletDesc.position.y;
+    bulletDesc.velocity = MiMath::Multiply(MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position)), 25.0f);
+    ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
 
     if (context.playerBehavior) {
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeAttack);
         context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AttackEnd);
     }
-
-    // ミサイルプレビューラインを非表示にする
-    for (int i = 0; i < MISSILE_PREVIEW_LINE_COUNT; i++) {
-        if (m_missilePreviewLines[i]) {
-            m_missilePreviewLines[i]->ClearLine();
-            m_missilePreviewLines[i]->SetEnable(false);
-            m_missilePreviewLines[i]->SetLineEnable(false);
-        }
-    }
-}
-
-// ミサイルコントロールポイントの取得
-void PlayerAttackBehavior::GetMissilePoints(int index, const XMFLOAT3& startPosition, const XMFLOAT3& targetPosition, XMFLOAT3& controlPoint1, XMFLOAT3& controlPoint2)
-{
-    const XMFLOAT2 controlPoint1Offset[5] = {
-        { 0.0f, 0.0f },
-        { 2.0f, 0.0f },
-        { -2.0f, 0.0f },
-        { 1.5f, 0.0f },
-        { -1.5f, 0.0f }
-    };
-
-    const XMFLOAT2 controlPoint2Offset[5] = {
-        { 0.0f, 5.0f },
-        { 1.0f, 4.0f },
-        { -1.0f, 6.0f },
-        { 2.0f, 3.0f },
-        { -2.0f, 7.0f}
-    };
-
-    const float power = 10.0f;
-
-    controlPoint1 = MiMath::Add(startPosition, MiMath::Multiply(m_transform->GetForward(), 15.0f));
-    controlPoint1.x += controlPoint1Offset[index].x * power;
-    controlPoint1.z += controlPoint1Offset[index].x * power;
-
-    controlPoint2 = MiMath::Add(targetPosition, MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
-    controlPoint2.x += controlPoint2Offset[index].x * power;
-    controlPoint2.y += controlPoint2Offset[index].y * power;
-    controlPoint2.z += controlPoint2Offset[index].x * power;
-}
-
-void PlayerAttackBehavior::SetupMissilePreviewLines(
-    const std::array<BezierLinePreviewBehavior*, MISSILE_PREVIEW_LINE_COUNT>& previewLines)
-{
-    m_missilePreviewLines = previewLines;
 }

@@ -28,7 +28,7 @@
 #include "Engine/Framework/Component/decal_component.h"
 #include "Engine/Framework/Component/transform_component.h"
 
-#include "Game/Behavior/camera_control_behavior.h"
+#include "Game/ActorBehavior/camera_control_behavior.h"
 
 #include "Game/ControllerBehavior/game_effect_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"

@@ -14,7 +14,6 @@
 class TransformComponent;
 class HitStopBehavior;
 class BlinkerBehavior;
-class ShakeObjectBehavior;
 
 class BulletBehavior : public BehaviorComponent {
 public:
@@ -39,7 +38,6 @@ private:
     // === 演出関連 ===
     HitStopBehavior* m_hitStopBehavior = nullptr;
     BlinkerBehavior* m_blinkerBehavior = nullptr;
-    ShakeObjectBehavior* m_shakeObjectBehavior = nullptr;
 
 public:
     BulletBehavior() = default;

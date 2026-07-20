@@ -14,10 +14,9 @@
 
 #include "Engine/Framework/Component/camera_component.h"
 
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
-#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Base/blinker_behavior.h"
 
 #include "Utility/mi_math.h"
 
@@ -67,8 +66,6 @@ void EnemyBehavior::Start()
     m_healthBehavior->SetMaxHealth(30.0f, true);
 
     m_blinkerBehavior = owner->GetComponent<BlinkerBehavior>();
-    m_shakeObjectBehavior = owner->GetComponent<ShakeObjectBehavior>();
-
     // ダメージコールバックの設定
     m_healthBehavior->SetOnTakeDamageCallback([this](float currentHealth, float damage) {
         if (currentHealth <= 0.0f) {
@@ -78,7 +75,6 @@ void EnemyBehavior::Start()
                     0.5f,
                     [this]() {
                         m_blinkerBehavior->Flash({ 1.0f, 0.0f, 0.0f }, 1.0f, 0.5f); // 死亡時に赤くフラッシュ
-                        m_shakeObjectBehavior->ShakeTemporary(0.5f, 1.0f); // 死亡時に揺らす（オフセットリセットあり）
                     },
                     nullptr,
                     nullptr,
@@ -98,13 +94,11 @@ void EnemyBehavior::Start()
                     0.3f,
                     [this]() {
                         m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.3f); // ダメージを受けたときに短く赤くフラッシュ
-                        m_shakeObjectBehavior->Shake(0.3f, 1.0f); // ダメージを受けたときに短く揺らす
                     },
                     nullptr,
                     nullptr,
                     [this]() {
                         m_blinkerBehavior->Reset(0.3f); // ヒットストップ終了後にフラッシュをリセット
-                        m_shakeObjectBehavior->Reset(0.3f); // ヒットストップ終了後に揺れをリセット
 
                         m_context.state = EnemyState::Chase; // ヒットストップ終了後にChase状態に戻す（仮）
                     }); // ダメージを受けたときに短いヒットストップを開始

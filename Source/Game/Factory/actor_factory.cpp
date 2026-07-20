@@ -18,24 +18,21 @@
 #include "Engine/Framework/Component/sprite_animation_component.h"
 
 // behavior
-#include "Game/Behavior/PlayerBehavior/player_behavior.h"
-#include "Game/Behavior/PlayerBehavior/player_state_machine_behavior.h"
-#include "Game/Behavior/PlayerBehavior/player_combat_machine_behavior.h"
+#include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/player_state_machine_behavior.h"
+#include "Game/ActorBehavior/Player/player_combat_machine_behavior.h"
 
-#include "Game/Behavior/PlayerBehavior/PlayerState/player_move_behavior.h"
-#include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
-#include "Game/Behavior/PlayerBehavior/PlayerState/player_dodge_behavior.h"
+#include "Game/ActorBehavior/Player/PlayerState/player_move_behavior.h"
+#include "Game/ActorBehavior/Player/PlayerState/player_attack_behavior.h"
+#include "Game/ActorBehavior/Player/PlayerState/player_dodge_behavior.h"
 
-#include "Game/Behavior/BaseBehavior/afterimage_generator_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Enemy/enemy_state_machine_behavior.h"
+#include "Game/ActorBehavior/Enemy/base_enemy_attack_behavior.h"
 
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/EnemyBehavior/enemy_behavior.h"
-#include "Game/Behavior/EnemyBehavior/enemy_state_machine_behavior.h"
-#include "Game/Behavior/EnemyBehavior/base_enemy_attack_behavior.h"
-
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
-#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
-#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/blinker_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -115,15 +112,6 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     player->AddComponent<PlayerDodgeBehavior>();
 
     player->AddComponent<HitStopBehavior>();
-    AfterimageGeneratorBehavior* afterimage = player->AddComponent<AfterimageGeneratorBehavior>();
-    {
-        afterimage->SetSource(transform, spriteRenderer);
-        afterimage->SetEmitInterval(0.1f);
-        afterimage->SetAfterimageLifeTime(0.25f);
-        afterimage->SetAlphaRange(0.15f, 0.0f);
-        afterimage->StopEmission();
-    }
-
     return player;
 }
 
@@ -197,7 +185,5 @@ GameObject* ActorFactory::CreateSimpleEnemy(SceneBase* scene, const XMFLOAT3& po
     enemy->AddComponent<HitStopBehavior>();
     enemy->AddComponent<HealthBehavior>();
     enemy->AddComponent<BlinkerBehavior>();
-    enemy->AddComponent<ShakeObjectBehavior>();
-
     return enemy;
 }

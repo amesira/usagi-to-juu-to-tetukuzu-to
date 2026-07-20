@@ -19,7 +19,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Game/Behavior/camera_control_behavior.h"
+#include "Game/ActorBehavior/camera_control_behavior.h"
 
 GameEffectController::GameEffectController()
 {

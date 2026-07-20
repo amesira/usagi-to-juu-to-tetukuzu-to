@@ -14,10 +14,9 @@
 
 #include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
 
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
-#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Base/blinker_behavior.h"
 
 #include "External/ImGui/imgui.h"
 
@@ -37,8 +36,6 @@ void BulletBehavior::Start()
         m_hitStopBehavior = GetOwner()->AddComponent<HitStopBehavior>();
     }
     m_blinkerBehavior = GetOwner()->GetComponent<BlinkerBehavior>();
-    m_shakeObjectBehavior = GetOwner()->GetComponent<ShakeObjectBehavior>();
-
     // 半径に応じてスケーリングを設定
     SetRadius(m_radius);
 }

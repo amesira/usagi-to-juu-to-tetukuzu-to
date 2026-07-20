@@ -13,8 +13,8 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Utility/mi_math.h"
 
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 
 #include "Engine/Editor/EditorWindow/imgui_window_interface.h"
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"

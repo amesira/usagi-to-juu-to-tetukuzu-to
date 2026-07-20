@@ -10,11 +10,10 @@
 #include "Engine/Framework/Component/light_component.h"
 #include "Engine/Framework/Component/rect_transform_component.h"
 
-#include "Game/Behavior/transform_constraint_behavior.h"
-#include "Game/Behavior/PlayerBehavior/player_behavior.h"
-#include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
-#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
+#include "Game/ActorBehavior/transform_constraint_behavior.h"
+#include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/PlayerState/player_attack_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
@@ -70,26 +69,6 @@ namespace PrefabFactory
             lightComp->SetEnable(false); // 最初はライトをオフにする
             playerBehavior->SetupChargeLight(lightComp);
         }
-        if (playerAttackBehavior) {
-            std::array<BezierLinePreviewBehavior*, PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT> previewLines = {};
-
-            for (int i = 0; i < PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT; ++i) {
-                ProjectileFactory::BezierLinePreviewCreateDesc lineDesc;
-                lineDesc.name = "MissilePreviewLine";
-                lineDesc.visibleOnCreate = false;
-                lineDesc.lineWidth = 0.08f;
-                lineDesc.lineColor = { 1.0f, 0.5f, 0.5f, 1.0f };
-
-                GameObject* lineObject = ProjectileFactory::CreateBezierLinePreview(scene, lineDesc);
-                if (!lineObject) continue;
-
-                lineObject->SetRenderLayer(RenderLayer::Player); // プレイヤーのレイヤーに設定
-                previewLines[i] = lineObject->GetComponent<BezierLinePreviewBehavior>();
-            }
-
-            playerAttackBehavior->SetupMissilePreviewLines(previewLines);
-        }
-
         return prefab;
     }
 

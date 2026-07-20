@@ -38,8 +38,7 @@
 #include "./PlayerState/player_attack_behavior.h"
 #include "./PlayerState/player_dodge_behavior.h"
 
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/BaseBehavior/afterimage_generator_behavior.h"
+#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
@@ -60,7 +59,6 @@ void PlayerBehavior::Start()
     m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
     m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
 
-    m_afterimageGenerator = owner->GetComponent<AfterimageGeneratorBehavior>();
     m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
 
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
@@ -158,11 +156,9 @@ void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
         // === Dodge ===
     case PlayerEffectType::DodgeStart:
         GAME_EFFECT->ChangeFOVTemporary(70.0f, 0.08f, 0.04f);
-        m_afterimageGenerator->StartEmission();
         break;
     case PlayerEffectType::DodgeEnd:
         GAME_EFFECT->ResetFOV(0.1f);
-        m_afterimageGenerator->StopEmission();
         break;
         // === Aim ===
     case PlayerEffectType::AimHoldStart:
