@@ -165,7 +165,6 @@ void BulletBehavior::Finalize(bool isHitStop)
             0.5f,
             [this]() {
                 m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.5f);
-                m_shakeObjectBehavior->Shake(0.5f, 1.0f);
             },
             nullptr,
             nullptr,
