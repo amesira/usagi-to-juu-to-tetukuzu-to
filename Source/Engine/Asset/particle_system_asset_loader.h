@@ -1,8 +1,9 @@
 //---------------------------------------------------
-// particle_system_asset_loader.h
-// 
-// Author：Miu Kitamura
+// File  ：Engine/Asset/particle_system_asset_loader.h
 // Date  ：2026/07/20
+// Author：Miu Kitamura
+// 
+// ・ParticleSystemAssetのセーブ/ロードをJSON形式で行う
 //---------------------------------------------------
 #pragma once
 #include <string>
