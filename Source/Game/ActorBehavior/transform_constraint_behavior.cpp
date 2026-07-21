@@ -9,7 +9,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Framework/Component/transform_component.h"
 
-#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+#include "Engine/Editor/EditorWindow/inspector_view_window.h"
 
 #include "Utility/mi_math.h"
 

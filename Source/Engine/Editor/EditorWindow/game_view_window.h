@@ -6,11 +6,11 @@
 //---------------------------------------------------
 #ifndef GAME_VIEW_WINDOW_H
 #define GAME_VIEW_WINDOW_H
-#include "imgui_window_interface.h"
+#include "Engine/Editor/i_editor_window.h"
 
-class GameViewWindow : public IImguiWindow {
+class GameViewWindow : public IEditorWindow {
 public:
-    GameViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
+    GameViewWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     void Draw() override;
 };
 

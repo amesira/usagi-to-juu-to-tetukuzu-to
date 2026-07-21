@@ -6,16 +6,16 @@
 //---------------------------------------------------
 #ifndef TOOL_BAR_WINDOW_H
 #define TOOL_BAR_WINDOW_H
-#include "imgui_window_interface.h"
+#include "Engine/Editor/i_editor_window.h"
 
 class EditorWindowManager;
 
-class ToolBarWindow : public IImguiWindow {
+class ToolBarWindow : public IEditorWindow {
 private:
     EditorWindowManager* m_windowManager = nullptr;
 
 public:
-    ToolBarWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
+    ToolBarWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     void Draw() override;
 
     void SetWindowManager(EditorWindowManager* windowManager)

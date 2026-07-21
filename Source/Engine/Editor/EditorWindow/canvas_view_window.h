@@ -6,11 +6,11 @@
 //---------------------------------------------------
 #ifndef CANVAS_VIEW_WINDOW_H
 #define CANVAS_VIEW_WINDOW_H
-#include "imgui_window_interface.h"
+#include "Engine/Editor/i_editor_window.h"
 
-class CanvasViewWindow : public IImguiWindow {
+class CanvasViewWindow : public IEditorWindow {
 public:
-    CanvasViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
+    CanvasViewWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     void Draw() override;
 };
 

@@ -102,6 +102,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -334,6 +337,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
+    <ClCompile Include="Source\Engine\Asset\particle_system_asset_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -655,7 +659,6 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\inspector_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
@@ -731,6 +734,10 @@
     <ClInclude Include="Utility\mi_curve_json.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Asset\i_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_asset_loader.h" />
+    <ClInclude Include="Utility\mi_math_json.h" />
+    <ClInclude Include="Source\Engine\Editor\i_editor_window.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

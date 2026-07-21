@@ -8,8 +8,9 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
-#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
+
 #include "Engine/Editor/EditorWindow/inspector_view_window.h"
+
 #include "Engine/Framework/Component/model_component.h"
 #include "Engine/Framework/Component/sprite_renderer_component.h"
 #include "Engine/Graphics/material_resource.h"

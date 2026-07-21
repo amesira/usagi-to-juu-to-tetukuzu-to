@@ -16,13 +16,13 @@
 
 class EditorContext;
 
-class IImguiWindow {
+class IEditorWindow {
 protected:
     EditorContext* m_editorContext;
 
 public:
-    IImguiWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
-    virtual ~IImguiWindow() = default;
+    IEditorWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
+    virtual ~IEditorWindow() = default;
     virtual void Draw() = 0;
 };
 

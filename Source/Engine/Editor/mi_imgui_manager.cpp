@@ -9,7 +9,7 @@
 #include "mi_imgui_manager.h"
 #include "Engine/Device/direct3d.h"
 
-#include "./EditorWindow/imgui_window_interface.h"
+#include "i_editor_window.h"
 
 // Imguiの初期化
 void MiImguiManager::Initialize(HWND hwnd)

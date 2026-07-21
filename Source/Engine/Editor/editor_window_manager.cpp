@@ -1,6 +1,6 @@
 #include "editor_window_manager.h"
 
-#include "EditorWindow/imgui_window_interface.h"
+#include "i_editor_window.h"
 
 namespace
 {
@@ -12,7 +12,7 @@ namespace
 
 void EditorWindowManager::Register(
     EditorWindowId id,
-    IImguiWindow* window,
+    IEditorWindow* window,
     const char* title,
     const char* internalId,
     bool openByDefault,

@@ -5,7 +5,7 @@
 
 #include "External/ImGui/imgui.h"
 
-class IImguiWindow;
+class IEditorWindow;
 
 enum class EditorWindowId
 {
@@ -24,7 +24,7 @@ class EditorWindowManager
 private:
     struct WindowEntry
     {
-        IImguiWindow* window = nullptr;
+        IEditorWindow* window = nullptr;
         std::string title;
         std::string internalId;
         ImVec2 defaultPosition = { 0.0f, 0.0f };
@@ -38,7 +38,7 @@ private:
 public:
     void Register(
         EditorWindowId id,
-        IImguiWindow* window,
+        IEditorWindow* window,
         const char* title,
         const char* internalId,
         bool openByDefault,

@@ -6,11 +6,11 @@
 //---------------------------------------------------
 #ifndef DEBUG_VIEW_WINDOW_H
 #define DEBUG_VIEW_WINDOW_H
-#include "imgui_window_interface.h"
+#include "Engine/Editor/i_editor_window.h"
 
-class DebugViewWindow : public IImguiWindow {
+class DebugViewWindow : public IEditorWindow {
 public:
-    DebugViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
+    DebugViewWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     void Draw() override;
 };
 

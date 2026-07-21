@@ -6,13 +6,13 @@
 //---------------------------------------------------
 #ifndef SETTINGS_VIEW_WINDOW_H
 #define SETTINGS_VIEW_WINDOW_H
-#include "imgui_window_interface.h"
+#include "Engine/Editor/i_editor_window.h"
 
-class SettingsViewWindow : public IImguiWindow {
+class SettingsViewWindow : public IEditorWindow {
 private:
 
 public:
-    SettingsViewWindow(EditorContext* editorContext) : IImguiWindow(editorContext) {}
+    SettingsViewWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     void Draw() override;
 
 private:
