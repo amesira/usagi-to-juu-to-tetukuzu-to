@@ -8,6 +8,7 @@
 #include "Engine/engine.h"
 
 #include "Engine/Editor/editor_context.h"
+#include "Engine/Editor/editor_window_manager.h"
 #include "Engine/render_view.h"
 #include "Engine/Core/game_object.h"
 
@@ -15,7 +16,17 @@
 
 void ToolBarWindow::Draw()
 {
-    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 8));
+    const char* collapseLabel = m_editorContext->toolbarExpanded ? "^" : "v";
+    if (ImGui::Button(collapseLabel)) {
+        m_editorContext->toolbarExpanded = !m_editorContext->toolbarExpanded;
+    }
+
+    if (!m_editorContext->toolbarExpanded) {
+        return;
+    }
+
+    ImGui::SameLine();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 6));
 
     ImGui::Text("Mi Engine v1 : ");
     ImGui::SameLine();
@@ -34,6 +45,51 @@ void ToolBarWindow::Draw()
     }
     ImGui::SameLine();
 
+    ImGui::SeparatorEx(ImGuiSeparatorFlags_Vertical);
+    ImGui::SameLine();
+
+    ImGui::TextUnformatted("Main View:");
+    ImGui::SameLine();
+
+    if (ImGui::RadioButton(
+        "Game",
+        m_editorContext->mainViewMode == EditorContext::MainViewMode::Game)) {
+        m_editorContext->mainViewMode = EditorContext::MainViewMode::Game;
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton(
+        "Scene",
+        m_editorContext->mainViewMode == EditorContext::MainViewMode::Scene)) {
+        m_editorContext->mainViewMode = EditorContext::MainViewMode::Scene;
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Windows")) {
+        ImGui::OpenPopup("EditorWindowMenu");
+    }
+
+    if (ImGui::BeginPopup("EditorWindowMenu")) {
+        if (m_windowManager) {
+            auto drawWindowToggle = [this](const char* label, EditorWindowId id) {
+                bool open = m_windowManager->IsOpen(id);
+                if (ImGui::MenuItem(label, nullptr, open)) {
+                    m_windowManager->Toggle(id);
+                }
+            };
+
+            drawWindowToggle("Hierarchy", EditorWindowId::Hierarchy);
+            drawWindowToggle("Runtime Inspector", EditorWindowId::Inspector);
+            drawWindowToggle("Debug", EditorWindowId::Debug);
+            ImGui::Separator();
+            drawWindowToggle("Game View", EditorWindowId::GameView);
+            drawWindowToggle("Scene View", EditorWindowId::SceneView);
+            drawWindowToggle("Canvas View", EditorWindowId::CanvasView);
+            drawWindowToggle("Settings", EditorWindowId::Settings);
+        }
+        ImGui::EndPopup();
+    }
+
+    ImGui::SameLine();
     if (ImGui::Button("Reload Scene")) {
         m_editorContext->triggerSceneReload = true;
     }

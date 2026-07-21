@@ -8,6 +8,11 @@ class SceneSettings;
 #include <vector>
 
 struct EditorContext {
+    enum class MainViewMode {
+        Game,
+        Scene,
+    } mainViewMode = MainViewMode::Game;
+
     IScene* scene = nullptr;                  // 観測対象のシーン
     SceneSettings* sceneSettings = nullptr; // シーン全体のレンダリング設定
 
@@ -25,6 +30,8 @@ struct EditorContext {
     float toolbarHeight = 40.0f;
     float hierarchyWidth = 300.0f;
     float inspectorWidth = 300.0f;
+
+    bool toolbarExpanded = true;
 
     std::vector<std::string> logMessages; // ログメッセージのリスト
 
