@@ -726,6 +726,9 @@
     <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
     <ClInclude Include="Utility\mi_curve.h" />
+    <ClInclude Include="Utility\mi_curve_json.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

@@ -6,10 +6,10 @@
 // Date  ：2026/06/28
 //---------------------------------------------------
 #pragma once
-#include <string>
+#include "i_asset.h"
 #include "particle_system_data.h"
 
- // 各モジュールのデータ
+// 各モジュールのデータ
 struct ParticleSystemDesc {
     ParticleSystemData::MainModule mainModule;
     ParticleSystemData::EmissionModule emissionModule;
@@ -19,15 +19,14 @@ struct ParticleSystemDesc {
     ParticleSystemData::RendererModule rendererModule;
 };
 
-class ParticleSystemAsset {
-public:
-    std::string name;
-    int formatVersion = 1;  // 読み込み形式のver
-
+class ParticleSystemAsset : public IAsset {
 private:
     ParticleSystemDesc m_desc = {};
 
 public:
+    // Descの取得・コピー
     const ParticleSystemDesc& GetDesc() const { return m_desc; }
     ParticleSystemDesc CopyDesc() const { return m_desc; }
+
+    void SetDesc(const ParticleSystemDesc& desc) { m_desc = desc; }
 };
