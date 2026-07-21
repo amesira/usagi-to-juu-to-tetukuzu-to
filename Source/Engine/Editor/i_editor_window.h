@@ -1,13 +1,11 @@
 //---------------------------------------------------
-// imgui_window_interface.h [imguiウィンドウ制御クラス]
-// 
-// imguiウィンドウの管理・制御を行う。
-// 
-// Author：Miu Kitamura
+// File  ：Engine/Editor/i_editor_window.h
 // Date  ：2025/07/01
+// Author：Miu Kitamura
+// 
+// ・imguiを用いたエディターウィンドウのインターフェースクラス
 //---------------------------------------------------
-#ifndef IMGUI_WINDOW_INTERFACE_H
-#define IMGUI_WINDOW_INTERFACE_H
+#pragma once
 #include "External/ImGui/imgui.h"
 #include "External/ImGui/imgui_internal.h"
 
@@ -25,5 +23,3 @@ public:
     virtual ~IEditorWindow() = default;
     virtual void Draw() = 0;
 };
-
-#endif // IMGUI_WINDOW_INTERFACE_H

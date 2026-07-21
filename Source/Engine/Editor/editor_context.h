@@ -1,11 +1,18 @@
+//---------------------------------------------------
+// File  ：Engine/Editor/editor_context.h
+// Date  ：2026/05
+// Author：Miu Kitamura
+// 
+// ・エディターのコンテキスト情報を保持する構造体
+//---------------------------------------------------
 #pragma once
+#include <string>
+#include <vector>
+
 class IScene;
 struct RenderView;
 class GameObject;
 class SceneSettings;
-
-#include <string>
-#include <vector>
 
 struct EditorContext {
     enum class MainViewMode {
@@ -39,11 +46,7 @@ struct EditorContext {
         Edit,
         Play,
     } currentEditorMode = EditorMode::Edit;
+
     bool triggerSceneReload = false; // シーンのリロード要求フラグ
 
-    /*enum class ViewMode {
-        SceneView,
-        GameView,
-        DebugView
-    } currentViewMode = ViewMode::SceneView;*/
 };

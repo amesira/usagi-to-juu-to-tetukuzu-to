@@ -206,7 +206,7 @@
     <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp">
+    <ClCompile Include="Source\Engine\Editor\editor_imgui_backend.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp">
@@ -511,7 +511,7 @@
     <ClInclude Include="External\ImGui\imgui_impl_win32.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h">
+    <ClInclude Include="Source\Engine\Editor\editor_imgui_backend.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Editor\editor_context.h">

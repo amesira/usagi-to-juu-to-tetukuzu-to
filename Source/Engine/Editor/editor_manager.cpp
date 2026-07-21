@@ -1,28 +1,37 @@
+//===================================================
+// File  ：Engine/Editor/editor_manager.cpp
+// Date  ：2026/07/21
+// Author：Miu Kitamura
+// 
+// ・エディターの管理クラス
+// ・Engineから呼び出され、エディターの初期化、描画、終了処理を行う
+//===================================================
 #include "editor_manager.h"
 
 void EditorManager::Initialize(HWND hWnd)
 {
-    m_imguiManager.Initialize(hWnd);
+    m_imguiBackend.Initialize(hWnd);
+
     m_toolBarWindow.SetWindowManager(&m_windowManager);
     RegisterWindows();
 }
 
 void EditorManager::Finalize()
 {
-    m_imguiManager.Finalize();
+    m_imguiBackend.Finalize();
 }
 
 // EditorManagerの描画処理
 void EditorManager::Render()
 {
-    m_imguiManager.BeginFrame();
+    m_imguiBackend.BeginFrame();
 
     // Main Viewを最初に描画し、各ツールをその上へ重ねる。
     DrawMainView();
     DrawToolbar();
     m_windowManager.DrawAll();
 
-    m_imguiManager.EndFrame();
+    m_imguiBackend.EndFrame();
 }
 
 void EditorManager::RegisterWindows()

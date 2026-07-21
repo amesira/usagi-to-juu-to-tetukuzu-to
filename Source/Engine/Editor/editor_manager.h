@@ -1,6 +1,14 @@
+//---------------------------------------------------
+// File  ：Engine/Editor/editor_manager.h
+// Date  ：2026/07/21
+// Author：Miu Kitamura
+// 
+// ・エディターの管理クラス
+// ・Engineから呼び出され、エディターの初期化、描画、終了処理を行う
+//---------------------------------------------------
 #pragma once
 
-#include "mi_imgui_manager.h"
+#include "editor_imgui_backend.h"
 #include "editor_context.h"
 #include "editor_window_manager.h"
 
@@ -13,21 +21,26 @@
 #include "EditorWindow/game_view_window.h"
 #include "EditorWindow/canvas_view_window.h"
 
-class EditorManager
-{
+class EditorManager {
 private:
-    MiImguiManager m_imguiManager;
-    EditorContext m_editorContext;
+    // エディターのコンテキスト情報
+    EditorContext       m_editorContext;
+
+    // === バックエンドとウィンドウ管理 ===
+    EditorImGuiBackend  m_imguiBackend;
     EditorWindowManager m_windowManager;
 
-    HierarchyViewWindow m_hierarchyViewWindow;
-    InspectorViewWindow m_inspectorViewWindow;
-    SceneViewWindow m_sceneViewWindow;
-    ToolBarWindow m_toolBarWindow;
-    DebugViewWindow m_debugViewWindow;
-    SettingsViewWindow m_settingsViewWindow;
-    GameViewWindow m_gameViewWindow;
-    CanvasViewWindow m_canvasViewWindow;
+    // === 各ウィンドウ ===
+    HierarchyViewWindow m_hierarchyViewWindow;  // Hierarchyウィンドウ
+    InspectorViewWindow m_inspectorViewWindow;  // Inspectorウィンドウ
+
+    ToolBarWindow       m_toolBarWindow;        // ツールバーウィンドウ
+    DebugViewWindow     m_debugViewWindow;      // デバッグウィンドウ
+    SettingsViewWindow  m_settingsViewWindow;   // 設定ウィンドウ
+
+    SceneViewWindow     m_sceneViewWindow;      // SceneViewウィンドウ
+    GameViewWindow      m_gameViewWindow;       // GameViewウィンドウ
+    CanvasViewWindow    m_canvasViewWindow;     // CanvasViewウィンドウ
 
 public:
     EditorManager()
@@ -52,4 +65,5 @@ private:
     void RegisterWindows();
     void DrawMainView();
     void DrawToolbar();
+
 };
