@@ -91,7 +91,6 @@ private:
     // ピクセルシェーダーの読み込み
     bool LoadPixelShader(ID3D11PixelShader** outPs, const std::string& filePath);
 
-
 };
 
 #endif // SHADER_REPOSITORY_H

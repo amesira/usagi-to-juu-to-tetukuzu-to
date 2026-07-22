@@ -18,6 +18,7 @@ void EditorManager::Initialize(HWND hWnd)
 
 void EditorManager::Finalize()
 {
+    m_particleSystemEditorWindow.OnWindowClosed();
     m_imguiBackend.Finalize();
 }
 
@@ -29,6 +30,7 @@ void EditorManager::Render()
     // Main Viewを最初に描画し、各ツールをその上へ重ねる。
     DrawMainView();
     DrawToolbar();
+    SyncWindowLifecycle();
     m_windowManager.DrawAll();
 
     m_imguiBackend.EndFrame();
@@ -98,6 +100,23 @@ void EditorManager::RegisterWindows()
         false,
         { 1200.0f, 100.0f },
         { 340.0f, 650.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::ParticleSystemEditor,
+        &m_particleSystemEditorWindow,
+        "Particle System Editor",
+        "ParticleSystemEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
+}
+
+void EditorManager::SyncWindowLifecycle()
+{
+    if (!m_windowManager.IsOpen(EditorWindowId::ParticleSystemEditor))
+    {
+        m_particleSystemEditorWindow.OnWindowClosed();
+    }
 }
 
 void EditorManager::DrawMainView()

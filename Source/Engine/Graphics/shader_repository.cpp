@@ -13,6 +13,11 @@
 
 #include <fstream>
 
+namespace {
+    // シェーダーのコンパイル済みファイルが格納されているディレクトリ
+    const std::string SHADER_DIRECTORY = "ShadersCompiled/";
+}
+
 // シェーダーリポジトリの初期化
 void ShaderRepository::Initialize()
 {
@@ -237,7 +242,7 @@ ConstantBufferResource* ShaderRepository::GenerateConstantBufferResource(
 // 頂点シェーダーの読み込み
 bool ShaderRepository::LoadVertexShader(ID3D11VertexShader** outVs, const std::string& filePath, VsBinaryData& vbData)
 {
-    std::ifstream ifs_vs(filePath, std::ios::binary);
+    std::ifstream ifs_vs(SHADER_DIRECTORY + filePath, std::ios::binary);
     if (!ifs_vs)return false;
 
     // ファイルサイズを取得
@@ -330,7 +335,7 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
 bool ShaderRepository::LoadPixelShader(ID3D11PixelShader** outPs, const std::string& filePath)
 {
     // 事前コンパイル済みピクセルシェーダーの読み込み
-    std::ifstream ifs_ps(filePath, std::ios::binary);
+    std::ifstream ifs_ps(SHADER_DIRECTORY + filePath, std::ios::binary);
     if (!ifs_ps)return false;
 
     // ファイルサイズを取得

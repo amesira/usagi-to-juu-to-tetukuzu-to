@@ -28,7 +28,7 @@ void ToolBarWindow::Draw()
     ImGui::SameLine();
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 6));
 
-    ImGui::Text("Mi Engine v1 : ");
+    ImGui::Text("Mi Engine v2 : ");
     ImGui::SameLine();
 
     ImGui::Text("FPS: %.1f", FPS_GetFPS());
@@ -85,6 +85,8 @@ void ToolBarWindow::Draw()
             drawWindowToggle("Scene View", EditorWindowId::SceneView);
             drawWindowToggle("Canvas View", EditorWindowId::CanvasView);
             drawWindowToggle("Settings", EditorWindowId::Settings);
+            ImGui::Separator();
+            drawWindowToggle("Particle System Editor", EditorWindowId::ParticleSystemEditor);
         }
         ImGui::EndPopup();
     }
@@ -95,5 +97,4 @@ void ToolBarWindow::Draw()
     }
 
     ImGui::PopStyleVar();
-
 }

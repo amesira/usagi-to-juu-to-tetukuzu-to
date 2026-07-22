@@ -105,6 +105,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -330,6 +333,10 @@
     <ClCompile Include="Source\Engine\Editor\EditorWindow\scene_view_window.cpp" />
     <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_parameter_panel.cpp" />
+    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_system_editor_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
@@ -667,6 +674,10 @@
     <ClInclude Include="Source\Engine\Editor\EditorWindow\scene_view_window.h" />
     <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_parameter_panel.h" />
+    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_system_editor_window.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />

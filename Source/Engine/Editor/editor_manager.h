@@ -20,6 +20,7 @@
 #include "EditorWindow/settings_view_window.h"
 #include "EditorWindow/game_view_window.h"
 #include "EditorWindow/canvas_view_window.h"
+#include "EditorWindow/ParticleEditor/particle_system_editor_window.h"
 
 class EditorManager {
 private:
@@ -41,6 +42,7 @@ private:
     SceneViewWindow     m_sceneViewWindow;      // SceneViewウィンドウ
     GameViewWindow      m_gameViewWindow;       // GameViewウィンドウ
     CanvasViewWindow    m_canvasViewWindow;     // CanvasViewウィンドウ
+    ParticleSystemEditorWindow m_particleSystemEditorWindow;
 
 public:
     EditorManager()
@@ -52,6 +54,7 @@ public:
         , m_settingsViewWindow(&m_editorContext)
         , m_gameViewWindow(&m_editorContext)
         , m_canvasViewWindow(&m_editorContext)
+        , m_particleSystemEditorWindow(&m_editorContext)
     {
     }
 
@@ -65,5 +68,6 @@ private:
     void RegisterWindows();
     void DrawMainView();
     void DrawToolbar();
+    void SyncWindowLifecycle();
 
 };

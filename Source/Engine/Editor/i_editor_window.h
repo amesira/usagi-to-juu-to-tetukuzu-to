@@ -12,7 +12,7 @@
 #include "External/ImGui/imgui_impl_dx11.h"
 #include "External/ImGui/imgui_impl_win32.h"
 
-class EditorContext;
+struct EditorContext;
 
 class IEditorWindow {
 protected:

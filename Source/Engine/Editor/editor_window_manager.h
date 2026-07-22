@@ -24,6 +24,7 @@ enum class EditorWindowId
     SceneView,
     CanvasView,
     Settings,
+    ParticleSystemEditor,
     Count,
 };
 
