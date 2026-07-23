@@ -36,9 +36,9 @@ namespace FieldEditor
 #pragma region FieldEditor DragFieldの特殊化
     /// @brief FieldEditorのfloat型の特殊化
     template<>
-    class FieldEditor<float, DragFieldOptions<float>> {
+    class FieldEditor<float, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, float& value, const DragFieldOptions<float>& options)
+        static bool Draw(const char* label, float& value, const DragFieldOptions& options)
         {
             return ImGui::DragFloat(label, &value, options.dragSpeed, options.minValue, options.maxValue);
         }
@@ -46,41 +46,46 @@ namespace FieldEditor
     
     /// @brief FieldEditorのint型の特殊化
     template<>
-    class FieldEditor<int, DragFieldOptions<int>> {
+    class FieldEditor<int, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, int& value, const DragFieldOptions<int>& options)
+        static bool Draw(const char* label, int& value, const DragFieldOptions& options)
         {
-            return ImGui::DragInt(label, &value, options.dragSpeed, options.minValue, options.maxValue);
+            return ImGui::DragInt(
+                label,
+                &value,
+                options.dragSpeed,
+                static_cast<int>(options.minValue),
+                static_cast<int>(options.maxValue));
         }
     };
 
     /// @brief FieldEditorのXMFLOAT2型の特殊化
     template<>
-    class FieldEditor<XMFLOAT2, DragFieldOptions<XMFLOAT2>> {
+    class FieldEditor<XMFLOAT2, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, XMFLOAT2& value, const DragFieldOptions<XMFLOAT2>& options)
+        static bool Draw(const char* label, XMFLOAT2& value, const DragFieldOptions& options)
         {
-            return ImGui::DragFloat2(label, &value.x, options.dragSpeed, options.minValue.x, options.maxValue.x);
+            return ImGui::DragFloat2(label, &value.x, options.dragSpeed, options.minValue, options.maxValue);
         }
     };
 
     /// @brief FieldEditorのXMFLOAT3型の特殊化
     template<>
-    class FieldEditor<XMFLOAT3, DragFieldOptions<XMFLOAT3>> {
+    class FieldEditor<XMFLOAT3, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, XMFLOAT3& value, const DragFieldOptions<XMFLOAT3>& options)
+        static bool Draw(const char* label, XMFLOAT3& value, const DragFieldOptions& options)
         {
-            return ImGui::DragFloat3(label, &value.x, options.dragSpeed, options.minValue.x, options.maxValue.x);
+            return ImGui::DragFloat3(label, &value.x, options.dragSpeed, options.minValue, options.maxValue);
         }
     };
 
     /// @brief FieldEditorのXMFLOAT4型の特殊化
     template<>
-    class FieldEditor<XMFLOAT4, DragFieldOptions<XMFLOAT4>> {
+    class FieldEditor<XMFLOAT4, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, XMFLOAT4& value, const DragFieldOptions<XMFLOAT4>& options)
+        static bool Draw(const char* label, XMFLOAT4& value, const DragFieldOptions& options)
         {
-            return ImGui::DragFloat4(label, &value.x, options.dragSpeed, options.minValue.x, options.maxValue.x);
+            return ImGui::DragFloat4(label, &value.x, options.dragSpeed, options.minValue, options.maxValue);
         }
     };
 #pragma endregion
@@ -88,9 +93,9 @@ namespace FieldEditor
 #pragma region FieldEditor SliderFieldの特殊化
     /// @brief FieldEditorのfloat型のSliderFieldOptions特殊化
     template<>
-    class FieldEditor<float, SliderFieldOptions<float>> {
+    class FieldEditor<float, SliderFieldOptions> {
     public:
-        static bool Draw(const char* label, float& value, const SliderFieldOptions<float>& options)
+        static bool Draw(const char* label, float& value, const SliderFieldOptions& options)
         {
             return ImGui::SliderFloat(label, &value, options.minValue, options.maxValue);
         }
@@ -98,11 +103,15 @@ namespace FieldEditor
 
     /// @brief FieldEditorのint型のSliderFieldOptions特殊化
     template<>
-    class FieldEditor<int, SliderFieldOptions<int>> {
+    class FieldEditor<int, SliderFieldOptions> {
     public:
-        static bool Draw(const char* label, int& value, const SliderFieldOptions<int>& options)
+        static bool Draw(const char* label, int& value, const SliderFieldOptions& options)
         {
-            return ImGui::SliderInt(label, &value, options.minValue, options.maxValue);
+            return ImGui::SliderInt(
+                label,
+                &value,
+                static_cast<int>(options.minValue),
+                static_cast<int>(options.maxValue));
         }
     };
 #pragma endregion
