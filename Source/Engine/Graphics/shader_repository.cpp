@@ -15,7 +15,7 @@
 
 namespace {
     // シェーダーのコンパイル済みファイルが格納されているディレクトリ
-    const std::string SHADER_DIRECTORY = "ShadersCompiled/";
+    const std::string SHADER_DIRECTORY = "ShaderCompiled/";
 }
 
 // シェーダーリポジトリの初期化

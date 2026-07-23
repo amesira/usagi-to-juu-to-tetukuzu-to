@@ -39,6 +39,7 @@ namespace MiCurveJson
             return false;
         }
 
+        // "keys"フィールドが存在し、配列であることを確認
         const auto keysIt = jsonValue.find("keys");
         if (keysIt == jsonValue.end() || !keysIt->is_array())
         {
@@ -49,6 +50,7 @@ namespace MiCurveJson
         loadedCurve.keys.clear();
         loadedCurve.keys.reserve(keysIt->size());
 
+        // === 各キーをデシリアライズ ===
         for (const json& keyJson : *keysIt)
         {
             if (!keyJson.is_object())
@@ -70,6 +72,7 @@ namespace MiCurveJson
             });
         }
 
+        // キーを時間順にソートする
         std::stable_sort(
             loadedCurve.keys.begin(),
             loadedCurve.keys.end(),

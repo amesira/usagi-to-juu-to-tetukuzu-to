@@ -3,7 +3,7 @@
         "emission": {
             "enabled": true,
             "rateOverDistance": 0.0,
-            "rateOverTime": 62.70000076293945
+            "rateOverTime": 55.099998474121094
         },
         "main": {
             "duration": 5.0,

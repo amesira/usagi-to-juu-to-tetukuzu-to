@@ -16,16 +16,30 @@ namespace MiMathJson
 {
     using json = nlohmann::json;
 
+    /// @brief XMFLOAT2をJSONにシリアライズする
+    inline json SerializeFloat2(const XMFLOAT2& value)
+    {
+        return json::array({ value.x, value.y });
+    }
+
+    /// @brief JSONからXMFLOAT2をデシリアライズする
+    inline bool DeserializeFloat2(const json& jsonValue, XMFLOAT2& outValue)
+    {
+        if (!jsonValue.is_array() || jsonValue.size() != 2)
+        {
+            return false;
+        }
+        outValue = {
+            jsonValue[0].get<float>(),
+            jsonValue[1].get<float>(),
+        };
+        return true;
+    }
+
     /// @brief XMFLOAT3をJSONにシリアライズする
     inline json SerializeFloat3(const XMFLOAT3& value)
     {
         return json::array({ value.x, value.y, value.z });
-    }
-
-    /// @brief XMFLOAT4をJSONにシリアライズする
-    inline json SerializeFloat4(const XMFLOAT4& value)
-    {
-        return json::array({ value.x, value.y, value.z, value.w });
     }
 
     /// @brief JSONからXMFLOAT3をデシリアライズする
@@ -41,6 +55,12 @@ namespace MiMathJson
             jsonValue[2].get<float>(),
         };
         return true;
+    }
+
+    /// @brief XMFLOAT4をJSONにシリアライズする
+    inline json SerializeFloat4(const XMFLOAT4& value)
+    {
+        return json::array({ value.x, value.y, value.z, value.w });
     }
 
     /// @brief JSONからXMFLOAT4をデシリアライズする

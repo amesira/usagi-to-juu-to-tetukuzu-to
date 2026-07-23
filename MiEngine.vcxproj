@@ -288,6 +288,14 @@
     <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_asset_loader.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\particle_system_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\particle_system_field_serializer.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
