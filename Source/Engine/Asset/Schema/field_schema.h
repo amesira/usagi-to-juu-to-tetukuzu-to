@@ -20,7 +20,7 @@ private:
     // （例：Field<ParticleSystem, float, RangeOption>とField<ParticleSystem, int, DefaultOption>を同時に管理できる）
 
 public:
-    explicit FieldSchema(TFields... fields) : m_fields(std::move(fields)) {
+    explicit FieldSchema(TFields... fields) : m_fields(std::move(fields)...) {
     }
 
     /// @brief Fieldのタプルを取得する
