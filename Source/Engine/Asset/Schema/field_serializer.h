@@ -159,7 +159,6 @@ namespace FieldSerialization
         {
             return MiCurveJson::Deserialize(jsonValue, value);
         }
-
     };
 }
 
