@@ -7,6 +7,10 @@
 //===================================================
 #include "particle_system_asset_loader.h"
 #include "particle_system_data.h"
+#include "particle_system_schema.h"
+
+#include "Engine/Asset/Schema/enum_field_serializer.h"
+#include "Engine/Asset/Schema/field_serializer.h"
 
 #include "Utility/mi_curve_json.h"
 #include "Utility/mi_math_json.h"
@@ -111,17 +115,6 @@ namespace
         return "Sphere";
     }
 
-    // TimeModeの文字列化
-    const char* ToString(ParticleSystemData::TimeMode value)
-    {
-        switch (value)
-        {
-        case ParticleSystemData::TimeMode::Lifetime: return "Lifetime";
-        case ParticleSystemData::TimeMode::Speed: return "Speed";
-        }
-        return "Lifetime";
-    }
-
     // BillboardModeの文字列化
     const char* ToString(ParticleSystemData::BillboardMode value)
     {
@@ -162,17 +155,6 @@ namespace
         const std::string text = value.get<std::string>();
         if (text == "Sphere") outValue = ParticleSystemData::ShapeType::Sphere;
         else if (text == "Cone") outValue = ParticleSystemData::ShapeType::Cone;
-        else return false;
-        return true;
-    }
-
-    // TimeModeをJSONからデシリアライズする
-    bool DeserializeTimeMode(const json& value, ParticleSystemData::TimeMode& outValue)
-    {
-        if (!value.is_string()) return false;
-        const std::string text = value.get<std::string>();
-        if (text == "Lifetime") outValue = ParticleSystemData::TimeMode::Lifetime;
-        else if (text == "Speed") outValue = ParticleSystemData::TimeMode::Speed;
         else return false;
         return true;
     }
@@ -245,21 +227,18 @@ namespace
     // EmissionModuleをJSONにシリアライズする
     json SerializeEmission(const ParticleSystemData::EmissionModule& module)
     {
-        return {
-            { "enabled", module.enabled },
-            { "rateOverTime", module.rateOverTime },
-            { "rateOverDistance", module.rateOverDistance },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetEmissionSchema());
     }
 
     // EmissionModuleをJSONからデシリアライズする
     bool DeserializeEmission(const json& jsonValue, ParticleSystemDesc& desc)
     {
-        auto& module = desc.emissionModule;
-        module.enabled = jsonValue.value("enabled", module.enabled);
-        module.rateOverTime = jsonValue.value("rateOverTime", module.rateOverTime);
-        module.rateOverDistance = jsonValue.value("rateOverDistance", module.rateOverDistance);
-        return true;
+        return FieldSerialization::DeserializeFields(
+            jsonValue,
+            desc.emissionModule,
+            ParticleSystemSchema::GetEmissionSchema());
     }
 
     // ShapeModuleをJSONにシリアライズする
@@ -332,32 +311,18 @@ namespace
     // TextureSheetAnimationModuleをJSONにシリアライズする
     json SerializeTextureSheetAnimation(const ParticleSystemData::TextureSheetAnimation& module)
     {
-        return {
-            { "enabled", module.enabled },
-            { "tileX", module.tileX },
-            { "tileY", module.tileY },
-            { "startFrame", module.startFrame },
-            { "frameCount", module.frameCount },
-            { "timeMode", ToString(module.timeMode) },
-            { "framePerSecond", module.framePerSecond },
-            { "loop", module.loop },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetTextureSheetAnimationSchema());
     }
 
     // TextureSheetAnimationModuleをJSONからデシリアライズする
     bool DeserializeTextureSheetAnimation(const json& jsonValue, ParticleSystemDesc& desc)
     {
-        auto& module = desc.textureSheetAnimation;
-        module.enabled = jsonValue.value("enabled", module.enabled);
-        module.tileX = jsonValue.value("tileX", module.tileX);
-        module.tileY = jsonValue.value("tileY", module.tileY);
-        module.startFrame = jsonValue.value("startFrame", module.startFrame);
-        module.frameCount = jsonValue.value("frameCount", module.frameCount);
-        module.framePerSecond = jsonValue.value("framePerSecond", module.framePerSecond);
-        module.loop = jsonValue.value("loop", module.loop);
-        if (const auto it = jsonValue.find("timeMode");
-            it != jsonValue.end() && !DeserializeTimeMode(*it, module.timeMode)) return false;
-        return true;
+        return FieldSerialization::DeserializeFields(
+            jsonValue,
+            desc.textureSheetAnimation,
+            ParticleSystemSchema::GetTextureSheetAnimationSchema());
     }
 
     // RendererModuleをJSONにシリアライズする

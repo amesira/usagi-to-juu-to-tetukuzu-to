@@ -29,7 +29,7 @@ namespace FieldSerialization
                 jsonValue.get_to(value);
                 return true;
             }
-            catch (const Json::exception&)
+            catch (const json::exception&)
             {
                 return false;
             }

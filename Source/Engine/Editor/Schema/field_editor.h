@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// File  ：Engine/Editor/EditorWindow/Schema/field_editor.h
+// File  ：Engine/Editor/Schema/field_editor.h
 // Date  ：2026/07/23
 // Author：Miu Kitamura
 // 
@@ -31,6 +31,22 @@ namespace FieldEditor
     {
         TValue& value = object.*(field.member);
         return FieldEditor<TValue, TOptions>::Draw(field.label.c_str(), value, field.options);
+    }
+
+    template<class TObject, class TSchema>
+    bool DrawFields(TObject& object, const TSchema& schema)
+    {
+        bool changed = false;
+
+        ImGui::PushID(static_cast<const void*>(&object));
+        schema.ForEach([&](const auto& field) {
+            ImGui::PushID(field.key.c_str());
+            changed |= DrawField(object, field);
+            ImGui::PopID();
+        });
+        ImGui::PopID();
+
+        return changed;
     }
 
 #pragma region FieldEditor DragFieldの特殊化

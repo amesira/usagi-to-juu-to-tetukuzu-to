@@ -746,6 +746,7 @@
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
     <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_schema.h" />
     <ClInclude Include="Utility\mi_curve.h" />
     <ClInclude Include="Utility\mi_curve_json.h">
       <Filter>Utility</Filter>

@@ -8,6 +8,7 @@
 //---------------------------------------------------
 #pragma once
 #include <string>
+#include <utility>
 #include "field_options.h"
 
 /// @brief 1つのフィールドについての情報を表す構造体
@@ -24,7 +25,21 @@ public:
     TOptions options;           // フィールドのオプション（enum変換用の文字列、範囲、デフォルト値など）
 
     // TOptionが{}の場合、型ごとにデフォルトのオプションを設定する
-    explicit Field(std::string key, std::string label, TValue TObject::* member, TOptions options = DefaultFieldOptions())
-        :key(key), label(label), member(member), options(options) {
+    explicit Field(std::string key, std::string label, TValue TObject::* member, TOptions options = TOptions{})
+        :key(std::move(key)), label(std::move(label)), member(member), options(std::move(options)) {
     }
 };
+
+template<class TObject, class TValue, class TOptions = DefaultFieldOptions>
+auto MakeField(
+    std::string key,
+    std::string label,
+    TValue TObject::* member,
+    TOptions options = TOptions{})
+{
+    return Field<TObject, TValue, TOptions>(
+        std::move(key),
+        std::move(label),
+        member,
+        std::move(options));
+}

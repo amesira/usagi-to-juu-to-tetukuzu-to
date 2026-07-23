@@ -4,6 +4,9 @@
 #include <cstring>
 
 #include "External/ImGui/imgui.h"
+#include "Engine/Asset/particle_system_schema.h"
+#include "Engine/Editor/Schema/enum_field_editor.h"
+#include "Engine/Editor/Schema/field_editor.h"
 
 namespace
 {
@@ -56,11 +59,9 @@ bool ParticleParameterPanel::DrawMain(ParticleSystemData::MainModule& module)
 bool ParticleParameterPanel::DrawEmission(ParticleSystemData::EmissionModule& module)
 {
     if (!ImGui::CollapsingHeader("Emission", ImGuiTreeNodeFlags_DefaultOpen)) return false;
-    bool changed = false;
-    changed |= ImGui::Checkbox("Enabled##Emission", &module.enabled);
-    changed |= ImGui::DragFloat("Rate Over Time", &module.rateOverTime, 0.1f, 0.0f);
-    changed |= ImGui::DragFloat("Rate Over Distance", &module.rateOverDistance, 0.1f, 0.0f);
-    return changed;
+    return FieldEditor::DrawFields(
+        module,
+        ParticleSystemSchema::GetEmissionSchema());
 }
 
 bool ParticleParameterPanel::DrawShape(ParticleSystemData::ShapeModule& module)
@@ -108,23 +109,9 @@ bool ParticleParameterPanel::DrawSizeOverLifetime(ParticleSystemData::SizeOverLi
 bool ParticleParameterPanel::DrawTextureSheetAnimation(ParticleSystemData::TextureSheetAnimation& module)
 {
     if (!ImGui::CollapsingHeader("Texture Sheet Animation")) return false;
-    bool changed = false;
-    changed |= ImGui::Checkbox("Enabled##TextureSheet", &module.enabled);
-    changed |= ImGui::DragInt("Tiles X", &module.tileX, 1.0f, 1);
-    changed |= ImGui::DragInt("Tiles Y", &module.tileY, 1.0f, 1);
-    changed |= ImGui::DragInt("Start Frame", &module.startFrame, 1.0f, 0);
-    changed |= ImGui::DragInt("Frame Count", &module.frameCount, 1.0f, 1);
-
-    int timeMode = static_cast<int>(module.timeMode);
-    const char* items[] = { "Lifetime", "Speed" };
-    if (ImGui::Combo("Time Mode", &timeMode, items, IM_ARRAYSIZE(items)))
-    {
-        module.timeMode = static_cast<ParticleSystemData::TimeMode>(timeMode);
-        changed = true;
-    }
-    changed |= ImGui::DragFloat("Frames Per Second", &module.framePerSecond, 0.1f, 0.0f);
-    changed |= ImGui::Checkbox("Loop##TextureSheet", &module.loop);
-    return changed;
+    return FieldEditor::DrawFields(
+        module,
+        ParticleSystemSchema::GetTextureSheetAnimationSchema());
 }
 
 bool ParticleParameterPanel::DrawRenderer(ParticleSystemData::RendererModule& module)

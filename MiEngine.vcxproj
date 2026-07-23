@@ -288,6 +288,7 @@
     <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_asset_loader.h" />
     <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\particle_system_schema.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field.h" />

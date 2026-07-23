@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// File  ：Engine/Editor/EditorWindow/Schema/enum_field_editor.h
+// File  ：Engine/Editor/Schema/enum_field_editor.h
 // Date  ：2026/07/23
 // Author：Miu Kitamura
 // 
