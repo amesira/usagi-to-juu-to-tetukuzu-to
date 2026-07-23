@@ -138,9 +138,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Asset\particle_system_asset_loader.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\game_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\settings_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
@@ -169,7 +169,7 @@
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp" />
     <ClCompile Include="Utility\debug_ostream.cpp" />
     <ClCompile Include="Utility\debug_renderer.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\debug_view_window.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Device\direct3d.cpp" />
     <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
@@ -180,7 +180,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_state_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\health_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\hit_stop_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
     <ClCompile Include="External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="External\ImGui\imgui_draw.cpp" />
@@ -188,7 +188,7 @@
     <ClCompile Include="External\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\inspector_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\inspector_view_window.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.cpp" />
     <ClCompile Include="Source\Engine\Graphics\material_repository.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_imgui_backend.cpp" />
@@ -222,18 +222,18 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
     <ClCompile Include="Source\Engine\Manager\resource_manager.cpp" />
     <ClCompile Include="Source\Engine\Manager\scene_manager.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\scene_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\scene_view_window.cpp" />
     <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp" />
     <ClCompile Include="External\stb_implementation.cpp" />
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_document.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_preview.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_parameter_panel.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_system_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.cpp" />
     <ClCompile Include="Source\Game\Factory\ui_factory.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
@@ -299,9 +299,9 @@
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\canvas_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\game_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\settings_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Editor\editor_window_manager.h" />
     <ClInclude Include="Source\Engine\Editor\i_editor_window.h" />
@@ -347,7 +347,7 @@
     <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
     <ClInclude Include="Source\Game\Factory\projectile_factory.h" />
     <ClInclude Include="Utility\debug_renderer.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\debug_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
@@ -362,7 +362,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_state_machine_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\health_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\hit_stop_behavior.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.h" />
     <ClInclude Include="External\ImGui\imconfig.h" />
     <ClInclude Include="External\ImGui\imgui.h" />
     <ClInclude Include="External\ImGui\imgui_impl_dx11.h" />
@@ -371,7 +371,7 @@
     <ClInclude Include="External\ImGui\imstb_rectpack.h" />
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\inspector_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\inspector_view_window.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Component\joint_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\joint_group_component.h" />
@@ -427,7 +427,7 @@
     <ClInclude Include="Source\Engine\Core\scene_base.h" />
     <ClInclude Include="Source\Engine\Core\scene_interface.h" />
     <ClInclude Include="Source\Engine\Manager\scene_manager.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\scene_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\scene_view_window.h" />
     <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h" />
@@ -436,11 +436,13 @@
     <ClInclude Include="Source\Engine\Graphics\texture_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\texture_resource.h" />
     <ClInclude Include="Source\Engine\Framework\Component\text_component.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\tool_bar_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_document.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_editor_preview.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_parameter_panel.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\ParticleEditor\particle_system_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\enum_field_editor.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\field_editor.h" />
     <ClInclude Include="Source\Engine\Framework\Component\transform_component.h" />
     <ClInclude Include="Source\Engine\Core\component_type_id.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.h" />

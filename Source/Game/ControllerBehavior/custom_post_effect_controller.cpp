@@ -8,7 +8,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 #include "Engine/Settings/scene_settings.h"
 

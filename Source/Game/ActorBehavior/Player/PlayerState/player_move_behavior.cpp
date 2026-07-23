@@ -10,7 +10,7 @@
 
 #include "Utility/mi_math.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"

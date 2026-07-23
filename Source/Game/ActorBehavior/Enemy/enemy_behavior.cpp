@@ -23,7 +23,7 @@
 #include "enemy_state_machine_behavior.h"
 #include "base_enemy_attack_behavior.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 #include "Game/Factory/render_effect_factory.h"
 

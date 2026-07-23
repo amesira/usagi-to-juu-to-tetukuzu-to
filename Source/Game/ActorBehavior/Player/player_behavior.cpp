@@ -13,7 +13,7 @@
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mouse.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 #include <algorithm>
 

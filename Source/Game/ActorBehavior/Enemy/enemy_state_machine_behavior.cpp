@@ -16,7 +16,7 @@
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 namespace {
     constexpr float ENEMY_CHASE_SPEED = 4.0f;

@@ -11,7 +11,7 @@
 #include "Utility/mi_math.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
+#include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
 #include "player_behavior.h"
 

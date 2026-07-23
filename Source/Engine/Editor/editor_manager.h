@@ -12,15 +12,15 @@
 #include "editor_context.h"
 #include "editor_window_manager.h"
 
-#include "EditorWindow/hierarchy_view_window.h"
-#include "EditorWindow/inspector_view_window.h"
-#include "EditorWindow/scene_view_window.h"
-#include "EditorWindow/tool_bar_window.h"
-#include "EditorWindow/debug_view_window.h"
-#include "EditorWindow/settings_view_window.h"
-#include "EditorWindow/game_view_window.h"
-#include "EditorWindow/canvas_view_window.h"
-#include "EditorWindow/ParticleEditor/particle_system_editor_window.h"
+#include "BaseEditor/hierarchy_view_window.h"
+#include "BaseEditor/inspector_view_window.h"
+#include "BaseEditor/scene_view_window.h"
+#include "BaseEditor/tool_bar_window.h"
+#include "BaseEditor/debug_view_window.h"
+#include "BaseEditor/settings_view_window.h"
+#include "BaseEditor/game_view_window.h"
+#include "BaseEditor/canvas_view_window.h"
+#include "ParticleEditor/particle_system_editor_window.h"
 
 class EditorManager {
 private:
