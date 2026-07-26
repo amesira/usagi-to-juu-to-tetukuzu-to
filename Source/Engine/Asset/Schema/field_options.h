@@ -34,6 +34,9 @@ public:
     bool useHDR = false; // HDRカラーを使用するかどうか
 };
 
-// Curve
-// Angle
-// Pathなど
+/// @brief Editorで使用するAngleFieldのオプション
+class AngleFieldOptions {
+public:
+    float minValue = 0.0f;   // 最小値
+    float maxValue = 360.0f; // 最大値
+};

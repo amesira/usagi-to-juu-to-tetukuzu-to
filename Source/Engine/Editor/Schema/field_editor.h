@@ -47,7 +47,7 @@ namespace FieldEditor
         if (!ImGui::TreeNode(field.label.c_str())) return false;
 
         TStructValue& structValue = object.*(field.member);
-        bool changed = DrawFields(structValue, field.m_schema);
+        bool changed = DrawFields(structValue, field.schema);
 
         ImGui::TreePop();
         return changed;
@@ -249,5 +249,24 @@ namespace FieldEditor
             return changed;
         }
     };
+#pragma endregion
 
+    /// @brief FieldEditorのAngleFieldOptions特殊化
+    template<>
+    class FieldEditor<float, AngleFieldOptions> {
+    public:
+        static bool Draw(const char* label, float& value, const AngleFieldOptions& options)
+        {
+            // ラジアンを度に変換して表示する
+            float degrees = value * (180.0f / XM_PI);
+            bool changed = ImGui::SliderAngle(label, &degrees, options.minValue, options.maxValue);
+
+            // 変更があった場合は、度をラジアンに変換してvalueに格納する
+            if (changed) {
+                value = degrees * (XM_PI / 180.0f);
+            }
+
+            return changed;
+        }
+    };
 }

@@ -765,7 +765,6 @@
     <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
-    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
     <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_field_editor.h" />
   </ItemGroup>

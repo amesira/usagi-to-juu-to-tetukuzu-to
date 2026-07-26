@@ -12,9 +12,9 @@
 namespace FieldEditor
 {
     template<>
-    class FieldEditor<ParticleSystemData::MinMaxFloat, DefaultFieldOptions> {
+    class FieldEditor<ParticleSystemData::MinMaxFloat, DragFieldOptions> {
     public:
-        static bool Draw(const char* label, ParticleSystemData::MinMaxFloat& value, const DefaultFieldOptions& options)
+        static bool Draw(const char* label, ParticleSystemData::MinMaxFloat& value, const DragFieldOptions& options)
         {
             if (!ImGui::TreeNode(label)) return false;
 
@@ -22,11 +22,17 @@ namespace FieldEditor
             // ランダムかどうかのチェックボックス
             changed |= ImGui::Checkbox("Random Between Two Constants", &value.randomBetweenTwoConstants);
             if (value.randomBetweenTwoConstants) {
-                changed |= ImGui::DragFloat("Constant Min", &value.constantMin, 0.1f);
-                changed |= ImGui::DragFloat("Constant Max", &value.constantMax, 0.1f);
+                changed |= ImGui::DragFloat(
+                    "Constant Min", &value.constantMin,
+                    options.dragSpeed, options.minValue, options.maxValue);
+                changed |= ImGui::DragFloat(
+                    "Constant Max", &value.constantMax,
+                    options.dragSpeed, options.minValue, options.maxValue);
             }
             else {
-                changed |= ImGui::DragFloat("Constant", &value.constant, 0.1f);
+                changed |= ImGui::DragFloat(
+                    "Constant", &value.constant,
+                    options.dragSpeed, options.minValue, options.maxValue);
             }
 
             ImGui::TreePop();
@@ -37,7 +43,7 @@ namespace FieldEditor
     template<>
     class FieldEditor<ParticleSystemData::MinMaxColor, ColorFieldOptions> {
     public:
-        static bool Draw(const char* label, ParticleSystemData::MinMaxColor& value, const DefaultFieldOptions& options)
+        static bool Draw(const char* label, ParticleSystemData::MinMaxColor& value, const ColorFieldOptions& options)
         {
             if (!ImGui::TreeNode(label)) return false;
 

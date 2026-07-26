@@ -7,6 +7,7 @@
 //===================================================
 #include "particle_system_asset_loader.h"
 #include "particle_system_data.h"
+#include "particle_system_field_serializer.h"
 #include "particle_system_schema.h"
 
 #include "Engine/Asset/Schema/enum_field_serializer.h"
@@ -23,205 +24,22 @@ namespace
 {
     using json = nlohmann::json;
 
-#pragma region MinMaxFloat/MinMaxColorのJSONシリアライズ/デシリアライズ
-    // MinMaxFloatをJSONにシリアライズする
-    json SerializeMinMaxFloat(const ParticleSystemData::MinMaxFloat& value)
-    {
-        return {
-            { "randomBetweenTwoConstants", value.randomBetweenTwoConstants },
-            { "constant", value.constant },
-            { "constantMin", value.constantMin },
-            { "constantMax", value.constantMax },
-        };
-    }
-
-    // MinMaxFloatをJSONからデシリアライズする
-    bool DeserializeMinMaxFloat(const json& jsonValue, ParticleSystemData::MinMaxFloat& outValue)
-    {
-        if (!jsonValue.is_object())
-        {
-            return false;
-        }
-
-        outValue.randomBetweenTwoConstants = jsonValue.value(
-            "randomBetweenTwoConstants", outValue.randomBetweenTwoConstants);
-        outValue.constant = jsonValue.value("constant", outValue.constant);
-        outValue.constantMin = jsonValue.value("constantMin", outValue.constantMin);
-        outValue.constantMax = jsonValue.value("constantMax", outValue.constantMax);
-        return true;
-    }
-
-    // MinMaxColorをJSONにシリアライズする
-    json SerializeMinMaxColor(const ParticleSystemData::MinMaxColor& value)
-    {
-        return {
-            { "randomBetweenTwoColors", value.randomBetweenTwoColors },
-            { "color", MiMathJson::SerializeFloat4(value.color) },
-            { "colorMin", MiMathJson::SerializeFloat4(value.colorMin) },
-            { "colorMax", MiMathJson::SerializeFloat4(value.colorMax) },
-        };
-    }
-
-    // MinMaxColorをJSONからデシリアライズする
-    bool DeserializeMinMaxColor(const json& jsonValue, ParticleSystemData::MinMaxColor& outValue)
-    {
-        if (!jsonValue.is_object())
-        {
-            return false;
-        }
-
-        outValue.randomBetweenTwoColors = jsonValue.value(
-            "randomBetweenTwoColors", outValue.randomBetweenTwoColors);
-
-        if (const auto it = jsonValue.find("color");
-            it != jsonValue.end() && !MiMathJson::DeserializeFloat4(*it, outValue.color))
-        {
-            return false;
-        }
-        if (const auto it = jsonValue.find("colorMin");
-            it != jsonValue.end() && !MiMathJson::DeserializeFloat4(*it, outValue.colorMin))
-        {
-            return false;
-        }
-        if (const auto it = jsonValue.find("colorMax");
-            it != jsonValue.end() && !MiMathJson::DeserializeFloat4(*it, outValue.colorMax))
-        {
-            return false;
-        }
-        return true;
-    }
-#pragma endregion
-
-#pragma region EnumのJSONシリアライズ/デシリアライズ
-    // SimulationSpaceの文字列化
-    const char* ToString(ParticleSystemData::SimulationSpace value)
-    {
-        switch (value)
-        {
-        case ParticleSystemData::SimulationSpace::Local: return "Local";
-        case ParticleSystemData::SimulationSpace::World: return "World";
-        }
-        return "Local";
-    }
-
-    // ShapeTypeの文字列化
-    const char* ToString(ParticleSystemData::ShapeType value)
-    {
-        switch (value)
-        {
-        case ParticleSystemData::ShapeType::Sphere: return "Sphere";
-        case ParticleSystemData::ShapeType::Cone: return "Cone";
-        }
-        return "Sphere";
-    }
-
-    // BillboardModeの文字列化
-    const char* ToString(ParticleSystemData::BillboardMode value)
-    {
-        switch (value)
-        {
-        case ParticleSystemData::BillboardMode::View: return "View";
-        case ParticleSystemData::BillboardMode::Horizontal: return "Horizontal";
-        }
-        return "View";
-    }
-
-    // BlendModeの文字列化
-    const char* ToString(ParticleSystemData::BlendMode value)
-    {
-        switch (value)
-        {
-        case ParticleSystemData::BlendMode::AlphaBlend: return "AlphaBlend";
-        case ParticleSystemData::BlendMode::Additive: return "Additive";
-        }
-        return "AlphaBlend";
-    }
-
-    // SimulationSpaceをJSONからデシリアライズする
-    bool DeserializeSimulationSpace(const json& value, ParticleSystemData::SimulationSpace& outValue)
-    {
-        if (!value.is_string()) return false;
-        const std::string text = value.get<std::string>();
-        if (text == "Local") outValue = ParticleSystemData::SimulationSpace::Local;
-        else if (text == "World") outValue = ParticleSystemData::SimulationSpace::World;
-        else return false;
-        return true;
-    }
-
-    // ShapeTypeをJSONからデシリアライズする
-    bool DeserializeShapeType(const json& value, ParticleSystemData::ShapeType& outValue)
-    {
-        if (!value.is_string()) return false;
-        const std::string text = value.get<std::string>();
-        if (text == "Sphere") outValue = ParticleSystemData::ShapeType::Sphere;
-        else if (text == "Cone") outValue = ParticleSystemData::ShapeType::Cone;
-        else return false;
-        return true;
-    }
-
-    // BillboardModeをJSONからデシリアライズする
-    bool DeserializeBillboardMode(const json& value, ParticleSystemData::BillboardMode& outValue)
-    {
-        if (!value.is_string()) return false;
-        const std::string text = value.get<std::string>();
-        if (text == "View") outValue = ParticleSystemData::BillboardMode::View;
-        else if (text == "Horizontal") outValue = ParticleSystemData::BillboardMode::Horizontal;
-        else return false;
-        return true;
-    }
-
-    // BlendModeをJSONからデシリアライズする
-    bool DeserializeBlendMode(const json& value, ParticleSystemData::BlendMode& outValue)
-    {
-        if (!value.is_string()) return false;
-        const std::string text = value.get<std::string>();
-        if (text == "AlphaBlend") outValue = ParticleSystemData::BlendMode::AlphaBlend;
-        else if (text == "Additive") outValue = ParticleSystemData::BlendMode::Additive;
-        else return false;
-        return true;
-    }
-#pragma endregion
-
 #pragma region ModuleのJSONシリアライズ/デシリアライズ
     // MainModuleをJSONにシリアライズする
     json SerializeMain(const ParticleSystemData::MainModule& module)
     {
-        return {
-            { "duration", module.duration },
-            { "loop", module.loop },
-            { "playOnAwake", module.playOnAwake },
-            { "startLifetime", SerializeMinMaxFloat(module.startLifetime) },
-            { "startSpeed", SerializeMinMaxFloat(module.startSpeed) },
-            { "startSize", SerializeMinMaxFloat(module.startSize) },
-            { "startColor", SerializeMinMaxColor(module.startColor) },
-            { "gravity", MiMathJson::SerializeFloat3(module.gravity) },
-            { "simulationSpeed", module.simulationSpeed },
-            { "simulationSpace", ToString(module.simulationSpace) },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetMainSchema());
     }
 
     // MainModuleをJSONからデシリアライズする
     bool DeserializeMain(const json& jsonValue, ParticleSystemDesc& desc)
     {
-        auto& module = desc.mainModule;
-        module.duration = jsonValue.value("duration", module.duration);
-        module.loop = jsonValue.value("loop", module.loop);
-        module.playOnAwake = jsonValue.value("playOnAwake", module.playOnAwake);
-        module.simulationSpeed = jsonValue.value("simulationSpeed", module.simulationSpeed);
-
-        if (const auto it = jsonValue.find("simulationSpace");
-            it != jsonValue.end() && !DeserializeSimulationSpace(*it, module.simulationSpace)) return false;
-        if (const auto it = jsonValue.find("startLifetime");
-            it != jsonValue.end() && !DeserializeMinMaxFloat(*it, module.startLifetime)) return false;
-        if (const auto it = jsonValue.find("startSpeed");
-            it != jsonValue.end() && !DeserializeMinMaxFloat(*it, module.startSpeed)) return false;
-        if (const auto it = jsonValue.find("startSize");
-            it != jsonValue.end() && !DeserializeMinMaxFloat(*it, module.startSize)) return false;
-        if (const auto it = jsonValue.find("startColor");
-            it != jsonValue.end() && !DeserializeMinMaxColor(*it, module.startColor)) return false;
-        if (const auto it = jsonValue.find("gravity");
-            it != jsonValue.end() && !MiMathJson::DeserializeFloat3(*it, module.gravity)) return false;
-        return true;
+        return FieldSerialization::DeserializeFields(
+            jsonValue,
+            desc.mainModule,
+            ParticleSystemSchema::GetMainSchema());
     }
 
     // EmissionModuleをJSONにシリアライズする
@@ -244,68 +62,35 @@ namespace
     // ShapeModuleをJSONにシリアライズする
     json SerializeShape(const ParticleSystemData::ShapeModule& module)
     {
-        return {
-            { "enabled", module.enabled },
-            { "type", ToString(module.shapeType) },
-            { "sphere", {
-                { "radius", module.sphere.radius },
-                { "emitFromShell", module.sphere.emitFromShell },
-            } },
-            { "cone", {
-                { "angle", module.cone.angle },
-                { "radius", module.cone.radius },
-                { "length", module.cone.length },
-                { "emitFromBase", module.cone.emitFromBase },
-            } },
-            { "randomDirectionAmount", module.randomDirectionAmount },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetShapeSchema());
     }
 
     // ShapeModuleをJSONからデシリアライズする
     bool DeserializeShape(const json& jsonValue, ParticleSystemDesc& desc)
     {
-        auto& module = desc.shapeModule;
-        module.enabled = jsonValue.value("enabled", module.enabled);
-        module.randomDirectionAmount = jsonValue.value(
-            "randomDirectionAmount", module.randomDirectionAmount);
-
-        if (const auto it = jsonValue.find("type");
-            it != jsonValue.end() && !DeserializeShapeType(*it, module.shapeType)) return false;
-
-        if (const auto it = jsonValue.find("sphere"); it != jsonValue.end())
-        {
-            if (!it->is_object()) return false;
-            module.sphere.radius = it->value("radius", module.sphere.radius);
-            module.sphere.emitFromShell = it->value("emitFromShell", module.sphere.emitFromShell);
-        }
-        if (const auto it = jsonValue.find("cone"); it != jsonValue.end())
-        {
-            if (!it->is_object()) return false;
-            module.cone.angle = it->value("angle", module.cone.angle);
-            module.cone.radius = it->value("radius", module.cone.radius);
-            module.cone.length = it->value("length", module.cone.length);
-            module.cone.emitFromBase = it->value("emitFromBase", module.cone.emitFromBase);
-        }
-        return true;
+        return FieldSerialization::DeserializeFields(
+            jsonValue,
+            desc.shapeModule,
+            ParticleSystemSchema::GetShapeSchema());
     }
 
     // SizeOverLifetimeModuleをJSONにシリアライズする
     json SerializeSizeOverLifetime(const ParticleSystemData::SizeOverLifetimeModule& module)
     {
-        return {
-            { "enabled", module.enabled },
-            { "size", MiCurveJson::Serialize(module.size) },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetSizeOverLifetimeSchema());
     }
 
     // SizeOverLifetimeModuleをJSONからデシリアライズする
     bool DeserializeSizeOverLifetime(const json& jsonValue, ParticleSystemDesc& desc)
     {
-        auto& module = desc.sizeOverLifetimeModule;
-        module.enabled = jsonValue.value("enabled", module.enabled);
-        if (const auto it = jsonValue.find("size");
-            it != jsonValue.end() && !MiCurveJson::Deserialize(*it, module.size)) return false;
-        return true;
+        return FieldSerialization::DeserializeFields(
+            jsonValue,
+            desc.sizeOverLifetimeModule,
+            ParticleSystemSchema::GetSizeOverLifetimeSchema());
     }
 
     // TextureSheetAnimationModuleをJSONにシリアライズする
@@ -328,31 +113,23 @@ namespace
     // RendererModuleをJSONにシリアライズする
     json SerializeRenderer(const ParticleSystemData::RendererModule& module)
     {
-        return {
-            { "texturePath", module.texturePath },
-            { "uvRect", MiMathJson::SerializeFloat4(module.uvRect) },
-            { "billboardMode", ToString(module.billboardMode) },
-            { "blendMode", ToString(module.blendMode) },
-            { "sortByDistance", module.sortByDistance },
-        };
+        return FieldSerialization::SerializeFields(
+            module,
+            ParticleSystemSchema::GetRendererSchema());
     }
 
     // RendererModuleをJSONからデシリアライズする
     bool DeserializeRenderer(const json& jsonValue, ParticleSystemDesc& desc)
     {
         auto& module = desc.rendererModule;
-        module.texturePath = jsonValue.value("texturePath", module.texturePath);
-        module.sortByDistance = jsonValue.value("sortByDistance", module.sortByDistance);
-        if (const auto it = jsonValue.find("uvRect");
-            it != jsonValue.end() && !MiMathJson::DeserializeFloat4(*it, module.uvRect)) return false;
-        if (const auto it = jsonValue.find("billboardMode");
-            it != jsonValue.end() && !DeserializeBillboardMode(*it, module.billboardMode)) return false;
-        if (const auto it = jsonValue.find("blendMode");
-            it != jsonValue.end() && !DeserializeBlendMode(*it, module.blendMode)) return false;
+        const bool succeeded = FieldSerialization::DeserializeFields(
+            jsonValue,
+            module,
+            ParticleSystemSchema::GetRendererSchema());
 
         // textureResourceは保存データではないため、参照解決前は空にする。
         module.textureResource = nullptr;
-        return true;
+        return succeeded;
     }
 #pragma endregion
 

@@ -6,6 +6,8 @@
 // ・Fieldのシリアライズ・デシリアライズを行うための関数群
 //---------------------------------------------------
 #pragma once
+#include "field.h"
+#include "field_struct.h"
 #include "Utility/mi_math_json.h"
 #include "Utility/mi_curve_json.h"
 
@@ -92,7 +94,7 @@ namespace FieldSerialization
     {
         const auto it = schemaJson.find(field.key);
         if (it == schemaJson.end()) {
-            return false; // JSONにフィールドが存在しない場合はfalseを返す
+            return true; // JSONにフィールドが存在しない場合は現在値を維持する
         }
         const json& jsonValue = it.value();
         TValue tempValue = object.*(field.member); // デシリアライズに失敗した場合に元の値を保持するための一時変数
@@ -109,14 +111,14 @@ namespace FieldSerialization
     template<class TObject, class TStructValue, class TOptions, class... TFields>
     inline bool DeserializeField(const json& schemaJson, TObject& object, const StructField<TObject, TStructValue, TOptions, TFields...>& field) 
     {
-        const auto it = schemaJson.find(field.m_key);
+        const auto it = schemaJson.find(field.key);
         if (it == schemaJson.end()) {
             return true; // JSONにフィールドが存在しない場合はスキップしてtrueを返す
         }
         const json& structJson = it.value();
         TStructValue tempStructValue = object.*(field.member); // デシリアライズに失敗した場合に元の値を保持するための一時変数
 
-        if (DeserializeFields(structJson, tempStructValue, field.m_schema)) {
+        if (DeserializeFields(structJson, tempStructValue, field.schema)) {
             object.*(field.member) = std::move(tempStructValue); // デシリアライズに成功した場合のみ値を更新
             return true;
         }

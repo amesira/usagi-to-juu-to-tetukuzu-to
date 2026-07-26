@@ -19,25 +19,32 @@ namespace FieldSerialization
     public:
         static json Serialize(const ParticleSystemData::MinMaxFloat& value, const TOptions& options)
         {
-            json jsonValue = json::object();
-
-            jsonValue["randomBetweenTwoConstants"] = Serialize(value.randomBetweenTwoConstants, options);
-            jsonValue["constant"] = Serialize(value.constant, options);
-            jsonValue["constantMin"] = Serialize(value.constantMin, options);
-            jsonValue["constantMax"] = Serialize(value.constantMax, options);
-
-            return jsonValue;
+            return {
+                { "randomBetweenTwoConstants", value.randomBetweenTwoConstants },
+                { "constant", value.constant },
+                { "constantMin", value.constantMin },
+                { "constantMax", value.constantMax }
+            };
         }
 
         static bool Deserialize(const json& jsonValue, ParticleSystemData::MinMaxFloat& value, const TOptions& options)
         {
             if (!jsonValue.is_object()) return false;
 
-            value.randomBetweenTwoConstants = Deserialize(jsonValue.value("randomBetweenTwoConstants", value.constant), options);
-            value.constant = Deserialize(jsonValue.value("constant", value.constant), options);
-            value.constantMin = Deserialize(jsonValue.value("constantMin", value.constantMin), options);
-            value.constantMax = Deserialize(jsonValue.value("constantMax", value.constantMax), options);
+            auto temporary = value;
+            try {
+                temporary.randomBetweenTwoConstants = jsonValue.value(
+                    "randomBetweenTwoConstants",
+                    temporary.randomBetweenTwoConstants);
+                temporary.constant = jsonValue.value("constant", temporary.constant);
+                temporary.constantMin = jsonValue.value("constantMin", temporary.constantMin);
+                temporary.constantMax = jsonValue.value("constantMax", temporary.constantMax);
+            }
+            catch (const json::exception&) {
+                return false;
+            }
 
+            value = temporary;
             return true;
         }
     };
@@ -48,25 +55,45 @@ namespace FieldSerialization
     public:
         static json Serialize(const ParticleSystemData::MinMaxColor& value, const TOptions& options)
         {
-            json jsonValue = json::object();
-
-            jsonValue["randomBetweenTwoColors"] = Serialize(value.randomBetweenTwoColors, options);
-            jsonValue["color"] = Serialize(value.color, options);
-            jsonValue["colorMin"] = Serialize(value.colorMin, options);
-            jsonValue["colorMax"] = Serialize(value.colorMax, options);
-
-            return jsonValue;
+            return {
+                { "randomBetweenTwoColors", value.randomBetweenTwoColors },
+                { "color", MiMathJson::SerializeFloat4(value.color) },
+                { "colorMin", MiMathJson::SerializeFloat4(value.colorMin) },
+                { "colorMax", MiMathJson::SerializeFloat4(value.colorMax) }
+            };
         }
 
         static bool Deserialize(const json& jsonValue, ParticleSystemData::MinMaxColor& value, const TOptions& options)
         {
             if (!jsonValue.is_object()) return false;
 
-            value.randomBetweenTwoColors = Deserialize(jsonValue.value("randomBetweenTwoColors", value.randomBetweenTwoColors), options);
-            value.color = Deserialize(jsonValue.value("color", value.color), options);
-            value.colorMin = Deserialize(jsonValue.value("colorMin", value.colorMin), options);
-            value.colorMax = Deserialize(jsonValue.value("colorMax", value.colorMax), options);
+            auto temporary = value;
+            try {
+                temporary.randomBetweenTwoColors = jsonValue.value(
+                    "randomBetweenTwoColors",
+                    temporary.randomBetweenTwoColors);
+            }
+            catch (const json::exception&) {
+                return false;
+            }
 
+            if (const auto it = jsonValue.find("color");
+                it != jsonValue.end() &&
+                !MiMathJson::DeserializeFloat4(*it, temporary.color)) {
+                return false;
+            }
+            if (const auto it = jsonValue.find("colorMin");
+                it != jsonValue.end() &&
+                !MiMathJson::DeserializeFloat4(*it, temporary.colorMin)) {
+                return false;
+            }
+            if (const auto it = jsonValue.find("colorMax");
+                it != jsonValue.end() &&
+                !MiMathJson::DeserializeFloat4(*it, temporary.colorMax)) {
+                return false;
+            }
+
+            value = temporary;
             return true;
         }
     };

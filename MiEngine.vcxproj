@@ -296,7 +296,6 @@
     <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />
-    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_serializer.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />

@@ -14,8 +14,4 @@ private:
     bool DrawSizeOverLifetime(ParticleSystemData::SizeOverLifetimeModule& module);
     bool DrawTextureSheetAnimation(ParticleSystemData::TextureSheetAnimation& module);
     bool DrawRenderer(ParticleSystemData::RendererModule& module);
-
-    bool DrawMinMaxFloat(const char* label, ParticleSystemData::MinMaxFloat& value);
-    bool DrawMinMaxColor(const char* label, ParticleSystemData::MinMaxColor& value);
-    bool DrawFloatCurve(const char* label, MiCurve::FloatCurve& curve);
 };

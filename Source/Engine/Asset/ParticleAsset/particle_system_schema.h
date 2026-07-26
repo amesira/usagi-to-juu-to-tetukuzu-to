@@ -241,10 +241,9 @@ namespace ParticleSystemSchema
                 "angle",
                 "Angle",
                 &Module::ConeShape::angle,
-                DragFieldOptions{
-                    .dragSpeed = 1.0f,
+                AngleFieldOptions{
                     .minValue = 0.0f,
-                    .maxValue = 180.0f }),
+                    .maxValue = 360.0f }),
             MakeField(
                 "radius",
                 "Radius",
