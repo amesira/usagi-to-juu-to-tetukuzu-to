@@ -58,11 +58,18 @@ public:
     {
     }
 
+    /// @brief エディターを初期化する
     void Initialize(HWND hWnd);
+    /// @brief エディターを終了する
     void Finalize();
+    /// @brief エディターを描画する
     void Render();
 
+    /// @brief エディターのコンテキスト情報を取得する
     EditorContext& GetEditorContext() { return m_editorContext; }
+
+    /// @brief シーン破棄時に呼び出す
+    void OnSceneDestroyed();
 
 private:
     void RegisterWindows();

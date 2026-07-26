@@ -36,6 +36,12 @@ void EditorManager::Render()
     m_imguiBackend.EndFrame();
 }
 
+/// @brief シーン破棄時に呼び出す
+void EditorManager::OnSceneDestroyed()
+{
+    m_particleSystemEditorWindow.CleanUp();
+}
+
 void EditorManager::RegisterWindows()
 {
     m_windowManager.Register(

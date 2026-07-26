@@ -88,7 +88,10 @@ void MiEngine::Update()
     if (m_editorContext->triggerSceneReload) {
         m_editorContext->triggerSceneReload = false;
         m_gameWorld.GetSceneManager().ReloadScene();
+
+        // シーン破棄時の処理を呼び出す
         m_editorContext->selectedObject = nullptr; // 選択オブジェクトをリセット
+        m_editorManager.OnSceneDestroyed(); // Editor側のシーン破棄処理を呼び出す
     }
 
     // デバッグ描画のバッファリセット

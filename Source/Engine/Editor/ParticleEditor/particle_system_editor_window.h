@@ -34,6 +34,9 @@ public:
     void Draw() override;
     void OnWindowClosed();
 
+    /// @brief CleanUp
+    void CleanUp();
+
 private:
     /// @brief ParticleEditorのツールバーを描画する
     void DrawToolbar();

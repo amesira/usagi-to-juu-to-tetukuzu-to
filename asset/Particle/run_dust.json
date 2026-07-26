@@ -1,0 +1,119 @@
+{
+    "data": {
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 1.0,
+            "rateOverTime": 0.0
+        },
+        "main": {
+            "duration": 1.0,
+            "gravity": [
+                0.0,
+                -0.25,
+                0.0
+            ],
+            "loop": true,
+            "playOnAwake": true,
+            "simulationSpace": "World",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "colorMax": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.949999988079071
+                ],
+                "colorMin": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    0.75
+                ],
+                "randomBetweenTwoColors": true
+            },
+            "startLifetime": {
+                "constant": 0.44999998807907104,
+                "constantMax": 0.6499999761581421,
+                "constantMin": 0.25,
+                "randomBetweenTwoConstants": true
+            },
+            "startSize": {
+                "constant": 1.350000023841858,
+                "constantMax": 1.0,
+                "constantMin": 0.800000011920929,
+                "randomBetweenTwoConstants": true
+            },
+            "startSpeed": {
+                "constant": 0.44999998807907104,
+                "constantMax": 0.800000011920929,
+                "constantMin": 0.20000000298023224,
+                "randomBetweenTwoConstants": true
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "AlphaBlend",
+            "sortByDistance": true,
+            "texturePath": "asset/Texture/fuwa_effect_sheet.png",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 1.0
+            },
+            "enabled": true,
+            "randomDirectionAmount": 0.6499999761581421,
+            "sphere": {
+                "emitFromShell": false,
+                "radius": 0.0
+            },
+            "type": "Sphere"
+        },
+        "sizeOverLifetime": {
+            "enabled": false,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 0.25
+                    },
+                    {
+                        "time": 0.3499999940395355,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 0.15000000596046448
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": true,
+            "frameCount": 13,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 13,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "run_dust",
+    "type": "ParticleSystem"
+}

@@ -75,6 +75,12 @@ void ParticleSystemEditorWindow::OnWindowClosed()
     m_preview.Cleanup();
 }
 
+
+void ParticleSystemEditorWindow::CleanUp()
+{
+    m_preview.Cleanup();
+}
+
 #pragma region ParticleEditorの内部描画関数
 /// @brief ParticleEditorのツールバーを描画する
 void ParticleSystemEditorWindow::DrawToolbar()
