@@ -13,16 +13,16 @@
 template<class TObject, class TStructValue, class TOptions, class... TFields>
 class StructField {
 public:
-    std::string m_key;    // JSON上でのキー名
-    std::string m_label;  // Editor上でのラベル名
+    std::string key;    // JSON上でのキー名
+    std::string label;  // Editor上でのラベル名
 
     TStructValue TObject::* member;   // メンバ変数へのポインタ（指定の構造体）
     TOptions options;           // フィールドのオプション
 
-    FieldSchema<TFields...> m_schema;
+    FieldSchema<TFields...> schema;
 
     explicit StructField(std::string key, std::string label, TStructValue TObject::* member, FieldSchema<TFields...> schema, TOptions options = TOptions{})
-        : m_key(std::move(key)), m_label(std::move(label)), member(member), options(std::move(options)), m_schema(std::move(schema)) {
+        : key(std::move(key)), label(std::move(label)), member(member), options(std::move(options)), schema(std::move(schema)) {
     }
 
 };

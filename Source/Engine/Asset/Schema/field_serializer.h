@@ -65,7 +65,7 @@ namespace FieldSerialization
     {
         // StructFieldの場合は、ネストされたFieldSchemaを使用して再帰的なシリアライズを行う
         const TStructValue& structValue = object.*(field.member);
-        return SerializeFields(structValue, field.m_schema);
+        return SerializeFields(structValue, field.schema);
     }
 
 #pragma endregion
