@@ -1,11 +1,20 @@
+//===================================================
+// File  ：Engine/Editor/ParticleEditor/particle_parameter_panel.cpp
+// Date  ：2026/07/26
+// Author：Miu Kitamura
+// 
+// ・ParticleEditorのパラメータ編集パネルを管理するクラス
+//===================================================
 #include "particle_parameter_panel.h"
+#include "Engine/Editor/i_editor_window.h"
 
-#include "External/ImGui/imgui.h"
-#include "Engine/Asset/ParticleAsset/particle_system_schema.h"
 #include "Engine/Editor/Schema/enum_field_editor.h"
 #include "Engine/Editor/Schema/field_editor.h"
+#include "Engine/Asset/ParticleAsset/particle_system_schema.h"
+
 #include "particle_system_field_editor.h"
 
+/// @brief ParticleEditorのパラメータ編集パネルを描画する
 bool ParticleParameterPanel::Draw(ParticleSystemDesc& desc)
 {
     bool changed = false;
@@ -18,6 +27,7 @@ bool ParticleParameterPanel::Draw(ParticleSystemDesc& desc)
     return changed;
 }
 
+#pragma region ParticleEditorのパラメータ編集パネルの描画関数
 bool ParticleParameterPanel::DrawMain(ParticleSystemData::MainModule& module)
 {
     if (!ImGui::CollapsingHeader("Main", ImGuiTreeNodeFlags_DefaultOpen)) return false;
@@ -65,3 +75,4 @@ bool ParticleParameterPanel::DrawRenderer(ParticleSystemData::RendererModule& mo
         module,
         ParticleSystemSchema::GetRendererSchema());
 }
+#pragma endregion

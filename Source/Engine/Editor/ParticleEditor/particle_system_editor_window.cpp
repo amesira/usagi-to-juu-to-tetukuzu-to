@@ -1,6 +1,5 @@
 //===================================================
-// File  ：Engine/Editor/EditorWindow/ParticleEditor
-//          /particle_system_editor_window.cpp
+// File  ：Engine/Editor/ParticleEditor/particle_system_editor_window.cpp
 // Date  ：2026/07/21
 // Author：Miu Kitamura
 // 
