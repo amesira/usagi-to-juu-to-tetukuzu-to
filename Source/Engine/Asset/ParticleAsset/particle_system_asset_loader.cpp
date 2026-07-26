@@ -236,7 +236,7 @@ bool ParticleSystemAssetLoader::LoadParticle(
         // === 全項目の読み込み成功後に反映 ===
         outAsset.SetHeader(loadedHeader);
         outAsset.SetFilePath(filePath);
-        outAsset.SetDesc(loadedDesc);
+        outAsset.GetDesc() = std::move(loadedDesc);
         return true;
     }
     catch (const json::exception& error)

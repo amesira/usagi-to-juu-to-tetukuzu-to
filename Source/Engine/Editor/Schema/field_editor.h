@@ -257,16 +257,7 @@ namespace FieldEditor
     public:
         static bool Draw(const char* label, float& value, const AngleFieldOptions& options)
         {
-            // ラジアンを度に変換して表示する
-            float degrees = value * (180.0f / XM_PI);
-            bool changed = ImGui::SliderAngle(label, &degrees, options.minValue, options.maxValue);
-
-            // 変更があった場合は、度をラジアンに変換してvalueに格納する
-            if (changed) {
-                value = degrees * (XM_PI / 180.0f);
-            }
-
-            return changed;
+            return ImGui::SliderAngle(label, &value, options.minValue, options.maxValue);
         }
     };
 }

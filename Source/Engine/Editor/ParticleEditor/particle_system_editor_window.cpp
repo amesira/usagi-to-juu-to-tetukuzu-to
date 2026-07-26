@@ -36,7 +36,7 @@ ParticleSystemEditorWindow::ParticleSystemEditorWindow(EditorContext* editorCont
 void ParticleSystemEditorWindow::Draw()
 {
     // パーティクルアセットのプレビューを作成し、更新する
-    m_preview.EnsureCreated(m_document.GetEditingDesc());
+    m_preview.GeneratePreviewObject(m_document.GetEditingDesc());
     m_preview.Update();
 
     // ツールバーを描画
@@ -83,7 +83,8 @@ void ParticleSystemEditorWindow::DrawToolbar()
     {
         m_document.New();
         strncpy_s(m_pathBuffer.data(), m_pathBuffer.size(),
-            "asset/Particle/new_particle.json", _TRUNCATE);
+            "asset/Particle/new_particle.json",
+            _TRUNCATE);
         m_preview.Apply(m_document.GetEditingDesc(), true);
     }
     ImGui::SameLine();
@@ -94,13 +95,9 @@ void ParticleSystemEditorWindow::DrawToolbar()
         if (m_document.SaveAs(std::filesystem::path(m_pathBuffer.data()))) RefreshAssetList();
     }
     ImGui::SameLine();
-    if (ImGui::Button("Reload"))
-    {
-        if (m_document.Reload()) m_preview.Apply(m_document.GetEditingDesc(), true);
-    }
-    ImGui::SameLine();
     if (ImGui::Button("Refresh Assets")) RefreshAssetList();
 
+    // パーティクルアセットのパスを表示する入力テキストボックスを描画する
     ImGui::SetNextItemWidth(-1.0f);
     ImGui::InputText("##ParticleAssetPath", m_pathBuffer.data(), m_pathBuffer.size());
 }
@@ -110,6 +107,8 @@ void ParticleSystemEditorWindow::DrawAssetList()
 {
     ImGui::TextUnformatted("Particle Assets");
     ImGui::Separator();
+
+    // パーティクルアセットのリストを描画する子ウィンドウを作成する
     ImGui::BeginChild("ParticleAssetList", { 0.0f, 0.0f }, false);
     for (const std::filesystem::path& path : m_assetPaths)
     {
@@ -118,11 +117,14 @@ void ParticleSystemEditorWindow::DrawAssetList()
         if (ImGui::Selectable(path.filename().string().c_str(), selected)) OpenAsset(path);
         if (ImGui::IsItemHovered()) ImGui::SetTooltip("%s", path.generic_string().c_str());
     }
+
+    // MEMO: パーティクルアセットが存在しない場合は、ディレクトリが空であることを示すメッセージを表示する
     if (m_assetPaths.empty())
     {
         ImGui::TextDisabled("No particle assets in");
         ImGui::TextWrapped("%s", PARTICLE_ASSET_DIRECTORY.generic_string().c_str());
     }
+
     ImGui::EndChild();
 }
 
@@ -145,6 +147,7 @@ void ParticleSystemEditorWindow::DrawPreview()
         ImGui::TextDisabled("Particles: %zu", particleSystem->Particles().size());
     }
 
+    // SceneViewのレンダリング結果を表示する子ウィンドウを作成する
     ImGui::BeginChild("ParticlePreview", { 0.0f, 0.0f }, true);
     const RenderView* renderView = m_editorContext->sceneRenderView;
     if (renderView && renderView->colorBufferSRV)
@@ -160,6 +163,7 @@ void ParticleSystemEditorWindow::DrawPreview()
     {
         ImGui::TextDisabled("Scene RenderView is not available.");
     }
+
     ImGui::EndChild();
 }
 
@@ -180,6 +184,7 @@ void ParticleSystemEditorWindow::DrawParameters()
 /// @brief ParticleEditorのステータスバーを描画する
 void ParticleSystemEditorWindow::DrawStatusBar()
 {
+    // MEMO: パーティクルアセットのパスが空の場合は、"Untitled"と表示する
     const std::string path = m_document.HasAssetPath()
         ? m_document.GetAssetPath().generic_string()
         : "Untitled";
@@ -196,15 +201,20 @@ void ParticleSystemEditorWindow::RefreshAssetList()
     std::error_code error;
     if (!std::filesystem::exists(PARTICLE_ASSET_DIRECTORY, error)) return;
 
+    // パーティクルアセットのディレクトリを再帰的に探索し、.jsonファイルのパスを取得する
     std::filesystem::recursive_directory_iterator iterator(
         PARTICLE_ASSET_DIRECTORY, std::filesystem::directory_options::skip_permission_denied, error);
     const std::filesystem::recursive_directory_iterator end;
+
     while (!error && iterator != end)
     {
-        if (iterator->is_regular_file(error) && iterator->path().extension() == ".json")
+        if (iterator->is_regular_file(error) && iterator->path().extension() == ".json") {
             m_assetPaths.push_back(iterator->path().lexically_normal());
+        }
         iterator.increment(error);
     }
+
+    // パーティクルアセットのパスを昇順にソートする
     std::sort(m_assetPaths.begin(), m_assetPaths.end());
 }
 

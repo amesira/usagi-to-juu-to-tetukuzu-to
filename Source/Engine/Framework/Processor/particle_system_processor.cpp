@@ -258,7 +258,6 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         // playOnAwakeが有効で、まだ再生されていない場合は再生する
         if (main.playOnAwake && !particleSystem.IsPlaying()) {
             particleSystem.Play();
-
             particleSystem.SetPreviousPosition(transform->GetPosition());
         }
 

@@ -125,7 +125,16 @@ public:
     const XMFLOAT3& GetCurrentPosition() const { return m_currentPosition; }
 
     // 再生
-    void Play() { m_isPlaying = true; }
+    void Play() { 
+        m_isPlaying = true;
+
+        // 再生開始時のリセット処理
+        Particles().clear();
+        SetTime(0.0f);                  // 再生開始時に時間をリセット
+        SetEmitAccumulator(0.0f);       // 再生開始時にアキュムレータをリセット
+        SetDistanceAccumulator(0.0f);   // 再生開始時に距離アキュムレータをリセット
+
+    }
     // 一時停止
     void Stop() { m_isPlaying = false; }
 

@@ -18,9 +18,9 @@
             "simulationSpeed": 1.0,
             "startColor": {
                 "color": [
-                    1.0,
-                    1.0,
-                    1.0,
+                    0.8983739614486694,
+                    0.8478704690933228,
+                    0.20815978944301605,
                     1.0
                 ],
                 "colorMax": [
@@ -38,7 +38,7 @@
                 "randomBetweenTwoColors": false
             },
             "startLifetime": {
-                "constant": 5.0,
+                "constant": 1.0,
                 "constantMax": 5.0,
                 "constantMin": 5.0,
                 "randomBetweenTwoConstants": false
@@ -60,7 +60,7 @@
             "billboardMode": "View",
             "blendMode": "AlphaBlend",
             "sortByDistance": true,
-            "texturePath": "",
+            "texturePath": "asset/Texture/pika_effect_sheet.png",
             "uvRect": [
                 0.0,
                 0.0,
@@ -99,17 +99,17 @@
             }
         },
         "textureSheetAnimation": {
-            "enabled": false,
-            "frameCount": 1,
+            "enabled": true,
+            "frameCount": 11,
             "framePerSecond": 30.0,
             "loop": true,
             "startFrame": 0,
-            "tileX": 1,
+            "tileX": 11,
             "tileY": 1,
             "timeMode": "Lifetime"
         }
     },
     "formatVersion": 1,
-    "name": "new_particle",
+    "name": "kirakira",
     "type": "ParticleSystem"
 }
