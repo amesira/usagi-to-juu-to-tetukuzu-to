@@ -23,5 +23,4 @@ template<class TEnum>
 class EnumFieldOptions {
 public:
     std::vector<EnumChoice<TEnum>> choices; // enumの選択肢のリスト
-
 };

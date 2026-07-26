@@ -6,7 +6,7 @@
 // ・ParticleSystemData特有のFieldSerializerの特殊化を定義する
 //---------------------------------------------------
 #pragma once
-#include "Engine/Asset/particle_system_data.h"
+#include "Engine/Asset/ParticleAsset/particle_system_data.h"
 #include "Engine/Asset/Schema/field_serializer.h"
 
 namespace FieldSerialization

@@ -36,12 +36,26 @@ namespace FieldSerialization
         }
     };
 
+    // === SerializeFieldsの前方宣言 ===
+    template<class TObject, class TSchema>
+    json SerializeFields(
+        const TObject& object,
+        const TSchema& schema);
+
+    // === DeserializeFieldsの前方宣言 ===
+    template<class TObject, class TSchema>
+    bool DeserializeFields(
+        const json& source,
+        TObject& object,
+        const TSchema& schema);
+
 #pragma region SerializeFieldのEntry関数
     /// @brief 通常SerializeFieldのEntry関数
     template<class TObject, class TValue, class TOptions>
     inline json SerializeField(const TObject& object, const Field<TObject, TValue, TOptions>& field) 
     {
         const TValue& value = object.*(field.member);
+
         return FieldSerializer<TValue, TOptions>::Serialize(value, field.options);
     }
 
@@ -65,10 +79,6 @@ namespace FieldSerialization
         json schemaJson = json::object();
 
         schema.ForEach([&](const auto& field) {
-            using TValue = std::decay_t<decltype(object.*(field.member))>;
-            using TOptions = std::decay_t<decltype(field.options)>;
-            const TValue& value = object.*(field.member);
-
             schemaJson[field.key] = SerializeField(object, field);
             });
 
@@ -101,7 +111,7 @@ namespace FieldSerialization
     {
         const auto it = schemaJson.find(field.m_key);
         if (it == schemaJson.end()) {
-            return false; // JSONにフィールドが存在しない場合はfalseを返す
+            return true; // JSONにフィールドが存在しない場合はスキップしてtrueを返す
         }
         const json& structJson = it.value();
         TStructValue tempStructValue = object.*(field.member); // デシリアライズに失敗した場合に元の値を保持するための一時変数

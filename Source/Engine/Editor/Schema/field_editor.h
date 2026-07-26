@@ -10,6 +10,7 @@
 #include "Engine/Asset/Schema/field_schema.h"
 #include "Engine/Asset/Schema/field_options.h"
 #include "Engine/Asset/Schema/enum_field_options.h"
+#include "Engine/Asset/Schema/field_struct.h"
 
 #include <DirectXMath.h>
 #include "Engine/Editor/i_editor_window.h"
@@ -21,6 +22,10 @@ namespace FieldEditor
     /// @brief FieldEditorのデフォルト実装（これを参照する場合はコンパイルエラーになる）
     template<class TValue, class TOptions>
     class FieldEditor;
+
+    // === DrawFieldsの前方宣言 ===
+    template<class TObject, class TSchema>
+    bool DrawFields(TObject& object, const TSchema& schema);
 
 #pragma region DrawFieldsのEntry関数
     /// @brief Fieldの値をEditor上で描画する関数

@@ -6,7 +6,7 @@
 // ・ParticleSystemData特有のFieldEditorの特殊化を定義する
 //---------------------------------------------------
 #pragma once
-#include "Engine/Asset/particle_system_data.h"
+#include "Engine/Asset/ParticleAsset/particle_system_data.h"
 #include "Engine/Editor/Schema/field_editor.h"
 
 namespace FieldEditor
@@ -16,6 +16,8 @@ namespace FieldEditor
     public:
         static bool Draw(const char* label, ParticleSystemData::MinMaxFloat& value, const DefaultFieldOptions& options)
         {
+            if (!ImGui::TreeNode(label)) return false;
+
             bool changed = false;
             // ランダムかどうかのチェックボックス
             changed |= ImGui::Checkbox("Random Between Two Constants", &value.randomBetweenTwoConstants);
@@ -26,6 +28,8 @@ namespace FieldEditor
             else {
                 changed |= ImGui::DragFloat("Constant", &value.constant, 0.1f);
             }
+
+            ImGui::TreePop();
             return changed;
         }
     };
@@ -35,6 +39,8 @@ namespace FieldEditor
     public:
         static bool Draw(const char* label, ParticleSystemData::MinMaxColor& value, const DefaultFieldOptions& options)
         {
+            if (!ImGui::TreeNode(label)) return false;
+
             bool changed = false;
             // ランダムかどうかのチェックボックス
             changed |= ImGui::Checkbox("Random Between Two Colors", &value.randomBetweenTwoColors);
@@ -45,6 +51,8 @@ namespace FieldEditor
             else {
                 changed |= ImGui::ColorEdit4("Color", reinterpret_cast<float*>(&value.color));
             }
+
+            ImGui::TreePop();
             return changed;
         }
     };

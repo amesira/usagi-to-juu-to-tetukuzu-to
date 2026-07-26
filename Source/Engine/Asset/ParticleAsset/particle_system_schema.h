@@ -33,6 +33,7 @@ namespace ParticleSystemSchema
                 }
             }
         };
+        return options;
     }
 
     /// @brief ParticleSystemData::ShapeTypeのFieldOptionsを取得
@@ -52,6 +53,7 @@ namespace ParticleSystemSchema
                 }
             }
         };
+        return options;
     }
 
     /// @brief ParticleSystemData::BillboardModeのFieldOptionsを取得
@@ -71,6 +73,7 @@ namespace ParticleSystemSchema
                 }
             }
         };
+        return options;
     }
 
     /// @brief ParticleSystemData::BlendModeのFieldOptionsを取得
@@ -90,6 +93,7 @@ namespace ParticleSystemSchema
                 }
             }
         };
+        return options;
     }
 
     /// @brief ParticleSystemData::TimeModeのFieldOptionsを取得
@@ -109,7 +113,6 @@ namespace ParticleSystemSchema
                 }
             }
         };
-
         return options;
     }
 
@@ -264,7 +267,7 @@ namespace ParticleSystemSchema
         static const auto schema = FieldSchema{
             MakeField("enabled", "Enabled", &Module::enabled),
             MakeField(
-                "shapeType",
+                "type",
                 "Shape Type",
                 &Module::shapeType,
                 GetShapeTypeOptions()),
@@ -374,7 +377,14 @@ namespace ParticleSystemSchema
         using Module = ParticleSystemData::RendererModule;
         static const auto schema = FieldSchema{
             MakeField("texturePath", "Texture Path", &Module::texturePath),
-            MakeField("uvRect", "UV Rect", &Module::uvRect),
+            MakeField(
+                "uvRect", 
+                "UV Rect", 
+                &Module::uvRect,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
             MakeField(
                 "billboardMode",
                 "Billboard Mode",
