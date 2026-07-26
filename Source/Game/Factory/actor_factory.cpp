@@ -22,9 +22,9 @@
 #include "Game/ActorBehavior/Player/player_state_machine_behavior.h"
 #include "Game/ActorBehavior/Player/player_combat_machine_behavior.h"
 
-#include "Game/ActorBehavior/Player/PlayerState/player_move_behavior.h"
-#include "Game/ActorBehavior/Player/PlayerState/player_attack_behavior.h"
-#include "Game/ActorBehavior/Player/PlayerState/player_dodge_behavior.h"
+#include "Game/ActorBehavior/Player/Movement/player_move_behavior.h"
+#include "Game/ActorBehavior/Player/Attack/player_attack_behavior.h"
+#include "Game/ActorBehavior/Player/Dodge/player_dodge_behavior.h"
 
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
