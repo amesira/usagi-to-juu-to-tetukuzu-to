@@ -34,8 +34,27 @@ namespace FieldSerialization
                 return false;
             }
         }
-
     };
+
+#pragma region SerializeFieldのEntry関数
+    /// @brief 通常SerializeFieldのEntry関数
+    template<class TObject, class TValue, class TOptions>
+    inline json SerializeField(const TObject& object, const Field<TObject, TValue, TOptions>& field) 
+    {
+        const TValue& value = object.*(field.member);
+        return FieldSerializer<TValue, TOptions>::Serialize(value, field.options);
+    }
+
+    /// @brief StructFieldのSerializeFieldのEntry関数
+    template<class TObject, class TStructValue, class TOptions, class... TFields>
+    inline json SerializeField(const TObject& object, const StructField<TObject, TStructValue, TOptions, TFields...>& field) 
+    {
+        // StructFieldの場合は、ネストされたFieldSchemaを使用して再帰的なシリアライズを行う
+        const TStructValue& structValue = object.*(field.member);
+        return SerializeFields(structValue, field.m_schema);
+    }
+
+#pragma endregion
 
     /// @brief FieldSchemaの各Fieldをシリアライズする関数
     /// @param object 対象となるオブジェクト
@@ -50,11 +69,52 @@ namespace FieldSerialization
             using TOptions = std::decay_t<decltype(field.options)>;
             const TValue& value = object.*(field.member);
 
-            schemaJson[field.key] = FieldSerializer<TValue, TOptions>::Serialize(value, field.options);
+            schemaJson[field.key] = SerializeField(object, field);
             });
 
         return schemaJson;
     };
+
+#pragma region DeserializeFieldのEntry関数
+    /// @brief 通常DeserializeFieldのEntry関数
+    template<class TObject, class TValue, class TOptions>
+    inline bool DeserializeField(const json& schemaJson, TObject& object, const Field<TObject, TValue, TOptions>& field) 
+    {
+        const auto it = schemaJson.find(field.key);
+        if (it == schemaJson.end()) {
+            return false; // JSONにフィールドが存在しない場合はfalseを返す
+        }
+        const json& jsonValue = it.value();
+        TValue tempValue = object.*(field.member); // デシリアライズに失敗した場合に元の値を保持するための一時変数
+        if (FieldSerializer<TValue, TOptions>::Deserialize(jsonValue, tempValue, field.options)) {
+            object.*(field.member) = std::move(tempValue); // デシリアライズに成功した場合のみ値を更新
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /// @brief StructFieldのDeserializeFieldのEntry関数
+    template<class TObject, class TStructValue, class TOptions, class... TFields>
+    inline bool DeserializeField(const json& schemaJson, TObject& object, const StructField<TObject, TStructValue, TOptions, TFields...>& field) 
+    {
+        const auto it = schemaJson.find(field.m_key);
+        if (it == schemaJson.end()) {
+            return false; // JSONにフィールドが存在しない場合はfalseを返す
+        }
+        const json& structJson = it.value();
+        TStructValue tempStructValue = object.*(field.member); // デシリアライズに失敗した場合に元の値を保持するための一時変数
+
+        if (DeserializeFields(structJson, tempStructValue, field.m_schema)) {
+            object.*(field.member) = std::move(tempStructValue); // デシリアライズに成功した場合のみ値を更新
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+#pragma endregion
 
     /// @brief FieldSchemaの各Fieldをデシリアライズする関数
     /// @param object 
@@ -77,21 +137,9 @@ namespace FieldSerialization
             using TOptions = std::decay_t<decltype(field.options)>;
             TValue& value = object.*(field.member);
 
-            const auto it = schemaJson.find(field.key);
-
-            // JSONにフィールドが存在しない場合はスキップ
-            if (it == schemaJson.end()) {
-                return ;
-            }
-
-            // === JSONの値を取得してデシリアライズ ===
-            const json& jsonValue = it.value();
-            TValue tempValue = value; // デシリアライズに失敗した場合に元の値を保持するための一時変数
-            if (FieldSerializer<TValue, TOptions>::Deserialize(jsonValue, tempValue, field.options)) {
-                value = std::move(tempValue); // デシリアライズに成功した場合のみ値を更新
-            }
-            else {
-                allSucceeded = false;
+           bool success = DeserializeField(schemaJson, object, field);
+            if (!success) {
+                allSucceeded = false; // 1つでも失敗した場合はfalseにする
             }
         });
 

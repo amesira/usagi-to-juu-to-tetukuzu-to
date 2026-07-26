@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Asset/particle_system_asset.h"
+#include "Engine/Asset/ParticleAsset/particle_system_asset.h"
 
 class ParticleParameterPanel
 {

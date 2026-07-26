@@ -4,7 +4,7 @@
 #include <cstring>
 
 #include "External/ImGui/imgui.h"
-#include "Engine/Asset/particle_system_schema.h"
+#include "Engine/Asset/ParticleAsset/particle_system_schema.h"
 #include "Engine/Editor/Schema/enum_field_editor.h"
 #include "Engine/Editor/Schema/field_editor.h"
 

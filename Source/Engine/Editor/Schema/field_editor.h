@@ -22,6 +22,7 @@ namespace FieldEditor
     template<class TValue, class TOptions>
     class FieldEditor;
 
+#pragma region DrawFieldsのEntry関数
     /// @brief Fieldの値をEditor上で描画する関数
     /// @tparam TObject 対象となるオブジェクトの型（例：ParticleSystem、DataAssetなど）
     /// @tparam TValue 対象となるメンバ変数の型
@@ -32,6 +33,21 @@ namespace FieldEditor
         TValue& value = object.*(field.member);
         return FieldEditor<TValue, TOptions>::Draw(field.label.c_str(), value, field.options);
     }
+
+    /// @brief StructFieldの値をEditor上で描画する関数
+    template<class TObject, class TStructValue, class TOptions, class... TFields>
+    bool DrawField(TObject& object, const StructField<TObject, TStructValue, TOptions, TFields...>& field)
+    {
+        // StructFieldのLabelをTreeNodeとして表示し、展開可能にする
+        if (!ImGui::TreeNode(field.label.c_str())) return false;
+
+        TStructValue& structValue = object.*(field.member);
+        bool changed = DrawFields(structValue, field.m_schema);
+
+        ImGui::TreePop();
+        return changed;
+    }
+#pragma endregion
 
     /// @brief FieldSchemaの各フィールドをEditor上で描画する関数
     /// @tparam TObject 

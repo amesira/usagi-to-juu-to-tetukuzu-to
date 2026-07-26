@@ -6,7 +6,7 @@
 // Date  ：2026/06/28
 //---------------------------------------------------
 #pragma once
-#include "i_asset.h"
+#include "Engine/Asset/i_asset.h"
 #include "particle_system_data.h"
 
 // 各モジュールのデータ

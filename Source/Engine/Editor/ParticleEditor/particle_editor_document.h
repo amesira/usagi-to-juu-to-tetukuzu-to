@@ -3,8 +3,8 @@
 #include <filesystem>
 #include <string>
 
-#include "Engine/Asset/particle_system_asset.h"
-#include "Engine/Asset/particle_system_asset_loader.h"
+#include "Engine/Asset/ParticleAsset/particle_system_asset.h"
+#include "Engine/Asset/ParticleAsset/particle_system_asset_loader.h"
 
 class ParticleEditorDocument
 {

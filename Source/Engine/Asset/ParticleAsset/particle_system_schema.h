@@ -6,7 +6,7 @@
 // ・ParticleSystemDataの各モジュールのスキーマを定義する
 //---------------------------------------------------
 #pragma once
-#include "Engine/Asset/particle_system_data.h"
+#include "Engine/Asset/ParticleAsset/particle_system_data.h"
 #include "Engine/Asset/Schema/enum_field_options.h"
 #include "Engine/Asset/Schema/field.h"
 #include "Engine/Asset/Schema/field_schema.h"

@@ -137,7 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\Asset\particle_system_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\game_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\settings_view_window.cpp" />
@@ -285,10 +285,10 @@
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
     <ClInclude Include="Source\Engine\Asset\i_asset.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_asset_loader.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_schema.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
@@ -296,8 +296,8 @@
     <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />
-    <ClInclude Include="Source\Engine\Asset\Schema\particle_system_field_options.h" />
-    <ClInclude Include="Source\Engine\Asset\Schema\particle_system_field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_serializer.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
@@ -307,6 +307,7 @@
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Editor\editor_window_manager.h" />
     <ClInclude Include="Source\Engine\Editor\i_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_field_editor.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\line_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h" />
