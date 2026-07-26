@@ -33,9 +33,9 @@
 #include "player_state_machine_behavior.h"
 #include "player_combat_machine_behavior.h"
 
-#include "./PlayerState/player_move_behavior.h"
-#include "./PlayerState/player_attack_behavior.h"
-#include "./PlayerState/player_dodge_behavior.h"
+#include "./Movement/player_move_behavior.h"
+#include "./Attack/player_attack_behavior.h"
+#include "./Dodge/player_dodge_behavior.h"
 
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 

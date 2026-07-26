@@ -114,6 +114,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -281,10 +284,10 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\PlayerState\player_attack_behavior.cpp">
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Attack\player_attack_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\PlayerState\player_move_behavior.cpp">
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\player_combat_machine_behavior.cpp">
@@ -305,7 +308,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.cpp">
       <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Dodge\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Engine\Framework\Component\collider_component.cpp">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClCompile>
@@ -615,10 +618,10 @@
     <ClInclude Include="Source\Game\Factory\projectile_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\PlayerState\player_attack_behavior.h">
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Attack\player_attack_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\PlayerState\player_move_behavior.h">
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.h">
@@ -645,7 +648,7 @@
     <ClInclude Include="Source\Game\Factory\actor_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />

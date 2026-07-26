@@ -12,7 +12,7 @@
 
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
-#include "Game/ActorBehavior/Player/PlayerState/player_attack_behavior.h"
+#include "Game/ActorBehavior/Player/Attack/player_attack_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
 #include "Engine/engine_service_locator.h"

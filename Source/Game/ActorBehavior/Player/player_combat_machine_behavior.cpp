@@ -8,7 +8,7 @@
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
-#include "./PlayerState/player_attack_behavior.h"
+#include "./Attack/player_attack_behavior.h"
 
 #include "Utility/debug_ostream.h"
 

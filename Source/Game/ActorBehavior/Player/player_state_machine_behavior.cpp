@@ -15,9 +15,9 @@
 
 #include "player_behavior.h"
 
-#include "./PlayerState/player_move_behavior.h"
-#include "./PlayerState/player_attack_behavior.h"
-#include "./PlayerState/player_dodge_behavior.h"
+#include "./Movement/player_move_behavior.h"
+#include "./Attack/player_attack_behavior.h"
+#include "./Dodge/player_dodge_behavior.h"
 
 namespace {
     const char* ToStateName(PlayerState state)
