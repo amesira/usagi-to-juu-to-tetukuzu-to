@@ -144,8 +144,6 @@ void ParticleSystemEditorWindow::DrawPreview()
     if (ImGui::Button("Pause")) m_preview.Pause();
     ImGui::SameLine();
     if (ImGui::Button("Stop")) m_preview.Stop();
-    ImGui::SameLine();
-    if (ImGui::Button("Restart")) m_preview.Restart();
 
     if (ParticleSystemComponent* particleSystem = m_preview.GetParticleSystem())
     {

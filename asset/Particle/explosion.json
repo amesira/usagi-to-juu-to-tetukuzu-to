@@ -1,11 +1,123 @@
 {
-    "type": "ParticleSystem", "formatVersion": 1, "name": "explosion",
     "data": {
-        "main": {"duration": 0.22, "loop": false, "playOnAwake": true, "startLifetime": {"randomBetweenTwoConstants": true, "constant": 0.45, "constantMin": 0.25, "constantMax": 0.75}, "startSpeed": {"randomBetweenTwoConstants": true, "constant": 7.5, "constantMin": 4.5, "constantMax": 12.0}, "startSize": {"randomBetweenTwoConstants": true, "constant": 0.34, "constantMin": 0.16, "constantMax": 0.62}, "startColor": {"randomBetweenTwoColors": true, "color": [1.0, 1.0, 1.0, 1.0], "colorMin": [0.2, 0.7, 1.0, 0.95], "colorMax": [1.0, 0.35, 0.9, 0.7]}, "gravity": [0.0, -0.35, 0.0], "simulationSpeed": 1.0, "simulationSpace": "World"},
-        "emission": {"enabled": true, "rateOverTime": 820.0, "rateOverDistance": 0.0},
-        "shape": {"enabled": true, "type": "Sphere", "sphere": {"radius": 0.45, "emitFromShell": false}, "cone": {"angle": 0.7853981633974483, "radius": 1.0, "length": 5.0, "emitFromBase": true}, "randomDirectionAmount": 1.0},
-        "sizeOverLifetime": {"enabled": true, "size": {"keys": [{"time": 0.0, "value": 0.15}, {"time": 0.12, "value": 1.25}, {"time": 0.45, "value": 0.85}, {"time": 1.0, "value": 0.0}]}},
-        "textureSheetAnimation": {"enabled": false, "tileX": 1, "tileY": 1, "startFrame": 0, "frameCount": 1, "timeMode": "Lifetime", "framePerSecond": 30.0, "loop": true},
-        "renderer": {"texturePath": "asset/Texture/white.bmp", "uvRect": [0.0, 0.0, 1.0, 1.0], "billboardMode": "View", "blendMode": "Additive", "sortByDistance": true}
-    }
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 0.0,
+            "rateOverTime": 820.0
+        },
+        "main": {
+            "duration": 0.2199999988079071,
+            "gravity": [
+                0.0,
+                -0.3499999940395355,
+                0.0
+            ],
+            "loop": false,
+            "playOnAwake": true,
+            "simulationSpace": "World",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "colorMax": [
+                    1.0,
+                    0.3499999940395355,
+                    0.8999999761581421,
+                    0.699999988079071
+                ],
+                "colorMin": [
+                    0.20000000298023224,
+                    0.699999988079071,
+                    1.0,
+                    0.949999988079071
+                ],
+                "randomBetweenTwoColors": true
+            },
+            "startLifetime": {
+                "constant": 0.30000001192092896,
+                "constantMax": 0.75,
+                "constantMin": 0.25,
+                "randomBetweenTwoConstants": false
+            },
+            "startSize": {
+                "constant": 0.3400000035762787,
+                "constantMax": 0.6200000047683716,
+                "constantMin": 0.1599999964237213,
+                "randomBetweenTwoConstants": true
+            },
+            "startSpeed": {
+                "constant": 7.5,
+                "constantMax": 31.899999618530273,
+                "constantMin": 11.5,
+                "randomBetweenTwoConstants": true
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "Additive",
+            "sortByDistance": true,
+            "texturePath": "asset/Texture/white.bmp",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 1.0
+            },
+            "enabled": true,
+            "randomDirectionAmount": 1.0,
+            "sphere": {
+                "emitFromShell": false,
+                "radius": 0.44999998807907104
+            },
+            "type": "Sphere"
+        },
+        "sizeOverLifetime": {
+            "enabled": true,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 0.15000000596046448
+                    },
+                    {
+                        "time": 0.11999999731779099,
+                        "value": 1.25
+                    },
+                    {
+                        "time": 0.44999998807907104,
+                        "value": 0.8500000238418579
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 0.0
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": false,
+            "frameCount": 1,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 1,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "explosion",
+    "type": "ParticleSystem"
 }

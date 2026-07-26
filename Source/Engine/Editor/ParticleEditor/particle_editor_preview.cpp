@@ -87,7 +87,7 @@ void ParticleEditorPreview::Apply(const ParticleSystemDesc& desc, bool restart)
     m_particleSystem->SetTextureResource(renderer.textureResource);
 
     // restart要求の処理
-    if (restart) Restart();
+    if (restart) Play();
 }
 
 /// @brief プレビュー用のパーティクルシステムを更新する
@@ -160,7 +160,7 @@ void ParticleEditorPreview::Pause()
 {
     if (!m_particleSystem) return;
     m_paused = true;
-    m_particleSystem->Stop();
+    m_particleSystem->Pause();
 }
 
 /// @brief ParticleEditorのStop
@@ -169,11 +169,4 @@ void ParticleEditorPreview::Stop()
     if (!m_particleSystem) return;
     m_paused = false;
     m_particleSystem->Stop();
-}
-
-/// @brief ParticleEditorのRestart
-void ParticleEditorPreview::Restart()
-{
-    if (!m_particleSystem) return;
-    Play();
 }

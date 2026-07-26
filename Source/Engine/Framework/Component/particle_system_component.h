@@ -127,16 +127,19 @@ public:
     // 再生
     void Play() { 
         m_isPlaying = true;
-
         // 再生開始時のリセット処理
         Particles().clear();
         SetTime(0.0f);                  // 再生開始時に時間をリセット
         SetEmitAccumulator(0.0f);       // 再生開始時にアキュムレータをリセット
         SetDistanceAccumulator(0.0f);   // 再生開始時に距離アキュムレータをリセット
-
+    }
+    // 停止
+    void Stop() { 
+        m_isPlaying = false;
+        Particles().clear();
     }
     // 一時停止
-    void Stop() { m_isPlaying = false; }
+    void Pause() { m_isPlaying = false; }
 
     // 再生状態の取得
     bool IsPlaying() const { return m_isPlaying; }

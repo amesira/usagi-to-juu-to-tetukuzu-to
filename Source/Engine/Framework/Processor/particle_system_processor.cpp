@@ -276,14 +276,14 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         float currentTime = previousTime + scaledDeltaTime;
 
         // durationを超えたらループするか停止する
+        bool inDuration = true;
         if (main.duration > 0.0f && currentTime >= main.duration) {
             if (main.loop) {
                 currentTime = std::fmod(currentTime, main.duration);
             }
             else {
                 currentTime = main.duration;
-
-                emission.enabled = false; // エミッションを停止
+                inDuration = false;
             }
         }
 
@@ -320,7 +320,7 @@ void ParticleSystemProcessor::Process(IScene* pScene)
         }
 
         // === エミッション ===
-        if (emission.enabled) {
+        if (emission.enabled && inDuration) {
             float accumulator = particleSystem.GetEmitAccumulator();
             // --- 時間ベースの発生
             accumulator += emission.rateOverTime * scaledDeltaTime;

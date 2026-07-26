@@ -44,7 +44,6 @@ public:
     void Play();
     void Pause();
     void Stop();
-    void Restart();
 
     bool IsCreated() const { return m_particleSystem != nullptr; }
     bool IsPlaying() const;
@@ -52,5 +51,5 @@ public:
 
 private:
     bool IsPreviewObjectValid() const;
-    void ResetSimulation();
+
 };
