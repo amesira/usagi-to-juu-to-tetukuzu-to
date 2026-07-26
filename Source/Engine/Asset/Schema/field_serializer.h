@@ -38,7 +38,7 @@ namespace FieldSerialization
     };
 
     /// @brief FieldSchemaの各Fieldをシリアライズする関数
-    /// @param object 
+    /// @param object 対象となるオブジェクト
     /// @param schema 
     template<class TObject, class TSchema>
     inline json SerializeFields(const TObject& object, const TSchema& schema) 

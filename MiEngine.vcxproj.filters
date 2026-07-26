@@ -111,6 +111,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -763,6 +766,7 @@
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\particle_system_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

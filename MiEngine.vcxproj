@@ -292,6 +292,7 @@
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />

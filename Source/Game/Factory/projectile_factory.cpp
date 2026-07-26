@@ -128,7 +128,7 @@ namespace
         particleSystem->Emission().rateOverDistance = 0.0f;
 
         particleSystem->Shape().enabled = true;
-        particleSystem->Shape().type = ParticleSystemComponent::ShapeType::Sphere;
+        particleSystem->Shape().shapeType = ParticleSystemComponent::ShapeType::Sphere;
         particleSystem->Shape().sphere.radius = desc.radius;
         particleSystem->Shape().sphere.emitFromShell = true;
         particleSystem->Shape().randomDirectionAmount = 1.0f;

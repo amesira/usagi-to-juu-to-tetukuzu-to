@@ -865,17 +865,17 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             auto& shape = particleSystem->Shape();
             if (ImGui::TreeNode("Shape")) {
                 ImGui::Checkbox("Enabled", &shape.enabled);
-                int shapeType = static_cast<int>(shape.type);
+                int shapeType = static_cast<int>(shape.shapeType);
                 const char* shapeTypeItems[] = { "Sphere", "Cone" };
                 if (ImGui::Combo("Shape Type", &shapeType, shapeTypeItems, IM_ARRAYSIZE(shapeTypeItems))) {
-                    shape.type = static_cast<ParticleSystemComponent::ShapeType>(shapeType);
+                    shape.shapeType = static_cast<ParticleSystemComponent::ShapeType>(shapeType);
                 }
 
-                if (shape.type == ParticleSystemComponent::ShapeType::Sphere) {
+                if (shape.shapeType == ParticleSystemComponent::ShapeType::Sphere) {
                     ImGui::DragFloat("Sphere Radius", &shape.sphere.radius, 0.01f, 0.0f);
                     ImGui::Checkbox("Emit From Shell", &shape.sphere.emitFromShell);
                 }
-                else if (shape.type == ParticleSystemComponent::ShapeType::Cone) {
+                else if (shape.shapeType == ParticleSystemComponent::ShapeType::Cone) {
                     float coneAngleDegrees = XMConvertToDegrees(shape.cone.angle);
                     if (ImGui::DragFloat("Cone Angle", &coneAngleDegrees, 0.1f, 0.0f, 180.0f)) {
                         shape.cone.angle = XMConvertToRadians(coneAngleDegrees);

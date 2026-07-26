@@ -33,6 +33,9 @@ namespace FieldEditor
         return FieldEditor<TValue, TOptions>::Draw(field.label.c_str(), value, field.options);
     }
 
+    /// @brief FieldSchemaの各フィールドをEditor上で描画する関数
+    /// @tparam TObject 
+    /// @tparam TSchema 
     template<class TObject, class TSchema>
     bool DrawFields(TObject& object, const TSchema& schema)
     {
@@ -178,5 +181,52 @@ namespace FieldEditor
         }
     };
 #pragma endregion
+
+#pragma region FieldEditor CurveFieldの特殊化
+    /// @brief FieldEditorのFloatCurve型の特殊化
+    template<>
+    class FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions> {
+    public:
+        static bool Draw(const char* label, MiCurve::FloatCurve& curve, const DefaultFieldOptions& options)
+        {
+            if (!ImGui::TreeNode(label)) return false;
+
+            bool changed = false;
+
+            // 各キーの時間と値を表示し、編集可能にする
+            for (int index = 0; index < static_cast<int>(curve.keys.size()); index++)
+            {
+                ImGui::PushID(index);
+                changed |= ImGui::DragFloat("Time", &curve.keys[index].time, 0.01f, 0.0f, 1.0f);
+                changed |= ImGui::DragFloat("Value", &curve.keys[index].value, 0.01f);
+
+                // Removeボタンを押すと、該当のキーを削除する
+                if (ImGui::Button("Remove")) {
+                    curve.keys.erase(curve.keys.begin() + index);
+                    changed = true;
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::Separator();
+                ImGui::PopID();
+            }
+
+            // Add Keyボタンを押すと、デフォルトのキーを追加する
+            if (ImGui::Button("Add Key")) {
+                curve.keys.push_back({ 1.0f, 1.0f });
+                changed = true;
+            }
+
+            // キーの時間を昇順にソートする
+            if (changed) {
+                std::sort(curve.keys.begin(), curve.keys.end(), [](const auto& left, const auto& right) {
+                    return left.time < right.time;
+                    });
+            }
+
+            ImGui::TreePop();
+            return changed;
+        }
+    };
 
 }

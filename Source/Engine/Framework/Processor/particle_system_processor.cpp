@@ -137,7 +137,7 @@ namespace {
         if (!shape.enabled) return;
 
         // Sphere形状の発生
-        if (shape.type == ParticleSystemData::ShapeType::Sphere) {
+        if (shape.shapeType == ParticleSystemData::ShapeType::Sphere) {
             DirectX::XMFLOAT3 direction = RandomUnitVector();
             const float radius = shape.sphere.emitFromShell
                 ? shape.sphere.radius
@@ -147,7 +147,7 @@ namespace {
             outDirection = direction;
         }
         // Cone形状の発生
-        else if (shape.type == ParticleSystemData::ShapeType::Cone) {
+        else if (shape.shapeType == ParticleSystemData::ShapeType::Cone) {
             const float baseAngle = RandomRange(0.0f, DirectX::XM_2PI);
             const float baseRadius = shape.cone.radius * std::sqrt(RandomRange(0.0f, 1.0f));
 

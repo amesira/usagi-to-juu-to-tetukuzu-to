@@ -90,7 +90,7 @@ namespace ParticleSystemData
     // 発生形状全般の設定を行うモジュール
     struct ShapeModule {
         bool enabled = true;                // 発生形状を有効にするかどうか
-        ShapeType type = ShapeType::Sphere; // 発生形状の種類
+        ShapeType shapeType = ShapeType::Sphere; // 発生形状の種類
 
         struct SphereShape {    // 球形状の発生設定
             float radius = 1.0f;

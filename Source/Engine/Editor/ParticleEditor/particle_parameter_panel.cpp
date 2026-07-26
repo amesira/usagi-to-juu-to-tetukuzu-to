@@ -69,15 +69,15 @@ bool ParticleParameterPanel::DrawShape(ParticleSystemData::ShapeModule& module)
     if (!ImGui::CollapsingHeader("Shape", ImGuiTreeNodeFlags_DefaultOpen)) return false;
     bool changed = false;
     changed |= ImGui::Checkbox("Enabled##Shape", &module.enabled);
-    int shapeType = static_cast<int>(module.type);
+    int shapeType = static_cast<int>(module.shapeType);
     const char* items[] = { "Sphere", "Cone" };
     if (ImGui::Combo("Shape Type", &shapeType, items, IM_ARRAYSIZE(items)))
     {
-        module.type = static_cast<ParticleSystemData::ShapeType>(shapeType);
+        module.shapeType = static_cast<ParticleSystemData::ShapeType>(shapeType);
         changed = true;
     }
 
-    if (module.type == ParticleSystemData::ShapeType::Sphere)
+    if (module.shapeType == ParticleSystemData::ShapeType::Sphere)
     {
         changed |= ImGui::DragFloat("Radius##Sphere", &module.sphere.radius, 0.01f, 0.0f);
         changed |= ImGui::Checkbox("Emit From Shell", &module.sphere.emitFromShell);

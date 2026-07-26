@@ -246,7 +246,7 @@ namespace
     {
         return {
             { "enabled", module.enabled },
-            { "type", ToString(module.type) },
+            { "type", ToString(module.shapeType) },
             { "sphere", {
                 { "radius", module.sphere.radius },
                 { "emitFromShell", module.sphere.emitFromShell },
@@ -270,7 +270,7 @@ namespace
             "randomDirectionAmount", module.randomDirectionAmount);
 
         if (const auto it = jsonValue.find("type");
-            it != jsonValue.end() && !DeserializeShapeType(*it, module.type)) return false;
+            it != jsonValue.end() && !DeserializeShapeType(*it, module.shapeType)) return false;
 
         if (const auto it = jsonValue.find("sphere"); it != jsonValue.end())
         {

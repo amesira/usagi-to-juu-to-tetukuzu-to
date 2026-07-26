@@ -70,7 +70,7 @@ GameObject* RenderEffectFactory::CreateParticleEffect(SceneBase* scene, const XM
 
     auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemData::ShapeType::Cone;
+    shape.shapeType = ParticleSystemData::ShapeType::Cone;
     shape.cone.angle = XM_PIDIV4;
     shape.cone.radius = 0.35f;
     shape.cone.emitFromBase = true;
@@ -133,7 +133,7 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene,std::str
 
     auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemData::ShapeType::Sphere;
+    shape.shapeType = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.18f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 0.65f;
@@ -199,7 +199,7 @@ GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(SceneBase* scene, co
 
     auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemData::ShapeType::Sphere;
+    shape.shapeType = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 1.5f;
     shape.sphere.emitFromShell = true;
     shape.randomDirectionAmount = 0.08f;
@@ -266,7 +266,7 @@ GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& 
 
     auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemData::ShapeType::Sphere;
+    shape.shapeType = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.12f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 0.9f;
@@ -324,7 +324,7 @@ GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFL
 
     auto& shape = desc.shapeModule;
     shape.enabled = true;
-    shape.type = ParticleSystemData::ShapeType::Sphere;
+    shape.shapeType = ParticleSystemData::ShapeType::Sphere;
     shape.sphere.radius = 0.45f;
     shape.sphere.emitFromShell = false;
     shape.randomDirectionAmount = 1.0f;
