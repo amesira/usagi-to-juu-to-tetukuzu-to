@@ -153,6 +153,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
+    <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\PlayerState\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
@@ -323,6 +324,7 @@
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
+    <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
     <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
     <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />

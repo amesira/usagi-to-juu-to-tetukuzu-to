@@ -151,6 +151,18 @@ namespace
     }
 }
 
+/// @brief ParticleSystemAssetLoaderの初期化
+void ParticleSystemAssetLoader::Initialize()
+{
+    m_particleAssetCache.clear();
+}
+
+/// @brief ParticleSystemAssetLoaderの終了処理
+void ParticleSystemAssetLoader::Finalize()
+{
+    m_particleAssetCache.clear();
+}
+
 /// @brief パーティクルアセットをセーブする
 bool ParticleSystemAssetLoader::SaveParticle(
     const std::string& filePath,

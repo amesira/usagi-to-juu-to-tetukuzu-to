@@ -34,6 +34,7 @@ bool MiEngine::Initialize(HWND hWnd)
     FPS_Initialize(hWnd);
     m_resourceManager.Initialize();
     m_shaderManager.Initialize(pDevice, pContext);
+    m_assetManager.Initialize();
     DebugRenderer_Initialize();
 
     // GameWorldの初期化
@@ -54,6 +55,7 @@ void MiEngine::Finalize()
 
     m_resourceManager.Finalize();
     m_shaderManager.Finalize();
+    m_assetManager.Finalize();
     UninitAudio();
     Direct3D_Finalize();
     DebugRenderer_Finalize();

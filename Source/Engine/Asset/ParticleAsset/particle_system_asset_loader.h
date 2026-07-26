@@ -20,6 +20,11 @@ private:
     std::unordered_map<std::string, std::unique_ptr<ParticleSystemAsset>> m_particleAssetCache;
 
 public:
+    /// @brief ParticleSystemAssetLoaderを初期化する
+    void Initialize();
+    /// @brief ParticleSystemAssetLoaderを終了する
+    void Finalize();
+
     /// @brief ParticleSystemAssetをJSON形式で保存する
     bool SaveParticle(const std::string& filePath, const ParticleSystemAsset& asset);
 

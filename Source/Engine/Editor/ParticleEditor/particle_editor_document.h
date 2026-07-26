@@ -14,9 +14,6 @@
 
 class ParticleEditorDocument {
 private:
-    // FIX: いずれはAssetManager経由でロードするようにする
-    ParticleSystemAssetLoader m_loader;
-
     // === 編集中のパーティクルアセットとそのパス ===
     ParticleSystemAsset m_asset;
     std::filesystem::path m_assetPath;

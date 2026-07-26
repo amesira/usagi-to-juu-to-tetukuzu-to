@@ -7,6 +7,12 @@
 //===================================================
 #include "particle_editor_document.h"
 
+#include "Engine/engine_service_locator.h"
+
+namespace {
+    #define PARTICLE_LOADER EngineServiceLocator::GetAssetManager()->GetParticleAssetLoader()
+}
+
 ParticleEditorDocument::ParticleEditorDocument()
 {
     New();
@@ -36,7 +42,7 @@ bool ParticleEditorDocument::Open(const std::filesystem::path& path)
     }
 
     // パーティクルアセットをロードする
-    bool success = m_loader.LoadParticle(pathString, loadedAsset);
+    bool success = PARTICLE_LOADER->LoadParticle(pathString, loadedAsset);
     if (!success)
     {
         m_statusMessage = "Failed to load: " + pathString;
@@ -93,7 +99,7 @@ bool ParticleEditorDocument::SaveAs(const std::filesystem::path& path)
     m_asset.SetFilePath(path.generic_string());
 
     // === パーティクルアセットを保存する ===
-    if (!m_loader.SaveParticle(path.generic_string(), m_asset))
+    if (!PARTICLE_LOADER->SaveParticle(path.generic_string(), m_asset))
     {
         m_statusMessage = "Failed to save: " + path.generic_string();
         return false;

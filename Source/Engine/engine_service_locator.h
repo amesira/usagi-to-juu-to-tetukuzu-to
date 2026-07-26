@@ -68,6 +68,14 @@ public:
             s_engineInstance->GetShaderManager().BindCameraCB(cameraData);
         }
     }
+
+    // AssetManagerへのアクセス
+    static AssetManager* GetAssetManager() {
+        return s_engineInstance ? &s_engineInstance->GetAssetManager() : nullptr;
+    }
+    static ParticleSystemAssetLoader* GetParticleAssetLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().GetParticleAssetLoader() : nullptr;
+    }
 };
 
 #endif // ENGINE_SERVICE_LOCATOR_H
