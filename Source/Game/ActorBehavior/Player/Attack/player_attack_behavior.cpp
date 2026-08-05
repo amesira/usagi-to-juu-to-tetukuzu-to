@@ -48,8 +48,8 @@ void PlayerAttackBehavior::StartAimHoldBuffer(PlayerContext& context)
 {
     m_aimHoldBufferTimer = 0.0f;
 
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AimHoldStart);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::AimHoldStart);
     }
 }
 
@@ -66,8 +66,8 @@ void PlayerAttackBehavior::StartAim(PlayerContext& context)
     m_chargeTimer = 0.0f;
 
     // エイム開始エフェクトの再生
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AimStart);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::AimStart);
     }
 }
 
@@ -84,8 +84,8 @@ void PlayerAttackBehavior::UpdateAim(PlayerContext& context, float deltaTime, fl
 void PlayerAttackBehavior::EndAim(PlayerContext& context)
 {
     // エイム終了エフェクトの再生
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AimEnd);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::AimEnd);
     }
 }
 
@@ -122,9 +122,9 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 
     ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
 
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::SingleAttack);
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AttackEnd);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::SingleAttack);
+        context.owner->PlayPlayerEffect(PlayerEffectType::AttackEnd);
     }
 }
 
@@ -133,8 +133,8 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 void PlayerAttackBehavior::StartCharge(PlayerContext& context)
 {
     m_chargeTimer = 0.0f;
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeStart);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::ChargeStart);
     }
 
 }
@@ -163,8 +163,8 @@ void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
     bulletDesc.velocity = MiMath::Multiply(MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position)), 25.0f);
     ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
 
-    if (context.playerBehavior) {
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::ChargeAttack);
-        context.playerBehavior->PlayPlayerEffect(PlayerEffectType::AttackEnd);
+    if (context.owner) {
+        context.owner->PlayPlayerEffect(PlayerEffectType::ChargeAttack);
+        context.owner->PlayPlayerEffect(PlayerEffectType::AttackEnd);
     }
 }

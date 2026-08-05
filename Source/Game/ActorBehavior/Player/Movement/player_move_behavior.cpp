@@ -56,11 +56,10 @@ void PlayerMoveBehavior::DrawComponentInspector()
 // ----------------------------------------------- public
 
 // 移動更新処理
-void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime)
+void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime)
 {
     if (!m_rigidbody) return;
 
-    const PlayerInput& input = context.input;
     XMFLOAT3 velocity = m_rigidbody->GetVelocity();
 
     // 移動できない場合は速度を0にして終了
@@ -71,7 +70,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerMo
         return;
     }
 
-    XMFLOAT3 moveDirection = { input.moveInputCameraLocal.x, 0.0f, input.moveInputCameraLocal.z };
+    XMFLOAT3 moveDirection = { input.moveDirection.x, 0.0f, input.moveDirection.z };
     moveDirection = MiMath::Multiply(MiMath::Normalize(moveDirection), m_moveSpeed);
 
     velocity.x += moveDirection.x * deltaTime * m_acceleration * moveRequest.speedMultiplier;
@@ -89,7 +88,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerMo
 }
 
 // 回転更新処理
-void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime)
+void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime)
 {
     if (!moveRequest.canRotate) return;
     if (moveRequest.rotationMode == PlayerRotationMode::Locked) return;
@@ -100,10 +99,10 @@ void PlayerMoveBehavior::UpdateRotation(const PlayerContext& context, const Play
 
     switch (moveRequest.rotationMode) {
     case PlayerRotationMode::CameraForward: // === 常にカメラ正面を向く ===
-        if (context.input.horizontal > 0.01f) {
+        if (input.horizontal > 0.01f) {
             m_spriteRenderer->SetFlipX(true);
         }
-        else if (context.input.horizontal < -0.01f) {
+        else if (input.horizontal < -0.01f) {
             m_spriteRenderer->SetFlipX(false);
         }
         break;

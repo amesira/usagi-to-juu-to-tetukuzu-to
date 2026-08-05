@@ -117,6 +117,12 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -281,17 +287,11 @@
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\Attack\player_attack_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\player_combat_machine_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\camera_control_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior</Filter>
@@ -355,6 +355,10 @@
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
     <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_rotate.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_action_executer.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_intent_builder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -624,12 +628,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\player_combat_machine_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\camera_control_behavior.h">
       <Filter>Sources\Game\ActorBehavior</Filter>
     </ClInclude>
@@ -772,6 +770,12 @@
     <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
     <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_field_editor.h" />
     <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_rotate.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_action_executer.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_intent_builder.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_input.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

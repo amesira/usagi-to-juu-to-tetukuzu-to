@@ -16,6 +16,7 @@ class SpriteRendererComponent;
 class SpriteAnimationComponent;
 
 #include "player_context.h"
+#include "player_input.h"
 class PlayerStateMachineBehavior;
 class PlayerCombatMachineBehavior;
 
@@ -37,10 +38,7 @@ private:
 
     // プレイヤーコンテキスト
     PlayerContext m_context;
-
-    // プレイヤー制御マシーン
-    PlayerStateMachineBehavior* m_stateMachine = nullptr;
-    PlayerCombatMachineBehavior* m_combatMachine = nullptr;
+    PlayerInput m_input;
 
     // メインカメラの参照
     TransformComponent* m_mainCameraTransform = nullptr;

@@ -155,6 +155,10 @@
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\Dodge\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_action_executer.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_intent_builder.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_rotate.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
@@ -199,9 +203,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\Attack\player_attack_behavior.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\player_combat_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.cpp" />
@@ -330,6 +332,12 @@
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\Dodge\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_action_executer.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_intent_builder.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_rotate.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_input.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
@@ -392,10 +400,8 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\Attack\player_attack_behavior.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\player_combat_machine_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\Movement\player_move_behavior.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\player_state_machine_behavior.h" />
     <ClInclude Include="Source\Game\Factory\render_effect_factory.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h" />
     <ClInclude Include="Source\Engine\render_view.h" />

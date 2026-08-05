@@ -8,6 +8,7 @@
 #define PLAYER_MOVE_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Game/ActorBehavior/Player/player_context.h"
+#include "Game/ActorBehavior/Player/player_input.h"
 
 class TransformComponent;
 class RigidbodyComponent;
@@ -16,6 +17,24 @@ class SpriteRendererComponent;
 class CameraComponent;
 
 class PlayerMoveBehavior : public BehaviorComponent {
+public:
+    // プレイヤーの回転モード
+    enum class PlayerRotationMode {
+        CameraForward,
+        AimForward,
+        Locked,
+    };
+
+    // プレイヤーの移動リクエスト構造体
+    struct PlayerMoveRequest {
+        bool canMove = true;
+        bool canRotate = true;
+
+        float speedMultiplier = 1.0f;
+
+        PlayerRotationMode rotationMode = PlayerRotationMode::CameraForward;
+    };
+
 private:
     TransformComponent* m_transform = nullptr;
     RigidbodyComponent* m_rigidbody = nullptr;
@@ -39,9 +58,9 @@ public:
     void DrawComponentInspector() override;
 
     // 移動更新処理
-    void UpdateMove(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime);
+    void UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime);
     // 回転更新処理
-    void UpdateRotation(const PlayerContext& context, const PlayerMoveRequest& moveRequest, float deltaTime);
+    void UpdateRotation(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime);
 
 };
 

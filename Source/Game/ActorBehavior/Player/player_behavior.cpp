@@ -30,8 +30,8 @@
 #include "Engine/Framework/Component/particle_system_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
-#include "player_state_machine_behavior.h"
-#include "player_combat_machine_behavior.h"
+#include "player_context.h"
+#include "player_input.h"
 
 #include "./Movement/player_move_behavior.h"
 #include "./Attack/player_attack_behavior.h"
@@ -55,15 +55,12 @@ void PlayerBehavior::Start()
     m_spriteRenderer = owner->GetComponent<SpriteRendererComponent>();
     m_spriteAnimation = owner->GetComponent<SpriteAnimationComponent>();
     
-    m_stateMachine = owner->GetComponent<PlayerStateMachineBehavior>();
-    m_combatMachine = owner->GetComponent<PlayerCombatMachineBehavior>();
-
     m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
 
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
     m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
-    m_context.playerBehavior = this;
+    m_context.owner = this;
 
     IScene* scene = owner->GetScene();
 
@@ -83,19 +80,9 @@ void PlayerBehavior::Update()
     float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
 
     // 入力の更新
-    m_context.input = UpdateInput();
+    m_input = UpdateInput();
 
-    PlayerMoveRequest moveRequest;
-
-    // 状態マシーンの更新
-    if (m_stateMachine) {
-        m_stateMachine->UpdateStateMachine(m_context, moveRequest, deltaTime);
-    }
-
-    // 戦闘マシーンの更新
-    if (m_combatMachine) {
-        m_combatMachine->UpdateCombatMachine(m_context, moveRequest, deltaTime, unscaledDeltaTime);
-    }
+    PlayerMoveBehavior::PlayerMoveRequest moveRequest;
 
     // 移動・回転の更新
     if (m_context.moveBehavior) {
@@ -103,14 +90,14 @@ void PlayerBehavior::Update()
             moveRequest.canMove = false; // 移動をロック
             moveRequest.canRotate = false; // 回転もロック
         }
-        m_context.moveBehavior->UpdateMove(m_context, moveRequest, deltaTime);
-        m_context.moveBehavior->UpdateRotation(m_context, moveRequest, deltaTime);
+        m_context.moveBehavior->UpdateMove(m_context, m_input, moveRequest, deltaTime);
+        m_context.moveBehavior->UpdateRotation(m_context, m_input, moveRequest, deltaTime);
     }
 
-    // アニメーション制御
-    if (!m_lockMovement) {
-        UpdateAnimation(m_context.state, m_context.combatState);
-    }
+    //// アニメーション制御
+    //if (!m_lockMovement) {
+    //    UpdateAnimation(m_context.state, m_context.combatState);
+    //}
 
     // === プレイヤーエフェクトの更新 ===
     m_changeChargeLightTask.Update(unscaledDeltaTime);
@@ -120,16 +107,16 @@ void PlayerBehavior::Update()
 void PlayerBehavior::DrawComponentInspector()
 {
     if(InspectorViewWindow::BeginComponentSection(this, "Player Behavior")) {
-        // 参照状態の表示
-        ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
-        ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
+        //// 参照状態の表示
+        //ImGui::Text("StateMachine: %s", m_stateMachine ? "OK" : "None");
+        //ImGui::Text("CombatMachine: %s", m_combatMachine ? "OK" : "None");
 
-        // 入力状態の表示
-        ImGui::Text(
-            "MoveInputCameraLocal: (%.2f, %.2f, %.2f)", 
-            m_context.input.moveInputCameraLocal.x,
-            m_context.input.moveInputCameraLocal.y,
-            m_context.input.moveInputCameraLocal.z);
+        //// 入力状態の表示
+        //ImGui::Text(
+        //    "MoveInputCameraLocal: (%.2f, %.2f, %.2f)", 
+        //    m_context.input.moveInputCameraLocal.x,
+        //    m_context.input.moveInputCameraLocal.y,
+        //    m_context.input.moveInputCameraLocal.z);
     }
 
     InspectorViewWindow::EndComponentSection();
@@ -294,9 +281,15 @@ PlayerInput PlayerBehavior::UpdateInput()
         XMFLOAT3 cameraForward = m_mainCamera->GetForward();
         XMFLOAT3 cameraRight = m_mainCamera->GetRight();
 
-        input.moveInputCameraLocal = MiMath::Add(
+       /* input.moveInputCameraLocal = MiMath::Add(
             MiMath::Multiply(cameraRight, input.horizontal),
             MiMath::Multiply(cameraForward, input.vertical)
+        );*/
+        input.moveDirection = MiMath::Normalize(
+            MiMath::Add(
+                MiMath::Multiply(cameraRight, input.horizontal),
+                MiMath::Multiply(cameraForward, input.vertical)
+            )
         );
     }
 

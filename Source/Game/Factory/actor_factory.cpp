@@ -19,8 +19,6 @@
 
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"
-#include "Game/ActorBehavior/Player/player_state_machine_behavior.h"
-#include "Game/ActorBehavior/Player/player_combat_machine_behavior.h"
 
 #include "Game/ActorBehavior/Player/Movement/player_move_behavior.h"
 #include "Game/ActorBehavior/Player/Attack/player_attack_behavior.h"
@@ -103,9 +101,6 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
-
-    player->AddComponent<PlayerStateMachineBehavior>();
-    player->AddComponent<PlayerCombatMachineBehavior>();
 
     player->AddComponent<PlayerMoveBehavior>();
     player->AddComponent<PlayerAttackBehavior>();
