@@ -1,3 +1,10 @@
+//---------------------------------------------------
+// File  ：_/ActorBehavior/Player/player_behavior.cpp
+// Date  ：2026/07/30
+// Author：Miu Kitamura
+// 
+// ・プレイヤーの挙動を統括する司令塔的なBehaviorComponent
+//---------------------------------------------------
 #include "player_behavior.h"
 
 #include "Engine/Core/game_object.h"
@@ -6,16 +13,17 @@
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Device/mouse.h"
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
+
 #include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/sprite_animation_component.h"
-#include "Engine/Framework/Component/sprite_renderer_component.h"
 #include "Engine/Framework/Component/transform_component.h"
-#include "Game/ActorBehavior/Player/P10_Locomotion/Movement/player_move_behavior.h"
+
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
 #include "Game/ActorBehavior/Player/P30_Action/Dodge/player_dodge_behavior.h"
+
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_effect_controller.h"
+
 #include "Utility/mi_math.h"
 
 using namespace DirectX;
@@ -25,22 +33,20 @@ void PlayerBehavior::Start()
     GameObject* owner = GetOwner();
     if (!owner) return;
 
-    m_rigidbody = owner->GetComponent<RigidbodyComponent>();
-    m_spriteRenderer = owner->GetComponent<SpriteRendererComponent>();
-    m_spriteAnimation = owner->GetComponent<SpriteAnimationComponent>();
-
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
     m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
     m_context.owner = this;
+
+    m_context.locomotionController = &m_locomotionController;
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
 
     GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
     if (mainCamera) {
-        m_mainCameraTransform = mainCamera->GetComponent<TransformComponent>();
-        m_mainCamera = mainCamera->GetComponent<CameraComponent>();
+        m_context.mainCameraTransform = mainCamera->GetComponent<TransformComponent>();
+        m_context.mainCamera = mainCamera->GetComponent<CameraComponent>();
     }
 }
 
@@ -68,9 +74,10 @@ void PlayerBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
+/// @brief プレイヤーの入力を更新する
 PlayerInput PlayerBehavior::UpdateInput()
 {
-    PlayerInput input{};
+    PlayerInput input = {};
 
     if (Keyboard_IsKeyDown(KK_D)) {
         input.horizontal = 1.0f;
@@ -86,11 +93,11 @@ PlayerInput PlayerBehavior::UpdateInput()
         input.vertical = -1.0f;
     }
 
-    if (m_mainCamera) {
+    if (m_context.mainCamera) {
         input.moveDirection = MiMath::Normalize(
             MiMath::Add(
-                MiMath::Multiply(m_mainCamera->GetRight(), input.horizontal),
-                MiMath::Multiply(m_mainCamera->GetForward(), input.vertical)));
+                MiMath::Multiply(m_context.mainCamera->GetRight(), input.horizontal),
+                MiMath::Multiply(m_context.mainCamera->GetForward(), input.vertical)));
     }
 
     input.triggerJumpCommand = Keyboard_IsKeyDownTrigger(KK_SPACE);
@@ -106,23 +113,3 @@ PlayerInput PlayerBehavior::UpdateInput()
 
     return input;
 }
-
-//void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combatState)
-//{
-//    if (!m_spriteAnimation) return;
-//
-//    std::string clipName;
-//    switch (state) {
-//    case PlayerState::Move:
-//        clipName = "Run";
-//        break;
-//    case PlayerState::Idle:
-//    default:
-//        clipName = "Idle";
-//        break;
-//    }
-//
-//    if (!m_spriteAnimation->GetClip(clipName)) return;
-//    if (m_spriteAnimation->GetClip(clipName) == m_spriteAnimation->GetCurrentClip()) return;
-//    m_spriteAnimation->Play(clipName);
-//}

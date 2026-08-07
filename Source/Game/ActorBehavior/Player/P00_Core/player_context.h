@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// File  ：.../ActorBehavior/Player/player_context.h
+// File  ：_/ActorBehavior/Player/P00_Core/player_context.h
 // Date  ：2026/07/30
 // Author：Miu Kitamura
 // 
@@ -14,9 +14,17 @@ public:
     class PlayerBehavior* owner = nullptr;
     class TransformComponent* transform = nullptr;
 
+    class PlayerLocomotionController* locomotionController = nullptr;
+    class PlayerConditionMachine* conditionMachine = nullptr;
+    class PlayerActionMachine* actionMachine = nullptr;
+    class PlayerWeaponController* weaponController = nullptr;
+
     class PlayerMoveBehavior* moveBehavior = nullptr;
     class PlayerDodgeBehavior* dodgeBehavior = nullptr;
     class PlayerAttackBehavior* attackBehavior = nullptr;
+
+    class CameraComponent* mainCamera = nullptr;
+    TransformComponent* mainCameraTransform = nullptr;
 
     // FIX: この下にDataAssetで作成したSettingsを入れる予定
 
