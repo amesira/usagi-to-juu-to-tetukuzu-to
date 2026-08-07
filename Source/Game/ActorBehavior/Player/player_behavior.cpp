@@ -30,12 +30,12 @@
 #include "Engine/Framework/Component/particle_system_component.h"
 
 // プレイヤーを構成する各種ビヘイビアのヘッダ
-#include "player_context.h"
-#include "player_input.h"
+#include "./P00_Core/player_context.h"
+#include "./P00_Core/player_input.h"
 
-#include "./Movement/player_move_behavior.h"
-#include "./Attack/player_attack_behavior.h"
-#include "./Dodge/player_dodge_behavior.h"
+#include "./P10_Locomotion/Movement/player_move_behavior.h"
+#include "./P30_Action/Attack/player_attack_behavior.h"
+#include "./P30_Action/Dodge/player_dodge_behavior.h"
 
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 

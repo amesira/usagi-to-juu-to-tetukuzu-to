@@ -20,9 +20,9 @@
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"
 
-#include "Game/ActorBehavior/Player/Movement/player_move_behavior.h"
-#include "Game/ActorBehavior/Player/Attack/player_attack_behavior.h"
-#include "Game/ActorBehavior/Player/Dodge/player_dodge_behavior.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/Movement/player_move_behavior.h"
+#include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
+#include "Game/ActorBehavior/Player/P30_Action/Dodge/player_dodge_behavior.h"
 
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"

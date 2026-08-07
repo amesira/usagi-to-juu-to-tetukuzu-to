@@ -15,8 +15,8 @@ class RigidbodyComponent;
 class SpriteRendererComponent;
 class SpriteAnimationComponent;
 
-#include "player_context.h"
-#include "player_input.h"
+#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
+#include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 class PlayerStateMachineBehavior;
 class PlayerCombatMachineBehavior;
 

@@ -8,7 +8,7 @@
 #define PLAYER_ATTACK_BEHAVIOR_H
 
 #include "Engine/Framework/Component/behavior_component.h"
-#include "Game/ActorBehavior/Player/player_context.h"
+#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 
 class TransformComponent;
 class CameraComponent;
