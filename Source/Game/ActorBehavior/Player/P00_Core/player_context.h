@@ -45,18 +45,4 @@ enum class PlayerCombatState {
 enum class PlayerEffectType {
     DodgeStart,
     DodgeEnd,
-
-    AimHoldStart,
-
-    AimStart,
-    AimEnd,
-
-    SingleAttack,
-    SingleHit,
-
-    ChargeStart,
-    ChargeAttack,
-    ChargeHit,
-
-    AttackEnd,
 };

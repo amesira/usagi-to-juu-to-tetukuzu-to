@@ -206,6 +206,7 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Movement\player_move_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp" />
@@ -406,6 +407,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Movement\player_move_behavior.h" />
     <ClInclude Include="Source\Game\Factory\render_effect_factory.h" />

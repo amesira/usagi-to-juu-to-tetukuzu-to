@@ -9,9 +9,12 @@
 
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
+#include "player_attack_effects.h"
 
 class TransformComponent;
 class CameraComponent;
+class LightComponent;
+class ParticleSystemComponent;
 
 class PlayerAttackBehavior : public BehaviorComponent {
 private:
@@ -20,6 +23,8 @@ private:
     // メインカメラの参照
     TransformComponent* m_mainCameraTransform = nullptr;
     CameraComponent* m_mainCamera = nullptr;
+
+    PlayerAttackEffects m_effects;
 
     // エイム移行前の入力猶予時間
     float m_aimHoldBufferTimer = 0.0f;
@@ -75,6 +80,10 @@ public:
     void UpdateCharge(PlayerContext& context, float deltaTime, float unscaledDeltaTime);
     // チャージ攻撃処理
     void ChargeAttack(PlayerContext& context);
+
+    void SetupChargeEffect(ParticleSystemComponent* chargeEffect) { m_effects.SetupChargeEffect(chargeEffect); }
+    void SetupChargeLight(LightComponent* chargeLight) { m_effects.SetupChargeLight(chargeLight); }
+    bool IsMovementLocked() const { return m_effects.IsMovementLocked(); }
 };
 
 #endif // PLAYER_ATTACK_BEHAVIOR_H

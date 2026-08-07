@@ -293,6 +293,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Movement\player_move_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
@@ -631,6 +632,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Movement\player_move_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>

@@ -48,7 +48,6 @@ namespace PrefabFactory
         PlayerPrefab prefab;
         prefab.player = ActorFactory::CreatePlayer(scene, position);
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
-        PlayerBehavior* playerBehavior = prefab.player->GetComponent<PlayerBehavior>();
         PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
 
         prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName());
@@ -60,14 +59,14 @@ namespace PrefabFactory
             SetupTransformConstraint(prefab.chargeEffectParticle, playerTransform, { 1.0f, -0.3f, 0.0f }, true, false);
             ParticleSystemComponent* particleSystem = prefab.chargeEffectParticle->GetComponent<ParticleSystemComponent>();
             particleSystem->Main().playOnAwake = false; // 最初は再生しない
-            playerBehavior->SetupChargeEffect(particleSystem);
+            playerAttackBehavior->SetupChargeEffect(particleSystem);
         }
         prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
         {
             SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);
             LightComponent* lightComp = prefab.chargeLight->GetComponent<LightComponent>();
             lightComp->SetEnable(false); // 最初はライトをオフにする
-            playerBehavior->SetupChargeLight(lightComp);
+            playerAttackBehavior->SetupChargeLight(lightComp);
         }
         return prefab;
     }

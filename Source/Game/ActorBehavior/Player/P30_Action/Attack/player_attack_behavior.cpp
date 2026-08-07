@@ -15,9 +15,11 @@
 #include "Utility/mi_math.h"
 
 #include "Game/Factory/projectile_factory.h"
+#include "Engine/Device/mi_fps.h"
 
 void PlayerAttackBehavior::Start()
 {
+    m_effects.Initialize(GetOwner());
     m_transform = GetOwner()->GetComponent<TransformComponent>();
 
     IScene* scene = GetOwner()->GetScene();
@@ -32,7 +34,7 @@ void PlayerAttackBehavior::Start()
 
 void PlayerAttackBehavior::Update()
 {
-
+    m_effects.Update(FPS_GetUnscaledDeltaTime());
 }
 
 void PlayerAttackBehavior::DrawComponentInspector()
@@ -48,9 +50,7 @@ void PlayerAttackBehavior::StartAimHoldBuffer(PlayerContext& context)
 {
     m_aimHoldBufferTimer = 0.0f;
 
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::AimHoldStart);
-    }
+    m_effects.Play(PlayerAttackEffectType::AimHoldStart);
 }
 
 // エイム移行バッファ更新処理
@@ -66,9 +66,7 @@ void PlayerAttackBehavior::StartAim(PlayerContext& context)
     m_chargeTimer = 0.0f;
 
     // エイム開始エフェクトの再生
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::AimStart);
-    }
+    m_effects.Play(PlayerAttackEffectType::AimStart);
 }
 
 // エイム更新処理
@@ -84,9 +82,7 @@ void PlayerAttackBehavior::UpdateAim(PlayerContext& context, float deltaTime, fl
 void PlayerAttackBehavior::EndAim(PlayerContext& context)
 {
     // エイム終了エフェクトの再生
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::AimEnd);
-    }
+    m_effects.Play(PlayerAttackEffectType::AimEnd);
 }
 
 // === Attack Hold Buffer ===
@@ -122,10 +118,8 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 
     ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
 
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::SingleAttack);
-        context.owner->PlayPlayerEffect(PlayerEffectType::AttackEnd);
-    }
+    m_effects.Play(PlayerAttackEffectType::SingleAttack);
+    m_effects.Play(PlayerAttackEffectType::AttackEnd);
 }
 
 // === Charge Attack ===
@@ -133,9 +127,7 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
 void PlayerAttackBehavior::StartCharge(PlayerContext& context)
 {
     m_chargeTimer = 0.0f;
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::ChargeStart);
-    }
+    m_effects.Play(PlayerAttackEffectType::ChargeStart);
 
 }
 
@@ -163,8 +155,6 @@ void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
     bulletDesc.velocity = MiMath::Multiply(MiMath::Normalize(MiMath::Subtract(bulletEnd, bulletDesc.position)), 25.0f);
     ProjectileFactory::CreateBullet(GetOwner()->GetScene(), bulletDesc);
 
-    if (context.owner) {
-        context.owner->PlayPlayerEffect(PlayerEffectType::ChargeAttack);
-        context.owner->PlayPlayerEffect(PlayerEffectType::AttackEnd);
-    }
+    m_effects.Play(PlayerAttackEffectType::ChargeAttack);
+    m_effects.Play(PlayerAttackEffectType::AttackEnd);
 }
