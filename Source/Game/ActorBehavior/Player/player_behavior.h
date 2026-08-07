@@ -30,12 +30,9 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
-    // Dodge effects remain here until the dodge action is rebuilt.
-    void PlayPlayerEffect(PlayerEffectType type);
-
 private:
     PlayerInput UpdateInput();
-    void UpdateAnimation(PlayerState state, PlayerCombatState combatState);
+
 };
 
 #endif

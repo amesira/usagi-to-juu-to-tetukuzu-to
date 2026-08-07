@@ -21,28 +21,3 @@ public:
     // FIX: この下にDataAssetで作成したSettingsを入れる予定
 
 };
-
-// プレイヤーの状態
-enum class PlayerState {
-    Idle,
-    Move,
-    Dodge,
-    Stunned,
-};
-
-// プレイヤーの戦闘状態
-enum class PlayerCombatState {
-    None,
-    AimHoldBuffer,
-    Aim,
-
-    AttackHoldBuffer,
-    SingleAttack,
-    ChargeAttack,
-};
-
-// プレイヤーエフェクトの種類
-enum class PlayerEffectType {
-    DodgeStart,
-    DodgeEnd,
-};

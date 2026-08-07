@@ -68,21 +68,6 @@ void PlayerBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
-void PlayerBehavior::PlayPlayerEffect(PlayerEffectType type)
-{
-    GameEffectController* gameEffect = GameControllerLocator::GetGameEffectController();
-    if (!gameEffect) return;
-
-    switch (type) {
-    case PlayerEffectType::DodgeStart:
-        gameEffect->ChangeFOVTemporary(70.0f, 0.08f, 0.04f);
-        break;
-    case PlayerEffectType::DodgeEnd:
-        gameEffect->ResetFOV(0.1f);
-        break;
-    }
-}
-
 PlayerInput PlayerBehavior::UpdateInput()
 {
     PlayerInput input{};
@@ -122,22 +107,22 @@ PlayerInput PlayerBehavior::UpdateInput()
     return input;
 }
 
-void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combatState)
-{
-    if (!m_spriteAnimation) return;
-
-    std::string clipName;
-    switch (state) {
-    case PlayerState::Move:
-        clipName = "Run";
-        break;
-    case PlayerState::Idle:
-    default:
-        clipName = "Idle";
-        break;
-    }
-
-    if (!m_spriteAnimation->GetClip(clipName)) return;
-    if (m_spriteAnimation->GetClip(clipName) == m_spriteAnimation->GetCurrentClip()) return;
-    m_spriteAnimation->Play(clipName);
-}
+//void PlayerBehavior::UpdateAnimation(PlayerState state, PlayerCombatState combatState)
+//{
+//    if (!m_spriteAnimation) return;
+//
+//    std::string clipName;
+//    switch (state) {
+//    case PlayerState::Move:
+//        clipName = "Run";
+//        break;
+//    case PlayerState::Idle:
+//    default:
+//        clipName = "Idle";
+//        break;
+//    }
+//
+//    if (!m_spriteAnimation->GetClip(clipName)) return;
+//    if (m_spriteAnimation->GetClip(clipName) == m_spriteAnimation->GetCurrentClip()) return;
+//    m_spriteAnimation->Play(clipName);
+//}
