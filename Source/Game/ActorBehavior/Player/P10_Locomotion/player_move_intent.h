@@ -12,6 +12,8 @@
 struct PlayerMoveIntent 
 {
     XMFLOAT3 moveDirection = { 0.0f, 0.0f, 0.0f }; // 移動方向（正規化済み）
+    float moveInputMagnitude = 1.0f; // 移動入力の大きさ（0.0f～1.0f）
+
     XMFLOAT3 rotateDirection = { 0.0f, 0.0f, 1.0f }; // 回転方向（正規化済み）
     
     float speedMultiplier = 1.0f; // 移動速度の倍率

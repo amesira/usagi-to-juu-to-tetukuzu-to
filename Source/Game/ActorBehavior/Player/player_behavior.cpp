@@ -33,12 +33,17 @@ void PlayerBehavior::Start()
     GameObject* owner = GetOwner();
     if (!owner) return;
 
+    m_context.owner = this;
+    m_context.transform = owner->GetComponent<TransformComponent>();
+
+    m_context.locomotionController = &m_locomotionController;
+
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
     m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
     m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
-    m_context.owner = this;
 
-    m_context.locomotionController = &m_locomotionController;
+    // セットアップ処理
+    m_context.moveBehavior->SetupContext(m_context);
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -55,7 +60,10 @@ void PlayerBehavior::Update()
     const float deltaTime = FPS_GetDeltaTime();
     m_input = UpdateInput();
 
-    PlayerMoveBehavior::PlayerMoveRequest moveRequest;
+    PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);
+    m_context.moveBehavior->UpdateMove(m_context, m_input, intent, deltaTime);
+
+   /* PlayerMoveBehavior::PlayerMoveRequest moveRequest;
     if (m_context.moveBehavior) {
         if (m_context.attackBehavior && m_context.attackBehavior->IsMovementLocked()) {
             moveRequest.canMove = false;
@@ -64,7 +72,7 @@ void PlayerBehavior::Update()
 
         m_context.moveBehavior->UpdateMove(m_context, m_input, moveRequest, deltaTime);
         m_context.moveBehavior->UpdateRotation(m_context, m_input, moveRequest, deltaTime);
-    }
+    }*/
 }
 
 void PlayerBehavior::DrawComponentInspector()
@@ -92,6 +100,8 @@ PlayerInput PlayerBehavior::UpdateInput()
     else if (Keyboard_IsKeyDown(KK_S)) {
         input.vertical = -1.0f;
     }
+
+    input.moveInput = { input.horizontal, 0.0f, input.vertical };
 
     if (m_context.mainCamera) {
         input.moveDirection = MiMath::Normalize(

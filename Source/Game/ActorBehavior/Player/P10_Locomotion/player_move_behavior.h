@@ -7,48 +7,13 @@
 #ifndef PLAYER_MOVE_BEHAVIOR_H
 #define PLAYER_MOVE_BEHAVIOR_H
 #include "Engine/Framework/Component/behavior_component.h"
-#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
-#include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
-class TransformComponent;
-class RigidbodyComponent;
-class SpriteRendererComponent;
-
-class CameraComponent;
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 
 class PlayerMoveBehavior : public BehaviorComponent {
-public:
-    // プレイヤーの回転モード
-    enum class PlayerRotationMode {
-        CameraForward,
-        AimForward,
-        Locked,
-    };
-
-    // プレイヤーの移動リクエスト構造体
-    struct PlayerMoveRequest {
-        bool canMove = true;
-        bool canRotate = true;
-
-        float speedMultiplier = 1.0f;
-
-        PlayerRotationMode rotationMode = PlayerRotationMode::CameraForward;
-    };
-
 private:
-    TransformComponent* m_transform = nullptr;
-    RigidbodyComponent* m_rigidbody = nullptr;
-    SpriteRendererComponent* m_spriteRenderer = nullptr;
-
-    float   m_acceleration = 20.0f;
-    float   m_moveSpeed = 10.0f;
-    float   m_jumpForce = 10.0f;
-
-    float   m_currentAngleY = 0.0f;
-    float   m_rotationSpeed = 10.0f;
-
-    // メインカメラの参照
-    CameraComponent* m_mainCamera = nullptr;
+    PlayerMoveContext m_context;
 
 public:
     PlayerMoveBehavior() = default;
@@ -57,10 +22,17 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
-    // 移動更新処理
-    void UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime);
-    // 回転更新処理
-    void UpdateRotation(const PlayerContext& context, const PlayerInput& input, const PlayerMoveRequest& moveRequest, float deltaTime);
+    /// @brief PlayerMoveBehaviorのコンテキストを設定する
+    void SetupContext(const class PlayerContext& playerContext);
+
+    /// @brief PlayerMoveBehaviorの更新処理を行う（PlayerBehaviorのUpdate()から呼び出す）
+    void UpdateMove(
+        const class PlayerContext& context, 
+        const class PlayerInput& input, 
+        const PlayerMoveIntent& moveIntent, 
+        float deltaTime);
+
+private:
 
 };
 

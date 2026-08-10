@@ -113,7 +113,14 @@ PlayerMoveIntent PlayerLocomotionController::BuildIntent(const PlayerContext& co
 
     // === PlayerMoveIntentを構築して返す ===
     PlayerMoveIntent intent = {};
+
+    // 方向は正規化し、入力自体の大きさはmoveInputMagnitudeで保持する
     intent.moveDirection = moveDirection;
+    intent.moveInputMagnitude = MiMath::Length(input.moveInput);
+    if (intent.moveInputMagnitude > 1.0f) {
+        intent.moveInputMagnitude = 1.0f; // 入力の大きさを1.0fに制限
+    }
+
     intent.rotateDirection = rotateDirection;
 
     intent.speedMultiplier = selectedRequest->speedMultiplier;

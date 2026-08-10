@@ -7,13 +7,10 @@
 //---------------------------------------------------
 #ifndef PLAYER_LOCOMOTION_CONTROLLER_H
 #define PLAYER_LOCOMOTION_CONTROLLER_H
-#include "Utility/utility_master.h"
+#include <DirectXMath.h>
+using namespace DirectX;
 
-class PlayerContext;
-class PlayerInput;
 #include "player_move_intent.h"
-
-class TransformComponent;
 
 class PlayerLocomotionController {
 public:
@@ -33,7 +30,7 @@ public:
         DirectionSource source = DirectionSource::MoveInput;
 
         // === Direction Source に応じた追加情報 ===
-        TransformComponent* targetTransform = nullptr;
+        class TransformComponent* targetTransform = nullptr;
         XMFLOAT3 fixedDirection = { 0.0f, 0.0f, 1.0f };
     };
 
@@ -84,7 +81,7 @@ public:
     void RemoveLocomotionRequestByIndex(int index);
 
     /// @brief プレイヤーの移動・回転意図を構築する
-    PlayerMoveIntent BuildIntent(const PlayerContext& context, const PlayerInput& input);
+    PlayerMoveIntent BuildIntent(const class PlayerContext& context, const class PlayerInput& input);
 };
 
 #endif

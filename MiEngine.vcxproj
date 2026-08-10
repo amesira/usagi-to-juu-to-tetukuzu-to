@@ -337,6 +337,7 @@
     <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_intent.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
