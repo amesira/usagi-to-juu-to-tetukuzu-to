@@ -72,7 +72,7 @@ bool DataAssetLoader::LoadDataAsset(const std::string& filePath, DataAsset& outA
         json root;
         ifs >> root;
 
-        if (!root.is_object() || root.value("type", "") != outAsset.GetAssetTypeName()) return false;
+        if (!root.is_object() || root.value("type", "") != static_cast<std::string>(outAsset.GetAssetTypeName())) return false;
 
         // FormatVersionを確認
         const int version = root.value("formatVersion", 0);
@@ -89,9 +89,9 @@ bool DataAssetLoader::LoadDataAsset(const std::string& filePath, DataAsset& outA
 
         // ヘッダーを設定
         AssetHeader loadedHeader;
-        loadedHeader.m_type = outAsset.GetAssetTypeName();
+        loadedHeader.m_type = static_cast<std::string>(outAsset.GetAssetTypeName());
         loadedHeader.m_formatVersion = version;
-        loadedHeader.m_name = root.value("name", "Unnamed" + outAsset.GetAssetTypeName());
+        loadedHeader.m_name = root.value("name", "Unnamed" + static_cast<std::string>(outAsset.GetAssetTypeName()));
 
         // === 全項目の読み込み成功後に反映（実データはデシリアライズ時点で反映する） ===
         outAsset.SetHeader(loadedHeader);
