@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\game_view_window.cpp" />
@@ -292,6 +293,9 @@
     <ClInclude Include="External\nlohmann\ordered_map.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_type_id.h" />
     <ClInclude Include="Source\Engine\Asset\i_asset.h" />
     <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset.h" />
     <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.h" />
@@ -300,6 +304,7 @@
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_master.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
@@ -339,6 +344,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_action_executer.h" />

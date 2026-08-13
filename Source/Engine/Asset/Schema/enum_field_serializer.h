@@ -19,6 +19,7 @@ namespace FieldSerialization
     public:
         static json Serialize(const TEnum& value, const EnumFieldOptions<TEnum>& options)
         {
+            // choicesの中からvalueに一致するものを探し、見つかったらそのkeyを返す
             for (const auto& choice : options.choices) {
                 if (choice.value == value) {
                     return json(choice.key);
@@ -36,6 +37,7 @@ namespace FieldSerialization
 
             std::string key = jsonValue.get<std::string>();
 
+            // choicesの中からkeyに一致するものを探し、見つかったらそのvalueを返す
             for (const auto& choice : options.choices) {
                 if (key == choice.key) {
                     value = choice.value;

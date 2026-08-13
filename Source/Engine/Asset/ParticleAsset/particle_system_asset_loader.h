@@ -27,13 +27,14 @@ public:
 
     /// @brief ParticleSystemAssetをJSON形式で保存する
     bool SaveParticle(const std::string& filePath, const ParticleSystemAsset& asset);
-
     /// @brief ParticleSystemAssetをJSON形式で読み込む
     bool LoadParticle(const std::string& filePath, ParticleSystemAsset& outAsset);
-    /// @brief ParticleSystemAssetをJSON形式で再読み込みする。キャッシュにある場合は上書き
-    bool ReloadParticle(const std::string& filePath);
 
-    /// @brief ParticleSystemAssetを取得する。キャッシュに無い場合はロードする
+    // ------------ Catch操作を行なう関数↓
+
+    /// @brief ParticleSystemAssetを取得する。キャッシュ生成もここで行う
     ParticleSystemAsset* GetParticle(const std::string& filePath);
+    /// @brief ParticleSystemAssetをJSON形式で再読み込みする。キャッシュを更新する
+    bool ReloadParticle(const std::string& filePath);
 
 };

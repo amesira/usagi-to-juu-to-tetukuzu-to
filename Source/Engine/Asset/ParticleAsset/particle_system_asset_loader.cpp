@@ -20,136 +20,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-namespace
-{
-    using json = nlohmann::json;
-
-#pragma region ModuleのJSONシリアライズ/デシリアライズ
-    // MainModuleをJSONにシリアライズする
-    json SerializeMain(const ParticleSystemData::MainModule& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetMainSchema());
-    }
-
-    // MainModuleをJSONからデシリアライズする
-    bool DeserializeMain(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        return FieldSerialization::DeserializeFields(
-            jsonValue,
-            desc.mainModule,
-            ParticleSystemSchema::GetMainSchema());
-    }
-
-    // EmissionModuleをJSONにシリアライズする
-    json SerializeEmission(const ParticleSystemData::EmissionModule& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetEmissionSchema());
-    }
-
-    // EmissionModuleをJSONからデシリアライズする
-    bool DeserializeEmission(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        return FieldSerialization::DeserializeFields(
-            jsonValue,
-            desc.emissionModule,
-            ParticleSystemSchema::GetEmissionSchema());
-    }
-
-    // ShapeModuleをJSONにシリアライズする
-    json SerializeShape(const ParticleSystemData::ShapeModule& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetShapeSchema());
-    }
-
-    // ShapeModuleをJSONからデシリアライズする
-    bool DeserializeShape(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        return FieldSerialization::DeserializeFields(
-            jsonValue,
-            desc.shapeModule,
-            ParticleSystemSchema::GetShapeSchema());
-    }
-
-    // SizeOverLifetimeModuleをJSONにシリアライズする
-    json SerializeSizeOverLifetime(const ParticleSystemData::SizeOverLifetimeModule& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetSizeOverLifetimeSchema());
-    }
-
-    // SizeOverLifetimeModuleをJSONからデシリアライズする
-    bool DeserializeSizeOverLifetime(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        return FieldSerialization::DeserializeFields(
-            jsonValue,
-            desc.sizeOverLifetimeModule,
-            ParticleSystemSchema::GetSizeOverLifetimeSchema());
-    }
-
-    // TextureSheetAnimationModuleをJSONにシリアライズする
-    json SerializeTextureSheetAnimation(const ParticleSystemData::TextureSheetAnimation& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetTextureSheetAnimationSchema());
-    }
-
-    // TextureSheetAnimationModuleをJSONからデシリアライズする
-    bool DeserializeTextureSheetAnimation(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        return FieldSerialization::DeserializeFields(
-            jsonValue,
-            desc.textureSheetAnimation,
-            ParticleSystemSchema::GetTextureSheetAnimationSchema());
-    }
-
-    // RendererModuleをJSONにシリアライズする
-    json SerializeRenderer(const ParticleSystemData::RendererModule& module)
-    {
-        return FieldSerialization::SerializeFields(
-            module,
-            ParticleSystemSchema::GetRendererSchema());
-    }
-
-    // RendererModuleをJSONからデシリアライズする
-    bool DeserializeRenderer(const json& jsonValue, ParticleSystemDesc& desc)
-    {
-        auto& module = desc.rendererModule;
-        const bool succeeded = FieldSerialization::DeserializeFields(
-            jsonValue,
-            module,
-            ParticleSystemSchema::GetRendererSchema());
-
-        // textureResourceは保存データではないため、参照解決前は空にする。
-        module.textureResource = nullptr;
-        return succeeded;
-    }
-#pragma endregion
-
-    /// @brief  JSONから指定のモジュールをデシリアライズする
-    /// @param data     元のJSONデータ
-    /// @param key      モジュールを示すキー
-    /// @param desc     デシリアライズ先のParticleSystemDesc
-    /// @param deserialize モジュールのデシリアライズ関数
-    /// @return 
-    bool DeserializeModule(
-        const json& data,
-        const char* key,
-        ParticleSystemDesc& desc,
-        bool (*deserialize)(const json&, ParticleSystemDesc&))
-    {
-        const auto it = data.find(key);
-        if (it == data.end()) return true;
-        return it->is_object() && deserialize(*it, desc);
-    }
-}
+using json = nlohmann::json;
 
 /// @brief ParticleSystemAssetLoaderの初期化
 void ParticleSystemAssetLoader::Initialize()
@@ -177,12 +48,12 @@ bool ParticleSystemAssetLoader::SaveParticle(
         { "formatVersion", m_supportedVersion },
         { "name", header.m_name },
         { "data", {
-            { "main", SerializeMain(desc.mainModule) },
-            { "emission", SerializeEmission(desc.emissionModule) },
-            { "shape", SerializeShape(desc.shapeModule) },
-            { "sizeOverLifetime", SerializeSizeOverLifetime(desc.sizeOverLifetimeModule) },
-            { "textureSheetAnimation", SerializeTextureSheetAnimation(desc.textureSheetAnimation) },
-            { "renderer", SerializeRenderer(desc.rendererModule) },
+            { "main", FieldSerialization::SerializeFields(desc.mainModule, ParticleSystemSchema::GetMainSchema())},
+            { "emission", FieldSerialization::SerializeFields(desc.emissionModule, ParticleSystemSchema::GetEmissionSchema())},
+            { "shape", FieldSerialization::SerializeFields(desc.shapeModule, ParticleSystemSchema::GetShapeSchema())},
+            { "sizeOverLifetime", FieldSerialization::SerializeFields(desc.sizeOverLifetimeModule, ParticleSystemSchema::GetSizeOverLifetimeSchema())},
+            { "textureSheetAnimation", FieldSerialization::SerializeFields(desc.textureSheetAnimation, ParticleSystemSchema::GetTextureSheetAnimationSchema())},
+            { "renderer", FieldSerialization::SerializeFields(desc.rendererModule, ParticleSystemSchema::GetRendererSchema())},
         } },
     };
 
@@ -229,12 +100,12 @@ bool ParticleSystemAssetLoader::LoadParticle(
 
         // JSONからParticlesystemAssetをデシリアライズ
         ParticleSystemDesc loadedDesc{};
-        if (!DeserializeModule(*dataIt, "main", loadedDesc, DeserializeMain) ||
-            !DeserializeModule(*dataIt, "emission", loadedDesc, DeserializeEmission) ||
-            !DeserializeModule(*dataIt, "shape", loadedDesc, DeserializeShape) ||
-            !DeserializeModule(*dataIt, "sizeOverLifetime", loadedDesc, DeserializeSizeOverLifetime) ||
-            !DeserializeModule(*dataIt, "textureSheetAnimation", loadedDesc, DeserializeTextureSheetAnimation) ||
-            !DeserializeModule(*dataIt, "renderer", loadedDesc, DeserializeRenderer))
+        if (!FieldSerialization::DeserializeFields(*dataIt, loadedDesc.mainModule, ParticleSystemSchema::GetMainSchema()) ||
+            !FieldSerialization::DeserializeFields(*dataIt, loadedDesc.emissionModule, ParticleSystemSchema::GetEmissionSchema()) ||
+            !FieldSerialization::DeserializeFields(*dataIt, loadedDesc.shapeModule, ParticleSystemSchema::GetShapeSchema()) ||
+            !FieldSerialization::DeserializeFields(*dataIt, loadedDesc.sizeOverLifetimeModule, ParticleSystemSchema::GetSizeOverLifetimeSchema()) ||
+            !FieldSerialization::DeserializeFields(*dataIt, loadedDesc.textureSheetAnimation, ParticleSystemSchema::GetTextureSheetAnimationSchema()) ||
+            !FieldSerialization::DeserializeFields(*dataIt, loadedDesc.rendererModule, ParticleSystemSchema::GetRendererSchema()))
         {
             return false;
         }
@@ -249,6 +120,9 @@ bool ParticleSystemAssetLoader::LoadParticle(
         outAsset.SetHeader(loadedHeader);
         outAsset.SetFilePath(filePath);
         outAsset.GetDesc() = std::move(loadedDesc);
+
+        // === キャッシュに追加 ===
+        m_particleAssetCache[filePath] = std::make_unique<ParticleSystemAsset>(std::move(outAsset));
         return true;
     }
     catch (const json::exception& error)
@@ -258,27 +132,9 @@ bool ParticleSystemAssetLoader::LoadParticle(
     }
 }
 
-/// @brief ParticleSystemAssetを再読み込みする。キャッシュにある場合は上書きする
-bool ParticleSystemAssetLoader::ReloadParticle(
-    const std::string& filePath)
-{
-    auto it = m_particleAssetCache.find(filePath);
-    if (it == m_particleAssetCache.end()) {
-        // キャッシュに無い場合は読み込まない
-        return false;
-    }
+// --------------------------------- Catch操作を行なう関数
 
-    ParticleSystemAsset newAsset;
-    if (LoadParticle(filePath, newAsset)) {
-        // 成功した場合はキャッシュを更新
-        it->second = std::make_unique<ParticleSystemAsset>(std::move(newAsset));
-        return true;
-    }
-
-    return false;
-}
-
-/// @brief ParticleSystemAssetを取得する。キャッシュに無い場合はロードする
+/// @brief ParticleSystemAssetを取得する。キャッシュ生成もここで行う
 ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::string& filePath)
 {
     auto it = m_particleAssetCache.find(filePath);
@@ -295,4 +151,22 @@ ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::string& f
     }
 
     return nullptr;
+}
+
+/// @brief ParticleSystemAssetを再読み込みする。キャッシュを更新する
+bool ParticleSystemAssetLoader::ReloadParticle(
+    const std::string& filePath)
+{
+    auto it = m_particleAssetCache.find(filePath);
+    if (it == m_particleAssetCache.end()) {
+        // キャッシュに無い場合は読み込まない
+        return false;
+    }
+
+    ParticleSystemAsset* assetPtr = it->second.get();
+    if (!LoadParticle(filePath, *assetPtr)) {
+        return false;
+    }
+
+    return true;;
 }

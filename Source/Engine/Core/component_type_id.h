@@ -1,7 +1,7 @@
 // type_id.h
 // 型ごとに一意なIDを生成するためのユーティリティ
-#ifndef TYPE_ID_H
-#define TYPE_ID_H
+#ifndef COMPONENT_TYPE_ID_H
+#define COMPONENT_TYPE_ID_H
 
 #include "component.h"
 

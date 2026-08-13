@@ -34,7 +34,6 @@ struct PlayerMoveReferences
 /// @brief PlayerMoveの設定値を保持する構造体（FIX: いずれはDataAsset化する）
 struct PlayerMoveSettings
 {
-    float   acceleration = 20.0f;
     float   moveSpeed = 10.0f;
     float   jumpForce = 10.0f;
 
