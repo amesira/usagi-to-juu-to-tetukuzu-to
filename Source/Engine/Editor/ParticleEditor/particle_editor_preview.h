@@ -41,6 +41,9 @@ public:
     /// @brief プレビュー用のオブジェクトを破棄する
     void Cleanup();
 
+    /// @brief シーンリロード時の処理
+    void ReloadScene();
+
     void Play();
     void Pause();
     void Stop();

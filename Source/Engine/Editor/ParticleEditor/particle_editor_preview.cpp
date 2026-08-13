@@ -123,7 +123,14 @@ void ParticleEditorPreview::Cleanup()
         }
     }
 
-    // シーンアドレスなどもリセットする
+    m_objectId = static_cast<unsigned int>(-1);
+    m_particleSystem = nullptr;
+    m_paused = false;
+}
+
+/// @brief シーンリロード時の処理
+void ParticleEditorPreview::ReloadScene()
+{
     m_scene = nullptr;
     m_objectId = static_cast<unsigned int>(-1);
     m_particleSystem = nullptr;

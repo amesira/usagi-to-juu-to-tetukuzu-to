@@ -76,9 +76,9 @@ void ParticleSystemEditorWindow::OnWindowClosed()
 }
 
 
-void ParticleSystemEditorWindow::CleanUp()
+void ParticleSystemEditorWindow::OnSceneDestroyed()
 {
-    m_preview.Cleanup();
+    m_preview.OnSceneDestroyed();
 }
 
 #pragma region ParticleEditorの内部描画関数

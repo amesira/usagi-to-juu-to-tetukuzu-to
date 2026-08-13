@@ -66,7 +66,7 @@ void ParticleSystemAssetLoader::Finalize()
 
 /// @brief パーティクルアセットをセーブする
 bool ParticleSystemAssetLoader::SaveParticle(
-    const std::string& filePath,
+    const std::filesystem::path& filePath,
     const ParticleSystemAsset& asset)
 {
     const ParticleSystemDesc& desc = asset.GetDesc();
@@ -105,7 +105,7 @@ bool ParticleSystemAssetLoader::SaveParticle(
 
 /// @brief パーティクルアセットをロードする
 bool ParticleSystemAssetLoader::LoadParticle(
-    const std::string& filePath,
+    const std::filesystem::path& filePath,
     ParticleSystemAsset& outAsset)
 {
     // === アセットファイルを開く ===
@@ -163,18 +163,19 @@ bool ParticleSystemAssetLoader::LoadParticle(
 // --------------------------------- Catch操作を行なう関数
 
 /// @brief ParticleSystemAssetを取得する。キャッシュ生成もここで行う
-ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::string& filePath)
+ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::filesystem::path& filePath)
 {
-    auto it = m_particleAssetCache.find(filePath);
+    const std::filesystem::path cacheKey = filePath.lexically_normal();
+    auto it = m_particleAssetCache.find(cacheKey);
     if (it != m_particleAssetCache.end()) {
         return it->second.get();
     }
 
     // キャッシュに無い場合はロードする
     auto newAsset = std::make_unique<ParticleSystemAsset>();
-    if (LoadParticle(filePath, *newAsset)) {
+    if (LoadParticle(cacheKey, *newAsset)) {
         ParticleSystemAsset* assetPtr = newAsset.get();
-        m_particleAssetCache[filePath] = std::move(newAsset);
+        m_particleAssetCache[cacheKey] = std::move(newAsset);
         return assetPtr;
     }
 
@@ -183,16 +184,17 @@ ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::string& f
 
 /// @brief ParticleSystemAssetを再読み込みする。キャッシュを更新する
 bool ParticleSystemAssetLoader::ReloadParticle(
-    const std::string& filePath)
+    const std::filesystem::path& filePath)
 {
-    auto it = m_particleAssetCache.find(filePath);
+    const std::filesystem::path cacheKey = filePath.lexically_normal();
+    auto it = m_particleAssetCache.find(cacheKey);
     if (it == m_particleAssetCache.end()) {
         // キャッシュに無い場合は読み込まない
         return false;
     }
 
     ParticleSystemAsset* assetPtr = it->second.get();
-    if (!LoadParticle(filePath, *assetPtr)) {
+    if (!LoadParticle(cacheKey, *assetPtr)) {
         return false;
     }
 

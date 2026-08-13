@@ -39,7 +39,7 @@ void EditorManager::Render()
 /// @brief シーン破棄時に呼び出す
 void EditorManager::OnSceneDestroyed()
 {
-    m_particleSystemEditorWindow.CleanUp();
+    m_particleSystemEditorWindow.OnSceneDestroyed();
 }
 
 void EditorManager::RegisterWindows()

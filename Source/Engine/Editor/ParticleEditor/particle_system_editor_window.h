@@ -35,7 +35,7 @@ public:
     void OnWindowClosed();
 
     /// @brief CleanUp
-    void CleanUp();
+    void ReloadScene();
 
 private:
     /// @brief ParticleEditorのツールバーを描画する

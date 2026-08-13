@@ -17,15 +17,15 @@
 
 namespace
 {
-    constexpr const char* GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.json";
-    constexpr const char* RUN_DUST_PARTICLE_ASSET = "asset/Particle/run_dust.json";
-    constexpr const char* CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.json";
-    constexpr const char* HIT_PARTICLE_ASSET = "asset/Particle/hit.json";
-    constexpr const char* EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.json";
+    const std::filesystem::path GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.json";
+    const std::filesystem::path RUN_DUST_PARTICLE_ASSET = "asset/Particle/run_dust.json";
+    const std::filesystem::path CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.json";
+    const std::filesystem::path HIT_PARTICLE_ASSET = "asset/Particle/hit.json";
+    const std::filesystem::path EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.json";
 
     bool ApplyParticleAsset(
         ParticleSystemComponent* particleSystem,
-        const char* assetPath,
+        const std::filesystem::path& assetPath,
         const std::wstring* textureOverride = nullptr)
     {
         if (!particleSystem) return false;
@@ -61,7 +61,7 @@ namespace
         IScene* scene,
         const char* objectName,
         const XMFLOAT3& position,
-        const char* assetPath,
+        const std::filesystem::path& assetPath,
         const std::wstring* textureOverride = nullptr)
     {
         if (!scene) return nullptr;
@@ -77,7 +77,7 @@ namespace
         if (!ApplyParticleAsset(particleSystem, assetPath, textureOverride))
         {
             EngineServiceLocator::AddLogMessage(
-                std::string("Failed to load particle asset: ") + assetPath);
+                "Failed to load particle asset: " + assetPath.generic_string());
         }
         return effect;
     }

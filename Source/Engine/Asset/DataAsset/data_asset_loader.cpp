@@ -32,7 +32,7 @@ void DataAssetLoader::Finalize()
 }
 
 /// @brief DataAssetをJSON形式で保存する
-bool DataAssetLoader::SaveDataAsset(const std::string& filePath, const DataAsset& asset)
+bool DataAssetLoader::SaveDataAsset(const std::filesystem::path& filePath, const DataAsset& asset)
 {
     try
     {
@@ -61,7 +61,7 @@ bool DataAssetLoader::SaveDataAsset(const std::string& filePath, const DataAsset
 }
 
 /// @brief DataAssetをJSON形式で読み込む
-bool DataAssetLoader::LoadDataAsset(const std::string& filePath, DataAsset& outAsset)
+bool DataAssetLoader::LoadDataAsset(const std::filesystem::path& filePath, DataAsset& outAsset)
 {
     // === アセットファイルを開く ===
     std::ifstream ifs(filePath);
@@ -109,15 +109,16 @@ bool DataAssetLoader::LoadDataAsset(const std::string& filePath, DataAsset& outA
 
 /// @brief DataAssetをJSON形式で再読み込みする
 /// @return キャッシュにある場合は更新してtrueを返す。キャッシュに無い場合は読み込まない
-bool DataAssetLoader::ReloadDataAsset(const std::string& filePath)
+bool DataAssetLoader::ReloadDataAsset(const std::filesystem::path& filePath)
 {
-    auto it = m_dataAssetCache.find(filePath);
+    const std::filesystem::path cacheKey = filePath.lexically_normal();
+    auto it = m_dataAssetCache.find(cacheKey);
     if (it == m_dataAssetCache.end()) {
         return false;
     }
 
     DataAsset* asset = it->second.get();
-    if (!LoadDataAsset(filePath, *asset)) {
+    if (!LoadDataAsset(cacheKey, *asset)) {
         return false;
     }
 

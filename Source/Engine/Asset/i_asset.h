@@ -6,6 +6,7 @@
 // Date  ：2026/07/20
 //---------------------------------------------------
 #pragma once
+#include <filesystem>
 #include <string>
 
 // アセットのヘッダ情報
@@ -19,7 +20,7 @@ public:
 class IAsset {
 protected:
     AssetHeader m_header;
-    std::string m_filePath;
+    std::filesystem::path m_filePath;
 
 public:
     virtual ~IAsset() = default;
@@ -29,7 +30,7 @@ public:
     void SetHeader(const AssetHeader& header) { m_header = header; }
 
     // アセットのファイルパスを取得
-    const std::string& GetFilePath() const { return m_filePath; }
-    void SetFilePath(const std::string& filePath) { m_filePath = filePath; }
+    const std::filesystem::path& GetFilePath() const { return m_filePath; }
+    void SetFilePath(const std::filesystem::path& filePath) { m_filePath = filePath; }
 
 };

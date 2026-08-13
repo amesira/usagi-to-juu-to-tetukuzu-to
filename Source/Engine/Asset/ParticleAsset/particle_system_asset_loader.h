@@ -6,7 +6,7 @@
 // ・ParticleSystemAssetのセーブ/ロードをJSON形式で行う
 //---------------------------------------------------
 #pragma once
-#include <string>
+#include <filesystem>
 #include <unordered_map>
 #include <memory>
 
@@ -17,7 +17,7 @@ private:
     int m_supportedVersion = 1; // サポートするフォーマットバージョン
 
     // ParticleSystemAssetのキャッシュ
-    std::unordered_map<std::string, std::unique_ptr<ParticleSystemAsset>> m_particleAssetCache;
+    std::unordered_map<std::filesystem::path, std::unique_ptr<ParticleSystemAsset>> m_particleAssetCache;
 
 public:
     /// @brief ParticleSystemAssetLoaderを初期化する
@@ -26,15 +26,15 @@ public:
     void Finalize();
 
     /// @brief ParticleSystemAssetをJSON形式で保存する
-    bool SaveParticle(const std::string& filePath, const ParticleSystemAsset& asset);
+    bool SaveParticle(const std::filesystem::path& filePath, const ParticleSystemAsset& asset);
     /// @brief ParticleSystemAssetをJSON形式で読み込む
-    bool LoadParticle(const std::string& filePath, ParticleSystemAsset& outAsset);
+    bool LoadParticle(const std::filesystem::path& filePath, ParticleSystemAsset& outAsset);
 
     // ------------ Catch操作を行なう関数↓
 
     /// @brief ParticleSystemAssetを取得する。キャッシュ生成もここで行う
-    ParticleSystemAsset* GetParticle(const std::string& filePath);
+    ParticleSystemAsset* GetParticle(const std::filesystem::path& filePath);
     /// @brief ParticleSystemAssetをJSON形式で再読み込みする。キャッシュを更新する
-    bool ReloadParticle(const std::string& filePath);
+    bool ReloadParticle(const std::filesystem::path& filePath);
 
 };

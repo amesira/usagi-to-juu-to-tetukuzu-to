@@ -42,7 +42,7 @@ bool ParticleEditorDocument::Open(const std::filesystem::path& path)
     }
 
     // パーティクルアセットをロードする
-    bool success = PARTICLE_LOADER->LoadParticle(pathString, loadedAsset);
+    bool success = PARTICLE_LOADER->LoadParticle(path, loadedAsset);
     if (!success)
     {
         m_statusMessage = "Failed to load: " + pathString;
@@ -96,10 +96,10 @@ bool ParticleEditorDocument::SaveAs(const std::filesystem::path& path)
     header.m_formatVersion = 1;
     header.m_name = path.stem().string();
     m_asset.SetHeader(header);
-    m_asset.SetFilePath(path.generic_string());
+    m_asset.SetFilePath(path);
 
     // === パーティクルアセットを保存する ===
-    if (!PARTICLE_LOADER->SaveParticle(path.generic_string(), m_asset))
+    if (!PARTICLE_LOADER->SaveParticle(path, m_asset))
     {
         m_statusMessage = "Failed to save: " + path.generic_string();
         return false;
