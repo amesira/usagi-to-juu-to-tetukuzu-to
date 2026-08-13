@@ -38,7 +38,7 @@ public:
     template<class TAsset>
     TAsset* GetAsset(const std::string& filePath) 
     {
-        assert(std::is_base_of<DataAsset, TAsset>::value && "TAsset must be derived from DataAsset");
+        static_assert(std::is_base_of<DataAsset, TAsset>::value && "TAsset must be derived from DataAsset");
 
         DataAsset* baseAsset = nullptr;
 

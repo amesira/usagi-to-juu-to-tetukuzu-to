@@ -15,12 +15,12 @@
             "loop": true,
             "playOnAwake": true,
             "simulationSpace": "Local",
-            "simulationSpeed": 1.0,
+            "simulationSpeed": 6.300000190734863,
             "startColor": {
                 "color": [
-                    0.8983739614486694,
-                    0.8478704690933228,
-                    0.20815978944301605,
+                    1.0,
+                    1.0,
+                    1.0,
                     1.0
                 ],
                 "colorMax": [
@@ -38,7 +38,7 @@
                 "randomBetweenTwoColors": false
             },
             "startLifetime": {
-                "constant": 1.0,
+                "constant": 5.0,
                 "constantMax": 5.0,
                 "constantMin": 5.0,
                 "randomBetweenTwoConstants": false
@@ -60,7 +60,7 @@
             "billboardMode": "View",
             "blendMode": "AlphaBlend",
             "sortByDistance": true,
-            "texturePath": "asset/Texture/pika_effect_sheet.png",
+            "texturePath": "",
             "uvRect": [
                 0.0,
                 0.0,
@@ -86,25 +86,16 @@
         "sizeOverLifetime": {
             "enabled": false,
             "size": {
-                "keys": [
-                    {
-                        "time": 0.0,
-                        "value": 1.0
-                    },
-                    {
-                        "time": 1.0,
-                        "value": 1.0
-                    }
-                ]
+                "keys": []
             }
         },
         "textureSheetAnimation": {
-            "enabled": true,
-            "frameCount": 11,
+            "enabled": false,
+            "frameCount": 1,
             "framePerSecond": 30.0,
             "loop": true,
             "startFrame": 0,
-            "tileX": 11,
+            "tileX": 1,
             "tileY": 1,
             "timeMode": "Lifetime"
         }
