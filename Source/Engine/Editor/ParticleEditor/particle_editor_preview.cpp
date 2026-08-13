@@ -129,7 +129,7 @@ void ParticleEditorPreview::Cleanup()
 }
 
 /// @brief シーンリロード時の処理
-void ParticleEditorPreview::ReloadScene()
+void ParticleEditorPreview::OnSceneDestroyed()
 {
     m_scene = nullptr;
     m_objectId = static_cast<unsigned int>(-1);

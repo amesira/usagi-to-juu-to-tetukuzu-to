@@ -53,24 +53,26 @@ void ModelRepository::Finalize()
 }
 
 // モデルの取得。キャッシュに無い場合は読み込む。
-ModelResource* ModelRepository::GetModel(const std::string& filePath)
+ModelResource* ModelRepository::GetModel(const std::filesystem::path& filePath)
 {
+    const auto cacheKey = filePath.lexically_normal();
     // キャッシュを確認
-    auto it = m_modelCache.find(filePath);
+    auto it = m_modelCache.find(cacheKey);
     if (it != m_modelCache.end())
     {
         return it->second.get();
     }
 
     // キャッシュに無い場合は読み込む
-    return LoadModel(filePath);
+    return LoadModel(cacheKey);
 }
 
 // アニメーションの読み込み
-int ModelRepository::LoadAnimation(ModelResource* model, const std::string& filePath)
+int ModelRepository::LoadAnimation(ModelResource* model, const std::filesystem::path& filePath)
 {
+    const std::string importPath = filePath.generic_string();
     const aiScene* scene = aiImportFile(
-        filePath.c_str(),
+        importPath.c_str(),
         aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
 
     // 読み込みエラーチェック
@@ -149,21 +151,23 @@ void ModelRepository::BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix)
 //------------------------------------
 
 // モデルの読み込み
-ModelResource* ModelRepository::LoadModel(const std::string& filePath)
+ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
 {
+    const auto cacheKey = filePath.lexically_normal();
+    const std::string importPath = cacheKey.generic_string();
     const aiScene* scene = aiImportFile(
-        filePath.c_str(), 
+        importPath.c_str(),
         aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
 
     // 読み込みエラーチェック
     if (scene == nullptr) return nullptr;
 
     // モデルリソースを作成してキャッシュに追加
-    m_modelCache[filePath] = std::make_unique<ModelResource>();
-    ModelResource* model = m_modelCache[filePath].get();
+    m_modelCache[cacheKey] = std::make_unique<ModelResource>();
+    ModelResource* model = m_modelCache[cacheKey].get();
 
     // モデルリソースにシーンデータを格納
-    model->filePath = filePath;
+    model->filePath = cacheKey;
     model->AiScene = scene;
     model->meshes.reserve(scene->mNumMeshes);
     model->materialResources.resize(scene->mNumMaterials);
@@ -282,7 +286,7 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         // マテリアルリソースの生成
         {
             MaterialResource material = CreateMaterialResource(mat);
-            material.name = filePath + "_mat%" + mat->GetName().C_Str();
+            material.name = cacheKey.generic_string() + "_mat%" + mat->GetName().C_Str();
             if (isSkinnedMesh) {
                 material.shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::SkinnedLit);
             }
@@ -558,8 +562,8 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
 MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
 {
     XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
-    std::wstring albedoTexturePath;
-    std::wstring normalTexturePath;
+    std::filesystem::path albedoTexturePath;
+    std::filesystem::path normalTexturePath;
 
     // マテリアルからベースカラーを取得
     {
@@ -614,7 +618,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
 }
 
 // モデルの解放
-void ModelRepository::ReleaseModel(const std::string& filePath)
+void ModelRepository::ReleaseModel(const std::filesystem::path& filePath)
 {
     ModelResource* model = GetModel(filePath);
     if (model)

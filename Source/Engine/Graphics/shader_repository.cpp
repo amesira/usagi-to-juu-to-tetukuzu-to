@@ -15,7 +15,7 @@
 
 namespace {
     // シェーダーのコンパイル済みファイルが格納されているディレクトリ
-    const std::string SHADER_DIRECTORY = "ShaderCompiled/";
+    const std::filesystem::path SHADER_DIRECTORY = "ShaderCompiled";
 }
 
 // シェーダーリポジトリの初期化
@@ -125,49 +125,51 @@ ShaderProgramResource* ShaderRepository::GenerateShaderProgramResource(const Sha
 }
 
 // 頂点シェーダーリソースの生成
-VertexShaderResource* ShaderRepository::GenerateVertexShaderResource(const std::string& filePath, VertexType vertexType)
+VertexShaderResource* ShaderRepository::GenerateVertexShaderResource(const std::filesystem::path& filePath, VertexType vertexType)
 {
+    const auto cacheKey = filePath.lexically_normal();
     // キャッシュを確認し、既に存在する場合は上書きする
-    auto it = m_vertexShaderCache.find(filePath);
+    auto it = m_vertexShaderCache.find(cacheKey);
     if (it != m_vertexShaderCache.end())
     {
         it->second = std::make_unique<VertexShaderResource>();
-        it->second->filePath = filePath;
+        it->second->filePath = cacheKey;
         it->second->vertexType = vertexType;
         VsBinaryData vbData;
-        LoadVertexShader(&(it->second->vertexShader), filePath, vbData);
+        LoadVertexShader(&(it->second->vertexShader), cacheKey, vbData);
         CreateInputLayout(&(it->second->inputLayout), vertexType, vbData);
         return it->second.get();
     }
 
     // キャッシュに存在しない場合は新規に追加する
-    m_vertexShaderCache[filePath] = std::make_unique<VertexShaderResource>();
-    m_vertexShaderCache[filePath]->filePath = filePath;
-    m_vertexShaderCache[filePath]->vertexType = vertexType;
+    m_vertexShaderCache[cacheKey] = std::make_unique<VertexShaderResource>();
+    m_vertexShaderCache[cacheKey]->filePath = cacheKey;
+    m_vertexShaderCache[cacheKey]->vertexType = vertexType;
     VsBinaryData vbData;
-    LoadVertexShader(&(m_vertexShaderCache[filePath]->vertexShader), filePath, vbData);
-    CreateInputLayout(&(m_vertexShaderCache[filePath]->inputLayout), vertexType, vbData);
-    return m_vertexShaderCache[filePath].get();
+    LoadVertexShader(&(m_vertexShaderCache[cacheKey]->vertexShader), cacheKey, vbData);
+    CreateInputLayout(&(m_vertexShaderCache[cacheKey]->inputLayout), vertexType, vbData);
+    return m_vertexShaderCache[cacheKey].get();
 }
 
 // ピクセルシェーダーリソースの生成
-PixelShaderResource* ShaderRepository::GeneratePixelShaderResource(const std::string& filePath)
+PixelShaderResource* ShaderRepository::GeneratePixelShaderResource(const std::filesystem::path& filePath)
 {
+    const auto cacheKey = filePath.lexically_normal();
     // キャッシュを確認し、既に存在する場合は上書きする
-    auto it = m_pixelShaderCache.find(filePath);
+    auto it = m_pixelShaderCache.find(cacheKey);
     if (it != m_pixelShaderCache.end())
     {
         it->second = std::make_unique<PixelShaderResource>();
-        it->second->filePath = filePath;
-        LoadPixelShader(&(it->second->pixelShader), filePath);
+        it->second->filePath = cacheKey;
+        LoadPixelShader(&(it->second->pixelShader), cacheKey);
         return it->second.get();
     }
 
     // キャッシュに存在しない場合は新規に追加する
-    m_pixelShaderCache[filePath] = std::make_unique<PixelShaderResource>();
-    m_pixelShaderCache[filePath]->filePath = filePath;
-    LoadPixelShader(&(m_pixelShaderCache[filePath]->pixelShader), filePath);
-    return m_pixelShaderCache[filePath].get();
+    m_pixelShaderCache[cacheKey] = std::make_unique<PixelShaderResource>();
+    m_pixelShaderCache[cacheKey]->filePath = cacheKey;
+    LoadPixelShader(&(m_pixelShaderCache[cacheKey]->pixelShader), cacheKey);
+    return m_pixelShaderCache[cacheKey].get();
 }
 
 // 定数バッファリソースの生成
@@ -240,9 +242,9 @@ ConstantBufferResource* ShaderRepository::GenerateConstantBufferResource(
 // ----------------------------- private シェーダー読み込み
 #pragma region シェーダー読み込み
 // 頂点シェーダーの読み込み
-bool ShaderRepository::LoadVertexShader(ID3D11VertexShader** outVs, const std::string& filePath, VsBinaryData& vbData)
+bool ShaderRepository::LoadVertexShader(ID3D11VertexShader** outVs, const std::filesystem::path& filePath, VsBinaryData& vbData)
 {
-    std::ifstream ifs_vs(SHADER_DIRECTORY + filePath, std::ios::binary);
+    std::ifstream ifs_vs(SHADER_DIRECTORY / filePath, std::ios::binary);
     if (!ifs_vs)return false;
 
     // ファイルサイズを取得
@@ -332,10 +334,10 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
 }
 
 // ピクセルシェーダーの読み込み
-bool ShaderRepository::LoadPixelShader(ID3D11PixelShader** outPs, const std::string& filePath)
+bool ShaderRepository::LoadPixelShader(ID3D11PixelShader** outPs, const std::filesystem::path& filePath)
 {
     // 事前コンパイル済みピクセルシェーダーの読み込み
-    std::ifstream ifs_ps(SHADER_DIRECTORY + filePath, std::ios::binary);
+    std::ifstream ifs_ps(SHADER_DIRECTORY / filePath, std::ios::binary);
     if (!ifs_ps)return false;
 
     // ファイルサイズを取得

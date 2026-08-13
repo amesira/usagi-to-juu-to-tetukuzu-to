@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <filesystem>
 
 class TextureRepository {
 private:
@@ -17,7 +18,7 @@ private:
     ID3D11DeviceContext* m_pContext = nullptr;
 
     // テクスチャリソースのキャッシュ
-    std::unordered_map<std::wstring, std::unique_ptr<TextureResource>> m_textureCache;
+    std::unordered_map<std::filesystem::path, std::unique_ptr<TextureResource>> m_textureCache;
 
 public:
     // 初期化
@@ -28,14 +29,14 @@ public:
     // テクスチャの生成。
     TextureResource* GenerateTextureResource(const TextureResource& texture);
     // テクスチャの取得。キャッシュに無い場合は読み込む。
-    TextureResource* GetTextureResource(const std::wstring& filePath);
+    TextureResource* GetTextureResource(const std::filesystem::path& filePath);
 
 private:
     // テクスチャの読み込み
-    TextureResource* LoadTexture(const std::wstring& filePath);
+    TextureResource* LoadTexture(const std::filesystem::path& filePath);
 
     // テクスチャの解放
-    void ReleaseTexture(const std::wstring& filePath);
+    void ReleaseTexture(const std::filesystem::path& filePath);
 };
 
 #endif // TEXTURE_REPOSITORY_H

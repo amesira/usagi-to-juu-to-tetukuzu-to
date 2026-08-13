@@ -103,10 +103,10 @@ namespace
 
     bool InputTextureResource(const char* label, TextureResource*& textureResource)
     {
-        std::string texturePath = textureResource ? MiString::ToUTF8(textureResource->name) : "";
+        std::string texturePath = textureResource ? textureResource->sourcePath.generic_string() : "";
         if (!InputTextFromString(label, texturePath)) return false;
 
-        TextureResource* newTextureResource = TEXTURE_REPOSITORY->GetTextureResource(MiString::ToWString(texturePath));
+        TextureResource* newTextureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
         if (!newTextureResource) return false;
 
         textureResource = newTextureResource;
@@ -527,7 +527,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
     if (model) {
         if (BeginComponentSection(model, "Model")){
             // モデルリソースの名前を表示
-            std::string modelName = model->GetModelResource()->filePath;
+            std::string modelName = model->GetModelResource()->filePath.generic_string();
             ImGui::Text("Model Resource:");
             ImGui::Text("  %s", modelName.c_str());
             
@@ -899,7 +899,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
             auto& renderer = particleSystem->Renderer();
             if (ImGui::TreeNode("Renderer")) {
                 if (renderer.textureResource) {
-                    ImGui::Text("Texture: %s", MiString::ToUTF8(renderer.textureResource->name).c_str());
+                    ImGui::Text("Texture: %s", renderer.textureResource->sourcePath.generic_string().c_str());
                 }
                 else {
                     ImGui::Text("Texture: None");

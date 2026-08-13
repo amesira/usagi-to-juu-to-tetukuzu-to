@@ -89,17 +89,17 @@ MaterialResource* MaterialRepository::GenerateMaterial(const MaterialResource& m
 }
 
 // マテリアルの取得。キャッシュに無い場合は読み込む。
-MaterialResource* MaterialRepository::GetMaterial(const std::string& filePath)
+MaterialResource* MaterialRepository::GetMaterial(const std::string& materialName)
 {
     // キャッシュを確認
-    auto it = m_materialCache.find(filePath);
+    auto it = m_materialCache.find(materialName);
     if (it != m_materialCache.end())
     {
         return it->second.get();
     }
 
     // キャッシュに無い場合は読み込む
-    return LoadMaterial(filePath);
+    return LoadMaterial(materialName);
 }
 
 // マテリアルのバインド
@@ -179,19 +179,19 @@ void MaterialRepository::BindCustomTextures(TextureResource** customTextures)
 //-------------------------------------
 
 // マテリアルの読み込み
-MaterialResource* MaterialRepository::LoadMaterial(const std::string& filePath)
+MaterialResource* MaterialRepository::LoadMaterial(const std::string& materialName)
 {
-    m_materialCache[filePath] = std::make_unique<MaterialResource>();
-    MaterialResource* materialResource = m_materialCache[filePath].get();
-    materialResource->name = filePath;
+    m_materialCache[materialName] = std::make_unique<MaterialResource>();
+    MaterialResource* materialResource = m_materialCache[materialName].get();
+    materialResource->name = materialName;
 
     return materialResource;
 }
 
 // マテリアルの解放
-void MaterialRepository::ReleaseMaterial(const std::string& filePath)
+void MaterialRepository::ReleaseMaterial(const std::string& materialName)
 {
-    auto it = m_materialCache.find(filePath);
+    auto it = m_materialCache.find(materialName);
     if (it != m_materialCache.end())
     {
         // ComPtrが自動的にリソースを解放するので、特になし

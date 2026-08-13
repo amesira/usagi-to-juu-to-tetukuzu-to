@@ -10,6 +10,7 @@
 
 #include <unordered_map>
 #include <memory>
+#include <filesystem>
 
 class ShaderRepository {
 private:
@@ -20,9 +21,9 @@ private:
     std::unordered_map<std::string, std::unique_ptr<ShaderProgramResource>> m_shaderCache;
 
     // 頂点シェーダキャッシュ
-    std::unordered_map<std::string, std::unique_ptr<VertexShaderResource>> m_vertexShaderCache;
+    std::unordered_map<std::filesystem::path, std::unique_ptr<VertexShaderResource>> m_vertexShaderCache;
     // ピクセルシェーダーキャッシュ
-    std::unordered_map<std::string, std::unique_ptr<PixelShaderResource>> m_pixelShaderCache;
+    std::unordered_map<std::filesystem::path, std::unique_ptr<PixelShaderResource>> m_pixelShaderCache;
     // 定数バッファキャッシュ
     std::unordered_map<std::string, std::unique_ptr<ConstantBufferResource>> m_constantBufferCache;
 
@@ -59,16 +60,16 @@ public:
     }
 
     // 頂点シェーダーリソースの生成・取得
-    VertexShaderResource* GenerateVertexShaderResource(const std::string& filePath, VertexType vertexType);
-    VertexShaderResource* GetVertexShaderResource(const std::string& filePath) {
-        auto it = m_vertexShaderCache.find(filePath);
+    VertexShaderResource* GenerateVertexShaderResource(const std::filesystem::path& filePath, VertexType vertexType);
+    VertexShaderResource* GetVertexShaderResource(const std::filesystem::path& filePath) {
+        auto it = m_vertexShaderCache.find(filePath.lexically_normal());
         if (it != m_vertexShaderCache.end()) return it->second.get();
         return nullptr;
     }
     // ピクセルシェーダーリソースの生成・取得
-    PixelShaderResource* GeneratePixelShaderResource(const std::string& filePath);
-    PixelShaderResource* GetPixelShaderResource(const std::string& filePath) {
-        auto it = m_pixelShaderCache.find(filePath);
+    PixelShaderResource* GeneratePixelShaderResource(const std::filesystem::path& filePath);
+    PixelShaderResource* GetPixelShaderResource(const std::filesystem::path& filePath) {
+        auto it = m_pixelShaderCache.find(filePath.lexically_normal());
         if (it != m_pixelShaderCache.end()) return it->second.get();
         return GeneratePixelShaderResource(filePath); // キャッシュにない場合は生成して返す
     }
@@ -85,11 +86,11 @@ public:
 
 private:
     // 頂点シェーダーの読み込み
-    bool LoadVertexShader(ID3D11VertexShader** outVs, const std::string& filePath, VsBinaryData& vbData);
+    bool LoadVertexShader(ID3D11VertexShader** outVs, const std::filesystem::path& filePath, VsBinaryData& vbData);
     // 頂点レイアウトの作成
     bool CreateInputLayout(ID3D11InputLayout** outInputLayout, VertexType vertexType, const VsBinaryData& vbData);
     // ピクセルシェーダーの読み込み
-    bool LoadPixelShader(ID3D11PixelShader** outPs, const std::string& filePath);
+    bool LoadPixelShader(ID3D11PixelShader** outPs, const std::filesystem::path& filePath);
 
 };
 

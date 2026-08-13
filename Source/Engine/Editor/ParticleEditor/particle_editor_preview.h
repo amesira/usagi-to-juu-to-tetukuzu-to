@@ -42,7 +42,7 @@ public:
     void Cleanup();
 
     /// @brief シーンリロード時の処理
-    void ReloadScene();
+    void OnSceneDestroyed();
 
     void Play();
     void Pause();

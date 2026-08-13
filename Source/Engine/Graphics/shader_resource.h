@@ -14,6 +14,7 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 #include <string>
+#include <filesystem>
 #include <array>
 
 #include "shader_definitions.h"
@@ -22,7 +23,7 @@ using namespace ShaderDefinitions;
 // 頂点シェーダーリソース
 class VertexShaderResource {
 public:
-    std::string filePath;    // シェーダーファイルのパス
+    std::filesystem::path filePath;    // シェーダーファイルのパス
     ComPtr<ID3D11VertexShader> vertexShader;  // 頂点シェーダー
     ComPtr<ID3D11InputLayout>  inputLayout;   // 頂点レイアウト
     VertexType vertexType; // 頂点の種類
@@ -31,7 +32,7 @@ public:
 // ピクセルシェーダーリソース
 class PixelShaderResource {
 public:
-    std::string filePath;    // シェーダーファイルのパス
+    std::filesystem::path filePath;    // シェーダーファイルのパス
     ComPtr<ID3D11PixelShader>  pixelShader;   // ピクセルシェーダー
 };
 
