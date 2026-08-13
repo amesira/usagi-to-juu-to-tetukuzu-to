@@ -12,25 +12,8 @@
 
 #include "field.h"
 
-class IFieldSchema {
-public:
-    virtual ~IFieldSchema() = default;
-
-    // MEMO: 派生クラスで実装されるForEachを呼び出す
-    template<class TFunction>
-    void ForEach(TFunction&& function)
-    {
-        
-    }
-    template<class TFunction>
-    void ForEach(TFunction&& function) const
-    {
-        
-    }
-};
-
 template<class... TFields> // MEMO: 0個以上の型を受け取る可変長テンプレート
-class FieldSchema : public IFieldSchema {
+class FieldSchema {
 private:
     std::tuple<TFields...> m_fields;
     // MEMO: std::tupleとTFields...を使うことで、異なる型のFieldをまとめて管理できる

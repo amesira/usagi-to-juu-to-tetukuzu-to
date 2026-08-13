@@ -12,23 +12,30 @@
 #include "Engine/Editor/editor_context.h"
 #include "Engine/Editor/Schema/field_editor.h"
 
+#include "Engine/engine_service_locator.h"
+
 namespace
 {
     // パーティクルアセットのディレクトリ
     const std::filesystem::path DATA_ASSET_DIRECTORY = "asset/Data";
+
+    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
 }
 
 void DataEditorWindow::Draw()
 {
+    const float statusBarHeight = ImGui::GetFrameHeightWithSpacing();
+    ImGui::BeginChild("MainContent",ImVec2(0.0f, -statusBarHeight),false);
+
     // ツールバーを描画
     DrawToolbar();
     ImGui::Separator();
 
-    // レイアウトを3列のテーブルで描画する
+    // レイアウトを2列のテーブルで描画する
     if (ImGui::BeginTable("ParticleEditorLayout", 2,
         ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerV))
     {
-        // 左から順に、アセットリスト、プレビュー、パラメータ編集パネルの列を設定する
+        // 左から順に、アセットリスト、パラメータ編集パネルの列を設定する
         ImGui::TableSetupColumn("Assets", ImGuiTableColumnFlags_WidthFixed, 230.0f);
         ImGui::TableSetupColumn("Parameters", ImGuiTableColumnFlags_WidthStretch, 1.0f);
         ImGui::TableNextRow();
@@ -40,6 +47,8 @@ void DataEditorWindow::Draw()
         DrawParameters();
         ImGui::EndTable();
     }
+
+    ImGui::EndChild();
 
     // ステータスバーを描画する
     ImGui::Separator();
@@ -171,7 +180,8 @@ void DataEditorWindow::DrawParameters()
         return;
     }
 
-    bool changed = FieldEditor::DrawFields(asset, asset->GetFieldSchema());
+    //bool changed = FieldEditor::DrawFields(asset, asset->GetFieldSchema());
+    bool changed = asset->DrawDataOnEditor();
     if (changed) m_document.MarkDirty();
 
     ImGui::EndChild();
@@ -180,6 +190,11 @@ void DataEditorWindow::DrawParameters()
 /// @brief ステータスバーを描画する
 void DataEditorWindow::DrawStatusBar()
 {
+    const float statusBarHeight = ImGui::GetFrameHeightWithSpacing();
+    const float windowBottom = ImGui::GetWindowContentRegionMax().y;
+    ImGui::SetCursorPosY(windowBottom - statusBarHeight);
+    ImGui::Separator();
+
     // アセットのパスが空の場合は、"Untitled"と表示する
     const std::string path = m_document.HasAssetPath()
         ? m_document.GetAssetPath().generic_string()
@@ -211,7 +226,17 @@ void DataEditorWindow::RefreshAssetList()
     {
         if (iterator->is_regular_file(error) && iterator->path().extension() == ".json" && iterator->path().stem().extension() == ".data") 
         {
-            std::string typeName = iterator->path().stem().stem().string(); // 拡張子を除いた型名を取得
+            // データアセットの型名を取得する
+            const DataAsset* asset = DATA_LOADER->GetAsset(iterator->path());
+            if (!asset)
+            {
+                // 型名の取得に失敗した場合は、次のファイルに進む
+                iterator.increment(error);
+                continue;
+            }
+
+            std::string typeName = asset->GetAssetTypeName().data();
+
             auto it = std::find_if(m_assetPaths.begin(), m_assetPaths.end(),
                 [&](const DataAssetPathEntry& entry) { return entry.typeName == typeName; });
             
@@ -245,7 +270,13 @@ void DataEditorWindow::SyncPathBuffer()
 /// @brief 指定されたパスのアセットを開く
 bool DataEditorWindow::OpenAsset(const std::filesystem::path& path)
 {
-    if (!m_document.Open(path)) return false;
+    // pathからassetTypeNameを取得する
+    auto it = std::find_if(m_assetPaths.begin(), m_assetPaths.end(),
+        [&](const DataAssetPathEntry& entry) { return std::find(entry.paths.begin(), entry.paths.end(), path) != entry.paths.end(); });
+    std::string assetTypeName = (it != m_assetPaths.end()) ? it->typeName : "";
+
+    // データアセットを開く
+    if (!m_document.Open(path, assetTypeName)) return false;
 
     SyncPathBuffer();
     return true;

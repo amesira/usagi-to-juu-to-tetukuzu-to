@@ -28,7 +28,7 @@ public:
     DataEditorDocument() = default;
 
     void New();
-    bool Open(const std::filesystem::path& path);
+    bool Open(const std::filesystem::path& path, const std::string& assetTypeName);
     bool Save();
     bool SaveAs(std::filesystem::path& path);
 

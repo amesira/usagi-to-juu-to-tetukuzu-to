@@ -36,7 +36,7 @@ void DataEditorDocument::New()
 }
 
 /// @brief データアセットを指定されたパスから開く
-bool DataEditorDocument::Open(const std::filesystem::path& path)
+bool DataEditorDocument::Open(const std::filesystem::path& path, const std::string& assetTypeName)
 {
     const std::string pathString = path.generic_string();
 
@@ -47,6 +47,7 @@ bool DataEditorDocument::Open(const std::filesystem::path& path)
     }
 
     // === データアセットをロードする ===
+    m_assetTypeName = assetTypeName;
     std::unique_ptr<DataAsset> loadedAsset = DATA_LOADER->CreateAsset(m_assetTypeName);
     if (!loadedAsset)
     {   // 指定された型のデータアセットが存在しない
@@ -120,6 +121,8 @@ bool DataEditorDocument::SaveAs(std::filesystem::path& path)
     }
     m_assetPath = path.lexically_normal();
     m_dirty = false;
+
+    DATA_LOADER->ReloadDataAsset(path); // キャッシュを更新する
 
     m_statusMessage = "Saved: " + path.generic_string();
     return true;

@@ -19,8 +19,6 @@
 void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
 {
     if (intent.useGravity) {
-
-
         if (context.runtimeState.m_isGrounded) {
             context.runtimeState.m_physicsVelocity.y = -0.1f;
         }
@@ -48,11 +46,11 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
 
     if (intent.canMove) {
 
-        XMFLOAT3 inputVelocity = MiMath::Multiply(intent.moveDirection, intent.moveInputMagnitude * context.settings.moveSpeed * intent.speedMultiplier);
+        XMFLOAT3 inputVelocity = MiMath::Multiply(intent.moveDirection, intent.moveInputMagnitude * context.settings().moveSpeed * intent.speedMultiplier);
         inputVelocity.y = 0.0f;
 
         // 移動入力がある場合は通常の平滑化時間、移動入力がない場合は停止時の平滑化時間を使用する
-        float smoothTime = (intent.moveInputMagnitude > 0.01f) ? context.settings.smoothTime : context.settings.stopSmoothTime;
+        float smoothTime = (intent.moveInputMagnitude > 0.01f) ? context.settings().smoothTime : context.settings().stopSmoothTime;
 
         // SmoothDampを使用して、現在の速度から目標速度に向かって平滑化する
         float desiredVelocityX = MiMath::SmoothDamp(

@@ -39,6 +39,9 @@ void ParticleSystemEditorWindow::Draw()
     m_preview.GeneratePreviewObject(m_document.GetEditingDesc());
     m_preview.Update();
 
+    const float statusBarHeight = ImGui::GetFrameHeightWithSpacing();
+    ImGui::BeginChild("MainContent", ImVec2(0.0f, -statusBarHeight), false);
+
     // ツールバーを描画
     DrawToolbar();
     ImGui::Separator();
@@ -62,6 +65,8 @@ void ParticleSystemEditorWindow::Draw()
         DrawParameters();
         ImGui::EndTable();
     }
+
+    ImGui::EndChild();
 
     // ステータスバーを描画する
     ImGui::Separator();
@@ -197,6 +202,11 @@ void ParticleSystemEditorWindow::DrawParameters()
 /// @brief ParticleEditorのステータスバーを描画する
 void ParticleSystemEditorWindow::DrawStatusBar()
 {
+    const float statusBarHeight = ImGui::GetFrameHeightWithSpacing();
+    const float windowBottom = ImGui::GetWindowContentRegionMax().y;
+    ImGui::SetCursorPosY(windowBottom - statusBarHeight);
+    ImGui::Separator();
+
     // MEMO: パーティクルアセットのパスが空の場合は、"Untitled"と表示する
     const std::string path = m_document.HasAssetPath()
         ? m_document.GetAssetPath().generic_string()

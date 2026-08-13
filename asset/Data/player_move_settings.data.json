@@ -1,0 +1,12 @@
+{
+    "data": {
+        "jumpForce": 10.0,
+        "moveSpeed": 20.0,
+        "rotationSpeed": 10.0,
+        "smoothTime": 0.15000000596046448,
+        "stopSmoothTime": 0.10000000149011612
+    },
+    "formatVersion": 0,
+    "name": "player_move_settings.data",
+    "type": "PlayerMoveSettingsAsset"
+}

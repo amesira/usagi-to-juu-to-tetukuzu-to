@@ -4,14 +4,17 @@
 // Author：Miu Kitamura
 // 
 // ・DataAssetの基底クラスを定義する
-// ・DataAssetはシリアライズ、デシリアライズの責務も持つ
+// ・DataAssetはシリアライズ、デシリアライズ、エディタ描画の責務も持つ
 // ・AssetTypeNameとFormatVersionはDataAssetの種類ごとに異なるため、派生クラスで定義する
 //---------------------------------------------------
 #pragma once
 #include "Engine/Asset/i_asset.h"
+
 #include <string_view>
 #include <nlohmann/json.hpp>
 #include <functional>
+
+#include "Engine/Editor/Schema/field_editor.h"
 
 class IFieldSchema;
 
@@ -30,9 +33,6 @@ public:
     /// @brief DataAssetを複製する
     virtual std::unique_ptr<DataAsset> Clone() const = 0;
 
-    /// @brief DataAssetのフィールドスキーマを取得する
-    virtual const IFieldSchema& GetFieldSchema() = 0;
-
     // === タイプ、フォーマットバージョン ===
 
     /// @brief DataAssetの種類を表す文字列を取得する
@@ -47,5 +47,10 @@ public:
     /// @brief DataAssetのデータをJSON形式からデシリアライズする
     /// @return デシリアライズに成功した場合は、実データに反映した上でtrueを返す
     virtual bool DeserializeDataToApply(const nlohmann::json& jsonData) = 0;
+
+    // === エディター ===
+
+    /// @brief DataAssetのデータをエディター上で描画する
+    virtual bool DrawDataOnEditor() { return false; } 
 
 };

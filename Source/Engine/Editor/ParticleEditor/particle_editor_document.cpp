@@ -113,6 +113,8 @@ bool ParticleEditorDocument::SaveAs(std::filesystem::path& path)
     m_assetPath = path.lexically_normal();
     m_dirty = false;
 
+    PARTICLE_LOADER->ReloadParticle(path); // キャッシュを更新する
+
     m_statusMessage = "Saved: " + path.generic_string();
     return true;
 }

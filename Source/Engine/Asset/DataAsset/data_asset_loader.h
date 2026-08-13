@@ -39,7 +39,7 @@ public:
     /// @brief 指定された型のDataAssetを取得する。キャッシュの生成もここで行う
     /// @tparam TAsset 指定された型のDataAsset。DataAssetを継承している必要がある
     template<class TAsset>
-    TAsset* GetAsset(const std::filesystem::path& filePath, bool createIfMissing)
+    TAsset* GetAsset(const std::filesystem::path& filePath, bool createIfMissing = false)
     {
         static_assert(std::is_base_of<DataAsset, TAsset>::value && "TAsset must be derived from DataAsset");
 
@@ -79,6 +79,16 @@ public:
 
         // ダウンキャストして返す
         return static_cast<TAsset*>(baseAsset);
+    }
+
+    /// @brief 指定されたパスのDataAsset基底アドレスを取得する
+    const DataAsset* GetAsset(const std::filesystem::path& filePath) const
+    {
+        auto it = m_dataAssetCache.find(filePath.lexically_normal());
+        if (it != m_dataAssetCache.end()) {
+            return it->second.get();
+        }
+        return nullptr;
     }
 
     /// @brief DataAssetをJSON形式で再読み込みする

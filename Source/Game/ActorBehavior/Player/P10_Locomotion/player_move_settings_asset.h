@@ -7,14 +7,24 @@
 
 #include "player_move_context.h"
 
-namespace PlayerMoveAssetsSchema
-{
-    using json = nlohmann::json;
-
-    // PlayerMoveのスキーマを取得
-    inline const IFieldSchema& GetPlayerMoveSchema()
+namespace PlayerMoveSettings {
+    /// @brief PlayerMoveの設定値を保持する構造体
+    struct Data
     {
-        using MoveSettings = PlayerMoveSettings;
+        float   moveSpeed = 10.0f;
+        float   jumpForce = 10.0f;
+
+        float   rotationSpeed = 10.0f;
+
+        float   smoothTime = 0.1f; // 平滑化の時間（秒）
+        float   stopSmoothTime = 0.05f; // 停止時の平滑化の時間（秒）
+    };
+
+    /// @brief PlayerMoveSettingsのFieldSchemaを取得する
+    using json = nlohmann::json;
+    static const auto& GetSchema()
+    {
+        using MoveSettings = Data;
 
         static const auto& schema = FieldSchema{
             MakeField(
@@ -64,28 +74,23 @@ namespace PlayerMoveAssetsSchema
     }
 }
 
-class PlayerMoveAsset : public DataAsset {
+class PlayerMoveSettingsAsset : public DataAsset {
 private:
-    PlayerMoveSettings m_moveSettings;
+    PlayerMoveSettings::Data m_data;
 
-    static constexpr std::string_view s_assetTypeName = "PlayerMoveAsset";
-    static constexpr int s_supportedFormatVersion = 1;
+    static constexpr std::string_view s_assetTypeName = "PlayerMoveSettingsAsset";
+    static constexpr int s_supportedFormatVersion = 0;
 
 public:
-    PlayerMoveAsset() : DataAsset(DataAssetTypeID::getTypeID<PlayerMoveAsset>()) {}
-    ~PlayerMoveAsset() override = default;
+    PlayerMoveSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<PlayerMoveSettingsAsset>()) {}
+    ~PlayerMoveSettingsAsset() override = default;
 
     /// @brief PlayerMoveAssetを複製する
     std::unique_ptr<DataAsset> Clone() const override
     {
-        auto clone = std::make_unique<PlayerMoveAsset>();
-        clone->m_moveSettings = m_moveSettings;
+        auto clone = std::make_unique<PlayerMoveSettingsAsset>();
+        clone->m_data = m_data;
         return clone;
-    }
-
-    const IFieldSchema& GetFieldSchema() override
-    {
-        return PlayerMoveAssetsSchema::GetPlayerMoveSchema();
     }
 
     std::string_view GetAssetTypeName() const override { return s_assetTypeName; }
@@ -94,23 +99,32 @@ public:
     /// @brief PlayerMoveSettingsをJSON形式でシリアライズする
     nlohmann::json SerializeData() const override
     {
-        nlohmann::json jsonData = FieldSerialization::SerializeFields(m_moveSettings, PlayerMoveAssetsSchema::GetPlayerMoveSchema());
+        nlohmann::json jsonData = FieldSerialization::SerializeFields(m_data, PlayerMoveSettings::GetSchema());
         return jsonData;
     }
 
     /// @brief PlayerMoveSettingsをJSON形式からデシリアライズする
     bool DeserializeDataToApply(const nlohmann::json& jsonData) override
     {
-        PlayerMoveSettings loaded = m_moveSettings;
-        if (!FieldSerialization::DeserializeFields(jsonData, loaded, PlayerMoveAssetsSchema::GetPlayerMoveSchema())) {
+        PlayerMoveSettings::Data loaded = m_data;
+        if (!FieldSerialization::DeserializeFields(jsonData, loaded, PlayerMoveSettings::GetSchema())) {
             return false;
         }
 
         // デシリアライズに成功した場合は、実データに反映する
-        m_moveSettings = loaded;
+        m_data = loaded;
         return true;
     }
 
-    /// @brief PlayerMoveSettingsを取得する
-    const PlayerMoveSettings& GetMoveSettings() const { return m_moveSettings; }
+    /// @brief PlayerMoveSettingsのデータをエディター上で描画する
+    bool DrawDataOnEditor() override
+    {
+        bool changed = false;
+        changed |= FieldEditor::DrawFields(m_data, PlayerMoveSettings::GetSchema());
+        return changed;
+    }
+
+    /// @brief PlayerMoveSettingsのデータを取得する
+    const PlayerMoveSettings::Data& GetData() const { return m_data; }
+
 };

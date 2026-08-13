@@ -9,6 +9,8 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
+
 #include "Game/ActorBehavior/Player/P10_Locomotion/Move/player_move_motor.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/Move/player_move_rotate.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/Move/player_move_effects.h"
@@ -31,18 +33,6 @@ struct PlayerMoveReferences
 
 };
 
-/// @brief PlayerMoveの設定値を保持する構造体（FIX: いずれはDataAsset化する）
-struct PlayerMoveSettings
-{
-    float   moveSpeed = 10.0f;
-    float   jumpForce = 10.0f;
-
-    float   rotationSpeed = 10.0f;
-
-    float   smoothTime = 0.1f; // 平滑化の時間（秒）
-    float   stopSmoothTime = 0.05f; // 停止時の平滑化の時間（秒）
-};
-
 /// @brief PlayerMoveBehaviorのコンテキストを保持する構造体
 struct PlayerMoveContext
 {
@@ -50,7 +40,10 @@ struct PlayerMoveContext
 
     PlayerMoveRuntimeState runtimeState;
     PlayerMoveReferences references;
-    PlayerMoveSettings settings;
+    const PlayerMoveSettingsAsset* settingsAsset = nullptr;
+    const auto& settings() {
+        return settingsAsset->GetData();
+    }
 
     class TransformComponent* transform = nullptr;
     class RigidbodyComponent* rigidbody = nullptr;

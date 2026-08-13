@@ -11,6 +11,7 @@
 #include "Utility/mi_math.h"
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/engine_service_locator.h"
 
 // === Component ===
 #include "Engine/Framework/Component/transform_component.h"
@@ -25,6 +26,10 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
 #include <cmath>
+
+namespace {
+    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+}
 
 void PlayerMoveBehavior::Start() {}
 
@@ -56,6 +61,10 @@ void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
     m_context.moveMotor = {};
     m_context.moveRotate = {};
     m_context.moveEffects = {};
+
+    if (m_context.settingsAsset == nullptr) {
+        m_context.settingsAsset = DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>("asset/Data/player_move_settings.data.json", true);
+    }
 }
 
 void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
@@ -65,7 +74,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // 移動アクション類の更新要求などはここ？（ジャンプやブリンクなど）
     if (input.triggerJumpCommand) {
         // ジャンプ処理の要求をここで行う
-        m_context.runtimeState.m_physicsVelocity.y = m_context.settings.jumpForce;
+        m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce; // ジャンプ力を設定
         m_context.runtimeState.m_isGrounded = false; // ジャンプ中は地面に接地していない状態にする
     }
 
