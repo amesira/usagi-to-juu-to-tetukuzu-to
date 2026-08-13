@@ -19,6 +19,9 @@ private:
     // DataAssetのキャッシュ
     std::unordered_map<std::filesystem::path, std::unique_ptr<DataAsset>> m_dataAssetCache;
 
+    // タイプごとのDataAssetデフォルトインスタンスを保持するマップ
+    std::unordered_map<std::string, std::unique_ptr<DataAsset>> m_defaultAssetMap;
+
 public:
     /// @brief DataAssetLoaderを初期化する
     void Initialize();
@@ -36,7 +39,7 @@ public:
     /// @brief 指定された型のDataAssetを取得する。キャッシュの生成もここで行う
     /// @tparam TAsset 指定された型のDataAsset。DataAssetを継承している必要がある
     template<class TAsset>
-    TAsset* GetAsset(const std::filesystem::path& filePath)
+    TAsset* GetAsset(const std::filesystem::path& filePath, bool createIfMissing)
     {
         static_assert(std::is_base_of<DataAsset, TAsset>::value && "TAsset must be derived from DataAsset");
 
@@ -52,8 +55,14 @@ public:
         // キャッシュに無い場合はロードする
         if (baseAsset == nullptr) {
             auto newAsset = std::make_unique<TAsset>();
+
             if (!LoadDataAsset(cacheKey, *newAsset)) {
-                return nullptr;
+                if (!createIfMissing) {
+                    return nullptr;
+                }
+
+                // ロードに失敗した場合は新規セーブする
+                SaveDataAsset(cacheKey, *newAsset);
             }
 
             baseAsset = newAsset.get();
@@ -65,6 +74,9 @@ public:
             return nullptr;
         }
 
+        // === デフォルトインスタンスを保持するマップに登録する ===
+        m_defaultAssetMap[baseAsset->GetAssetTypeName().data()] = std::make_unique<TAsset>();
+
         // ダウンキャストして返す
         return static_cast<TAsset*>(baseAsset);
     }
@@ -73,4 +85,16 @@ public:
     /// @return キャッシュにある場合は更新してtrueを返す。キャッシュに無い場合は読み込まない
     bool ReloadDataAsset(const std::filesystem::path& filePath);
 
+    // ----------- デフォルトインスタンス
+    /// @brief 指定された型のDataAssetのデフォルトアセットを生成する
+    std::unique_ptr<DataAsset> CreateAsset(const std::string& typeName) const
+    {
+        auto it = m_defaultAssetMap.find(typeName);
+        if (it == m_defaultAssetMap.end()) return nullptr;
+
+        const DataAsset* defaultAsset = it->second.get();
+        if (!defaultAsset) return nullptr;
+
+        return defaultAsset->Clone();
+    }
 };

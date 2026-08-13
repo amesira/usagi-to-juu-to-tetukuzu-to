@@ -17,11 +17,11 @@
 
 namespace
 {
-    const std::filesystem::path GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.json";
-    const std::filesystem::path RUN_DUST_PARTICLE_ASSET = "asset/Particle/run_dust.json";
-    const std::filesystem::path CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.json";
-    const std::filesystem::path HIT_PARTICLE_ASSET = "asset/Particle/hit.json";
-    const std::filesystem::path EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.json";
+    const std::filesystem::path GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.particle.json";
+    const std::filesystem::path RUN_DUST_PARTICLE_ASSET = "asset/Particle/run_dust.particle.json";
+    const std::filesystem::path CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.particle.json";
+    const std::filesystem::path HIT_PARTICLE_ASSET = "asset/Particle/hit.particle.json";
+    const std::filesystem::path EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.particle.json";
 
     bool ApplyParticleAsset(
         ParticleSystemComponent* particleSystem,

@@ -10,11 +10,13 @@
 /// @brief AssetManagerの初期化
 void AssetManager::Initialize()
 {
+    m_dataAssetLoader.Initialize();
     m_particleAssetLoader.Initialize();
 }
 
 /// @brief AssetManagerの終了処理
 void AssetManager::Finalize()
 {
+    m_dataAssetLoader.Finalize();
     m_particleAssetLoader.Finalize();
 }

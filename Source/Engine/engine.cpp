@@ -37,12 +37,12 @@ bool MiEngine::Initialize(HWND hWnd)
     m_assetManager.Initialize();
     DebugRenderer_Initialize();
 
-    // GameWorldの初期化
-    m_gameWorld.Initialize();
-
     // Editorの初期化
     m_editorManager.Initialize(hWnd);
     m_editorContext = &(m_editorManager.GetEditorContext());
+
+    // GameWorldの初期化
+    m_gameWorld.Initialize();
 
     return true;
 }

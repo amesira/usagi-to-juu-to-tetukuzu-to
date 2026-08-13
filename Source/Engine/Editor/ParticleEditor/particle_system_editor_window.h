@@ -32,9 +32,9 @@ public:
     explicit ParticleSystemEditorWindow(EditorContext* editorContext);
 
     void Draw() override;
-    void OnWindowClosed();
+    void OnWindowClosed() override;
 
-    /// @brief CleanUp
+    /// @brief シーンが破棄されたときの処理
     void OnSceneDestroyed();
 
 private:

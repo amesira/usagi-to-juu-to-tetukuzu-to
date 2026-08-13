@@ -1,11 +1,13 @@
 //===================================================
-// File  ：Engine/Editor/ParticleEditor/particle_editor_document.cpp
+// File  ：_/Editor/ParticleEditor/particle_editor_document.cpp
 // Date  ：2026/07/26
 // Author：Miu Kitamura
 // 
 // ・ParticleEditorのドキュメント管理クラス（アセットの読み書き、編集状態の管理など）
 //===================================================
 #include "particle_editor_document.h"
+#include <iostream>
+#include <filesystem>
 
 #include "Engine/engine_service_locator.h"
 
@@ -13,25 +15,26 @@ namespace {
     #define PARTICLE_LOADER EngineServiceLocator::GetAssetManager()->GetParticleAssetLoader()
 }
 
-ParticleEditorDocument::ParticleEditorDocument()
-{
-    New();
-}
-
 /// @brief 新しいパーティクルアセットを作成する
 void ParticleEditorDocument::New()
 {
     m_asset = ParticleSystemAsset{};
     m_assetPath.clear();
-    SetDefaultAsset();
     m_dirty = false;
     m_statusMessage = "New particle asset";
+
+    // === 新しいパーティクルアセットを設定する ===
+    m_asset.SetHeader(AssetHeader{
+        .m_type = "ParticleSystem",
+        .m_formatVersion = 1,
+        .m_name = "NewParticleSystem"
+        });
+    m_asset.GetDesc() = ParticleSystemDesc{};
 }
 
 /// @brief パーティクルアセットを指定されたパスから開く
 bool ParticleEditorDocument::Open(const std::filesystem::path& path)
 {
-    ParticleSystemAsset loadedAsset;
     const std::string pathString = path.generic_string();
 
     // パスが空の場合はエラーを返す
@@ -42,6 +45,7 @@ bool ParticleEditorDocument::Open(const std::filesystem::path& path)
     }
 
     // パーティクルアセットをロードする
+    ParticleSystemAsset loadedAsset;
     bool success = PARTICLE_LOADER->LoadParticle(path, loadedAsset);
     if (!success)
     {
@@ -71,7 +75,7 @@ bool ParticleEditorDocument::Save()
 }
 
 /// @brief パーティクルアセットを指定されたパスに保存する
-bool ParticleEditorDocument::SaveAs(const std::filesystem::path& path)
+bool ParticleEditorDocument::SaveAs(std::filesystem::path& path)
 {
     if (path.empty())
     {
@@ -90,15 +94,17 @@ bool ParticleEditorDocument::SaveAs(const std::filesystem::path& path)
         }
     }
 
-    // === アセットのヘッダーを設定する ===
+    if (path.extension() != ".json" || path.stem().extension() != ".particle")
+    {
+        path.replace_extension(".particle.json");
+    }
+
+    // === パーティクルアセットを保存する ===
     AssetHeader header = m_asset.GetHeader();
-    header.m_type = "ParticleSystem";
-    header.m_formatVersion = 1;
     header.m_name = path.stem().string();
     m_asset.SetHeader(header);
     m_asset.SetFilePath(path);
 
-    // === パーティクルアセットを保存する ===
     if (!PARTICLE_LOADER->SaveParticle(path, m_asset))
     {
         m_statusMessage = "Failed to save: " + path.generic_string();
@@ -109,15 +115,4 @@ bool ParticleEditorDocument::SaveAs(const std::filesystem::path& path)
 
     m_statusMessage = "Saved: " + path.generic_string();
     return true;
-}
-
-/// @brief デフォルトのパーティクルアセットを設定する
-void ParticleEditorDocument::SetDefaultAsset()
-{
-    AssetHeader header;
-    header.m_type = "ParticleSystem";
-    header.m_formatVersion = 1;
-    header.m_name = "NewParticleSystem";
-    m_asset.SetHeader(header);
-    m_asset.GetDesc() = ParticleSystemDesc{};
 }

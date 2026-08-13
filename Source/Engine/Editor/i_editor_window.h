@@ -22,4 +22,6 @@ public:
     IEditorWindow(EditorContext* editorContext) : m_editorContext(editorContext) {}
     virtual ~IEditorWindow() = default;
     virtual void Draw() = 0;
+    virtual void OnWindowClosed() {}
+
 };

@@ -76,6 +76,9 @@ public:
     static ParticleSystemAssetLoader* GetParticleAssetLoader() {
         return s_engineInstance ? s_engineInstance->GetAssetManager().GetParticleAssetLoader() : nullptr;
     }
+    static DataAssetLoader* GetDataAssetLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().GetDataAssetLoader() : nullptr;
+    }
 };
 
 #endif // ENGINE_SERVICE_LOCATOR_H

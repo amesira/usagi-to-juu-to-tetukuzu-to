@@ -28,6 +28,7 @@ bool ParticleParameterPanel::Draw(ParticleSystemDesc& desc)
 }
 
 #pragma region ParticleEditorのパラメータ編集パネルの描画関数
+
 bool ParticleParameterPanel::DrawMain(ParticleSystemData::MainModule& module)
 {
     if (!ImGui::CollapsingHeader("Main", ImGuiTreeNodeFlags_DefaultOpen)) return false;

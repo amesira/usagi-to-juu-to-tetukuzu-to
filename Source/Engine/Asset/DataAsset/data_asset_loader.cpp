@@ -89,9 +89,9 @@ bool DataAssetLoader::LoadDataAsset(const std::filesystem::path& filePath, DataA
 
         // ヘッダーを設定
         AssetHeader loadedHeader;
-        loadedHeader.m_type = static_cast<std::string>(outAsset.GetAssetTypeName());
+        loadedHeader.m_type = outAsset.GetAssetTypeName().data();
         loadedHeader.m_formatVersion = version;
-        loadedHeader.m_name = root.value("name", "Unnamed" + static_cast<std::string>(outAsset.GetAssetTypeName()));
+        loadedHeader.m_name = root.value("name", "Unnamed" + static_cast<std::string>(outAsset.GetAssetTypeName().data()));
 
         // === 全項目の読み込み成功後に反映（実データはデシリアライズ時点で反映する） ===
         outAsset.SetHeader(loadedHeader);

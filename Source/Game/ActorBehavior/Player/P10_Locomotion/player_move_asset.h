@@ -10,8 +10,9 @@
 namespace PlayerMoveAssetsSchema
 {
     using json = nlohmann::json;
+
     // PlayerMoveのスキーマを取得
-    inline const auto& GetPlayerMoveSchema()
+    inline const IFieldSchema& GetPlayerMoveSchema()
     {
         using MoveSettings = PlayerMoveSettings;
 
@@ -74,15 +75,30 @@ public:
     PlayerMoveAsset() : DataAsset(DataAssetTypeID::getTypeID<PlayerMoveAsset>()) {}
     ~PlayerMoveAsset() override = default;
 
+    /// @brief PlayerMoveAssetを複製する
+    std::unique_ptr<DataAsset> Clone() const override
+    {
+        auto clone = std::make_unique<PlayerMoveAsset>();
+        clone->m_moveSettings = m_moveSettings;
+        return clone;
+    }
+
+    const IFieldSchema& GetFieldSchema() override
+    {
+        return PlayerMoveAssetsSchema::GetPlayerMoveSchema();
+    }
+
     std::string_view GetAssetTypeName() const override { return s_assetTypeName; }
     int GetSupportedFormatVersion() const override { return s_supportedFormatVersion; }
 
+    /// @brief PlayerMoveSettingsをJSON形式でシリアライズする
     nlohmann::json SerializeData() const override
     {
         nlohmann::json jsonData = FieldSerialization::SerializeFields(m_moveSettings, PlayerMoveAssetsSchema::GetPlayerMoveSchema());
         return jsonData;
     }
 
+    /// @brief PlayerMoveSettingsをJSON形式からデシリアライズする
     bool DeserializeDataToApply(const nlohmann::json& jsonData) override
     {
         PlayerMoveSettings loaded = m_moveSettings;

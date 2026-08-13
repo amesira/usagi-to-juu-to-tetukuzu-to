@@ -69,7 +69,6 @@ void ParticleSystemEditorWindow::Draw()
 }
 
 /// @brief ParticleEditorウィンドウが閉じられたときの処理
-/// FIX: IEditorWindowにも追加してオーバーライドした方が良さそう
 void ParticleSystemEditorWindow::OnWindowClosed()
 {
     m_preview.Cleanup();
@@ -85,22 +84,32 @@ void ParticleSystemEditorWindow::OnSceneDestroyed()
 /// @brief ParticleEditorのツールバーを描画する
 void ParticleSystemEditorWindow::DrawToolbar()
 {
+    // NEW
     if (ImGui::Button("New"))
     {
         m_document.New();
         strncpy_s(m_pathBuffer.data(), m_pathBuffer.size(),
-            "asset/Particle/new_particle.json",
+            "asset/Particle/new_particle.particle.json",
             _TRUNCATE);
         m_preview.Apply(m_document.GetEditingDesc(), true);
     }
     ImGui::SameLine();
+
+    // SAVE
     if (ImGui::Button("Save")) m_document.Save();
     ImGui::SameLine();
     if (ImGui::Button("Save As"))
     {
-        if (m_document.SaveAs(std::filesystem::path(m_pathBuffer.data()))) RefreshAssetList();
+        std::filesystem::path path(m_pathBuffer.data());
+        if (m_document.SaveAs(path)){ 
+            RefreshAssetList();
+
+            // pathが修正された場合に一致させたいため、m_pathBufferも更新する
+            SyncPathBuffer();
+        }
     }
     ImGui::SameLine();
+
     if (ImGui::Button("Refresh Assets")) RefreshAssetList();
 
     // パーティクルアセットのパスを表示する入力テキストボックスを描画する
@@ -205,14 +214,14 @@ void ParticleSystemEditorWindow::RefreshAssetList()
     std::error_code error;
     if (!std::filesystem::exists(PARTICLE_ASSET_DIRECTORY, error)) return;
 
-    // パーティクルアセットのディレクトリを再帰的に探索し、.jsonファイルのパスを取得する
+    // パーティクルアセットのディレクトリを再帰的に探索し、.particle.jsonファイルのパスを取得する
     std::filesystem::recursive_directory_iterator iterator(
         PARTICLE_ASSET_DIRECTORY, std::filesystem::directory_options::skip_permission_denied, error);
     const std::filesystem::recursive_directory_iterator end;
 
     while (!error && iterator != end)
     {
-        if (iterator->is_regular_file(error) && iterator->path().extension() == ".json") {
+        if (iterator->is_regular_file(error) && iterator->path().extension() == ".json" && iterator->path().stem().extension() == ".particle") {
             m_assetPaths.push_back(iterator->path().lexically_normal());
         }
         iterator.increment(error);

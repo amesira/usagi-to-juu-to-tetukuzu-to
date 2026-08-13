@@ -115,6 +115,15 @@ void EditorManager::RegisterWindows()
         false,
         { 120.0f, 80.0f },
         { 1600.0f, 850.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::DataEditor,
+        &m_dataEditorWindow,
+        "Data Editor",
+        "DataEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
 }
 
 void EditorManager::SyncWindowLifecycle()
@@ -122,6 +131,11 @@ void EditorManager::SyncWindowLifecycle()
     if (!m_windowManager.IsOpen(EditorWindowId::ParticleSystemEditor))
     {
         m_particleSystemEditorWindow.OnWindowClosed();
+    }
+
+    if (!m_windowManager.IsOpen(EditorWindowId::DataEditor))
+    {
+        m_dataEditorWindow.OnWindowClosed();
     }
 }
 

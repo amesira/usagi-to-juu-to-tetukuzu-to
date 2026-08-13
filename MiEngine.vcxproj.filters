@@ -372,6 +372,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_document.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -802,6 +804,8 @@
     <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_loader.h" />
     <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_type_id.h" />
     <ClInclude Include="Source\Engine\Asset\Schema\field_master.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_document.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

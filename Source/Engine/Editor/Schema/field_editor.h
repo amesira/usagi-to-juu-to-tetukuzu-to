@@ -15,6 +15,8 @@
 #include <DirectXMath.h>
 #include "Engine/Editor/i_editor_window.h"
 
+#include "Utility/mi_curve.h"
+
 namespace FieldEditor
 {
     using namespace DirectX;

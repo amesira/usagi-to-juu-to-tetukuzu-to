@@ -217,7 +217,6 @@ namespace
 void InspectorViewWindow::Draw()
 {
     ImGui::TextDisabled("Runtime Inspector");
-    ImGui::TextWrapped("Changes made here affect the runtime instance and are not saved as assets.");
     ImGui::Separator();
 
     ImGui::Text("Selected Object: %s", m_editorContext->selectedObject ? m_editorContext->selectedObject->GetName().c_str() : "None");

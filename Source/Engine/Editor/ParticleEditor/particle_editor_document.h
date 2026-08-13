@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// File  ：Engine/Editor/ParticleEditor/particle_editor_document.h
+// File  ：_/Editor/ParticleEditor/particle_editor_document.h
 // Date  ：2026/07/26
 // Author：Miu Kitamura
 // 
@@ -23,7 +23,7 @@ private:
     std::string m_statusMessage;
 
 public:
-    ParticleEditorDocument();
+    ParticleEditorDocument() { New(); }
 
     /// @brief 新しいパーティクルアセットを作成する
     void New();
@@ -32,7 +32,7 @@ public:
     /// @brief パーティクルアセットを現在のパスに保存する。パスが空の場合は失敗する
     bool Save();
     /// @brief パーティクルアセットを指定されたパスに保存する
-    bool SaveAs(const std::filesystem::path& path);
+    bool SaveAs(std::filesystem::path& path);
 
     /// @brief 編集中のパーティクルアセットのDescを取得する
     ParticleSystemDesc& GetEditingDesc() { return const_cast<ParticleSystemDesc&>(m_asset.GetDesc()); }
@@ -46,12 +46,9 @@ public:
     /// @brief 編集中のパーティクルアセットのパスが空でないかどうかを取得する
     bool HasAssetPath() const { return !m_assetPath.empty(); }
 
-    /// @brief 編集中のパーティクルアセットが保存されていない変更を持っているかどうかを取得する
+    /// @brief 編集中のパーティクルアセットが未保存の変更を持っているかどうかを取得する
     bool IsDirty() const { return m_dirty; }
-    /// @brief 編集中のパーティクルアセットが保存されていない変更を持っていることをマークする
+    /// @brief 編集中のパーティクルアセットが未保存の変更を持っていることをマークする
     void MarkDirty() { m_dirty = true; }
 
-private:
-    /// @brief 編集中のパーティクルアセットをデフォルト値に設定する
-    void SetDefaultAsset();
 };

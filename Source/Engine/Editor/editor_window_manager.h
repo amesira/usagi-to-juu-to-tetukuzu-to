@@ -20,11 +20,16 @@ enum class EditorWindowId
     Hierarchy,
     Inspector,
     Debug,
+
     GameView,
     SceneView,
     CanvasView,
+
     Settings,
+
     ParticleSystemEditor,
+    DataEditor,
+
     Count,
 };
 
