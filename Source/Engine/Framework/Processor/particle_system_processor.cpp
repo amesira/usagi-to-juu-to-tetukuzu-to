@@ -20,6 +20,8 @@ using namespace MiMath;
 
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/engine_service_locator.h"
+#include "Utility/mi_string.h"
 
 namespace {
     struct TextureSheetRuntimeSettings {
@@ -225,12 +227,40 @@ namespace {
 
 void ParticleSystemProcessor::Initialize()
 {
+    m_pendingAssetReloads.clear();
 
+    // ParticleSystemAssetLoaderのリロードコールバックを設定
+    if (ParticleSystemAssetLoader* loader = EngineServiceLocator::GetParticleAssetLoader()) {
+        loader->SetReloadCallback(
+            [this](const std::filesystem::path& path, const ParticleSystemAsset& asset) {
+                    OnParticleAssetReloaded(path, asset);
+            });
+    }
 }
 
 void ParticleSystemProcessor::Finalize()
 {
+    m_pendingAssetReloads.clear();
+}
 
+void ParticleSystemProcessor::OnParticleAssetReloaded(
+    const std::filesystem::path& path,
+    const ParticleSystemAsset& asset)
+{
+    const auto normalizedPath = path.lexically_normal();
+    auto it = std::find_if(
+        m_pendingAssetReloads.begin(),
+        m_pendingAssetReloads.end(),
+        [&asset](const PendingAssetReload& pending) {
+            return pending.asset == &asset;
+        });
+
+    if (it != m_pendingAssetReloads.end()) {
+        it->path = normalizedPath;
+        return;
+    }
+
+    m_pendingAssetReloads.push_back({ normalizedPath, &asset });
 }
 
 void ParticleSystemProcessor::Process(IScene* pScene)
@@ -239,6 +269,42 @@ void ParticleSystemProcessor::Process(IScene* pScene)
 
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* particlePool = pScene->GetComponentPool<ParticleSystemComponent>();
+
+    if (particlePool && !m_pendingAssetReloads.empty()) {
+        TextureRepository* textureRepository =
+            EngineServiceLocator::GetTextureRepository();
+
+        for (const PendingAssetReload& pending : m_pendingAssetReloads) {
+            if (!pending.asset) continue;
+
+            for (ParticleSystemComponent& particleSystem : particlePool->GetList()) {
+                if (particleSystem.GetAsset() != pending.asset) continue;
+
+                const bool playOnAwake = particleSystem.Main().playOnAwake;
+                particleSystem.GetDesc() = pending.asset->GetDesc();
+                particleSystem.Main().playOnAwake = playOnAwake;
+
+                if (!textureRepository) continue;
+
+                TextureResource* texture = nullptr;
+                const auto& textureOverridePath =
+                    particleSystem.GetTextureOverridePath();
+                if (!textureOverridePath.empty()) {
+                    texture = textureRepository->GetTextureResource(
+                        textureOverridePath);
+                }
+                else if (!particleSystem.Renderer().texturePath.empty()) {
+                    texture = textureRepository->GetTextureResource(
+                        MiString::ToWString(
+                            particleSystem.Renderer().texturePath));
+                }
+                particleSystem.SetTextureResource(texture);
+            }
+        }
+
+        m_pendingAssetReloads.clear();
+    }
+
     if (!transformPool || !particlePool) return;
 
     const float deltaTime = FPS_GetDeltaTime();

@@ -9,6 +9,8 @@
 #include <filesystem>
 #include <unordered_map>
 #include <memory>
+#include <functional>
+#include <utility>
 
 #include "particle_system_asset.h"
 
@@ -18,6 +20,12 @@ private:
 
     // ParticleSystemAssetのキャッシュ
     std::unordered_map<std::filesystem::path, std::unique_ptr<ParticleSystemAsset>> m_particleAssetCache;
+
+    // ParticleSystemAssetの再読み込み時に呼び出されるコールバック関数
+    using ReloadCallback = std::function<void(
+        const std::filesystem::path&,
+        const ParticleSystemAsset&)>;
+    ReloadCallback m_reloadCallback;
 
 public:
     /// @brief ParticleSystemAssetLoaderを初期化する
@@ -35,6 +43,12 @@ public:
     /// @brief ParticleSystemAssetを取得する。キャッシュ生成もここで行う
     ParticleSystemAsset* GetParticle(const std::filesystem::path& filePath);
     /// @brief ParticleSystemAssetをJSON形式で再読み込みする。キャッシュを更新する
-    bool ReloadParticle(const std::filesystem::path& filePath);
+    bool ReloadParticle(
+        const std::filesystem::path& filePath,
+        bool notifyScene = true);
+
+    void SetReloadCallback(ReloadCallback callback) {
+        m_reloadCallback = std::move(callback);
+    }
 
 };

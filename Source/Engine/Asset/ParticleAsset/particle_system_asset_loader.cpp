@@ -184,7 +184,8 @@ ParticleSystemAsset* ParticleSystemAssetLoader::GetParticle(const std::filesyste
 
 /// @brief ParticleSystemAssetを再読み込みする。キャッシュを更新する
 bool ParticleSystemAssetLoader::ReloadParticle(
-    const std::filesystem::path& filePath)
+    const std::filesystem::path& filePath,
+    bool notifyScene)
 {
     const std::filesystem::path cacheKey = filePath.lexically_normal();
     auto it = m_particleAssetCache.find(cacheKey);
@@ -198,5 +199,10 @@ bool ParticleSystemAssetLoader::ReloadParticle(
         return false;
     }
 
-    return true;;
+    // === 再読み込み後にシーンに通知する ===
+    if (notifyScene && m_reloadCallback) {
+        m_reloadCallback(cacheKey, *assetPtr);
+    }
+
+    return true;
 }

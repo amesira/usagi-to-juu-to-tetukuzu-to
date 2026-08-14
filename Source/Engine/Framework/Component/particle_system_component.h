@@ -11,6 +11,7 @@
 #include "Engine/Graphics/texture_resource.h"
 
 #include <vector>
+#include <filesystem>
 using namespace DirectX;
 
 #include "Engine/Asset/ParticleAsset/particle_system_asset.h"
@@ -51,6 +52,7 @@ public:
     static constexpr int MAX_PARTICLES = 1000; // 最大パーティクル数
 
 private:
+    std::filesystem::path m_textureOverridePath;
     ParticleSystemAsset* m_asset = nullptr; // パーティクルシステムのアセット
     
     ParticleSystemDesc m_desc = {}; // パーティクルシステムの設定
@@ -70,6 +72,22 @@ private:
     float m_distanceAccumulator = 0.0f;        // 距離あたりの発生のための距離アキュムレータ
 
 public:
+    // === アセットの設定・取得 ===
+
+    void SetAsset(ParticleSystemAsset* asset) { m_asset = asset; }
+    ParticleSystemAsset* GetAsset() { return m_asset; }
+    const ParticleSystemAsset* GetAsset() const { return m_asset; }
+
+    // === テクスチャのオーバーライドパスの設定・取得 ===
+
+    void SetTextureOverridePath(const std::filesystem::path& path) {
+        m_textureOverridePath = path.lexically_normal();
+    }
+    void ClearTextureOverridePath() { m_textureOverridePath.clear(); }
+    const std::filesystem::path& GetTextureOverridePath() const {
+        return m_textureOverridePath;
+    }
+
     ParticleSystemDesc& GetDesc() { return m_desc; }
     const ParticleSystemDesc& GetDesc() const { return m_desc; }
 

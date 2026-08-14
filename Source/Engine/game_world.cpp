@@ -35,6 +35,11 @@ void GameWorld::Initialize()
 // GameWorldの終了処理
 void GameWorld::Finalize()
 {
+    if (ParticleSystemAssetLoader* loader =
+        EngineServiceLocator::GetParticleAssetLoader()) {
+        loader->SetReloadCallback({});
+    }
+
     // Processor群の終了処理
     m_physicsProcessor.Finalize();
     m_animationProcessor.Finalize();

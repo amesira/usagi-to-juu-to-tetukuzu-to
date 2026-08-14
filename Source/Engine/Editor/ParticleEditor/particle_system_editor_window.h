@@ -26,6 +26,7 @@ private:
     std::vector<std::filesystem::path> m_assetPaths;
     // パーティクルアセットのパスを保持するバッファ
     std::array<char, 512> m_pathBuffer = {};
+    bool m_liveApplyToScene = true;
 
 public:
     // MEMO: explicitを付けることで、暗黙の型変換を防ぎ、意図しないコンストラクタ呼び出しを避けることができる

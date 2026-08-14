@@ -64,18 +64,20 @@ bool ParticleEditorDocument::Open(const std::filesystem::path& path)
 
 /// @brief パーティクルアセットを現在のパスに保存する。パスが空の場合は失敗する
 /// @return 
-bool ParticleEditorDocument::Save()
+bool ParticleEditorDocument::Save(bool liveApplyToScene)
 {
     if (m_assetPath.empty())
     {
         m_statusMessage = "Enter a path and use Save As";
         return false;
     }
-    return SaveAs(m_assetPath);
+    return SaveAs(m_assetPath, liveApplyToScene);
 }
 
 /// @brief パーティクルアセットを指定されたパスに保存する
-bool ParticleEditorDocument::SaveAs(std::filesystem::path& path)
+bool ParticleEditorDocument::SaveAs(
+    std::filesystem::path& path,
+    bool liveApplyToScene)
 {
     if (path.empty())
     {
@@ -113,7 +115,7 @@ bool ParticleEditorDocument::SaveAs(std::filesystem::path& path)
     m_assetPath = path.lexically_normal();
     m_dirty = false;
 
-    PARTICLE_LOADER->ReloadParticle(path); // キャッシュを更新する
+    PARTICLE_LOADER->ReloadParticle(path, liveApplyToScene); // キャッシュを更新する
 
     m_statusMessage = "Saved: " + path.generic_string();
     return true;

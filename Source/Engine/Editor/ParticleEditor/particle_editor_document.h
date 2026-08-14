@@ -30,9 +30,11 @@ public:
     /// @brief パーティクルアセットを指定されたパスから開く
     bool Open(const std::filesystem::path& path);
     /// @brief パーティクルアセットを現在のパスに保存する。パスが空の場合は失敗する
-    bool Save();
+    bool Save(bool liveApplyToScene = true);
     /// @brief パーティクルアセットを指定されたパスに保存する
-    bool SaveAs(std::filesystem::path& path);
+    bool SaveAs(
+        std::filesystem::path& path,
+        bool liveApplyToScene = true);
 
     /// @brief 編集中のパーティクルアセットのDescを取得する
     ParticleSystemDesc& GetEditingDesc() { return const_cast<ParticleSystemDesc&>(m_asset.GetDesc()); }

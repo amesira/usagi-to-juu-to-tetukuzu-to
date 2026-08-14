@@ -101,12 +101,14 @@ void ParticleSystemEditorWindow::DrawToolbar()
     ImGui::SameLine();
 
     // SAVE
-    if (ImGui::Button("Save")) m_document.Save();
+    if (ImGui::Button("Save")) {
+        m_document.Save(m_liveApplyToScene);
+    }
     ImGui::SameLine();
     if (ImGui::Button("Save As"))
     {
         std::filesystem::path path(m_pathBuffer.data());
-        if (m_document.SaveAs(path)){ 
+        if (m_document.SaveAs(path, m_liveApplyToScene)){
             RefreshAssetList();
 
             // pathが修正された場合に一致させたいため、m_pathBufferも更新する
@@ -116,6 +118,8 @@ void ParticleSystemEditorWindow::DrawToolbar()
     ImGui::SameLine();
 
     if (ImGui::Button("Refresh Assets")) RefreshAssetList();
+    ImGui::SameLine();
+    ImGui::Checkbox("Live Apply to Scene", &m_liveApplyToScene);
 
     // パーティクルアセットのパスを表示する入力テキストボックスを描画する
     ImGui::SetNextItemWidth(-1.0f);

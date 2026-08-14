@@ -35,6 +35,7 @@ namespace
         ParticleSystemAsset* asset = loader->GetParticle(assetPath);
         if (!asset) return false;
 
+        particleSystem->SetAsset(asset);
         particleSystem->GetDesc() = asset->GetDesc();
 
         auto& renderer = particleSystem->Renderer();
@@ -44,10 +45,12 @@ namespace
         {
             if (textureOverride)
             {
+                particleSystem->SetTextureOverridePath(*textureOverride);
                 texture = textureRepository->GetTextureResource(*textureOverride);
             }
             else if (!renderer.texturePath.empty())
             {
+                particleSystem->ClearTextureOverridePath();
                 texture = textureRepository->GetTextureResource(
                     MiString::ToWString(renderer.texturePath));
             }
