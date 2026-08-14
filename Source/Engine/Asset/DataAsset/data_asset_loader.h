@@ -105,6 +105,6 @@ public:
         const DataAsset* defaultAsset = it->second.get();
         if (!defaultAsset) return nullptr;
 
-        return defaultAsset->Clone();
+        return defaultAsset->CreateDefaultInstance();
     }
 };

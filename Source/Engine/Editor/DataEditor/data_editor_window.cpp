@@ -180,7 +180,6 @@ void DataEditorWindow::DrawParameters()
         return;
     }
 
-    //bool changed = FieldEditor::DrawFields(asset, asset->GetFieldSchema());
     bool changed = asset->DrawDataOnEditor();
     if (changed) m_document.MarkDirty();
 

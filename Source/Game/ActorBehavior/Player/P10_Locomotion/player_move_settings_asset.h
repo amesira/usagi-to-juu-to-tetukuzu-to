@@ -85,11 +85,12 @@ public:
     PlayerMoveSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<PlayerMoveSettingsAsset>()) {}
     ~PlayerMoveSettingsAsset() override = default;
 
-    /// @brief PlayerMoveAssetを複製する
-    std::unique_ptr<DataAsset> Clone() const override
+    /// @brief PlayerMoveAssetのデフォルトインスタンスを作成する
+    std::unique_ptr<DataAsset> CreateDefaultInstance() const override
     {
         auto clone = std::make_unique<PlayerMoveSettingsAsset>();
-        clone->m_data = m_data;
+        clone->SetHeader(AssetHeader{ s_assetTypeName.data(), s_supportedFormatVersion, ""});
+        clone->m_data = PlayerMoveSettings::Data {};
         return clone;
     }
 

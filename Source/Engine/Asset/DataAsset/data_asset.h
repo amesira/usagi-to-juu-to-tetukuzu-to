@@ -30,8 +30,8 @@ public:
     /// @brief DataAssetのタイプIDを取得する
     const int GetDataAssetTypeID() const { return m_dataAssetTypeID; }
 
-    /// @brief DataAssetを複製する
-    virtual std::unique_ptr<DataAsset> Clone() const = 0;
+    /// @brief DataAssetのデフォルトインスタンスを作成する。派生クラスで実装する必要あり
+    virtual std::unique_ptr<DataAsset> CreateDefaultInstance() const = 0;
 
     // === タイプ、フォーマットバージョン ===
 
