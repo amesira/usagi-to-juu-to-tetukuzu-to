@@ -3,7 +3,7 @@
 using namespace DirectX;
 
 class GameObject;
-class SceneBase;
+class IScene;
 
 namespace PrefabFactory
 {
@@ -17,5 +17,5 @@ namespace PrefabFactory
 
     /// @brief PlayerPrefabを生成する関数
     /// @param position 生成位置
-    PlayerPrefab CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position);
+    PlayerPrefab CreatePlayerPrefab(IScene* scene, const XMFLOAT3& position);
 }

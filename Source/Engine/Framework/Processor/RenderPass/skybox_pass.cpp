@@ -13,8 +13,6 @@ void SkyboxPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext
     m_pDevice = pDevice;
     m_pContext = pContext;
 
-    return;
-
     // SkyBox用のモデルリソースをロード
     m_pSkyboxModel = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\skybox.fbx");
 }
@@ -26,8 +24,6 @@ void SkyboxPass::Finalize()
 
 void SkyboxPass::Process(IScene* pScene, const RenderView& view)
 {
-    (void)pScene;
-    return;
     // 描画ステートのセット
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);

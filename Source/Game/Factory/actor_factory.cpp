@@ -19,6 +19,7 @@
 
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
@@ -35,7 +36,10 @@
 #include "Engine/engine_service_locator.h"
 
 // プレイヤー生成
-GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& position)
+GameObject* ActorFactory::CreatePlayer(
+    IScene* scene,
+    const XMFLOAT3& position,
+    const PlayerPrefabSettings::Data& settings)
 {
     GameObject* player = scene->CreateGameObject();
     player->SetName("Player");
@@ -46,58 +50,22 @@ GameObject* ActorFactory::CreatePlayer(SceneBase* scene, const XMFLOAT3& positio
     TransformComponent* transform = player->AddComponent<TransformComponent>();
     BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
-    SpriteRendererComponent* spriteRenderer = player->AddComponent<SpriteRendererComponent>();
-    SpriteAnimationComponent* spriteAnimation = player->AddComponent<SpriteAnimationComponent>();
 
-    const XMFLOAT3& playerScaling = { 2.0f, 2.0f, 2.0f };
+    ModelComponent* model = player->AddComponent<ModelComponent>();
+    AnimationComponent* animation = player->AddComponent<AnimationComponent>();
 
     // component設定
     transform->SetPosition(position);
-    transform->SetScaling(playerScaling);
+    transform->SetScaling(settings.scaling);
 
-    rigidbody->SetMass(3.0f);
-    rigidbody->SetFriction({ 0.8f, 1.0f, 0.8f });
+    rigidbody->SetMass(1.0f);
+    rigidbody->SetFriction({ 1.0f, 1.0f, 1.0f });
 
-    collider->SetScale({
-        playerScaling.x,
-        playerScaling.y,
-        playerScaling.z
-        });
-    collider->SetCenter({ 0.0f, 0.0f, 0.0f });
+    collider->SetScale(settings.colliderScale);
+    collider->SetCenter(settings.colliderCenter);
 
-    MaterialResource mat = {};
-    mat.name = "PlayerMaterial";
-    spriteRenderer->SetMaterialResource(EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(mat));
-
-    TextureResource* texture = EngineServiceLocator::GetTextureRepository()->GetTextureResource(L"asset\\Texture\\player_sheet.png");
-    spriteRenderer->SetTextureResource(texture);
-    spriteRenderer->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
-    spriteRenderer->SetUvRect({ 0.0f, 0.0f, 0.5f, 0.5f });
-
-    SpriteAnimationComponent::Clip idleClip;
-    {
-        idleClip.name = "Idle";
-        idleClip.frames = {
-            { texture, {0.0f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
-            { texture, {0.0f, 0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.2f },
-        };
-        idleClip.speed = 1.0f;
-        idleClip.loop = true;
-    }
-    spriteAnimation->AddClip(idleClip);
-
-    SpriteAnimationComponent::Clip runClip;
-    {
-        runClip.name = "Run";
-        runClip.frames = {
-            { texture, {0.0f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
-            { texture, {0.5f, 0.0f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
-            { texture, {0.0f, 0.5f, 0.5f, 0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, 0.1f },
-        };
-        runClip.speed = 1.0f;
-        runClip.loop = true;
-    }
-    spriteAnimation->AddClip(runClip);
+    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset/Model/player_model.fbx");
+    model->SetModelResource(modelResource);
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();

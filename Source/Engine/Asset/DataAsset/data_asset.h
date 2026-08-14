@@ -14,17 +14,17 @@
 #include <nlohmann/json.hpp>
 #include <functional>
 
-#include "Engine/Editor/Schema/field_editor.h"
-
-class IFieldSchema;
-
 class DataAsset : public IAsset {
 private:
     // DataAssetのタイプID。実行時に一意に決まるため、毎回同じとは限らない。型一致判定にのみ使用することを想定
     int m_dataAssetTypeID = -1;
 
+    std::string_view m_assetTypeName = "";
+    int m_supportedFormatVersion = 0;
+
 public:
-    DataAsset(int dataAssetType) : m_dataAssetTypeID(dataAssetType) {}
+    DataAsset(int dataAssetType,const std::string_view& assetTypeName, const int supportVersion) 
+        : m_dataAssetTypeID(dataAssetType), m_assetTypeName(assetTypeName), m_supportedFormatVersion(supportVersion) {}
     virtual ~DataAsset() = default;
 
     /// @brief DataAssetのタイプIDを取得する
@@ -36,9 +36,9 @@ public:
     // === タイプ、フォーマットバージョン ===
 
     /// @brief DataAssetの種類を表す文字列を取得する
-    virtual std::string_view GetAssetTypeName() const = 0;
+    std::string_view GetAssetTypeName() const { return m_assetTypeName; }
     /// @brief DataAssetのサポートするフォーマットバージョンを取得する
-    virtual int GetSupportedFormatVersion() const = 0;
+    int GetSupportedFormatVersion() const { return m_supportedFormatVersion; }
 
     // === シリアライズ、デシリアライズ ===
 

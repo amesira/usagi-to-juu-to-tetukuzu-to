@@ -132,6 +132,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -806,6 +809,7 @@
     <ClInclude Include="Source\Engine\Asset\Schema\field_master.h" />
     <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_window.h" />
     <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_document.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_prefab_settings_asset.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

@@ -2,7 +2,7 @@
     "data": {
         "emission": {
             "enabled": true,
-            "rateOverDistance": 1.0,
+            "rateOverDistance": 0.5,
             "rateOverTime": 0.0
         },
         "main": {
@@ -19,8 +19,8 @@
             "startColor": {
                 "color": [
                     1.0,
-                    1.0,
-                    1.0,
+                    0.0,
+                    0.0,
                     1.0
                 ],
                 "colorMax": [
@@ -38,15 +38,15 @@
                 "randomBetweenTwoColors": true
             },
             "startLifetime": {
-                "constant": 0.44999998807907104,
-                "constantMax": 0.6499999761581421,
-                "constantMin": 0.25,
+                "constant": 1.0,
+                "constantMax": 1.0,
+                "constantMin": 0.699999988079071,
                 "randomBetweenTwoConstants": true
             },
             "startSize": {
                 "constant": 1.350000023841858,
-                "constantMax": 1.0,
-                "constantMin": 0.800000011920929,
+                "constantMax": 1.600000023841858,
+                "constantMin": 1.2000000476837158,
                 "randomBetweenTwoConstants": true
             },
             "startSpeed": {
@@ -114,6 +114,6 @@
         }
     },
     "formatVersion": 1,
-    "name": "run_dust",
+    "name": "run_dust.particle",
     "type": "ParticleSystem"
 }

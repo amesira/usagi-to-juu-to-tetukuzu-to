@@ -1,0 +1,30 @@
+{
+    "data": {
+        "colliderCenter": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "colliderScale": [
+            0.8999999761581421,
+            2.0,
+            0.8999999761581421
+        ],
+        "runDustEffect": {
+            "particleAssetPath": "asset/Particle/run_dust.particle.json",
+            "positionOffset": [
+                0.0,
+                0.3499999940395355,
+                0.30000001192092896
+            ]
+        },
+        "scaling": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+        ]
+    },
+    "formatVersion": 0,
+    "name": "player_prefab_settings.data",
+    "type": "PlayerPrefabSettingsAsset"
+}

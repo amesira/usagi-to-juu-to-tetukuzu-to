@@ -19,7 +19,34 @@ namespace
     // パーティクルアセットのディレクトリ
     const std::filesystem::path DATA_ASSET_DIRECTORY = "asset/Data";
 
+    // データアセットのロードを簡略化するためのマクロ
     #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+
+    bool BeginDataAssetSection(const char* name)
+    {
+        ImGui::PushID(name);
+        ImGui::Separator();
+        
+        const ImVec4 transparent{ 0.0f, 0.0f, 0.0f, 0.0f };
+
+        ImGui::PushStyleColor(ImGuiCol_Header, transparent);
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, transparent);
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, transparent);
+
+        const bool open = ImGui::CollapsingHeader(name,ImGuiTreeNodeFlags_DefaultOpen);
+
+        ImGui::PopStyleColor(3);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+
+        return open;
+    }
+
+    void EndDataAssetSection()
+    {
+        ImGui::PopStyleVar();
+        ImGui::PopID();
+    }
 }
 
 void DataEditorWindow::Draw()
@@ -139,15 +166,22 @@ void DataEditorWindow::DrawAssetList()
 
     for (const DataAssetPathEntry& entry : m_assetPaths)
     {
-        ImGui::TextUnformatted(entry.typeName.c_str());
-        ImGui::Separator();
-        for (const std::filesystem::path& path : entry.paths)
+        if (BeginDataAssetSection(entry.typeName.c_str()))
         {
-            const bool selected = m_document.HasAssetPath() &&
-                m_document.GetAssetPath().lexically_normal() == path.lexically_normal();
-            if (ImGui::Selectable(path.filename().string().c_str(), selected)) OpenAsset(path);
-            if (ImGui::IsItemHovered()) ImGui::SetTooltip("%s", path.generic_string().c_str());
+            ImGui::Separator();
+
+            for (const std::filesystem::path& path : entry.paths)
+            {
+                const bool selected = m_document.HasAssetPath() &&
+                    m_document.GetAssetPath().lexically_normal() == path.lexically_normal();
+                if (ImGui::Selectable(path.filename().string().c_str(), selected)) OpenAsset(path);
+                if (ImGui::IsItemHovered()) ImGui::SetTooltip("%s", path.generic_string().c_str());
+            }
         }
+        
+        EndDataAssetSection();
+
+        ImGui::Spacing();
     }
 
     // パーティクルアセットが存在しない場合は、ディレクトリが空であることを示すメッセージを表示する

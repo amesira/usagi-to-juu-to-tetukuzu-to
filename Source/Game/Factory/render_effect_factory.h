@@ -9,20 +9,23 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 #include <string>
+#include <filesystem>
 
 class GameObject;
 class IScene;
-class SceneBase;
 
 namespace RenderEffectFactory {
     // デカールエフェクト生成
-    GameObject* CreateDecalEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
+    GameObject* CreateDecalEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
     
     // パーティクルエフェクト生成
     // FIX: 将来的にはこれら情報はアセットとして外部化するべき
-    GameObject* CreateParticleEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
-    GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName);
-    GameObject* CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position);
+    GameObject* CreateParticleEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
+    GameObject* CreateRunDustParticle(
+        IScene* scene,
+        GameObject* target,
+        const std::filesystem::path& particleAssetPath);
+    GameObject* CreateChargeAbsorbParticle(IScene* scene, const XMFLOAT3& position);
     GameObject* CreateHitEffect(IScene* scene, const XMFLOAT3& position);
     GameObject* CreateExplosionEffect(IScene* scene, const XMFLOAT3& position);
 };

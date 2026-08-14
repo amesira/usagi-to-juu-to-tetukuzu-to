@@ -18,7 +18,6 @@
 namespace
 {
     const std::filesystem::path GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.particle.json";
-    const std::filesystem::path RUN_DUST_PARTICLE_ASSET = "asset/Particle/run_dust.particle.json";
     const std::filesystem::path CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.particle.json";
     const std::filesystem::path HIT_PARTICLE_ASSET = "asset/Particle/hit.particle.json";
     const std::filesystem::path EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.particle.json";
@@ -84,7 +83,7 @@ namespace
 }
 
 GameObject* RenderEffectFactory::CreateDecalEffect(
-    SceneBase* scene,
+    IScene* scene,
     const XMFLOAT3& position,
     const std::wstring& decalTexturePath)
 {
@@ -105,7 +104,7 @@ GameObject* RenderEffectFactory::CreateDecalEffect(
 }
 
 GameObject* RenderEffectFactory::CreateParticleEffect(
-    SceneBase* scene,
+    IScene* scene,
     const XMFLOAT3& position,
     const std::wstring& texturePath)
 {
@@ -117,11 +116,12 @@ GameObject* RenderEffectFactory::CreateParticleEffect(
         &texturePath);
 }
 
-GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene, std::string targetName)
+GameObject* RenderEffectFactory::CreateRunDustParticle(
+    IScene* scene,
+    GameObject* target,
+    const std::filesystem::path& particleAssetPath)
 {
     if (!scene) return nullptr;
-
-    GameObject* target = scene->GetGameObjectByName(targetName);
     if (!target) return nullptr;
 
     TransformComponent* targetTransform = target->GetComponent<TransformComponent>();
@@ -131,11 +131,11 @@ GameObject* RenderEffectFactory::CreateRunDustParticle(SceneBase* scene, std::st
         scene,
         "RunDustParticle",
         { 0.0f, 0.0f, 0.0f },
-        RUN_DUST_PARTICLE_ASSET);
+        particleAssetPath);
 }
 
 GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(
-    SceneBase* scene,
+    IScene* scene,
     const XMFLOAT3& position)
 {
     return CreateParticleObject(

@@ -12,11 +12,14 @@
 
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
 #include "Engine/engine_service_locator.h"
+#include "Engine/Asset/DataAsset/data_asset_loader.h"
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define DATA_LOADER EngineServiceLocator::GetDataAssetLoader()
 
 #include "actor_factory.h"
 #include "render_effect_factory.h"
@@ -25,6 +28,13 @@
 #include "ui_factory.h"
 
 #include <array>
+#include <filesystem>
+
+namespace
+{
+    const std::filesystem::path PLAYER_PREFAB_SETTINGS_PATH =
+        "asset/Data/player_prefab_settings.data.json";
+}
 
 namespace PrefabFactory
 {
@@ -43,17 +53,40 @@ namespace PrefabFactory
     // ----------------------------------- プレハブ生成
 
     // プレイヤープレハブ生成
-    PlayerPrefab PrefabFactory::CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position)
+    PlayerPrefab PrefabFactory::CreatePlayerPrefab(IScene* scene, const XMFLOAT3& position)
     {
-        PlayerPrefab prefab;
-        prefab.player = ActorFactory::CreatePlayer(scene, position);
+        PlayerPrefab prefab{};
+        if (!scene) return prefab;
+
+        PlayerPrefabSettingsAsset* settingsAsset = DATA_LOADER->GetAsset<PlayerPrefabSettingsAsset>(
+                PLAYER_PREFAB_SETTINGS_PATH,
+                true);
+        if (!settingsAsset) return prefab;
+
+        const PlayerPrefabSettings::Data& settings = settingsAsset->GetData();
+
+        // プレイヤー生成
+        prefab.player = ActorFactory::CreatePlayer(scene, position, settings);
+        if (!prefab.player) return prefab;
+
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
         PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
 
-        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName());
+        // 走行時の砂埃パーティクル生成
+        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(
+            scene,
+            prefab.player,
+            settings.runDustEffect.particleAssetPath);
+        if (prefab.runDustParticle)
         {
-            SetupTransformConstraint(prefab.runDustParticle, playerTransform, { 0.0f, -0.3f, 0.0f }, true, false);
+            SetupTransformConstraint(
+                prefab.runDustParticle,
+                playerTransform,
+                settings.runDustEffect.positionOffset,
+                true,
+                false);
         }
+        // チャージ時の吸収パーティクル生成
         prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position);
         {
             SetupTransformConstraint(prefab.chargeEffectParticle, playerTransform, { 1.0f, -0.3f, 0.0f }, true, false);
@@ -61,6 +94,7 @@ namespace PrefabFactory
             particleSystem->Main().playOnAwake = false; // 最初は再生しない
             playerAttackBehavior->SetupChargeEffect(particleSystem);
         }
+        // チャージ時のライト生成
         prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
         {
             SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);

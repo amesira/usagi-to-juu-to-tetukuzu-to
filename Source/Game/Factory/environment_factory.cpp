@@ -74,7 +74,7 @@ GameObject* EnvironmentFactory::CreateDirectionalLight(SceneBase* scene, const X
 }
 
 // PointLight生成
-GameObject* EnvironmentFactory::CreatePointLight(SceneBase* scene, const XMFLOAT4& diffuse, float range)
+GameObject* EnvironmentFactory::CreatePointLight(IScene* scene, const XMFLOAT4& diffuse, float range)
 {
     GameObject* obj = scene->CreateGameObject();
     obj->SetName("PointLight");

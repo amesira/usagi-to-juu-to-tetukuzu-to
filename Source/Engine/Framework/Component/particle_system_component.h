@@ -84,19 +84,19 @@ public:
     MainModule& Main() { return m_desc.mainModule; }
     const MainModule& Main() const { return m_desc.mainModule; }
 
-    //// エミッションモジュールへのアクセス
+    // エミッションモジュールへのアクセス
     EmissionModule& Emission() { return m_desc.emissionModule; }
     const EmissionModule& Emission() const { return m_desc.emissionModule; }
 
-    //// 発生形状モジュールへのアクセス
+    // 発生形状モジュールへのアクセス
     ShapeModule& Shape() { return m_desc.shapeModule; }
     const ShapeModule& Shape() const { return m_desc.shapeModule; }
 
-    //// 寿命に応じたサイズ変化モジュールへのアクセス
+    // 寿命に応じたサイズ変化モジュールへのアクセス
     SizeOverLifetimeModule& SizeOverLifetime() { return m_desc.sizeOverLifetimeModule; }
     const SizeOverLifetimeModule& SizeOverLifetime() const { return m_desc.sizeOverLifetimeModule; }
 
-    //// 描画モジュールへのアクセス
+    // 描画モジュールへのアクセス
     RendererModule& Renderer() { return m_desc.rendererModule; }
     const RendererModule& Renderer() const { return m_desc.rendererModule; }
 

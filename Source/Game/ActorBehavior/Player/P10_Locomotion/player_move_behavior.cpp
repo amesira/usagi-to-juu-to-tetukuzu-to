@@ -86,6 +86,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // 移動処理の更新
     m_context.moveMotor.UpdateMove_Motor(m_context, moveIntent, deltaTime);
 
+    // 速度で目標位置を更新（制御速度と物理速度の両方を考慮）
     m_context.runtimeState.m_desiredPosition = MiMath::Add(
         m_context.runtimeState.m_desiredPosition, 
         MiMath::Multiply(m_context.runtimeState.m_controlVelocity, deltaTime));

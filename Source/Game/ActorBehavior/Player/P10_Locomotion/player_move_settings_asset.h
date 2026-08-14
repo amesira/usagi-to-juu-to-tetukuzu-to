@@ -1,9 +1,11 @@
-// player_move_asset.h
+// player_move_settings_asset.h
 #pragma once
 #include "Engine/Asset/Schema/field_master.h"
 
 #include "Engine/Asset/DataAsset/data_asset.h"
 #include "Engine/Asset/DataAsset/data_asset_type_id.h"
+
+#include "Engine/Editor/Schema/field_editor.h"
 
 #include "player_move_context.h"
 
@@ -22,7 +24,7 @@ namespace PlayerMoveSettings {
 
     /// @brief PlayerMoveSettingsのFieldSchemaを取得する
     using json = nlohmann::json;
-    static const auto& GetSchema()
+    inline static const auto& GetSchema()
     {
         using MoveSettings = Data;
 
@@ -82,7 +84,10 @@ private:
     static constexpr int s_supportedFormatVersion = 0;
 
 public:
-    PlayerMoveSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<PlayerMoveSettingsAsset>()) {}
+    PlayerMoveSettingsAsset() : DataAsset(
+        DataAssetTypeID::getTypeID<PlayerMoveSettingsAsset>(),
+        s_assetTypeName, 
+        s_supportedFormatVersion) {}
     ~PlayerMoveSettingsAsset() override = default;
 
     /// @brief PlayerMoveAssetのデフォルトインスタンスを作成する
@@ -93,9 +98,6 @@ public:
         clone->m_data = PlayerMoveSettings::Data {};
         return clone;
     }
-
-    std::string_view GetAssetTypeName() const override { return s_assetTypeName; }
-    int GetSupportedFormatVersion() const override { return s_supportedFormatVersion; }
 
     /// @brief PlayerMoveSettingsをJSON形式でシリアライズする
     nlohmann::json SerializeData() const override

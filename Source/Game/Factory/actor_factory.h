@@ -10,12 +10,16 @@
 using namespace DirectX;
 
 class GameObject;
-class SceneBase;
+class IScene;
+namespace PlayerPrefabSettings { struct Data; }
 
 namespace ActorFactory {
     /// @brief プレイヤー生成
     /// @param position 位置
-    GameObject* CreatePlayer(SceneBase* scene, const XMFLOAT3& position);
+    GameObject* CreatePlayer(
+        IScene* scene,
+        const XMFLOAT3& position,
+        const PlayerPrefabSettings::Data& settings);
 
 };
 
