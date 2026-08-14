@@ -90,7 +90,7 @@ void CameraProcessor::SetRenderViews(std::vector<RenderView>& outViews)
         for (int j = 0; j < outViews.size(); j++) {
             if (outViews[j].enabled) continue; // すでに有効なRenderViewがある場合はスキップ
             // RenderViewにカメラ情報を設定
-            RenderView& view = outViews[i];
+            RenderView& view = outViews[j];
             view.enabled = true;
 
             view.viewMatrix = camera->GetViewMatrix();

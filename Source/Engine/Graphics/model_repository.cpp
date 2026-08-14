@@ -15,7 +15,6 @@
 
 #include "Engine/engine_service_locator.h"
 
-
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
@@ -157,7 +156,8 @@ ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
     const std::string importPath = cacheKey.generic_string();
     const aiScene* scene = aiImportFile(
         importPath.c_str(),
-        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
+        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate
+       );
 
     // 読み込みエラーチェック
     if (scene == nullptr) return nullptr;
@@ -481,13 +481,19 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
                 unsigned int boneIndex = boneNameToIndex.at(mesh->mBones[b]->mName.C_Str());
                 float weight = mesh->mBones[b]->mWeights[w].mWeight;
                 
-                // 自分より小さい重みを持つスロットを探し、そこにボーンインデックスと重みを挿入
-                int arrayIndex = std::find_if(boneWeights.begin(), boneWeights.end(), [weight](float w) { return w < weight; }) - boneWeights.begin();
-                if (arrayIndex < 4) {
-                    boneIndices[arrayIndex] = boneIndex;
-                    boneWeights[arrayIndex] = weight;
+                // 
+                for (unsigned int i = 0; i < 4; i++) {
+                    if (weight > boneWeights[i]) {
+                        // 挿入位置を見つけたら、後ろの要素をシフトして挿入
+                        for (int j = 3; j > i; j--) {
+                            boneIndices[j] = boneIndices[j - 1];
+                            boneWeights[j] = boneWeights[j - 1];
+                        }
+                        boneIndices[i] = boneIndex;
+                        boneWeights[i] = weight;
+                        break;
+                    }
                 }
-                
             }
         }
 
@@ -495,6 +501,10 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
         float totalWeight = 0.0f;
         for (int i = 0; i < 4; i++) {
             totalWeight += boneWeights[i];
+        }
+
+        if (totalWeight <= 0.0f) {
+            totalWeight = 1.0f; // 重みが0の場合は1で割ることで正規化を回避
         }
 
         for (int i = 0; i < 4; i++) {

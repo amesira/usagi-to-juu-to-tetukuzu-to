@@ -90,7 +90,7 @@ void GameWorld::Render()
     m_mainGameRenderViewIndex = 0;
 
     // シーンカメラの描画情報をRenderViewに反映
-    SetSceneRenderView(scene, m_cameraProcessor.GetCameraCounter());
+    SetSceneRenderView(scene);
     
     // 描画制御プロセッサー処理
     for (int i = 0; i < m_renderViews.size(); i++) {
@@ -105,49 +105,55 @@ void GameWorld::Render()
 // -------------------------------- private
 
 // シーンカメラの描画情報をRenderViewに反映
-void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
+void GameWorld::SetSceneRenderView(IScene* scene)
 {
     // シーンカメラの描画情報をRenderViewに反映
     SceneSettings& sceneSettings = scene->GetSceneSettings();
     sceneSettings.UpdateCameraSettings();
     const SceneCameraSettings& sceneCameraSettings = sceneSettings.GetCameraSettings();
 
-    // シーン全体のレンダリング設定をRenderViewに反映
-    int sceneViewIndex = sceneRenderViewIndex;
-    if (sceneViewIndex >= m_renderViews.size()) {
-        return;
-    }
+    int viewNumber = 0;
 
-    RenderView& view = m_renderViews[sceneViewIndex];
-    m_mainSceneRenderViewIndex = sceneViewIndex;
-    {
+    for (int i = 0; i < m_renderViews.size(); i++) {
+        if (m_renderViews[i].enabled) continue;
+
+        RenderView& view = m_renderViews[i];
         view.enabled = true;
 
-        view.viewMatrix = sceneCameraSettings.GetViewMatrix();
-        view.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-        view.eyePosition = sceneCameraSettings.GetPosition();
-        view.aspectRatio = sceneCameraSettings.GetAspect();
+        // Scene View
+        if(viewNumber == 0){
+            RenderView& sceneView = view;
+            sceneView.viewMatrix = sceneCameraSettings.GetViewMatrix();
+            sceneView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
+            sceneView.eyePosition = sceneCameraSettings.GetPosition();
+            sceneView.aspectRatio = sceneCameraSettings.GetAspect();
 
-        view.enable3D = true;
-        view.enableLighting = true;
-        view.enablePostEffect = true;
-        view.enableUI = false;
-        view.enableDebugDraw = true;
-    }
-    sceneViewIndex++;
-    if (sceneViewIndex >= m_renderViews.size()) {
-        return;
-    }
+            sceneView.enable3D = true;
+            sceneView.enableLighting = true;
+            sceneView.enablePostEffect = true;
+            sceneView.enableUI = false;
+            sceneView.enableDebugDraw = true;
 
-    // Canvas用のRenderViewを有効化
-    RenderView& canvasView = m_renderViews[sceneViewIndex];
-    m_canvasRenderViewIndex = sceneViewIndex;
-    {
-        canvasView.enabled = true;
+            m_mainSceneRenderViewIndex = i;
 
-        canvasView.enable3D = false;
-        canvasView.enableLighting = false;
-        canvasView.enablePostEffect = false;
-        canvasView.enableUI = true;
+            viewNumber++;
+        }
+        else if (viewNumber == 1) {
+            RenderView& canvasView = view;
+            canvasView.viewMatrix = sceneCameraSettings.GetViewMatrix();
+            canvasView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
+            canvasView.eyePosition = sceneCameraSettings.GetPosition();
+            canvasView.aspectRatio = sceneCameraSettings.GetAspect();
+
+            canvasView.enable3D = false;
+            canvasView.enableLighting = false;
+            canvasView.enablePostEffect = false;
+            canvasView.enableUI = true;
+            canvasView.enableDebugDraw = false;
+
+            m_canvasRenderViewIndex = i;
+
+            viewNumber++;
+        }
     }
 }

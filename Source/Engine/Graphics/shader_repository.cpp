@@ -39,7 +39,6 @@ void ShaderRepository::Initialize()
         skinnedLitShader.pixelShader = litShader.pixelShader; // ライト付きシェーダーと同じピクセルシェーダーを使用
         GenerateShaderProgramResource(skinnedLitShader);
 
-
         ShaderProgramResource unlitShader;
         unlitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Unlit)];
         unlitShader.vertexShader = GenerateVertexShaderResource("unlit_vs.cso", VertexType::Model);

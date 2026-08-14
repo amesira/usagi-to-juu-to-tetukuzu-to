@@ -56,7 +56,7 @@ public:
 
 private:
     // SceneRenderViewの設定
-    void SetSceneRenderView(IScene* scene, int sceneRenderViewIndex);
+    void SetSceneRenderView(IScene* scene);
 
 };
 

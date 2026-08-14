@@ -13,7 +13,7 @@ using namespace DirectX;
 struct RimLightSettings {
     bool    enabled = true;               // リムライトの有効/無効
     float   intensity = 1.0f;              // リムライトの強さ
-    float   threshold = 0.5f;              // リムライトの閾値（法線と視線の角度）
+    float   threshold = 0.7f;              // リムライトの閾値（法線と視線の角度）
     XMFLOAT3 color = { 1.0f, 1.0f, 1.0f }; // リムライトの色
 };
 

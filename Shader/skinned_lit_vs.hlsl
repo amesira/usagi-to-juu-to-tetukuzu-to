@@ -41,21 +41,35 @@ VS_OUTPUT main(VS_INPUT vs_in)
     
     // スキニング処理
     float4x4 skinMatrix = CalcSkinningMatrix(vs_in.boneIndex, vs_in.boneWeight);
+    //float4x4 skinMatrix = {
+    //    1, 0, 0, 0,
+    //    0, 1, 0, 0,
+    //    0, 0, -1, 0,
+    //    0, 0, 0, 1
+    //};
     float4 skinPosL = mul(vs_in.posL, skinMatrix);
     
     // 頂点を行列変換
     vs_out.posW = mul(skinPosL, g_WorldMatrix);
     vs_out.posH = mul(mul(vs_out.posW, g_ViewMatrix), g_ProjectionMatrix);
     
-    // スキニング処理（法線）
+    float4x4 skinMatrix2 = {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, -1, 0,
+        0, 0, 0, 1
+    };
+    // === 法線・接線用 ===
     float3x3 skinNormalMatrix = (float3x3)skinMatrix;
+    float3x3 worldNormalMatrix = (float3x3)g_WorldMatrix;
+
     float3 skinnedNormal = mul(vs_in.normal.xyz, skinNormalMatrix);
-    
-    // 法線をワールド空間に変換して正規化
-    float3x3 normalMatrix = (float3x3)g_WorldMatrix;
-    vs_out.normal.xyz = normalize(mul(skinnedNormal, normalMatrix));
-    vs_out.tangent.xyz = normalize(mul(mul(vs_in.tangent.xyz, skinNormalMatrix), normalMatrix));
-    vs_out.binormal.xyz = normalize(mul(mul(vs_in.binormal.xyz, skinNormalMatrix), normalMatrix));
+    float3 skinnedTangent = mul(vs_in.tangent.xyz, skinNormalMatrix);
+    float3 skinnedBinormal = mul(vs_in.binormal.xyz, skinNormalMatrix);
+
+    vs_out.normal.xyz = normalize(mul(skinnedNormal, worldNormalMatrix));
+    vs_out.tangent.xyz = normalize(mul(skinnedTangent, worldNormalMatrix));
+    vs_out.binormal.xyz = normalize(mul(skinnedBinormal, worldNormalMatrix));
     
     // テクスチャ座標
     vs_out.texcoord = vs_in.texcoord;

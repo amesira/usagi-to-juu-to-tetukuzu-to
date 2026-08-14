@@ -353,8 +353,7 @@ float3 CalcSpecular_SpotLights(float3 normal, float3 posW, float3 eyePos, float 
 // リムライトの計算関数
 float3 CalcRimLight(float3 normal, float3 posW, float3 eyePos)
 {
-    if (g_RimLight.Enable == 0)
-        return float3(0.0f, 0.0f, 0.0f);
+    if (g_RimLight.Enable == 0) return float3(0.0f, 0.0f, 0.0f);
     
     // Light方向と法線が逆行している場合 power1 = 1.0f になる
     float power1 = 0.0f;
@@ -378,7 +377,7 @@ float3 CalcRimLight(float3 normal, float3 posW, float3 eyePos)
         power2 = 1.0f - power2;
     }
     
-    float rimPower = power1 * power2;
+    float rimPower = power2;
     rimPower = smoothstep(g_RimLight.Threshold, 1.0f, rimPower); // 閾値以下は0、以上は1になるように補間
     rimPower = pow(rimPower, 2.0f); // リムライトのエッジを強調するために二次関数的に強める
     

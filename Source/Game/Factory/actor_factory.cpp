@@ -35,6 +35,10 @@
 
 #include "Engine/engine_service_locator.h"
 
+namespace {
+    #define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+}
+
 // プレイヤー生成
 GameObject* ActorFactory::CreatePlayer(
     IScene* scene,
@@ -64,8 +68,11 @@ GameObject* ActorFactory::CreatePlayer(
     collider->SetScale(settings.colliderScale);
     collider->SetCenter(settings.colliderCenter);
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset/Model/player_model.fbx");
+    ModelResource* modelResource = MODEL_REPOSITORY->GetModel("asset/Model/player_model.fbx");
     model->SetModelResource(modelResource);
+
+    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_idle.anim.fbx");
+    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_running.anim.fbx");
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
