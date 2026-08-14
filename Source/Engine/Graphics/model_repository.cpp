@@ -355,7 +355,11 @@ ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
             // ルートボーンの場合
             // memo: mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
             model->rootBoneIndex = i;
-            model->rootParentCorrection = XMMatrixInverse(nullptr, model->defaultPose.localTransforms[i]);
+           
+            const XMMATRIX rootLocal = model->defaultPose.localTransforms[i];
+            const XMMATRIX rootGlobal = model->defaultPose.globalTransforms[i];
+
+            model->rootParentCorrection = XMMatrixInverse(nullptr, rootLocal) * rootGlobal;
         }
     }
 

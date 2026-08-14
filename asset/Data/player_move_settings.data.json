@@ -1,8 +1,24 @@
 {
     "data": {
-        "jumpForce": 10.0,
+        "gravityScale": {
+            "keys": [
+                {
+                    "time": -1.0,
+                    "value": 5.0
+                },
+                {
+                    "time": 0.0,
+                    "value": 0.10000000149011612
+                },
+                {
+                    "time": 1.0,
+                    "value": 3.0
+                }
+            ]
+        },
+        "jumpForce": 15.0,
         "moveSpeed": 15.0,
-        "rotationSpeed": 10.0,
+        "rotationSpeed": 20.0,
         "smoothTime": 0.10000000149011612,
         "stopSmoothTime": 0.019999999552965164
     },

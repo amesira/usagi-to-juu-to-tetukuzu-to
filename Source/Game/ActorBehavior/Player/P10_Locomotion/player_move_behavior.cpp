@@ -17,7 +17,7 @@
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 #include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/sprite_renderer_component.h"
+#include "Engine/Framework/Component/animation_component.h"
 
 // === Player ===
 #include "Game/ActorBehavior/Player/player_behavior.h"
@@ -65,6 +65,9 @@ void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
     if (m_context.settingsAsset == nullptr) {
         m_context.settingsAsset = DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>("asset/Data/player_move_settings.data.json", true);
     }
+
+    // 仮
+    m_animationComponent = playerContext.owner->GetOwner()->GetComponent<AnimationComponent>();
 }
 
 void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
@@ -86,14 +89,9 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // 移動処理の更新
     m_context.moveMotor.UpdateMove_Motor(m_context, moveIntent, deltaTime);
 
-    // 速度で目標位置を更新（制御速度と物理速度の両方を考慮）
-    m_context.runtimeState.m_desiredPosition = MiMath::Add(
-        m_context.runtimeState.m_desiredPosition, 
-        MiMath::Multiply(m_context.runtimeState.m_controlVelocity, deltaTime));
-
-    m_context.runtimeState.m_desiredPosition = MiMath::Add(
-        m_context.runtimeState.m_desiredPosition, 
-        MiMath::Multiply(m_context.runtimeState.m_physicsVelocity, deltaTime));
+    // 速度で目標位置を更新
+    ApplyControlVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
+    ApplyPhysicsVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
 
     // 現在位置と目標位置の差分を計算してRigidbodyに反映
     XMFLOAT3 currentPosition = m_context.transform->GetPosition();
@@ -103,6 +101,33 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // Rigidbodyの速度を設定
     XMFLOAT3 newVelocity = MiMath::Multiply(deltaPosition, 1.0f / deltaTime);
     m_context.rigidbody->SetVelocity(newVelocity);
+
+    // 回転処理
+    if (moveIntent.canRotate && MiMath::Length(moveIntent.rotateDirection) > 0.01f) {
+        m_context.moveRotate.UpdateMove_Rotate(m_context, moveIntent, deltaTime);
+    }
+
+    // === 仮：アニメーション更新 ===
+    if (m_animationComponent) {
+        if (MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f) {
+            m_animationComponent->SetAnimationState(1, 2.0f); // Moveアニメーションを再生
+        }
+        else {
+            m_animationComponent->SetAnimationState(0, 1.0f); // Idleアニメーションを再生
+        }
+    }
+}
+
+/// @brief 制御速度を適用する
+void PlayerMoveBehavior::ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime)
+{
+    outPosition = MiMath::Add(outPosition, MiMath::Multiply(m_context.runtimeState.m_controlVelocity, deltaTime));
+}
+
+/// @brief 物理速度を適用する
+void PlayerMoveBehavior::ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime)
+{
+    outPosition = MiMath::Add(outPosition, MiMath::Multiply(m_context.runtimeState.m_physicsVelocity, deltaTime));
 }
 
 

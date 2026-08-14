@@ -18,5 +18,4 @@ public:
     /// @brief PlayerMoveMotorの移動処理を更新する
     void UpdateMove_Motor(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);
 
-
 };

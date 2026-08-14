@@ -15,6 +15,8 @@ class PlayerMoveBehavior : public BehaviorComponent {
 private:
     PlayerMoveContext m_context;
 
+    class AnimationComponent* m_animationComponent = nullptr;
+
 public:
     PlayerMoveBehavior() = default;
     ~PlayerMoveBehavior() = default;
@@ -33,6 +35,10 @@ public:
         float deltaTime);
 
 private:
+    /// @brief 制御速度を適用する
+    void ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime);
+    /// @brief 物理速度を適用する
+    void ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime);
 
 };
 

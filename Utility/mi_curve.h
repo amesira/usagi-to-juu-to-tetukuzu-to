@@ -24,8 +24,6 @@ namespace MiCurve {
         if (curve.keys.empty()) return 1.0f;
         if (curve.keys.size() == 1) return curve.keys.front().value;
 
-        normalizedTime = std::clamp(normalizedTime, 0.0f, 1.0f);
-
         const auto& keys = curve.keys;
         if (normalizedTime <= keys.front().time) return keys.front().value;
         if (normalizedTime >= keys.back().time) return keys.back().value;

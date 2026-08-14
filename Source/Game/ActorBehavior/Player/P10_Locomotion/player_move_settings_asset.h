@@ -9,6 +9,8 @@
 
 #include "player_move_context.h"
 
+#include "Utility/mi_curve.h"
+
 namespace PlayerMoveSettings {
     /// @brief PlayerMoveの設定値を保持する構造体
     struct Data
@@ -20,6 +22,14 @@ namespace PlayerMoveSettings {
 
         float   smoothTime = 0.1f; // 平滑化の時間（秒）
         float   stopSmoothTime = 0.05f; // 停止時の平滑化の時間（秒）
+
+        MiCurve::FloatCurve gravityScale = {
+            .keys = {
+                MiCurve::CurveKey{ 1.0f, 1.0f },    // 上昇
+                MiCurve::CurveKey{ 0.0f, 0.3f },    // 頂上付近
+                MiCurve::CurveKey{ -1.0f, 1.5f },   // 下降
+            }
+        };
     };
 
     /// @brief PlayerMoveSettingsのFieldSchemaを取得する
@@ -70,7 +80,14 @@ namespace PlayerMoveSettings {
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.01f,
-                    .maxValue = 10.0f })
+                    .maxValue = 10.0f }),
+
+            MakeField(
+                "gravityScale",
+                "Gravity Scale",
+                &MoveSettings::gravityScale,
+                DefaultFieldOptions{}
+            ),
         };
         return schema;
     }

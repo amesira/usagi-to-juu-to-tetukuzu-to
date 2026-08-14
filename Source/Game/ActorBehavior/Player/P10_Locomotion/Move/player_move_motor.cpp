@@ -26,16 +26,16 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
             float gravityScale = 1.0f; // 重力のスケール（必要に応じて調整可能）
 
             // 上昇中
-            if (context.runtimeState.m_physicsVelocity.y > 0.01f) {
-                gravityScale = 1.0f;
+            if (context.runtimeState.m_physicsVelocity.y > 0.1f) {
+                gravityScale = context.settings().gravityScale.Evaluate(1.0f); // 上昇時の重力スケールを使用
             }
             // 下降中
-            else if (context.runtimeState.m_physicsVelocity.y < -0.01f) {
-                gravityScale = 1.5f;
+            else if (context.runtimeState.m_physicsVelocity.y < -0.1f) {
+                gravityScale = context.settings().gravityScale.Evaluate(-1.0f); // 下降時の重力スケールを使用
             }
             // 頂上付近
             else {
-                gravityScale = 0.3f;
+                gravityScale = context.settings().gravityScale.Evaluate(0.0f); // 頂上付近の重力スケールを使用
             }
 
             // 重力加速度を計算する

@@ -227,6 +227,22 @@ namespace MiMath
         return q;
     }
 
+    inline XMFLOAT4 LookRotation(const XMFLOAT3& forward, const XMFLOAT3& up) {
+        XMVECTOR f = XMVector3Normalize(XMLoadFloat3(&forward));
+        XMVECTOR u = XMVector3Normalize(XMLoadFloat3(&up));
+        XMVECTOR r = XMVector3Normalize(XMVector3Cross(u, f));
+        u = XMVector3Cross(f, r);
+        XMMATRIX rotationMatrix = {
+            r,
+            u,
+            f,
+            XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
+        };
+        XMFLOAT4 quaternion;
+        XMStoreFloat4(&quaternion, XMQuaternionRotationMatrix(rotationMatrix));
+        return quaternion;
+    }
+
     inline XMFLOAT4 Slerp(const XMFLOAT4& current, const XMFLOAT4& target, float t) {
         t = Clamp(t, 0.0f, 1.0f);
 
