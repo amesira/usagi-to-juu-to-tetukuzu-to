@@ -14,7 +14,7 @@
 #include "Engine/Framework/Component/light_component.h"
 
 // behavior
-#include "Game/ActorBehavior/camera_control_behavior.h"
+#include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 

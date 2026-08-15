@@ -58,29 +58,11 @@ public:
     // FOVを元に戻す
     void ResetFOV(float duration);
 
-    // カメラ距離変更
-    void ChangeCameraDistance(float distance, float duration);
-    void ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration);
-    // カメラ距離を元に戻す
-    void ResetCameraDistance(float duration);
-
-    // カメラオフセット変更
-    void ChangeCameraOffset(const XMFLOAT3& offset, float duration);
-    void ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
-    // カメラオフセットを元に戻す
-    void ResetCameraOffset(float duration);
-
-    void ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration);
-    void ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration);
-    void ResetCameraLocalOffset(float duration);
-
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
 
     //// フラッシュエフェクトの再生
     //void PlayFlashEffect(const XMFLOAT4& color, float duration);
-
-private:
 
 };
 

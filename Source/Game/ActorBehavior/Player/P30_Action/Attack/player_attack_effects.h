@@ -55,6 +55,8 @@ private:
 
     ChangeChargeLightTask m_changeChargeLightTask;
 
+    class CameraControlBehavior* m_cameraController = nullptr;
+
 public:
     void Initialize(GameObject* owner);
     void Update(float unscaledDeltaTime);

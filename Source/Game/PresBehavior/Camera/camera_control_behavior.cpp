@@ -110,23 +110,84 @@ void CameraControlBehavior::Update()
 // ImGuiを使ったインスペクタの描画
 void CameraControlBehavior::DrawComponentInspector()
 {
-    float followDistance = m_followDistance;
-    if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
-        m_followDistance = followDistance;
-    }
-    float lookAtHeight = m_lookAtHeight;
-    if (ImGui::SliderFloat("LookAt Height", &lookAtHeight, 0.0f, 5.0f)) {
-        m_lookAtHeight = lookAtHeight;
+    if (InspectorViewWindow::BeginComponentSection(this, "Camera Control Behavior")) 
+    {
+        float followDistance = m_followDistance;
+        if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
+            m_followDistance = followDistance;
+        }
+        float lookAtHeight = m_lookAtHeight;
+        if (ImGui::SliderFloat("LookAt Height", &lookAtHeight, 0.0f, 5.0f)) {
+            m_lookAtHeight = lookAtHeight;
+        }
+
+        float targetPitchDegrees = XMConvertToDegrees(m_targetPitch);
+        if (ImGui::SliderFloat("Target Pitch", &targetPitchDegrees, -90.0f, 90.0f)) {
+            m_targetPitch = XMConvertToRadians(targetPitchDegrees);
+        }
+        float targetYawDegrees = XMConvertToDegrees(m_targetYaw);
+        if (ImGui::SliderFloat("Target Yaw", &targetYawDegrees, -180.0f, 180.0f)) {
+            m_targetYaw = XMConvertToRadians(targetYawDegrees);
+        }
+
+        if (ImGui::TreeNode("Camera Distance")) {
+            static float distance = 10.0f;
+            static float duration = 0.2f;
+            static float holdDuration = 0.2f;
+
+            ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f, 100.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change Distance")) {
+                ChangeCameraDistance(distance, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeCameraDistanceTemporary(distance, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetCameraDistance(duration);
+            }
+
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Camera Local Offset")) {
+            static XMFLOAT3 offset = { 0.8f, 0.2f, 0.0f };
+            static float duration = 0.2f;
+            static float holdDuration = 0.2f;
+
+            ImGui::DragFloat3("Local Offset", &offset.x, 0.05f, -10.0f, 10.0f);
+            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
+            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
+
+            if (ImGui::Button("Change Local Offset")) {
+                ChangeCameraLocalOffset(offset, duration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Temporary")) {
+                ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Reset")) {
+                ResetCameraLocalOffset(duration);
+            }
+
+            ImGui::TreePop();
+        }
     }
 
-    float targetPitchDegrees = XMConvertToDegrees(m_targetPitch);
-    if (ImGui::SliderFloat("Target Pitch", &targetPitchDegrees, -90.0f, 90.0f)) {
-        m_targetPitch = XMConvertToRadians(targetPitchDegrees);
-    }
-    float targetYawDegrees = XMConvertToDegrees(m_targetYaw);
-    if (ImGui::SliderFloat("Target Yaw", &targetYawDegrees, -180.0f, 180.0f)) {
-        m_targetYaw = XMConvertToRadians(targetYawDegrees);
-    }
+    InspectorViewWindow::EndComponentSection();
 }
 
 // ------------------------------- public Effect Tasks

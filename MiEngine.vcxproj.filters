@@ -135,6 +135,9 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
@@ -303,7 +306,7 @@
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\camera_control_behavior.cpp">
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_control_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\transform_constraint_behavior.cpp">
@@ -377,6 +380,7 @@
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_document.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
@@ -644,7 +648,7 @@
       <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\camera_control_behavior.h">
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h">
       <Filter>Sources\Game\ActorBehavior</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\transform_constraint_behavior.h">
@@ -810,6 +814,7 @@
     <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_window.h" />
     <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_document.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

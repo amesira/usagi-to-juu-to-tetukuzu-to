@@ -13,6 +13,8 @@
 #include "Game/ControllerBehavior/game_effect_controller.h"
 #include "Utility/mi_math.h"
 
+#include "Game/PresBehavior/Camera/camera_control_behavior.h"
+
 using namespace DirectX;
 
 namespace {
@@ -34,6 +36,8 @@ void PlayerAttackEffects::Initialize(GameObject* owner)
     m_hitStopBehavior = owner->GetComponent<HitStopBehavior>();
     m_rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_spriteAnimation = owner->GetComponent<SpriteAnimationComponent>();
+
+    m_cameraController = owner->GetScene()->GetGameObjectByName("MainCamera")->GetComponent<CameraControlBehavior>();
 }
 
 void PlayerAttackEffects::Update(float unscaledDeltaTime)
@@ -61,32 +65,32 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
 {
     GameEffectController* gameEffect = GetGameEffect();
     CustomPostEffectController* postEffect = GetCustomPostEffect();
-    if (!gameEffect || !postEffect) return;
+    if (!gameEffect || !postEffect || !m_cameraController) return;
 
     switch (type) {
     case PlayerAttackEffectType::AimHoldStart:
-        gameEffect->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
+        m_cameraController->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.35f, 0.05f, 0.0f), 0.08f, 0.08f);
         break;
 
     case PlayerAttackEffectType::AimStart:
         gameEffect->ChangeFOV(65.0f, 0.2f);
-        gameEffect->ChangeCameraOffset(XMFLOAT3(0.0f, -0.5f, 0.0f), 0.1f);
-        gameEffect->ChangeCameraLocalOffset(XMFLOAT3(2.5f, 0.0f, 0.0f), 0.1f);
-        gameEffect->ChangeCameraDistance(5.0f, 0.1f);
+        m_cameraController->ChangeCameraOffset(XMFLOAT3(0.0f, -0.5f, 0.0f), 0.1f);
+        m_cameraController->ChangeCameraLocalOffset(XMFLOAT3(2.5f, 0.0f, 0.0f), 0.1f);
+        m_cameraController->ChangeCameraDistance(5.0f, 0.1f);
         postEffect->PlayEffect(CustomPostEffectType::MonoMask, 0.8f, 0.2f, MiMath::Infinity());
         break;
 
     case PlayerAttackEffectType::AimEnd:
         gameEffect->ResetFOV(0.1f);
-        gameEffect->ResetCameraOffset(0.1f);
-        gameEffect->ResetCameraLocalOffset(0.1f);
-        gameEffect->ResetCameraDistance(0.1f);
+        m_cameraController->ResetCameraOffset(0.1f);
+        m_cameraController->ResetCameraLocalOffset(0.1f);
+        m_cameraController->ResetCameraDistance(0.1f);
         postEffect->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
         break;
 
     case PlayerAttackEffectType::SingleAttack:
         gameEffect->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
-        gameEffect->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
+        m_cameraController->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.45f, 0.0f, 0.10f), 0.06f, 0.04f);
         gameEffect->PlayCameraShake(0.10f, 0.15f);
         break;
 
@@ -111,7 +115,7 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
                 [this]() {
                     if (GameEffectController* effect = GetGameEffect()) {
                         effect->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
-                        effect->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
+                        m_cameraController->ChangeCameraLocalOffsetTemporary(XMFLOAT3(0.15f, 0.0f, 0.25f), 0.08f, 0.08f);
                         effect->PlayCameraShake(0.16f, 0.30f);
                     }
                     if (CustomPostEffectController* effect = GetCustomPostEffect()) {
@@ -153,7 +157,7 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
 
     case PlayerAttackEffectType::AttackEnd:
         gameEffect->ResetFOV(0.12f);
-        gameEffect->ResetCameraLocalOffset(0.12f);
+        m_cameraController->ResetCameraLocalOffset(0.12f);
         if (m_chargeEffect) m_chargeEffect->Stop();
         break;
     }

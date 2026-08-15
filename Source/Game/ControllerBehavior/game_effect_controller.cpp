@@ -18,7 +18,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Game/ActorBehavior/camera_control_behavior.h"
+#include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 GameEffectController::GameEffectController()
 {
@@ -125,62 +125,6 @@ void GameEffectController::DrawComponentInspector()
             ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Camera Distance")) {
-            static float distance = 10.0f;
-            static float duration = 0.2f;
-            static float holdDuration = 0.2f;
-
-            ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f, 100.0f);
-            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
-            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
-
-            if (ImGui::Button("Change Distance")) {
-                ChangeCameraDistance(distance, duration);
-            }
-
-            ImGui::SameLine();
-
-            if (ImGui::Button("Temporary")) {
-                ChangeCameraDistanceTemporary(distance, duration, holdDuration);
-            }
-
-            ImGui::SameLine();
-
-            if (ImGui::Button("Reset")) {
-                ResetCameraDistance(duration);
-            }
-
-            ImGui::TreePop();
-        }
-
-        if (ImGui::TreeNode("Camera Local Offset")) {
-            static XMFLOAT3 offset = { 0.8f, 0.2f, 0.0f };
-            static float duration = 0.2f;
-            static float holdDuration = 0.2f;
-
-            ImGui::DragFloat3("Local Offset", &offset.x, 0.05f, -10.0f, 10.0f);
-            ImGui::DragFloat("Duration", &duration, 0.01f, 0.0f, 5.0f);
-            ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
-
-            if (ImGui::Button("Change Local Offset")) {
-                ChangeCameraLocalOffset(offset, duration);
-            }
-
-            ImGui::SameLine();
-
-            if (ImGui::Button("Temporary")) {
-                ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
-            }
-
-            ImGui::SameLine();
-
-            if (ImGui::Button("Reset")) {
-                ResetCameraLocalOffset(duration);
-            }
-
-            ImGui::TreePop();
-        }
-
         if (ImGui::TreeNode("Camera Shake")) {
             static float duration = 0.2f;
             static float magnitude = 0.2f;
@@ -282,7 +226,7 @@ void GameEffectController::ResetTimeScale(float duration)
     ChangeTimeScale(1.0f, duration);
 }
 
-// CameraControlBehaviorを介した実装の窓口
+// ----- CameraControlBehaviorを介した実装の窓口
 
 // FOV変更
 void GameEffectController::ChangeFOV(float fov, float duration)
@@ -302,68 +246,6 @@ void GameEffectController::ResetFOV(float duration)
 {
     if (m_cameraControl) {
         m_cameraControl->ResetFOV(duration);
-    }
-}
-
-// カメラ距離変更
-void GameEffectController::ChangeCameraDistance(float distance, float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraDistance(distance, duration);
-    }
-}
-void GameEffectController::ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraDistanceTemporary(distance, duration, holdDuration);
-    }
-}
-// カメラ距離を元に戻す
-void GameEffectController::ResetCameraDistance(float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ResetCameraDistance(duration);
-    }
-}
-
-// カメラオフセット変更
-void GameEffectController::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraOffset(offset, duration);
-    }
-}
-void GameEffectController::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraOffsetTemporary(offset, duration, holdDuration);
-    }
-}
-// カメラオフセットを元に戻す
-void GameEffectController::ResetCameraOffset(float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ResetCameraOffset(duration);
-    }
-}
-
-// カメラローカルオフセット変更
-void GameEffectController::ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraLocalOffset(offset, duration);
-    }
-}
-void GameEffectController::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
-    }
-}
-void GameEffectController::ResetCameraLocalOffset(float duration)
-{
-    if (m_cameraControl) {
-        m_cameraControl->ResetCameraLocalOffset(duration);
     }
 }
 
