@@ -161,9 +161,6 @@
     <ClCompile Include="Source\Engine\Device\mouse.cpp">
       <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\game_object.h">
-      <Filter>Sources\Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="External\stb_implementation.cpp">
       <Filter>External</Filter>
     </ClCompile>
@@ -383,6 +380,9 @@
     <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Core\game_object.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClCompile>
     <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClInclude>
