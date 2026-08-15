@@ -1,0 +1,32 @@
+{
+    "data": {
+        "cameraPositionSmoothTime": 0.10000000149011612,
+        "focusWeight": 0.5,
+        "followDistance": 24.700000762939453,
+        "fov": 80.0,
+        "initialPitch": 0.6981316804885864,
+        "initialYaw": 0.0,
+        "invertPitchInput": false,
+        "lookAtHeight": 1.5,
+        "lookAtLocalOffset": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "lookAtOffset": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "lookAtPositionSmoothTime": 0.10000000149011612,
+        "maxPitch": 0.8726646304130554,
+        "minPitch": -0.0872664600610733,
+        "mouseSensitivityX": 0.6000000238418579,
+        "mouseSensitivityY": 0.6000000238418579,
+        "rotationSmoothTime": 0.10000000149011612,
+        "shakeFrequency": 35.0
+    },
+    "formatVersion": 0,
+    "name": "camera_settings.data",
+    "type": "CameraSettingsAsset"
+}

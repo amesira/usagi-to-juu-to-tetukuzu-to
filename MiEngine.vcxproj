@@ -373,6 +373,7 @@
     <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Component\camera_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_context.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\transform_constraint_behavior.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h" />
@@ -384,6 +385,7 @@
     <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
     <ClInclude Include="Source\Game\Factory\projectile_factory.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_settings_asset.h" />
     <ClInclude Include="Utility\debug_renderer.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />

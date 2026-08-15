@@ -66,6 +66,8 @@ struct CameraReferences
 {
     // 追従ターゲットのTransformComponent
     class TransformComponent* targetTransform = nullptr;
+    // 注視を補助するフォーカスターゲット
+    class TransformComponent* focusTarget = nullptr;
 };
 
 class CameraContext {

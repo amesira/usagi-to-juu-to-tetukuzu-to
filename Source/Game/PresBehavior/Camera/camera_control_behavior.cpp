@@ -15,6 +15,7 @@
 
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Device/mouse.h"
+#include "Engine/engine_service_locator.h"
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
@@ -22,10 +23,26 @@
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 
+namespace {
+    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+}
+
 void CameraControlBehavior::Start()
 {
-    m_transform = GetOwner()->GetComponent<TransformComponent>();
-    m_camera = GetOwner()->GetComponent<CameraComponent>();
+    m_context.owner = this;
+    m_context.transform = GetOwner()->GetComponent<TransformComponent>();
+    m_context.camera = GetOwner()->GetComponent<CameraComponent>();
+
+    if (m_context.settingsAsset == nullptr) {
+        m_context.settingsAsset = DATA_LOADER->GetAsset<CameraSettingsAsset>(
+            "asset/Data/camera_settings.data.json", true);
+    }
+    if (m_context.settingsAsset == nullptr) return;
+
+    m_context.runtimeState.Initialize(m_context.settings());
+    if (m_context.camera) {
+        m_context.camera->SetFov(m_context.runtimeState.fov);
+    }
 
     IScene* scene = GetOwner()->GetScene();
 
@@ -33,31 +50,19 @@ void CameraControlBehavior::Start()
     {
         GameObject* target = scene->GetGameObjectByName("Player");
         if (target) {
-            m_targetTransform = target->GetComponent<TransformComponent>();
+            m_context.references.targetTransform = target->GetComponent<TransformComponent>();
         }
     }
 
-    // 初期設定
-    m_targetPitch = m_pitch;
-    m_targetYaw = m_yaw;
-
-    // デフォルト値の保存
-    m_defaultLookAtOffset = m_lookAtOffset;
-    m_defaultLookAtLocalOffset = m_lookAtLocalOffset;
-    m_defaultFollowDistance = m_followDistance;
-    if (m_camera) {
-        m_defaultFov = m_camera->GetFov();
-        m_fovTask.m_currentValue = m_defaultFov;
-    }
-
     // タスクのリセット
-    m_cameraDistanceTask.m_currentValue = m_followDistance;
-    m_cameraOffsetTask.m_currentValue = m_lookAtOffset;
-    m_cameraLocalOffsetTask.m_currentValue = m_lookAtLocalOffset;
-    m_fovTask.m_endValue = m_defaultFov;
-    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;
-    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;
-    m_cameraLocalOffsetTask.m_endValue = m_defaultLookAtLocalOffset;
+    m_fovTask.m_currentValue = m_context.runtimeState.fov;
+    m_cameraDistanceTask.m_currentValue = m_context.runtimeState.followDistance;
+    m_cameraOffsetTask.m_currentValue = m_context.runtimeState.lookAtOffset;
+    m_cameraLocalOffsetTask.m_currentValue = m_context.runtimeState.lookAtLocalOffset;
+    m_fovTask.m_endValue = m_context.settings().fov;
+    m_cameraDistanceTask.m_endValue = m_context.settings().followDistance;
+    m_cameraOffsetTask.m_endValue = m_context.settings().lookAtOffset;
+    m_cameraLocalOffsetTask.m_endValue = m_context.settings().lookAtLocalOffset;
 
     m_fovTask.Reset();
     m_cameraDistanceTask.Reset();
@@ -67,34 +72,39 @@ void CameraControlBehavior::Start()
 
 void CameraControlBehavior::Update()
 {
+    if (m_context.settingsAsset == nullptr) return;
+
     float deltaTime = FPS_GetUnscaledDeltaTime();
     UpdateCameraEffectTasks(deltaTime);
 
-    if (!m_targetTransform) return;
+    if (!m_context.references.targetTransform || !m_context.transform || !m_context.camera) return;
+
+    CameraRuntimeState& state = m_context.runtimeState;
+    const CameraSettings::Data& settings = m_context.settings();
 
     // マウス入力から回転のターゲット値を更新
     UpdateTargetYawPitchFromInput(deltaTime);
-    m_targetPitch = MiMath::Clamp(m_targetPitch, m_minPitch, m_maxPitch);
+    state.targetPitch = MiMath::Clamp(state.targetPitch, settings.minPitch, settings.maxPitch);
 
     // カメラ位置のターゲット値を計算
     XMFLOAT3 targetAtPosition = CalculateTargetAtPosition();
 
     // === カメラの回転と位置のスムーズ追従 ===
     // カメラの回転をスムーズに追従
-    m_pitch = MiMath::SmoothDamp(m_pitch, m_targetPitch, m_pitchVelocity, m_rotationSmoothTime, deltaTime);
-    m_yaw = MiMath::SmoothDamp(m_yaw, m_targetYaw, m_yawVelocity, m_rotationSmoothTime, deltaTime);
+    state.pitch = MiMath::SmoothDamp(state.pitch, state.targetPitch, state.pitchVelocity, settings.rotationSmoothTime, deltaTime);
+    state.yaw = MiMath::SmoothDamp(state.yaw, state.targetYaw, state.yawVelocity, settings.rotationSmoothTime, deltaTime);
 
     // カメラの注視点をスムーズに追従
-    XMFLOAT3 currentCameraAtPosition = m_camera->GetAtPosition();
-    currentCameraAtPosition = MiMath::SmoothDamp(currentCameraAtPosition, targetAtPosition, m_cameraPositionVelocity, m_positionSmoothTime, deltaTime);
+    XMFLOAT3 currentCameraAtPosition = m_context.camera->GetAtPosition();
+    currentCameraAtPosition = MiMath::SmoothDamp(currentCameraAtPosition, targetAtPosition, state.lookAtPositionVelocity, settings.lookAtPositionSmoothTime, deltaTime);
     
     // カメラ位置を計算
     XMFLOAT3 cameraForward, cameraRight;
     BuildCameraBasis(cameraForward, cameraRight);
 
     XMFLOAT3 targetCameraPosition = CalculateTargetCameraPosition(cameraForward, cameraRight, currentCameraAtPosition);
-    XMFLOAT3 currentCameraPosition = m_transform->GetPosition();
-    currentCameraPosition = MiMath::SmoothDamp(currentCameraPosition, targetCameraPosition, m_cameraOffsetVelocity, m_positionSmoothTime, deltaTime);
+    XMFLOAT3 currentCameraPosition = m_context.transform->GetPosition();
+    currentCameraPosition = MiMath::SmoothDamp(currentCameraPosition, targetCameraPosition, state.cameraPositionVelocity, settings.cameraPositionSmoothTime, deltaTime);
 
     // === カメラシェイクの適用 ===
     if (m_isShaking) {
@@ -103,8 +113,8 @@ void CameraControlBehavior::Update()
     }
 
     // === カメラの適用処理 ===
-    m_camera->SetAtPosition(currentCameraAtPosition);
-    m_transform->SetPosition(currentCameraPosition);
+    m_context.camera->SetAtPosition(currentCameraAtPosition);
+    m_context.transform->SetPosition(currentCameraPosition);
 }
 
 // ImGuiを使ったインスペクタの描画
@@ -112,22 +122,23 @@ void CameraControlBehavior::DrawComponentInspector()
 {
     if (InspectorViewWindow::BeginComponentSection(this, "Camera Control Behavior")) 
     {
-        float followDistance = m_followDistance;
+        CameraRuntimeState& state = m_context.runtimeState;
+
+        float followDistance = state.followDistance;
         if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
-            m_followDistance = followDistance;
+            state.followDistance = followDistance;
         }
-        float lookAtHeight = m_lookAtHeight;
-        if (ImGui::SliderFloat("LookAt Height", &lookAtHeight, 0.0f, 5.0f)) {
-            m_lookAtHeight = lookAtHeight;
+        if (m_context.settingsAsset) {
+            ImGui::Text("LookAt Height: %.2f", m_context.settings().lookAtHeight);
         }
 
-        float targetPitchDegrees = XMConvertToDegrees(m_targetPitch);
+        float targetPitchDegrees = XMConvertToDegrees(state.targetPitch);
         if (ImGui::SliderFloat("Target Pitch", &targetPitchDegrees, -90.0f, 90.0f)) {
-            m_targetPitch = XMConvertToRadians(targetPitchDegrees);
+            state.targetPitch = XMConvertToRadians(targetPitchDegrees);
         }
-        float targetYawDegrees = XMConvertToDegrees(m_targetYaw);
+        float targetYawDegrees = XMConvertToDegrees(state.targetYaw);
         if (ImGui::SliderFloat("Target Yaw", &targetYawDegrees, -180.0f, 180.0f)) {
-            m_targetYaw = XMConvertToRadians(targetYawDegrees);
+            state.targetYaw = XMConvertToRadians(targetYawDegrees);
         }
 
         if (ImGui::TreeNode("Camera Distance")) {
@@ -194,11 +205,11 @@ void CameraControlBehavior::DrawComponentInspector()
 
 void CameraControlBehavior::ChangeFOV(float fov, float duration)
 {
-    if (!m_camera) return;
+    if (!m_context.camera) return;
 
     m_fovTask.Reset();
 
-    m_fovTask.m_startValue = m_camera->GetFov();
+    m_fovTask.m_startValue = m_context.runtimeState.fov;
     m_fovTask.m_targetValue = fov;
     m_fovTask.m_endValue = fov;
     m_fovTask.m_duration = duration;
@@ -208,13 +219,13 @@ void CameraControlBehavior::ChangeFOV(float fov, float duration)
 
 void CameraControlBehavior::ChangeFOVTemporary(float fov, float duration, float holdDuration)
 {
-    if (!m_camera) return;
+    if (!m_context.camera || !m_context.settingsAsset) return;
 
     m_fovTask.Reset();
 
-    m_fovTask.m_startValue = m_camera->GetFov();
+    m_fovTask.m_startValue = m_context.runtimeState.fov;
     m_fovTask.m_targetValue = fov;
-    m_fovTask.m_endValue = m_defaultFov;
+    m_fovTask.m_endValue = m_context.settings().fov;
     m_fovTask.m_duration = duration;
     m_fovTask.m_holdDuration = holdDuration;
     m_fovTask.Start();
@@ -222,14 +233,15 @@ void CameraControlBehavior::ChangeFOVTemporary(float fov, float duration, float 
 
 void CameraControlBehavior::ResetFOV(float duration)
 {
-    ChangeFOV(m_defaultFov, duration);
+    if (!m_context.settingsAsset) return;
+    ChangeFOV(m_context.settings().fov, duration);
 }
 
 void CameraControlBehavior::ChangeCameraDistance(float distance, float duration)
 {
     m_cameraDistanceTask.Reset();
 
-    m_cameraDistanceTask.m_startValue = m_followDistance;
+    m_cameraDistanceTask.m_startValue = m_context.runtimeState.followDistance;
     m_cameraDistanceTask.m_targetValue = distance;
     m_cameraDistanceTask.m_endValue = distance;
     m_cameraDistanceTask.m_duration = duration;
@@ -240,9 +252,10 @@ void CameraControlBehavior::ChangeCameraDistance(float distance, float duration)
 void CameraControlBehavior::ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration)
 {
     m_cameraDistanceTask.Reset();
-    m_cameraDistanceTask.m_startValue = m_followDistance;
+    if (!m_context.settingsAsset) return;
+    m_cameraDistanceTask.m_startValue = m_context.runtimeState.followDistance;
     m_cameraDistanceTask.m_targetValue = distance;
-    m_cameraDistanceTask.m_endValue = m_defaultFollowDistance;  // 変更後の距離からデフォルトの距離に戻るように設定
+    m_cameraDistanceTask.m_endValue = m_context.settings().followDistance;
     m_cameraDistanceTask.m_duration = duration;
     m_cameraDistanceTask.m_holdDuration = holdDuration;
     m_cameraDistanceTask.Start();
@@ -250,14 +263,15 @@ void CameraControlBehavior::ChangeCameraDistanceTemporary(float distance, float 
 
 void CameraControlBehavior::ResetCameraDistance(float duration)
 {
-    ChangeCameraDistance(m_defaultFollowDistance, duration);
+    if (!m_context.settingsAsset) return;
+    ChangeCameraDistance(m_context.settings().followDistance, duration);
 }
 
 void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
 {
     m_cameraOffsetTask.Reset();
 
-    m_cameraOffsetTask.m_startValue = m_lookAtOffset;
+    m_cameraOffsetTask.m_startValue = m_context.runtimeState.lookAtOffset;
     m_cameraOffsetTask.m_targetValue = offset;
     m_cameraOffsetTask.m_endValue = offset;
     m_cameraOffsetTask.m_duration = duration;
@@ -267,11 +281,12 @@ void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float dur
 
 void CameraControlBehavior::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
 {
+    if (!m_context.settingsAsset) return;
     m_cameraOffsetTask.Reset();
 
-    m_cameraOffsetTask.m_startValue = m_lookAtOffset;
+    m_cameraOffsetTask.m_startValue = m_context.runtimeState.lookAtOffset;
     m_cameraOffsetTask.m_targetValue = offset;
-    m_cameraOffsetTask.m_endValue = m_defaultLookAtOffset;  // 変更後のオフセットからデフォルトのオフセットに戻るように設定
+    m_cameraOffsetTask.m_endValue = m_context.settings().lookAtOffset;
     m_cameraOffsetTask.m_duration = duration;
     m_cameraOffsetTask.m_holdDuration = holdDuration;
     m_cameraOffsetTask.Start();
@@ -279,14 +294,15 @@ void CameraControlBehavior::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, 
 
 void CameraControlBehavior::ResetCameraOffset(float duration)
 {
-    ChangeCameraOffset(m_defaultLookAtOffset, duration);
+    if (!m_context.settingsAsset) return;
+    ChangeCameraOffset(m_context.settings().lookAtOffset, duration);
 }
 
 void CameraControlBehavior::ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration)
 {
     m_cameraLocalOffsetTask.Reset();
 
-    m_cameraLocalOffsetTask.m_startValue = m_lookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_startValue = m_context.runtimeState.lookAtLocalOffset;
     m_cameraLocalOffsetTask.m_targetValue = offset;
     m_cameraLocalOffsetTask.m_endValue = offset;
     m_cameraLocalOffsetTask.m_duration = duration;
@@ -296,11 +312,12 @@ void CameraControlBehavior::ChangeCameraLocalOffset(const XMFLOAT3& offset, floa
 
 void CameraControlBehavior::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
 {
+    if (!m_context.settingsAsset) return;
     m_cameraLocalOffsetTask.Reset();
 
-    m_cameraLocalOffsetTask.m_startValue = m_lookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_startValue = m_context.runtimeState.lookAtLocalOffset;
     m_cameraLocalOffsetTask.m_targetValue = offset;
-    m_cameraLocalOffsetTask.m_endValue = m_defaultLookAtLocalOffset;
+    m_cameraLocalOffsetTask.m_endValue = m_context.settings().lookAtLocalOffset;
     m_cameraLocalOffsetTask.m_duration = duration;
     m_cameraLocalOffsetTask.m_holdDuration = holdDuration;
     m_cameraLocalOffsetTask.Start();
@@ -308,7 +325,8 @@ void CameraControlBehavior::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& off
 
 void CameraControlBehavior::ResetCameraLocalOffset(float duration)
 {
-    ChangeCameraLocalOffset(m_defaultLookAtLocalOffset, duration);
+    if (!m_context.settingsAsset) return;
+    ChangeCameraLocalOffset(m_context.settings().lookAtLocalOffset, duration);
 }
 
 void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
@@ -316,7 +334,9 @@ void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
     m_cameraShakeTask.Reset();
     m_cameraShakeTask.m_duration = duration;
     m_cameraShakeTask.m_magnitude = magnitude;
-    m_cameraShakeTask.m_shakeFrequency = m_shakeFrequency; // シェイクの周波数はクラスの設定値を使用
+    m_cameraShakeTask.m_shakeFrequency = m_context.settingsAsset
+        ? m_context.settings().shakeFrequency
+        : 35.0f;
     m_cameraShakeTask.Start();
 }
 
@@ -339,17 +359,18 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
     m_cameraShakeTask.Update(deltaTime);
 
     // タスクの更新後に値を適用
-    if (fovTaskRunning && m_camera) {
-        m_camera->SetFov(m_fovTask.m_currentValue);
+    if (fovTaskRunning && m_context.camera) {
+        m_context.runtimeState.fov = m_fovTask.m_currentValue;
+        m_context.camera->SetFov(m_context.runtimeState.fov);
     }
     if (distanceTaskRunning) {
-        m_followDistance = m_cameraDistanceTask.m_currentValue;
+        m_context.runtimeState.followDistance = m_cameraDistanceTask.m_currentValue;
     }
     if (offsetTaskRunning) {
-        m_lookAtOffset = m_cameraOffsetTask.m_currentValue;
+        m_context.runtimeState.lookAtOffset = m_cameraOffsetTask.m_currentValue;
     }
     if (localOffsetTaskRunning) {
-        m_lookAtLocalOffset = m_cameraLocalOffsetTask.m_currentValue;
+        m_context.runtimeState.lookAtLocalOffset = m_cameraLocalOffsetTask.m_currentValue;
     }
     if (cameraShakeTaskRunning) {
         m_isShaking = true;
@@ -363,7 +384,8 @@ void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
 // カメラの前方と右方向のベクトルを構築
 void CameraControlBehavior::BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const
 {
-    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ m_pitch, m_yaw, 0.0f });
+    const CameraRuntimeState& state = m_context.runtimeState;
+    XMFLOAT4 cameraQuaternion = MiMath::QuaternionFromEuler({ state.pitch, state.yaw, 0.0f });
 
     outForward = MiMath::RotateVector(cameraQuaternion, { 0.0f, 0.0f, 1.0f });
     outRight = MiMath::RotateVector(cameraQuaternion, { 1.0f, 0.0f, 0.0f });
@@ -373,10 +395,11 @@ void CameraControlBehavior::BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& out
 XMFLOAT3 CameraControlBehavior::CalculateTargetAtPosition()
 {
     // ターゲットの位置を取得
-    XMFLOAT3 targetPosition = m_targetTransform->GetPosition();
-    if (m_focusTarget) {
-        XMFLOAT3 focusPosition = m_focusTarget->GetPosition();
-        targetPosition = MiMath::Lerp(targetPosition, focusPosition, m_focusWeight);
+    const CameraRuntimeState& state = m_context.runtimeState;
+    XMFLOAT3 targetPosition = m_context.references.targetTransform->GetPosition();
+    if (m_context.references.focusTarget) {
+        XMFLOAT3 focusPosition = m_context.references.focusTarget->GetPosition();
+        targetPosition = MiMath::Lerp(targetPosition, focusPosition, state.focusWeight);
     }
 
     XMFLOAT3 cameraForward, cameraRight;
@@ -384,13 +407,13 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetAtPosition()
 
     const XMFLOAT3 worldUp = { 0.0f, 1.0f, 0.0f };
     XMFLOAT3 localOffset = { 0.0f, 0.0f, 0.0f };
-    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraRight, m_lookAtLocalOffset.x));
-    localOffset = MiMath::Add(localOffset, MiMath::Multiply(worldUp, m_lookAtLocalOffset.y));
-    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraForward, m_lookAtLocalOffset.z));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraRight, state.lookAtLocalOffset.x));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(worldUp, state.lookAtLocalOffset.y));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraForward, state.lookAtLocalOffset.z));
 
-    targetPosition = MiMath::Add(targetPosition, m_lookAtOffset);
+    targetPosition = MiMath::Add(targetPosition, state.lookAtOffset);
     targetPosition = MiMath::Add(targetPosition, localOffset);
-    targetPosition.y += m_lookAtHeight;
+    targetPosition.y += m_context.settings().lookAtHeight;
 
     return targetPosition;
 }
@@ -398,19 +421,26 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetAtPosition()
 // カメラ回転のターゲット値の入力による更新
 void CameraControlBehavior::UpdateTargetYawPitchFromInput(float deltaTime)
 {
+    CameraRuntimeState& state = m_context.runtimeState;
+    const CameraSettings::Data& settings = m_context.settings();
+
     // マウス入力から回転のターゲット値を計算
     float mouseX = Mouse_GetPositionX() - Mouse_GetOldPositionX();
     float mouseY = Mouse_GetPositionY() - Mouse_GetOldPositionY();
 
-    m_targetYaw += mouseX * m_mouseSensitivity * deltaTime;
-    m_targetPitch += mouseY * m_mouseSensitivity * deltaTime;
+    state.targetYaw += mouseX * settings.mouseSensitivityX * deltaTime;
+
+    const float pitchDirection = settings.invertPitchInput ? -1.0f : 1.0f;
+    state.targetPitch += mouseY * settings.mouseSensitivityY * pitchDirection * deltaTime;
 }
 
 // カメラ位置のターゲット値を計算
 XMFLOAT3 CameraControlBehavior::CalculateTargetCameraPosition(const XMFLOAT3& cameraForward, const XMFLOAT3& cameraRight, const XMFLOAT3& targetAtPosition)
 {
     XMFLOAT3 targetCameraPosition = targetAtPosition;
-    targetCameraPosition = MiMath::Subtract(targetCameraPosition, MiMath::Multiply(cameraForward, m_followDistance));
+    targetCameraPosition = MiMath::Subtract(
+        targetCameraPosition,
+        MiMath::Multiply(cameraForward, m_context.runtimeState.followDistance));
 
     return targetCameraPosition;
 }
