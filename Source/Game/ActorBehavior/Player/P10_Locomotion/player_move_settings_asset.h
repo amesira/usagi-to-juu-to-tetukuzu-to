@@ -7,8 +7,6 @@
 
 #include "Engine/Editor/Schema/field_editor.h"
 
-#include "player_move_context.h"
-
 #include "Utility/mi_curve.h"
 
 namespace PlayerMoveSettings {
@@ -107,12 +105,17 @@ public:
         s_supportedFormatVersion) {}
     ~PlayerMoveSettingsAsset() override = default;
 
+    /// @brief PlayerMoveSettingsのデータを取得する
+    const PlayerMoveSettings::Data& GetData() const { return m_data; }
+
+    // === DataAssetのオーバーライド関数 ===
+
     /// @brief PlayerMoveAssetのデフォルトインスタンスを作成する
     std::unique_ptr<DataAsset> CreateDefaultInstance() const override
     {
         auto clone = std::make_unique<PlayerMoveSettingsAsset>();
-        clone->SetHeader(AssetHeader{ s_assetTypeName.data(), s_supportedFormatVersion, ""});
-        clone->m_data = PlayerMoveSettings::Data {};
+        clone->SetHeader(AssetHeader{ s_assetTypeName.data(), s_supportedFormatVersion, "" });
+        clone->m_data = PlayerMoveSettings::Data{};
         return clone;
     }
 
@@ -144,7 +147,5 @@ public:
         return changed;
     }
 
-    /// @brief PlayerMoveSettingsのデータを取得する
-    const PlayerMoveSettings::Data& GetData() const { return m_data; }
 
 };

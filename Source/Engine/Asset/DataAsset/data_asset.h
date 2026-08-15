@@ -24,7 +24,10 @@ private:
 
 public:
     DataAsset(int dataAssetType,const std::string_view& assetTypeName, const int supportVersion) 
-        : m_dataAssetTypeID(dataAssetType), m_assetTypeName(assetTypeName), m_supportedFormatVersion(supportVersion) {}
+        : m_dataAssetTypeID(dataAssetType), m_assetTypeName(assetTypeName), m_supportedFormatVersion(supportVersion) 
+    {
+        SetHeader(AssetHeader{ assetTypeName.data(), supportVersion, "" });
+    }
     virtual ~DataAsset() = default;
 
     /// @brief DataAssetのタイプIDを取得する
