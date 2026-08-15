@@ -56,7 +56,143 @@ namespace CameraSettings {
     {
         using CameraSettingsData = Data;
         static const auto& schema = FieldSchema{
-            // ここにFieldを追加していく
+            // === 基本構図 ===
+            MakeField(
+                "lookAtOffset",
+                "Look At Offset",
+                &CameraSettingsData::lookAtOffset,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = -100.0f,
+                    .maxValue = 100.0f }),
+            MakeField(
+                "lookAtLocalOffset",
+                "Look At Local Offset",
+                &CameraSettingsData::lookAtLocalOffset,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = -100.0f,
+                    .maxValue = 100.0f }),
+            MakeField(
+                "lookAtHeight",
+                "Look At Height",
+                &CameraSettingsData::lookAtHeight,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = -10.0f,
+                    .maxValue = 100.0f }),
+            MakeField(
+                "followDistance",
+                "Follow Distance",
+                &CameraSettingsData::followDistance,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 100.0f }),
+            MakeField(
+                "fov",
+                "FOV",
+                &CameraSettingsData::fov,
+                SliderFieldOptions{
+                    .minValue = 1.0f,
+                    .maxValue = 179.0f }),
+
+            // === フォーカス ===
+            MakeField(
+                "focusWeight",
+                "Focus Weight",
+                &CameraSettingsData::focusWeight,
+                SliderFieldOptions{
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
+
+            // === 入力 ===
+            MakeField(
+                "mouseSensitivityX",
+                "Mouse Sensitivity X",
+                &CameraSettingsData::mouseSensitivityX,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "mouseSensitivityY",
+                "Mouse Sensitivity Y",
+                &CameraSettingsData::mouseSensitivityY,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "invertPitchInput",
+                "Invert Pitch Input",
+                &CameraSettingsData::invertPitchInput),
+
+            // === 補間 ===
+            MakeField(
+                "rotationSmoothTime",
+                "Rotation Smooth Time",
+                &CameraSettingsData::rotationSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "lookAtPositionSmoothTime",
+                "Look At Position Smooth Time",
+                &CameraSettingsData::lookAtPositionSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "cameraPositionSmoothTime",
+                "Camera Position Smooth Time",
+                &CameraSettingsData::cameraPositionSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+
+            // === 初期回転・制限 ===
+            MakeField(
+                "initialPitch",
+                "Initial Pitch",
+                &CameraSettingsData::initialPitch,
+                AngleFieldOptions{
+                    .minValue = -89.0f,
+                    .maxValue = 89.0f }),
+            MakeField(
+                "initialYaw",
+                "Initial Yaw",
+                &CameraSettingsData::initialYaw,
+                AngleFieldOptions{
+                    .minValue = -180.0f,
+                    .maxValue = 180.0f }),
+            MakeField(
+                "maxPitch",
+                "Maximum Pitch",
+                &CameraSettingsData::maxPitch,
+                AngleFieldOptions{
+                    .minValue = -89.0f,
+                    .maxValue = 89.0f }),
+            MakeField(
+                "minPitch",
+                "Minimum Pitch",
+                &CameraSettingsData::minPitch,
+                AngleFieldOptions{
+                    .minValue = -89.0f,
+                    .maxValue = 89.0f }),
+
+            // === シェイク ===
+            MakeField(
+                "shakeFrequency",
+                "Shake Frequency",
+                &CameraSettingsData::shakeFrequency,
+                DragFieldOptions{
+                    .dragSpeed = 1.0f,
+                    .minValue = 0.0f,
+                    .maxValue = 200.0f }),
         };
 
         return schema;
