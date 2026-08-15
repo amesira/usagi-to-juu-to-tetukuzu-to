@@ -23,6 +23,9 @@ class CameraControlBehavior : public BehaviorComponent {
 private:
     CameraContext m_context;
 
+    std::uint64_t m_lastSettingsRevision = 0; // DataAssetのリビジョン番号を保持し、変更があった場合に更新する
+    std::function<void()> m_settingsReloadCallback; // DataAssetのリロード時に呼ばれるコールバック
+
     // === カメラシェイク設定 ===
     bool m_isShaking = false;
     XMFLOAT3 m_shakeOffset = { 0.0f, 0.0f, 0.0f }; // シェイクによる位置のオフセット
@@ -52,6 +55,10 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    // ユーザーによるカメラ回転入力の有効状態
+    void SetCameraInputEnabled(bool enabled);
+    bool IsCameraInputEnabled() const;
+
     // FOV変更
     void ChangeFOV(float fov, float duration);
     void ChangeFOVTemporary(float fov, float duration, float holdDuration);
@@ -78,6 +85,9 @@ public:
     void PlayCameraShake(float duration, float magnitude);
 
 private:
+    // 入力の有効・無効を切り替える操作を処理
+    void UpdateCameraInputActivation();
+
     // エフェクトタスクの更新
     void UpdateCameraEffectTasks(float deltaTime);
 

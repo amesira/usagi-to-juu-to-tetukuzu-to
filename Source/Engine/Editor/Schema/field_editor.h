@@ -11,6 +11,7 @@
 #include "Engine/Asset/Schema/field_options.h"
 #include "Engine/Asset/Schema/enum_field_options.h"
 #include "Engine/Asset/Schema/field_struct.h"
+#include "Engine/Asset/Schema/field_header.h"
 
 #include <DirectXMath.h>
 #include "Engine/Editor/i_editor_window.h"
@@ -54,6 +55,15 @@ namespace FieldEditor
         ImGui::TreePop();
         return changed;
     }
+
+    /// @brief HeaderFieldをEditor上で描画する関数
+    template<class TObject>
+    bool DrawField(TObject& object, const HeaderField& field)
+    {
+        ImGui::Text("%s", field.label.c_str());
+        return false;
+    }
+
 #pragma endregion
 
     /// @brief FieldSchemaの各フィールドをEditor上で描画する関数

@@ -38,6 +38,7 @@ struct EditorContext {
     float hierarchyWidth = 300.0f;
     float inspectorWidth = 300.0f;
 
+    // ツールバーの展開状態（true: 展開中、false: 折りたたみ中）
     bool toolbarExpanded = true;
 
     std::vector<std::string> logMessages; // ログメッセージのリスト

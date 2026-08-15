@@ -122,5 +122,7 @@ bool DataAssetLoader::ReloadDataAsset(const std::filesystem::path& filePath)
         return false;
     }
 
+    asset->OnDataReloaded();
+
     return true;
 }

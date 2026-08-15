@@ -27,6 +27,12 @@ private:
 
     DataEditorDocument m_document; // DataEditorのドキュメント管理クラス
 
+    bool m_isOpened = false; // ウィンドウが開かれているかどうか
+
+    // オートセーブの設定
+    bool m_autoSave = true;
+    int m_autoSaveFrameCounter = 0;
+
 public:
     DataEditorWindow(EditorContext* editorContext) : IEditorWindow(editorContext) {}
     virtual ~DataEditorWindow() = default;

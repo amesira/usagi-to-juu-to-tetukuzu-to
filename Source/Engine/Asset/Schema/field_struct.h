@@ -35,7 +35,7 @@ public:
 /// @param schema 
 /// @return 
 template<class TObject, class TStructValue, class TOptions, class... TFields>
-auto MakeStructField(
+inline auto MakeStructField(
     std::string key,
     std::string label,
     TStructValue TObject::* member,

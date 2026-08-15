@@ -22,6 +22,7 @@ namespace
     // データアセットのロードを簡略化するためのマクロ
     #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
 
+    /// @brief DataAssetセクションの開始
     bool BeginDataAssetSection(const char* name)
     {
         ImGui::PushID(name);
@@ -42,6 +43,7 @@ namespace
         return open;
     }
 
+    /// @brief DataAssetセクションの終わり
     void EndDataAssetSection()
     {
         ImGui::PopStyleVar();
@@ -51,6 +53,12 @@ namespace
 
 void DataEditorWindow::Draw()
 {
+    // === ウィンドウが開かれたときに、アセットリストを更新する ===
+    if (!m_isOpened) {
+        m_isOpened = true;
+        RefreshAssetList();
+    }
+
     const float statusBarHeight = ImGui::GetFrameHeightWithSpacing();
     ImGui::BeginChild("MainContent",ImVec2(0.0f, -statusBarHeight),false);
 
@@ -84,7 +92,7 @@ void DataEditorWindow::Draw()
 
 void DataEditorWindow::OnWindowClosed()
 {
-
+    m_isOpened = false;
 }
 
 #pragma region 内部描画
@@ -121,6 +129,23 @@ void DataEditorWindow::DrawToolbar()
     ImGui::SameLine();
 
     if (ImGui::Button("Refresh Assets")) RefreshAssetList();
+    ImGui::SameLine();
+
+    // === オートセーブ ===
+    ImGui::Checkbox("Auto Save", &m_autoSave);
+    ImGui::SameLine();
+    ImGui::Text("%d%s%d", m_autoSaveFrameCounter, "/", 100);
+    if (m_autoSave) {
+        m_autoSaveFrameCounter++;
+
+        // 100フレームごとに自動保存を行う
+        if (m_autoSaveFrameCounter >= 100) {
+            m_autoSaveFrameCounter = 0;
+            if (m_document.IsDirty()) {
+                m_document.Save();
+            }
+        }
+    }
 
     // === データアセットのタイプ名とパスを表示する入力テキストボックスを描画する ===
     ImGui::SetNextItemWidth(-1.0f);

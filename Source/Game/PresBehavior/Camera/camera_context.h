@@ -14,6 +14,9 @@
 
 struct CameraRuntimeState
 {
+    // ユーザーによるカメラ回転入力を受け付けるか
+    bool isInputEnabled = true;
+
     // 現在のカメラ構図
     DirectX::XMFLOAT3 lookAtOffset = {};
     DirectX::XMFLOAT3 lookAtLocalOffset = {};
@@ -38,6 +41,8 @@ struct CameraRuntimeState
 
     void Initialize(const CameraSettings::Data& settings)
     {
+        isInputEnabled = true;
+
         lookAtOffset = settings.lookAtOffset;
         lookAtLocalOffset = settings.lookAtLocalOffset;
         followDistance = settings.followDistance;

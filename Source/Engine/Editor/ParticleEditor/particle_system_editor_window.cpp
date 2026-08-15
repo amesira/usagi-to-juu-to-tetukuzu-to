@@ -121,6 +121,22 @@ void ParticleSystemEditorWindow::DrawToolbar()
     ImGui::SameLine();
     ImGui::Checkbox("Live Apply to Scene", &m_liveApplyToScene);
 
+    // === オートセーブ ===
+    ImGui::Checkbox("Auto Save", &m_autoSave);
+    ImGui::SameLine();
+    ImGui::Text("%d%s%d", m_autoSaveFrameCounter, "/", 100);
+    if (m_autoSave) {
+        m_autoSaveFrameCounter++;
+
+        // 100フレームごとに自動保存を行う
+        if (m_autoSaveFrameCounter >= 100) {
+            m_autoSaveFrameCounter = 0;
+            if (m_document.IsDirty()) {
+                m_document.Save();
+            }
+        }
+    }
+
     // パーティクルアセットのパスを表示する入力テキストボックスを描画する
     ImGui::SetNextItemWidth(-1.0f);
     ImGui::InputText("##ParticleAssetPath", m_pathBuffer.data(), m_pathBuffer.size());

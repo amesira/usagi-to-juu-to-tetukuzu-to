@@ -14,6 +14,7 @@
 #include "Utility/mi_signal.h"
 
 #include "Engine/Device/mi_fps.h"
+#include "Engine/Device/keyboard.h"
 #include "Engine/Device/mouse.h"
 #include "Engine/engine_service_locator.h"
 
@@ -25,6 +26,8 @@
 
 namespace {
     #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+
+    constexpr Keyboard_Keys CAMERA_INPUT_DISABLE_KEY = KK_F1;
 }
 
 void CameraControlBehavior::Start()
@@ -43,6 +46,19 @@ void CameraControlBehavior::Start()
     if (m_context.camera) {
         m_context.camera->SetFov(m_context.runtimeState.fov);
     }
+
+    // 仮：DataAssetのロード完了時に呼ばれるコールバックを登録
+    m_settingsReloadCallback = [this]() {
+        if (m_context.settingsAsset) {
+            m_context.runtimeState.followDistance = m_context.settings().followDistance;
+            m_context.runtimeState.lookAtOffset = m_context.settings().lookAtOffset;
+            m_context.runtimeState.lookAtLocalOffset = m_context.settings().lookAtLocalOffset;
+            m_context.runtimeState.fov = m_context.settings().fov;
+            if (m_context.camera) {
+                m_context.camera->SetFov(m_context.runtimeState.fov);
+            }
+        }
+        };
 
     IScene* scene = GetOwner()->GetScene();
 
@@ -74,8 +90,17 @@ void CameraControlBehavior::Update()
 {
     if (m_context.settingsAsset == nullptr) return;
 
+    if (m_lastSettingsRevision != m_context.settingsAsset->GetRevision()) {
+        m_lastSettingsRevision = m_context.settingsAsset->GetRevision();
+
+        // 設定が変更された場合の処理
+        m_settingsReloadCallback();
+    }
+
     float deltaTime = FPS_GetUnscaledDeltaTime();
     UpdateCameraEffectTasks(deltaTime);
+
+    UpdateCameraInputActivation();
 
     if (!m_context.references.targetTransform || !m_context.transform || !m_context.camera) return;
 
@@ -83,7 +108,9 @@ void CameraControlBehavior::Update()
     const CameraSettings::Data& settings = m_context.settings();
 
     // マウス入力から回転のターゲット値を更新
-    UpdateTargetYawPitchFromInput(deltaTime);
+    if (state.isInputEnabled) {
+        UpdateTargetYawPitchFromInput(deltaTime);
+    }
     state.targetPitch = MiMath::Clamp(state.targetPitch, settings.minPitch, settings.maxPitch);
 
     // カメラ位置のターゲット値を計算
@@ -123,6 +150,8 @@ void CameraControlBehavior::DrawComponentInspector()
     if (InspectorViewWindow::BeginComponentSection(this, "Camera Control Behavior")) 
     {
         CameraRuntimeState& state = m_context.runtimeState;
+
+        ImGui::Text("Camera Input: %s", state.isInputEnabled ? "Enabled" : "Disabled");
 
         float followDistance = state.followDistance;
         if (ImGui::SliderFloat("Follow Distance", &followDistance, 5.0f, 30.0f)) {
@@ -199,6 +228,16 @@ void CameraControlBehavior::DrawComponentInspector()
     }
 
     InspectorViewWindow::EndComponentSection();
+}
+
+void CameraControlBehavior::SetCameraInputEnabled(bool enabled)
+{
+    m_context.runtimeState.isInputEnabled = enabled;
+}
+
+bool CameraControlBehavior::IsCameraInputEnabled() const
+{
+    return m_context.runtimeState.isInputEnabled;
 }
 
 // ------------------------------- public Effect Tasks
@@ -341,6 +380,18 @@ void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 }
 
 // ------------------------------- private
+
+void CameraControlBehavior::UpdateCameraInputActivation()
+{
+    if (Keyboard_IsKeyDownTrigger(CAMERA_INPUT_DISABLE_KEY)) {
+        if (IsCameraInputEnabled()) {
+            SetCameraInputEnabled(false);
+        }
+        else {
+            SetCameraInputEnabled(true);
+        }
+    }
+}
 
 void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
 {

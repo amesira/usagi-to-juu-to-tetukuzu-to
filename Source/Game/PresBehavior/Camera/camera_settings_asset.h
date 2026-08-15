@@ -57,6 +57,7 @@ namespace CameraSettings {
         using CameraSettingsData = Data;
         static const auto& schema = FieldSchema{
             // === 基本構図 ===
+            MakeHeaderField("Basic Composition"),
             MakeField(
                 "lookAtOffset",
                 "Look At Offset",
@@ -98,6 +99,7 @@ namespace CameraSettings {
                     .maxValue = 179.0f }),
 
             // === フォーカス ===
+            MakeHeaderField("Focus"),
             MakeField(
                 "focusWeight",
                 "Focus Weight",
@@ -107,6 +109,7 @@ namespace CameraSettings {
                     .maxValue = 1.0f }),
 
             // === 入力 ===
+            MakeHeaderField("Input"),
             MakeField(
                 "mouseSensitivityX",
                 "Mouse Sensitivity X",
@@ -129,6 +132,7 @@ namespace CameraSettings {
                 &CameraSettingsData::invertPitchInput),
 
             // === 補間 ===
+            MakeHeaderField("Interpolation"),
             MakeField(
                 "rotationSmoothTime",
                 "Rotation Smooth Time",
@@ -155,6 +159,7 @@ namespace CameraSettings {
                     .maxValue = 10.0f }),
 
             // === 初期回転・制限 ===
+            MakeHeaderField("Initial Rotation & Limits"),
             MakeField(
                 "initialPitch",
                 "Initial Pitch",

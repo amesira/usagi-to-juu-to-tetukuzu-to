@@ -322,7 +322,7 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
         ImGui::Separator();
         if (ImGui::CollapsingHeader("Rect Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
             auto position = rectTransform->GetPosition();
-            if (ImGui::DragFloat3("Position", &position.x, 0.5f)) {
+            if (ImGui::DragFloat3("Position", &position.x, 3.0f)) {
                 rectTransform->SetPosition(position);
             }
             auto eulerRotation = rectTransform->GetRotation();

@@ -31,7 +31,10 @@ void EditorManager::Render()
     DrawMainView();
     DrawToolbar();
     SyncWindowLifecycle();
-    m_windowManager.DrawAll();
+
+    if (m_editorContext.toolbarExpanded) {
+        m_windowManager.DrawAll();
+    }
 
     m_imguiBackend.EndFrame();
 }
@@ -139,6 +142,7 @@ void EditorManager::SyncWindowLifecycle()
     }
 }
 
+/// @brief エディターのメインビューを描画する
 void EditorManager::DrawMainView()
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -173,6 +177,7 @@ void EditorManager::DrawMainView()
     ImGui::PopStyleVar();
 }
 
+/// @brief エディターのツールバーを描画する
 void EditorManager::DrawToolbar()
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();

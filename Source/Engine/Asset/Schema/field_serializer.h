@@ -8,6 +8,7 @@
 #pragma once
 #include "field.h"
 #include "field_struct.h"
+#include "field_header.h"
 #include "Utility/mi_math_json.h"
 #include "Utility/mi_curve_json.h"
 
@@ -70,6 +71,14 @@ namespace FieldSerialization
         return SerializeFields(structValue, field.schema);
     }
 
+    /// @brief HeaderFieldのSerializeFieldのEntry関数
+    template<class TObject>
+    inline json SerializeField(const TObject& object, const HeaderField& field) 
+    {
+        // HeaderFieldはシリアライズ対象ではないため、nullを返す
+        return nullptr;
+    }
+
 #pragma endregion
 
     /// @brief FieldSchemaの各Fieldをシリアライズする関数
@@ -126,6 +135,15 @@ namespace FieldSerialization
             return false;
         }
     }
+
+    /// @brief HeaderFieldのDeserializeFieldのEntry関数
+    template<class TObject>
+    inline bool DeserializeField(const json& schemaJson, TObject& object, const HeaderField& field) 
+    {
+        // HeaderFieldはデシリアライズ対象ではないため、常にtrueを返す
+        return true;
+    }
+
 #pragma endregion
 
     /// @brief FieldSchemaの各Fieldをデシリアライズする関数
@@ -145,10 +163,6 @@ namespace FieldSerialization
         bool allSucceeded = true;
 
         schema.ForEach([&](const auto& field) {
-            using TValue = std::decay_t<decltype(object.*(field.member))>;
-            using TOptions = std::decay_t<decltype(field.options)>;
-            TValue& value = object.*(field.member);
-
            bool success = DeserializeField(schemaJson, object, field);
             if (!success) {
                 allSucceeded = false; // 1つでも失敗した場合はfalseにする

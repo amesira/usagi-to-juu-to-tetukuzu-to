@@ -22,6 +22,13 @@ private:
     std::string_view m_assetTypeName = "";
     int m_supportedFormatVersion = 0;
 
+    // リロード時に更新されるデータのバージョン番号。エディター上での変更を検知するために使用する
+    std::uint64_t m_revision = 0;
+
+    friend class DataAssetLoader;
+    /// @brief DataAssetがリロードされたときに呼ばれる。リビジョン番号を更新する
+    void OnDataReloaded() { m_revision++; }
+
 public:
     DataAsset(int dataAssetType,const std::string_view& assetTypeName, const int supportVersion) 
         : m_dataAssetTypeID(dataAssetType), m_assetTypeName(assetTypeName), m_supportedFormatVersion(supportVersion) 
@@ -36,10 +43,14 @@ public:
     /// @brief DataAssetのデフォルトインスタンスを作成する。派生クラスで実装する必要あり
     virtual std::unique_ptr<DataAsset> CreateDefaultInstance() const = 0;
 
+    /// @brief DataAssetのリビジョン番号を取得する。リロード時に更新される
+    const std::uint64_t GetRevision() const { return m_revision; }
+
     // === タイプ、フォーマットバージョン ===
 
     /// @brief DataAssetの種類を表す文字列を取得する
     std::string_view GetAssetTypeName() const { return m_assetTypeName; }
+
     /// @brief DataAssetのサポートするフォーマットバージョンを取得する
     int GetSupportedFormatVersion() const { return m_supportedFormatVersion; }
 
@@ -47,6 +58,7 @@ public:
 
     /// @brief DataAssetのデータをJSON形式でシリアライズする
     virtual nlohmann::json SerializeData() const = 0;
+
     /// @brief DataAssetのデータをJSON形式からデシリアライズする
     /// @return デシリアライズに成功した場合は、実データに反映した上でtrueを返す
     virtual bool DeserializeDataToApply(const nlohmann::json& jsonData) = 0;

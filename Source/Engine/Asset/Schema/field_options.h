@@ -6,6 +6,7 @@
 // ・FieldSerializer、FieldEditorで使用するオプションを定義する
 //---------------------------------------------------
 #pragma once
+#include <string>
 
 /// @brief デフォルトのFieldOptionsクラス
 class DefaultFieldOptions {

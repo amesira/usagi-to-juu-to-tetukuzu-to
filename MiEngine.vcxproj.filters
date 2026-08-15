@@ -817,6 +817,7 @@
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_context.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_settings_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_header.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">

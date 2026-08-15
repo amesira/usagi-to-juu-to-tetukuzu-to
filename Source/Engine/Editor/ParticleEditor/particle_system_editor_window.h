@@ -28,6 +28,9 @@ private:
     std::array<char, 512> m_pathBuffer = {};
     bool m_liveApplyToScene = true;
 
+    bool m_autoSave = true;
+    int m_autoSaveFrameCounter = 0;
+
 public:
     // MEMO: explicitを付けることで、暗黙の型変換を防ぎ、意図しないコンストラクタ呼び出しを避けることができる
     explicit ParticleSystemEditorWindow(EditorContext* editorContext);
