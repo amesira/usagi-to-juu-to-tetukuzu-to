@@ -6,6 +6,7 @@
 //---------------------------------------------------
 #ifndef BULLET_BEHAVIOR_H
 #define BULLET_BEHAVIOR_H
+#include "Engine/Core/game_object_layer.h"
 #include "Engine/Framework/Component/behavior_component.h"
 #include "Engine/Framework/Processor/PhysicsPass/Collision/collision_utility.h"
 
@@ -28,7 +29,7 @@ private:
     float m_radius = 0.25f;
     float m_lifeTime = 5.0f;
     float m_lifeTimer = 0.0f;
-    int m_layerMask = -1;
+    CollisionLayerMask m_layerMask = COLLISION_LAYER_MASK_ALL;
 
     bool m_isExpired = false;       // 弾が寿命切れかどうか
     bool m_hasHit = false;          // 何かにヒットしたかどうか
@@ -48,7 +49,11 @@ public:
     void DrawComponentInspector() override;
 
     // 弾の初期化
-    void Initialize(const DirectX::XMFLOAT3& velocity, float radius, float lifeTime, int layerMask = -1);
+    void Initialize(
+        const DirectX::XMFLOAT3& velocity,
+        float radius,
+        float lifeTime,
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
 
     // 弾の速度の設定・取得
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { m_velocity = velocity; }
@@ -63,8 +68,8 @@ public:
     float GetLifeTime() const { return m_lifeTime; }
 
     // レイヤーマスクの設定・取得
-    void SetLayerMask(int layerMask) { m_layerMask = layerMask; }
-    int GetLayerMask() const { return m_layerMask; }
+    void SetLayerMask(CollisionLayerMask layerMask) { m_layerMask = layerMask; }
+    CollisionLayerMask GetLayerMask() const { return m_layerMask; }
 
     // ヒットコールバックの設定
     void SetOnHit(HitCallback onHit) { m_onHit = onHit; }

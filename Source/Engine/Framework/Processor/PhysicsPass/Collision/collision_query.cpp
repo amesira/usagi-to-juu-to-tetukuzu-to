@@ -24,7 +24,7 @@
 //===================================================
 // Raycastクエリー
 bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit, 
-    const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance, int layerMask)
+    const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance, CollisionLayerMask layerMask)
 {
     raycastHit = RaycastHit{};
 
@@ -39,7 +39,7 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
 
         for (BoxColliderComponent& boxCollider : boxColliders) {
             if (!boxCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
             
             TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
             if (t == nullptr) continue;
@@ -66,7 +66,7 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
 
         for (SphereColliderComponent& sphereCollider : sphereColliders) {
             if (!sphereCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
             
             TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
             if (t == nullptr) continue;
@@ -93,7 +93,7 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
 
 // SphereCastクエリー
 bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit, 
-    const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance, int layerMask)
+    const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance, CollisionLayerMask layerMask)
 {
     raycastHit = RaycastHit{};
 
@@ -108,7 +108,7 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 
         for (BoxColliderComponent& boxCollider : boxColliders) {
             if (!boxCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
 
             TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
             if (t == nullptr) continue;
@@ -143,7 +143,7 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 
         for (SphereColliderComponent& sphereCollider : sphereColliders) {
             if (!sphereCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
 
             TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
             if (t == nullptr) continue;

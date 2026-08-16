@@ -108,7 +108,9 @@ void PlayerAttackBehavior::SingleAttack(PlayerContext& context)
     bulletDesc.position = MiMath::Add(bulletDesc.position, MiMath::Multiply(m_transform->GetRight(), 0.5f));
     bulletDesc.radius = 0.25f;
     bulletDesc.lifeTime = 5.0f;
-    bulletDesc.layerMask = (int)CollisionLayer::Bullet;
+    bulletDesc.layerMask =
+        CollisionLayerToMask(CollisionLayer::Bullet) |
+        CollisionLayerToMask(CollisionLayer::Enemy);
 
     // 画面中心からワールド空間へのレイを計算して、弾の飛ぶ方向を決定する
     XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
@@ -148,7 +150,9 @@ void PlayerAttackBehavior::ChargeAttack(PlayerContext& context)
     bulletDesc.position = MiMath::Add(m_transform->GetPosition(), MiMath::Multiply(m_transform->GetRight(), 0.5f));
     bulletDesc.radius = 0.5f;
     bulletDesc.lifeTime = 5.0f;
-    bulletDesc.layerMask = static_cast<int>(CollisionLayer::Bullet);
+    bulletDesc.layerMask =
+        CollisionLayerToMask(CollisionLayer::Bullet) |
+        CollisionLayerToMask(CollisionLayer::Enemy);
 
     XMFLOAT3 bulletEnd = MiMath::Add(m_mainCameraTransform->GetPosition(), MiMath::Multiply(m_mainCamera->GetForward(), 30.0f));
     bulletEnd.y = bulletDesc.position.y;

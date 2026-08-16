@@ -9,6 +9,7 @@
 #define COLLISION_QUERY_H
 
 #include "Engine/Device/direct3d.h"
+#include "Engine/Core/game_object_layer.h"
 using namespace DirectX;
 
 class GameObject;
@@ -25,12 +26,14 @@ public:
     static bool Raycast(
         IScene* scene,
         /*out*/ RaycastHit& raycastHit,
-        const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance,int layerMask = -1);
+        const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance,
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
     // SphereCastクエリー
     static bool SphereCast(
         IScene* scene,
         /*out*/ RaycastHit& raycastHit,
-        const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance, int layerMask = -1);
+        const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance,
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
 
     // OverlapBoxクエリー
     static bool OverlapBox(

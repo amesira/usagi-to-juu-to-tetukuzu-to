@@ -1,6 +1,7 @@
 // projectile_factory.h
 #pragma once
 #include <DirectXMath.h>
+#include "Engine/Core/game_object_layer.h"
 
 #include <string>
 
@@ -18,7 +19,7 @@ namespace ProjectileFactory
         XMFLOAT3 velocity = { 0.0f, 0.0f, 1.0f };
         float radius = 0.25f;
         float lifeTime = 3.0f;
-        int layerMask = -1;
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL;
 
         const char* modelPath = "asset\\Model\\bullet.fbx";
         const char* materialName = "BulletHologramMaterial";

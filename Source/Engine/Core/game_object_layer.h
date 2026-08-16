@@ -36,4 +36,19 @@ enum class CollisionLayer {
     MAX,
 };
 
+using CollisionLayerMask = uint32_t;
+
+inline constexpr CollisionLayerMask CollisionLayerToMask(CollisionLayer layer)
+{
+    return static_cast<CollisionLayerMask>(1u << static_cast<uint32_t>(layer));
+}
+
+inline constexpr CollisionLayerMask COLLISION_LAYER_MASK_ALL =
+    (static_cast<CollisionLayerMask>(1u << static_cast<uint32_t>(CollisionLayer::MAX))) - 1u;
+
+inline constexpr bool IsCollisionLayerInMask(CollisionLayer layer, CollisionLayerMask mask)
+{
+    return (mask & CollisionLayerToMask(layer)) != 0;
+}
+
 #endif // GAME_OBJECT_LAYER_H

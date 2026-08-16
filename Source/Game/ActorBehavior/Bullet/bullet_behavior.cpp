@@ -114,7 +114,7 @@ void BulletBehavior::DrawComponentInspector()
         SetRadius(m_radius);
     }
     ImGui::DragFloat("Life Time", &m_lifeTime, 0.01f, -1.0f, 100.0f);
-    ImGui::InputInt("Layer Mask", &m_layerMask);
+    ImGui::InputScalar("Layer Mask", ImGuiDataType_U32, &m_layerMask);
     ImGui::Text("Life Timer: %.3f", m_lifeTimer);
     ImGui::Text("Expired: %s", m_isExpired ? "true" : "false");
     ImGui::Text("Hit: %s", m_hasHit ? "true" : "false");
@@ -123,7 +123,11 @@ void BulletBehavior::DrawComponentInspector()
 // ----------------------------------------------- public
 
 // 弾の初期化
-void BulletBehavior::Initialize(const DirectX::XMFLOAT3& velocity, float radius, float lifeTime, int layerMask)
+void BulletBehavior::Initialize(
+    const DirectX::XMFLOAT3& velocity,
+    float radius,
+    float lifeTime,
+    CollisionLayerMask layerMask)
 {
     m_velocity = velocity;
     SetRadius(radius);
