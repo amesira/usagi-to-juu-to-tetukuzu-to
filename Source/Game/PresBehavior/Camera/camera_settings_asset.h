@@ -28,9 +28,6 @@ namespace CameraSettings {
         float followDistance = 10.0f;
         float fov = 80.0f;
 
-        // フォーカス
-        float focusWeight = 0.5f;
-
         // 入力
         float mouseSensitivityX = 0.6f;
         float mouseSensitivityY = 0.6f;
@@ -38,7 +35,7 @@ namespace CameraSettings {
 
         // 補間
         float rotationSmoothTime = 0.1f;
-        float lookAtPositionSmoothTime = 0.1f;
+        float pivotPositionSmoothTime = 0.1f;
         float cameraPositionSmoothTime = 0.1f;
 
         // 初期回転・制限
@@ -98,16 +95,6 @@ namespace CameraSettings {
                     .minValue = 1.0f,
                     .maxValue = 179.0f }),
 
-            // === フォーカス ===
-            MakeHeaderField("Focus"),
-            MakeField(
-                "focusWeight",
-                "Focus Weight",
-                &CameraSettingsData::focusWeight,
-                SliderFieldOptions{
-                    .minValue = 0.0f,
-                    .maxValue = 1.0f }),
-
             // === 入力 ===
             MakeHeaderField("Input"),
             MakeField(
@@ -142,9 +129,9 @@ namespace CameraSettings {
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
             MakeField(
-                "lookAtPositionSmoothTime",
-                "Look At Position Smooth Time",
-                &CameraSettingsData::lookAtPositionSmoothTime,
+                "pivotPositionSmoothTime",
+                "Pivot Position Smooth Time",
+                &CameraSettingsData::pivotPositionSmoothTime,
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,

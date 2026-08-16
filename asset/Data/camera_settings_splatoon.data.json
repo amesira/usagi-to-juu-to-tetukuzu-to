@@ -1,14 +1,14 @@
 {
     "data": {
         "cameraPositionSmoothTime": 0.10000000149011612,
-        "followDistance": 8.0,
+        "followDistance": 7.0,
         "fov": 70.0,
         "initialPitch": 0.6981316804885864,
         "initialYaw": 0.0,
         "invertPitchInput": false,
         "lookAtHeight": 0.0,
         "lookAtLocalOffset": [
-            2.0,
+            0.0,
             4.0,
             0.0
         ],
@@ -27,6 +27,6 @@
         "this_is_header_field": null
     },
     "formatVersion": 0,
-    "name": "camera_settings.data",
+    "name": "camera_settings_splatoon.data",
     "type": "CameraSettingsAsset"
 }

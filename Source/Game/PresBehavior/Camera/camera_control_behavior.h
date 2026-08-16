@@ -32,13 +32,9 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
-    // ユーザーによるカメラ回転入力の有効状態
-    void SetCameraInputEnabled(bool enabled);
-    bool IsCameraInputEnabled() const;
-
+    // === CameraEffect関連の操作 ===
     /// @brief カメラエフェクトタスクをリクエストする
     void RequestCameraEffectTask(CameraEffect::EffectTaskTarget target, const CameraEffect::RequestEffectTaskInfo& requestInfo);
-
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
 
@@ -49,16 +45,16 @@ private:
     // カメラの基底ベクトルの構築
     void BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const;
 
-    // カメラの注視点のターゲット値を計算
-    XMFLOAT3 CalculateTargetAtPosition();
+    // カメラPivot位置のターゲット値を計算
+    XMFLOAT3 GetTargetPivotPosition();
+
+    XMFLOAT3 CalculateTotalOffset();
+
     // カメラ回転のターゲット値の入力による更新
     void UpdateTargetYawPitchFromInput(float deltaTime);
-
-    // カメラ位置を計算
-    XMFLOAT3 CalculateTargetCameraPosition(const XMFLOAT3& cameraForward, const XMFLOAT3& cameraRight, const XMFLOAT3& targetAtPosition);
 };
 
-
+/// @brief CameraControlBehaviorのカメラエフェクトタスクを簡単にリクエストするためのヘルパー関数群
 namespace CameraEffectTaskHelper {
 
     inline void ChangeCameraEffect(CameraControlBehavior* cameraControl, CameraEffect::EffectTaskTarget effectTaskTarget, float target, float duration)

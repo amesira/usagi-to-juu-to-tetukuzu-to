@@ -76,7 +76,9 @@ void CameraControlBehavior::Start()
 void CameraControlBehavior::Update()
 {
     if (m_context.settingsAsset == nullptr) return;
+    float deltaTime = FPS_GetUnscaledDeltaTime();
 
+    // === DataAssetのリロード検知 ===
     if (m_lastSettingsRevision != m_context.settingsAsset->GetRevision()) {
         m_lastSettingsRevision = m_context.settingsAsset->GetRevision();
 
@@ -84,51 +86,57 @@ void CameraControlBehavior::Update()
         m_settingsReloadCallback();
     }
 
-    float deltaTime = FPS_GetUnscaledDeltaTime();
+    // カメラエフェクトタスクの更新
     m_context.cameraEffect.UpdateCameraEffectTasks(m_context, deltaTime);
 
+    // 入力の有効・無効を切り替える操作を処理
     UpdateCameraInputActivation();
-
-    if (!m_context.references.targetTransform || !m_context.transform || !m_context.camera) return;
 
     CameraRuntimeState& state = m_context.runtimeState;
     const CameraSettings::Data& settings = m_context.settings();
 
-    // マウス入力から回転のターゲット値を更新
+    // 1.カメラ回転処理
     if (state.isInputEnabled) {
         UpdateTargetYawPitchFromInput(deltaTime);
     }
     state.targetPitch = MiMath::Clamp(state.targetPitch, settings.minPitch, settings.maxPitch);
 
-    // カメラ位置のターゲット値を計算
-    XMFLOAT3 targetAtPosition = CalculateTargetAtPosition();
-
-    // === カメラの回転と位置のスムーズ追従 ===
     // カメラの回転をスムーズに追従
     state.pitch = MiMath::SmoothDamp(state.pitch, state.targetPitch, state.pitchVelocity, settings.rotationSmoothTime, deltaTime);
     state.yaw = MiMath::SmoothDamp(state.yaw, state.targetYaw, state.yawVelocity, settings.rotationSmoothTime, deltaTime);
 
-    // カメラの注視点をスムーズに追従
-    XMFLOAT3 currentCameraAtPosition = m_context.camera->GetAtPosition();
-    currentCameraAtPosition = MiMath::SmoothDamp(currentCameraAtPosition, targetAtPosition, state.lookAtPositionVelocity, settings.lookAtPositionSmoothTime, deltaTime);
-    
-    // カメラ位置を計算
-    XMFLOAT3 cameraForward, cameraRight;
-    BuildCameraBasis(cameraForward, cameraRight);
+    // 2.ForwardとRightの計算
+    BuildCameraBasis(state.cameraForward, state.cameraRight);
 
-    XMFLOAT3 targetCameraPosition = CalculateTargetCameraPosition(cameraForward, cameraRight, currentCameraAtPosition);
-    XMFLOAT3 currentCameraPosition = m_context.transform->GetPosition();
-    currentCameraPosition = MiMath::SmoothDamp(currentCameraPosition, targetCameraPosition, state.cameraPositionVelocity, settings.cameraPositionSmoothTime, deltaTime);
+    // 3.CameraPivotPositionを更新する
+    XMFLOAT3 targetPivotPosition = GetTargetPivotPosition();
+    state.currentCameraPivotPosition = MiMath::SmoothDamp(
+        state.currentCameraPivotPosition, 
+        targetPivotPosition, 
+        state.pivotPositionVelocity, 
+        settings.pivotPositionSmoothTime, 
+        deltaTime);
+
+    // 絶対的なオフセットをここで加算（補間を行ないたくないパラメータ）
+    XMFLOAT3 targetLookAtPosition = MiMath::Add(
+        state.currentCameraPivotPosition, 
+        CalculateTotalOffset()
+    );
 
     // === カメラシェイクの適用 ===
     if (m_context.cameraEffect.IsCameraShaking()) {
-        currentCameraAtPosition = MiMath::Add(currentCameraAtPosition, m_context.cameraEffect.GetShakeOffset());
-        currentCameraPosition = MiMath::Add(currentCameraPosition, m_context.cameraEffect.GetShakeOffset());
+        targetLookAtPosition = MiMath::Add(targetLookAtPosition, m_context.cameraEffect.GetShakeOffset());
     }
 
-    // === カメラの適用処理 ===
-    m_context.camera->SetAtPosition(currentCameraAtPosition);
-    m_context.transform->SetPosition(currentCameraPosition);
+    // 4.CameraEyePositionを更新する
+    XMFLOAT3 targetCameraPosition = MiMath::Add(
+        targetLookAtPosition, 
+        MiMath::Multiply(state.cameraForward, -state.followDistance)
+    );
+
+    // 5.適用
+    m_context.transform->SetPosition(targetCameraPosition);
+    m_context.camera->SetAtPosition(targetLookAtPosition);
 }
 
 // ImGuiを使ったインスペクタの描画
@@ -217,21 +225,15 @@ void CameraControlBehavior::DrawComponentInspector()
     InspectorViewWindow::EndComponentSection();
 }
 
-void CameraControlBehavior::SetCameraInputEnabled(bool enabled)
-{
-    m_context.runtimeState.isInputEnabled = enabled;
-}
+// ----- CameraEffect関連の操作 -----
 
-bool CameraControlBehavior::IsCameraInputEnabled() const
-{
-    return m_context.runtimeState.isInputEnabled;
-}
-
+/// @brief カメラエフェクトタスクをリクエストする
 void CameraControlBehavior::RequestCameraEffectTask(CameraEffect::EffectTaskTarget target, const CameraEffect::RequestEffectTaskInfo& requestInfo)
 {
     m_context.cameraEffect.RequestEffectTask(m_context, target, requestInfo);
 }
 
+/// @brief カメラシェイクを再生する
 void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 {
     m_context.cameraEffect.PlayCameraShake(m_context, duration, magnitude);
@@ -242,11 +244,11 @@ void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 void CameraControlBehavior::UpdateCameraInputActivation()
 {
     if (Keyboard_IsKeyDownTrigger(CAMERA_INPUT_DISABLE_KEY)) {
-        if (IsCameraInputEnabled()) {
-            SetCameraInputEnabled(false);
+        if (m_context.runtimeState.isInputEnabled) {
+            m_context.runtimeState.isInputEnabled = false;
         }
         else {
-            SetCameraInputEnabled(true);
+            m_context.runtimeState.isInputEnabled = true;
         }
     }
 }
@@ -262,30 +264,39 @@ void CameraControlBehavior::BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& out
 }
 
 // カメラの注視点の目標値を計算
-XMFLOAT3 CameraControlBehavior::CalculateTargetAtPosition()
+XMFLOAT3 CameraControlBehavior::GetTargetPivotPosition()
 {
     // ターゲットの位置を取得
     const CameraRuntimeState& state = m_context.runtimeState;
     XMFLOAT3 targetPosition = m_context.references.targetTransform->GetPosition();
-    if (m_context.references.focusTarget) {
-        XMFLOAT3 focusPosition = m_context.references.focusTarget->GetPosition();
-        targetPosition = MiMath::Lerp(targetPosition, focusPosition, state.focusWeight);
-    }
 
-    XMFLOAT3 cameraForward, cameraRight;
-    BuildCameraBasis(cameraForward, cameraRight);
-
-    const XMFLOAT3 worldUp = { 0.0f, 1.0f, 0.0f };
+   /* const XMFLOAT3 worldUp = { 0.0f, 1.0f, 0.0f };
     XMFLOAT3 localOffset = { 0.0f, 0.0f, 0.0f };
-    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraRight, state.lookAtLocalOffset.x));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(state.cameraRight, state.lookAtLocalOffset.x));
     localOffset = MiMath::Add(localOffset, MiMath::Multiply(worldUp, state.lookAtLocalOffset.y));
-    localOffset = MiMath::Add(localOffset, MiMath::Multiply(cameraForward, state.lookAtLocalOffset.z));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(state.cameraForward, state.lookAtLocalOffset.z));
 
     targetPosition = MiMath::Add(targetPosition, state.lookAtOffset);
     targetPosition = MiMath::Add(targetPosition, localOffset);
-    targetPosition.y += m_context.settings().lookAtHeight;
+    targetPosition.y += m_context.settings().lookAtHeight;*/
 
     return targetPosition;
+}
+
+XMFLOAT3 CameraControlBehavior::CalculateTotalOffset()
+{
+    const CameraRuntimeState& state = m_context.runtimeState;
+
+    const XMFLOAT3 worldUp = { 0.0f, 1.0f, 0.0f };
+    XMFLOAT3 localOffset = { 0.0f, 0.0f, 0.0f };
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(state.cameraRight, state.lookAtLocalOffset.x));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(worldUp, state.lookAtLocalOffset.y));
+    localOffset = MiMath::Add(localOffset, MiMath::Multiply(state.cameraForward, state.lookAtLocalOffset.z));
+
+    XMFLOAT3 totalOffset = MiMath::Add(state.lookAtOffset, localOffset);
+    totalOffset.y += m_context.settings().lookAtHeight;
+
+    return totalOffset;
 }
 
 // カメラ回転のターゲット値の入力による更新
@@ -302,15 +313,4 @@ void CameraControlBehavior::UpdateTargetYawPitchFromInput(float deltaTime)
 
     const float pitchDirection = settings.invertPitchInput ? -1.0f : 1.0f;
     state.targetPitch += mouseY * settings.mouseSensitivityY * pitchDirection * deltaTime;
-}
-
-// カメラ位置のターゲット値を計算
-XMFLOAT3 CameraControlBehavior::CalculateTargetCameraPosition(const XMFLOAT3& cameraForward, const XMFLOAT3& cameraRight, const XMFLOAT3& targetAtPosition)
-{
-    XMFLOAT3 targetCameraPosition = targetAtPosition;
-    targetCameraPosition = MiMath::Subtract(
-        targetCameraPosition,
-        MiMath::Multiply(cameraForward, m_context.runtimeState.followDistance));
-
-    return targetCameraPosition;
 }

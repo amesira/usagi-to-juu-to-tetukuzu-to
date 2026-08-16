@@ -17,14 +17,16 @@ struct CameraRuntimeState
     // ユーザーによるカメラ回転入力を受け付けるか
     bool isInputEnabled = true;
 
+    DirectX::XMFLOAT3 currentCameraPivotPosition = {};
+    DirectX::XMFLOAT3 currentCameraEyePosition = {};
+    DirectX::XMFLOAT3 cameraForward = {};
+    DirectX::XMFLOAT3 cameraRight = {};
+
     // 現在のカメラ構図
     DirectX::XMFLOAT3 lookAtOffset = {};
     DirectX::XMFLOAT3 lookAtLocalOffset = {};
     float followDistance = 10.0f;
     float fov = 80.0f;
-
-    // フォーカス状態
-    float focusWeight = 0.5f;
 
     // 現在角度と目標角度
     float pitch = 0.0f;
@@ -36,7 +38,7 @@ struct CameraRuntimeState
     float pitchVelocity = 0.0f;
     float yawVelocity = 0.0f;
 
-    DirectX::XMFLOAT3 lookAtPositionVelocity = {};
+    DirectX::XMFLOAT3 pivotPositionVelocity = {};
     DirectX::XMFLOAT3 cameraPositionVelocity = {};
 
     void Initialize(const CameraSettings::Data& settings)
@@ -47,8 +49,6 @@ struct CameraRuntimeState
         lookAtLocalOffset = settings.lookAtLocalOffset;
         followDistance = settings.followDistance;
         fov = settings.fov;
-
-        focusWeight = settings.focusWeight;
 
         pitch = settings.initialPitch;
         yaw = settings.initialYaw;
@@ -62,7 +62,7 @@ struct CameraRuntimeState
     {
         pitchVelocity = 0.0f;
         yawVelocity = 0.0f;
-        lookAtPositionVelocity = {};
+        pivotPositionVelocity = {};
         cameraPositionVelocity = {};
     }
 };
