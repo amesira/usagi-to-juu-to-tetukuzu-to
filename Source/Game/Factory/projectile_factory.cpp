@@ -25,11 +25,6 @@
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_math.h"
 
-#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
-#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
-#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
-#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
-
 namespace
 {
     // ホログラムシェーダーの取得または生成

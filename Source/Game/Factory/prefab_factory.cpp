@@ -18,8 +18,6 @@
 
 #include "Engine/engine_service_locator.h"
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
-#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
-#define DATA_LOADER EngineServiceLocator::GetDataAssetLoader()
 
 #include "actor_factory.h"
 #include "render_effect_factory.h"

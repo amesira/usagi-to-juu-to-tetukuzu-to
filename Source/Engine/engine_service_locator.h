@@ -81,4 +81,11 @@ public:
     }
 };
 
+#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
+#define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+
 #endif // ENGINE_SERVICE_LOCATOR_H

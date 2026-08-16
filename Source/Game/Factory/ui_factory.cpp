@@ -15,7 +15,6 @@
 #include "Engine/Framework/Component/slider_component.h"
 
 #include "Engine/engine_service_locator.h"
-#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 
 // UIイメージ生成
 GameObject* UiFactory::CreateUiImage(SceneBase* scene, const std::wstring& texturePath)

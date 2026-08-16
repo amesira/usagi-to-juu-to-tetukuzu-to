@@ -35,10 +35,6 @@
 
 #include "Engine/engine_service_locator.h"
 
-namespace {
-    #define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
-}
-
 // プレイヤー生成
 GameObject* ActorFactory::CreatePlayer(
     IScene* scene,

@@ -27,8 +27,6 @@
 using namespace CameraEffectTaskHelper;
 
 namespace {
-    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
-
     constexpr Keyboard_Keys CAMERA_INPUT_DISABLE_KEY = KK_F1;
 }
 
