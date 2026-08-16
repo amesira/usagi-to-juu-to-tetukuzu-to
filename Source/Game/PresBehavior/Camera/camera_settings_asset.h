@@ -35,7 +35,8 @@ namespace CameraSettings {
 
         // 補間
         float rotationSmoothTime = 0.1f;
-        float followAnchorSmoothTime = 0.1f;
+        float followAnchorHorizontalSmoothTime = 0.1f;
+        float followAnchorVerticalSmoothTime = 0.1f;
 
         // 初期回転・制限
         float initialPitch = XMConvertToRadians(40.0f);
@@ -128,9 +129,17 @@ namespace CameraSettings {
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
             MakeField(
-                "followAnchorSmoothTime",
-                "Follow Anchor Smooth Time",
-                &CameraSettingsData::followAnchorSmoothTime,
+                "followAnchorHorizontalSmoothTime",
+                "Follow Anchor Horizontal Smooth Time",
+                &CameraSettingsData::followAnchorHorizontalSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "followAnchorVerticalSmoothTime",
+                "Follow Anchor Vertical Smooth Time",
+                &CameraSettingsData::followAnchorVerticalSmoothTime,
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,

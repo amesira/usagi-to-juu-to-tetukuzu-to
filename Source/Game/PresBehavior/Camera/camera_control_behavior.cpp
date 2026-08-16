@@ -110,11 +110,25 @@ void CameraControlBehavior::Update()
 
     // 3.追従アンカー位置を更新する
     XMFLOAT3 targetFollowAnchorPosition = CalculateTargetFollowAnchorPosition();
-    state.followAnchorPosition = MiMath::SmoothDamp(
-        state.followAnchorPosition,
-        targetFollowAnchorPosition,
-        state.followAnchorVelocity,
-        settings.followAnchorSmoothTime,
+
+    state.followAnchorPosition.x = MiMath::SmoothDamp(
+        state.followAnchorPosition.x, 
+        targetFollowAnchorPosition.x, 
+        state.followAnchorVelocity.x, 
+        settings.followAnchorHorizontalSmoothTime,
+        deltaTime);
+    state.followAnchorPosition.z = MiMath::SmoothDamp(
+        state.followAnchorPosition.z, 
+        targetFollowAnchorPosition.z, 
+        state.followAnchorVelocity.z, 
+        settings.followAnchorHorizontalSmoothTime,
+        deltaTime);
+
+    state.followAnchorPosition.y = MiMath::SmoothDamp(
+        state.followAnchorPosition.y, 
+        targetFollowAnchorPosition.y, 
+        state.followAnchorVelocity.y, 
+        settings.followAnchorVerticalSmoothTime,
         deltaTime);
 
     // 絶対的なオフセットをここで加算（補間を行ないたくないパラメータ）
