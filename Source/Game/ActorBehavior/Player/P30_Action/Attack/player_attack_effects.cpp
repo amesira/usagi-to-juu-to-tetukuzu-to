@@ -70,28 +70,28 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
 
     switch (type) {
     case PlayerAttackEffectType::AimHoldStart:
-        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, {0.35f, 0.05f, 0.0f}, 0.08f, 0.08f);
+        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, {0.35f, 0.05f, 0.0f}, 0.08f, 0.08f);
         break;
 
     case PlayerAttackEffectType::AimStart:
         gameEffect->ChangeFOV(65.0f, 0.2f);
-        ChangeCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::Offset, {0.0f, -0.5f, 0.0f}, 0.1f);
-        ChangeCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, { 2.5f, 0.0f, 0.0f }, 0.1f);
+        ChangeCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::CompositionWorldOffset, {0.0f, -0.5f, 0.0f}, 0.1f);
+        ChangeCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, { 2.5f, 0.0f, 0.0f }, 0.1f);
         ChangeCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::Distance, 5.0f, 0.1f);
         postEffect->PlayEffect(CustomPostEffectType::MonoMask, 0.8f, 0.2f, MiMath::Infinity());
         break;
 
     case PlayerAttackEffectType::AimEnd:
         gameEffect->ResetFOV(0.1f);
-        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::Offset, 0.1f);
-        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, 0.1f);
+        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::CompositionWorldOffset, 0.1f);
+        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, 0.1f);
         ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::Distance, 0.1f);
         postEffect->PlayEffect(CustomPostEffectType::MonoMask, 0.0f, 0.1f, 0.0f);
         break;
 
     case PlayerAttackEffectType::SingleAttack:
         gameEffect->ChangeFOVTemporary(72.0f, 0.08f, 0.04f);
-        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, {0.45f, 0.0f, 0.1f}, 0.06f, 0.04f);
+        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, {0.45f, 0.0f, 0.1f}, 0.06f, 0.04f);
         gameEffect->PlayCameraShake(0.10f, 0.15f);
         break;
 
@@ -116,7 +116,7 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
                 [this]() {
                     if (GameEffectController* effect = GetGameEffect()) {
                         effect->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
-                        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, { 0.15f, 0.0f, 0.25f }, 0.08f, 0.08f);
+                        ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, { 0.15f, 0.0f, 0.25f }, 0.08f, 0.08f);
                         effect->PlayCameraShake(0.16f, 0.30f);
                     }
                     if (CustomPostEffectController* effect = GetCustomPostEffect()) {
@@ -158,7 +158,7 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
 
     case PlayerAttackEffectType::AttackEnd:
         gameEffect->ResetFOV(0.12f);
-        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::LocalOffset, 0.12f);
+        ResetCameraEffect(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, 0.12f);
         if (m_chargeEffect) m_chargeEffect->Stop();
         break;
     }

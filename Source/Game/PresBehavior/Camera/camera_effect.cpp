@@ -20,8 +20,8 @@ void CameraEffect::Initialize(CameraContext& context)
 {
     m_fovTask.Reset();
     m_cameraDistanceTask.Reset();
-    m_cameraOffsetTask.Reset();
-    m_cameraLocalOffsetTask.Reset();
+    m_compositionWorldOffsetTask.Reset();
+    m_compositionCameraLocalOffsetTask.Reset();
 }
 
 /// @brief カメラエフェクトタスクを更新する
@@ -30,15 +30,15 @@ void CameraEffect::UpdateCameraEffectTasks(CameraContext& context, float deltaTi
     //タスクが実行中かどうか
     bool fovTaskRunning = !m_fovTask.IsFinished();
     bool distanceTaskRunning = !m_cameraDistanceTask.IsFinished();
-    bool offsetTaskRunning = !m_cameraOffsetTask.IsFinished();
-    bool localOffsetTaskRunning = !m_cameraLocalOffsetTask.IsFinished();
+    bool offsetTaskRunning = !m_compositionWorldOffsetTask.IsFinished();
+    bool localOffsetTaskRunning = !m_compositionCameraLocalOffsetTask.IsFinished();
     bool cameraShakeTaskRunning = !m_cameraShakeTask.IsFinished();
 
     // タスクの更新
     m_fovTask.Update(deltaTime);
     m_cameraDistanceTask.Update(deltaTime);
-    m_cameraOffsetTask.Update(deltaTime);
-    m_cameraLocalOffsetTask.Update(deltaTime);
+    m_compositionWorldOffsetTask.Update(deltaTime);
+    m_compositionCameraLocalOffsetTask.Update(deltaTime);
     m_cameraShakeTask.Update(deltaTime);
 
     // タスクの更新後に値を適用
@@ -50,10 +50,10 @@ void CameraEffect::UpdateCameraEffectTasks(CameraContext& context, float deltaTi
         context.runtimeState.followDistance = m_cameraDistanceTask.m_currentValue;
     }
     if (offsetTaskRunning) {
-        context.runtimeState.lookAtOffset = m_cameraOffsetTask.m_currentValue;
+        context.runtimeState.compositionWorldOffset = m_compositionWorldOffsetTask.m_currentValue;
     }
     if (localOffsetTaskRunning) {
-        context.runtimeState.lookAtLocalOffset = m_cameraLocalOffsetTask.m_currentValue;
+        context.runtimeState.compositionCameraLocalOffset = m_compositionCameraLocalOffsetTask.m_currentValue;
     }
     if (cameraShakeTaskRunning) {
         m_isShaking = true;
@@ -94,26 +94,26 @@ void CameraEffect::RequestEffectTask(CameraContext& context, EffectTaskTarget ta
                 : m_cameraDistanceTask.m_targetValue;
             break;
         }
-        case EffectTaskTarget::Offset: {
-            task = &m_cameraOffsetTask;
-            m_cameraOffsetTask.m_startValue = context.runtimeState.lookAtOffset;
-            m_cameraOffsetTask.m_targetValue = (taskType == EffectTaskType::Reset)
-                ? context.settings().lookAtOffset
+        case EffectTaskTarget::CompositionWorldOffset: {
+            task = &m_compositionWorldOffsetTask;
+            m_compositionWorldOffsetTask.m_startValue = context.runtimeState.compositionWorldOffset;
+            m_compositionWorldOffsetTask.m_targetValue = (taskType == EffectTaskType::Reset)
+                ? context.settings().compositionWorldOffset
                 : requestInfo.targetValue;
-            m_cameraOffsetTask.m_endValue = (taskType == EffectTaskType::ChangeTemporary)
-                ? context.settings().lookAtOffset
-                : m_cameraOffsetTask.m_targetValue;
+            m_compositionWorldOffsetTask.m_endValue = (taskType == EffectTaskType::ChangeTemporary)
+                ? context.settings().compositionWorldOffset
+                : m_compositionWorldOffsetTask.m_targetValue;
             break;
         }
-        case EffectTaskTarget::LocalOffset: {
-            task = &m_cameraLocalOffsetTask;
-            m_cameraLocalOffsetTask.m_startValue = context.runtimeState.lookAtLocalOffset;
-            m_cameraLocalOffsetTask.m_targetValue = (taskType == EffectTaskType::Reset)
-                ? context.settings().lookAtLocalOffset
+        case EffectTaskTarget::CompositionCameraLocalOffset: {
+            task = &m_compositionCameraLocalOffsetTask;
+            m_compositionCameraLocalOffsetTask.m_startValue = context.runtimeState.compositionCameraLocalOffset;
+            m_compositionCameraLocalOffsetTask.m_targetValue = (taskType == EffectTaskType::Reset)
+                ? context.settings().compositionCameraLocalOffset
                 : requestInfo.targetValue;
-            m_cameraLocalOffsetTask.m_endValue = (taskType == EffectTaskType::ChangeTemporary)
-                ? context.settings().lookAtLocalOffset
-                : m_cameraLocalOffsetTask.m_targetValue;
+            m_compositionCameraLocalOffsetTask.m_endValue = (taskType == EffectTaskType::ChangeTemporary)
+                ? context.settings().compositionCameraLocalOffset
+                : m_compositionCameraLocalOffsetTask.m_targetValue;
             break;
         }
         default: break;

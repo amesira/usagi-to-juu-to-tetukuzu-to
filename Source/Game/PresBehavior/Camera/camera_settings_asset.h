@@ -22,8 +22,8 @@ namespace CameraSettings {
     struct Data
     {
         // 基本構図
-        XMFLOAT3 lookAtOffset = {};
-        XMFLOAT3 lookAtLocalOffset = {};
+        XMFLOAT3 compositionWorldOffset = {};
+        XMFLOAT3 compositionCameraLocalOffset = {};
         float lookAtHeight = 1.5f;
         float followDistance = 10.0f;
         float fov = 80.0f;
@@ -35,8 +35,7 @@ namespace CameraSettings {
 
         // 補間
         float rotationSmoothTime = 0.1f;
-        float pivotPositionSmoothTime = 0.1f;
-        float cameraPositionSmoothTime = 0.1f;
+        float followAnchorSmoothTime = 0.1f;
 
         // 初期回転・制限
         float initialPitch = XMConvertToRadians(40.0f);
@@ -56,17 +55,17 @@ namespace CameraSettings {
             // === 基本構図 ===
             MakeHeaderField("Basic Composition"),
             MakeField(
-                "lookAtOffset",
-                "Look At Offset",
-                &CameraSettingsData::lookAtOffset,
+                "compositionWorldOffset",
+                "Composition World Offset",
+                &CameraSettingsData::compositionWorldOffset,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = -100.0f,
                     .maxValue = 100.0f }),
             MakeField(
-                "lookAtLocalOffset",
-                "Look At Local Offset",
-                &CameraSettingsData::lookAtLocalOffset,
+                "compositionCameraLocalOffset",
+                "Composition Camera Local Offset",
+                &CameraSettingsData::compositionCameraLocalOffset,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = -100.0f,
@@ -129,17 +128,9 @@ namespace CameraSettings {
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
             MakeField(
-                "pivotPositionSmoothTime",
-                "Pivot Position Smooth Time",
-                &CameraSettingsData::pivotPositionSmoothTime,
-                DragFieldOptions{
-                    .dragSpeed = 0.01f,
-                    .minValue = 0.0f,
-                    .maxValue = 10.0f }),
-            MakeField(
-                "cameraPositionSmoothTime",
-                "Camera Position Smooth Time",
-                &CameraSettingsData::cameraPositionSmoothTime,
+                "followAnchorSmoothTime",
+                "Follow Anchor Smooth Time",
+                &CameraSettingsData::followAnchorSmoothTime,
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,

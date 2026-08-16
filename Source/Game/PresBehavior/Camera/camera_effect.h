@@ -17,8 +17,8 @@ public:
     enum class EffectTaskTarget {
         FOV,
         Distance,
-        Offset,
-        LocalOffset
+        CompositionWorldOffset,
+        CompositionCameraLocalOffset
     };
 
     /// @brief カメラエフェクトのタスクの種類を表す列挙型
@@ -48,8 +48,8 @@ private:
     // カメラ距離変更タスク
     FloatTweenTask m_cameraDistanceTask;
     // カメラオフセット変更タスク
-    Vector3TweenTask m_cameraOffsetTask;
-    Vector3TweenTask m_cameraLocalOffsetTask;
+    Vector3TweenTask m_compositionWorldOffsetTask;
+    Vector3TweenTask m_compositionCameraLocalOffsetTask;
 
     // カメラシェイクタスク
     class CameraShakeTask : public SequenceTask {

@@ -7,12 +7,12 @@
         "initialYaw": 0.0,
         "invertPitchInput": false,
         "lookAtHeight": 0.0,
-        "lookAtLocalOffset": [
+        "compositionCameraLocalOffset": [
             2.0,
             4.0,
             0.0
         ],
-        "lookAtOffset": [
+        "compositionWorldOffset": [
             0.0,
             0.0,
             0.0
@@ -21,7 +21,7 @@
         "minPitch": 0.0872664675116539,
         "mouseSensitivityX": 0.6000000238418579,
         "mouseSensitivityY": 0.6000000238418579,
-        "pivotPositionSmoothTime": 0.05000000074505806,
+        "followAnchorSmoothTime": 0.05000000074505806,
         "rotationSmoothTime": 0.05000000074505806,
         "shakeFrequency": 35.0,
         "this_is_header_field": null

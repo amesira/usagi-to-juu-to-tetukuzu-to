@@ -42,16 +42,17 @@ private:
     // 入力の有効・無効を切り替える操作を処理
     void UpdateCameraInputActivation();
 
+    // カメラ回転のターゲット値の入力による更新
+    void UpdateTargetYawPitchFromInput(float deltaTime);
+
     // カメラの基底ベクトルの構築
     void BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const;
 
-    // カメラPivot位置のターゲット値を計算
-    XMFLOAT3 GetTargetPivotPosition();
+    /// @brief 追従アンカー位置のターゲット値を計算する
+    XMFLOAT3 CalculateTargetFollowAnchorPosition();
+    /// @brief カメラの注視点のオフセットを計算する
+    XMFLOAT3 CalculateCompositionOffset();
 
-    XMFLOAT3 CalculateTotalOffset();
-
-    // カメラ回転のターゲット値の入力による更新
-    void UpdateTargetYawPitchFromInput(float deltaTime);
 };
 
 /// @brief CameraControlBehaviorのカメラエフェクトタスクを簡単にリクエストするためのヘルパー関数群

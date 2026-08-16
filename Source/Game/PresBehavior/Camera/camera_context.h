@@ -17,14 +17,13 @@ struct CameraRuntimeState
     // ユーザーによるカメラ回転入力を受け付けるか
     bool isInputEnabled = true;
 
-    DirectX::XMFLOAT3 currentCameraPivotPosition = {};
-    DirectX::XMFLOAT3 currentCameraEyePosition = {};
+    DirectX::XMFLOAT3 followAnchorPosition = {};
     DirectX::XMFLOAT3 cameraForward = {};
     DirectX::XMFLOAT3 cameraRight = {};
 
     // 現在のカメラ構図
-    DirectX::XMFLOAT3 lookAtOffset = {};
-    DirectX::XMFLOAT3 lookAtLocalOffset = {};
+    DirectX::XMFLOAT3 compositionWorldOffset = {};
+    DirectX::XMFLOAT3 compositionCameraLocalOffset = {};
     float followDistance = 10.0f;
     float fov = 80.0f;
 
@@ -38,15 +37,14 @@ struct CameraRuntimeState
     float pitchVelocity = 0.0f;
     float yawVelocity = 0.0f;
 
-    DirectX::XMFLOAT3 pivotPositionVelocity = {};
-    DirectX::XMFLOAT3 cameraPositionVelocity = {};
+    DirectX::XMFLOAT3 followAnchorVelocity = {};
 
     void Initialize(const CameraSettings::Data& settings)
     {
         isInputEnabled = true;
 
-        lookAtOffset = settings.lookAtOffset;
-        lookAtLocalOffset = settings.lookAtLocalOffset;
+        compositionWorldOffset = settings.compositionWorldOffset;
+        compositionCameraLocalOffset = settings.compositionCameraLocalOffset;
         followDistance = settings.followDistance;
         fov = settings.fov;
 
@@ -62,8 +60,7 @@ struct CameraRuntimeState
     {
         pitchVelocity = 0.0f;
         yawVelocity = 0.0f;
-        pivotPositionVelocity = {};
-        cameraPositionVelocity = {};
+        followAnchorVelocity = {};
     }
 };
 
@@ -71,8 +68,6 @@ struct CameraReferences
 {
     // 追従ターゲットのTransformComponent
     class TransformComponent* targetTransform = nullptr;
-    // 注視を補助するフォーカスターゲット
-    class TransformComponent* focusTarget = nullptr;
 };
 
 class CameraContext {
