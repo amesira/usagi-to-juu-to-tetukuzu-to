@@ -35,6 +35,9 @@ public:
         float deltaTime);
 
 private:
+    /// @brief 下向きのSphereCastで接地状態を判定する
+    bool CheckGrounded();
+
     /// @brief 制御速度を適用する
     void ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime);
     /// @brief 物理速度を適用する

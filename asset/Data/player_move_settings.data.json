@@ -1,7 +1,7 @@
 {
     "data": {
         "airSmoothTime": 0.20000000298023224,
-        "airSpeedMultiplier": 0.8999999761581421,
+        "airSpeedMultiplier": 0.800000011920929,
         "gravityScale": {
             "keys": [
                 {
@@ -18,6 +18,8 @@
                 }
             ]
         },
+        "groundCheckDistance": 0.5,
+        "groundCheckRadius": 0.20000000298023224,
         "jumpForce": 15.0,
         "moveSpeed": 20.0,
         "rotationSpeed": 25.0,

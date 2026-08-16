@@ -20,7 +20,7 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
 {
     if (intent.useGravity) {
         if (context.runtimeState.m_isGrounded) {
-            context.runtimeState.m_physicsVelocity.y = -0.1f;
+            context.runtimeState.m_physicsVelocity.y = -9.81f;
         }
         else {
             float normalizedYVelocity = context.runtimeState.m_physicsVelocity.y / 0.1f;
@@ -34,14 +34,17 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
 
     if (intent.canMove) 
     {
+        // 移動速度を計算する
         float moveSpeed = context.settings().moveSpeed * intent.speedMultiplier * intent.moveInputMagnitude;
         if (!context.runtimeState.m_isGrounded) {
             moveSpeed *= context.settings().airSpeedMultiplier;
         }
+
+        // 移動入力速度を算出
         m_inputVelocity = MiMath::Multiply(intent.moveDirection, moveSpeed);
         m_inputVelocity.y = 0.0f;
 
-        // 移動入力がある場合は通常の平滑化時間、移動入力がない場合は停止時の平滑化時間を使用する
+        // 状態に応じた平滑化時間を計算する
         float smoothTime = CalculateSmoothTime(context);
 
         // === 目標速度を更新する ===

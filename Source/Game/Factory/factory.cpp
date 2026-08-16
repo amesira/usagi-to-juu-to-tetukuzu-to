@@ -161,6 +161,7 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
 void Factory::CreateField(GameObject* field, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
 {
     field->SetName("Field");
+    field->SetCollisionLayer(CollisionLayer::Field);
 
     // component生成・登録
     TransformComponent* transform = field->AddComponent<TransformComponent>();

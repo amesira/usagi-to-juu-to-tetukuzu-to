@@ -1,5 +1,7 @@
 // player_move_settings_asset.h
 #pragma once
+#include <DirectXMath.h>
+
 #include "Engine/Asset/Schema/field_master.h"
 
 #include "Engine/Asset/DataAsset/data_asset.h"
@@ -17,6 +19,10 @@ namespace PlayerMoveSettings {
         float   moveSpeed = 10.0f;
         float   jumpForce = 10.0f;
         float   airSpeedMultiplier = 0.9f;    // 空中での移動制御の強さ（0.0f～1.0f）
+
+        // === 接地判定設定 ===
+        float   groundCheckRadius = 0.35f;
+        float   groundCheckDistance = 0.15f;
 
         // === 回転設定 ===
         float   rotationSpeed = 10.0f;
@@ -70,6 +76,25 @@ namespace PlayerMoveSettings {
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,
                     .maxValue = 1.0f }),
+
+            // === 接地判定設定 ===
+            MakeHeaderField("Ground Check Settings"),
+            MakeField(
+                "groundCheckRadius",
+                "Ground Check Radius",
+                &MoveSettings::groundCheckRadius,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "groundCheckDistance",
+                "Ground Check Distance",
+                &MoveSettings::groundCheckDistance,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
 
             // === 回転設定 ===
             MakeHeaderField("Rotation Settings"),

@@ -47,6 +47,7 @@ struct PlayerMoveContext
 
     class TransformComponent* transform = nullptr;
     class RigidbodyComponent* rigidbody = nullptr;
+    class BoxColliderComponent* collider = nullptr;
 
     PlayerMoveMotor moveMotor;
     PlayerMoveRotate moveRotate;

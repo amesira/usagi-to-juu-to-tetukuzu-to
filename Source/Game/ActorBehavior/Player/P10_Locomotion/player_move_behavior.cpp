@@ -16,8 +16,11 @@
 // === Component ===
 #include "Engine/Framework/Component/transform_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Framework/Component/collider_component.h"
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/animation_component.h"
+#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
+#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_utility.h"
 
 // === Player ===
 #include "Game/ActorBehavior/Player/player_behavior.h"
@@ -39,6 +42,7 @@ void PlayerMoveBehavior::DrawComponentInspector()
         ImGui::Text("Control Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_controlVelocity.x, m_context.runtimeState.m_controlVelocity.y, m_context.runtimeState.m_controlVelocity.z);
         ImGui::Text("Physics Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_physicsVelocity.x, m_context.runtimeState.m_physicsVelocity.y, m_context.runtimeState.m_physicsVelocity.z);
         ImGui::Text("Desired Position: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_desiredPosition.x, m_context.runtimeState.m_desiredPosition.y, m_context.runtimeState.m_desiredPosition.z);
+        ImGui::Text("Grounded: %s", m_context.runtimeState.m_isGrounded ? "true" : "false");
     }
 
     InspectorViewWindow::EndComponentSection();
@@ -51,8 +55,10 @@ void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
 {
     m_context.owner = this;
 
+    GameObject* player = playerContext.owner->GetOwner();
     m_context.transform = playerContext.transform;
-    m_context.rigidbody = playerContext.owner->GetOwner()->GetComponent<RigidbodyComponent>();
+    m_context.rigidbody = player->GetComponent<RigidbodyComponent>();
+    m_context.collider = player->GetComponent<BoxColliderComponent>();
 
     m_context.moveMotor = {};
     m_context.moveRotate = {};
@@ -63,15 +69,15 @@ void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
     }
 
     // 仮
-    m_animationComponent = playerContext.owner->GetOwner()->GetComponent<AnimationComponent>();
+    m_animationComponent = player->GetComponent<AnimationComponent>();
 }
 
 void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
 {
-    m_context.runtimeState.m_isGrounded = m_context.rigidbody->GetIsGrounded();
+    m_context.runtimeState.m_isGrounded = CheckGrounded();
 
     // 移動アクション類の更新要求などはここ？（ジャンプやブリンクなど）
-    if (input.triggerJumpCommand) {
+    if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded) {
         // ジャンプ処理の要求をここで行う
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce; // ジャンプ力を設定
         m_context.runtimeState.m_isGrounded = false; // ジャンプ中は地面に接地していない状態にする
@@ -112,6 +118,53 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
             m_animationComponent->SetAnimationState(0, 1.0f); // Idleアニメーションを再生
         }
     }
+}
+
+/// @brief 下向きのSphereCastで接地状態を判定する
+bool PlayerMoveBehavior::CheckGrounded()
+{
+    if (!m_context.transform || !m_context.collider || !GetOwner()->GetScene()) {
+        return false;
+    }
+
+    // 上昇中は足元に地面が残っていても接地扱いにしない
+    if (m_context.runtimeState.m_physicsVelocity.y > 0.0f) {
+        return false;
+    }
+
+    const PlayerMoveSettings::Data& settings = m_context.settings();
+    const XMFLOAT3 colliderScale = m_context.collider->GetScale();
+    const XMFLOAT3 colliderCenter = m_context.collider->GetCenter();
+    const XMFLOAT4 playerRotation = m_context.transform->GetRotation();
+
+    // Playerのローカル座標における足元を求める
+    const XMFLOAT3 localFootPosition = {
+        colliderCenter.x,
+        colliderCenter.y - colliderScale.y * 0.5f,
+        colliderCenter.z
+    };
+    const XMFLOAT3 footPosition = MiMath::Add(
+        m_context.transform->GetPosition(),
+        MiMath::RotateVector(playerRotation, localFootPosition));
+
+    // SphereCastのoriginは球の中心なので、足元から半径分だけ上に置く
+    const XMFLOAT3 castOrigin = {
+        footPosition.x,
+        footPosition.y + settings.groundCheckRadius,
+        footPosition.z
+    };
+
+    RaycastHit hit;
+    const bool hasHit = CollisionQuery::SphereCast(
+        GetOwner()->GetScene(),
+        /*out*/ hit,
+        castOrigin,
+        { 0.0f, -1.0f, 0.0f },
+        settings.groundCheckRadius,
+        settings.groundCheckDistance,
+        CollisionLayerToMask(CollisionLayer::Field));
+
+    return hasHit;
 }
 
 /// @brief 制御速度を適用する
