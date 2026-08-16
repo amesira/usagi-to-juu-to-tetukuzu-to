@@ -177,7 +177,8 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 //===================================================
 // OverlapBoxクエリー
 bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& outObjects, 
-    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation, int layerMask)
+    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation,
+    CollisionLayerMask layerMask)
 {
     auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
@@ -190,7 +191,6 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
         tempTransform.SetPosition(center);
         tempTransform.SetRotation(orientation);
         tempBoxCollider.SetScale(scale);
-        tempBoxCollider.SetLayer(ColliderComponent::Layer::Default); // ToDo: レイヤーの指定方法を検討
     }
 
     if (boxColliderPools) {
@@ -198,7 +198,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
 
         for (BoxColliderComponent& boxCollider : boxColliders) {
             if (!boxCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
             
             TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
             
@@ -222,7 +222,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
     
         for (SphereColliderComponent& sphereCollider : sphereColliders) {
             if (!sphereCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
     
             TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
     
@@ -246,7 +246,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
 
 // OverlapSphereクエリー
 bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*>& outObjects, 
-    const XMFLOAT3& center, float radius, int layerMask)
+    const XMFLOAT3& center, float radius, CollisionLayerMask layerMask)
 {
     auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
@@ -258,14 +258,13 @@ bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*
     {
         tempTransform.SetPosition(center);
         tempSphereCollider.SetRadius(radius);
-        tempSphereCollider.SetLayer(ColliderComponent::Layer::Default); // ToDo: レイヤーの指定方法を検討
     }
 
     if (boxColliderPools) {
         auto& boxColliders = boxColliderPools->GetList();
         for (BoxColliderComponent& boxCollider : boxColliders) {
             if (!boxCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)boxCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
             
             TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
             
@@ -288,7 +287,7 @@ bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*
         auto& sphereColliders = sphereColliderPools->GetList();
         for (SphereColliderComponent& sphereCollider : sphereColliders) {
             if (!sphereCollider.GetEnable()) continue;
-            if (CollisionUtility::IsIgnoreLayerPair(layerMask, (int)sphereCollider.GetLayer())) continue;
+            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
             
             TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
             

@@ -10,6 +10,7 @@
 
 #include "Engine/Device/direct3d.h"
 #include "Engine/Core/game_object_layer.h"
+#include <vector>
 using namespace DirectX;
 
 class GameObject;
@@ -39,12 +40,14 @@ public:
     static bool OverlapBox(
         IScene* scene,
         /*out*/ std::vector<ColliderComponent*>& outObjects,
-        const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation, int layerMask = -1);
+        const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation,
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
     // OverlapSphereクエリー
     static bool OverlapSphere(
         IScene* scene,
         /*out*/ std::vector<ColliderComponent*>& outObjects,
-        const XMFLOAT3& center, float radius, int layerMask = -1);
+        const XMFLOAT3& center, float radius,
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
 
 };
 
