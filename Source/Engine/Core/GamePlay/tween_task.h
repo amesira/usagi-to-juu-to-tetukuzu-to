@@ -40,17 +40,20 @@ public:
     }
 };
 
+class TweenTask : public SequenceTask {
+public:
+    float m_duration = 0.0f;    // 補間にかける時間
+    float m_holdDuration = 0.0f;// 目標値でどれだけの時間値を保持するか
+};
+
 // float値を補間する演出タスク
-class FloatTweenTask : public SequenceTask {
+class FloatTweenTask : public TweenTask {
 public:
     float m_startValue = 0.0f;  // 補間の開始値
     float m_targetValue = 0.0f; // 補間の目標値
     float m_endValue = 0.0f;    // 補間の終了値（目標値からさらに変化させる場合に利用）
 
     float m_currentValue = 0.0f;// 現在の補間値
-
-    float m_duration = 0.0f;    // 補間にかける時間
-    float m_holdDuration = 0.0f;// 目標値でどれだけの時間値を保持するか
 
     void Start() override {
         SequenceTask::Start();
@@ -102,14 +105,12 @@ public:
 };
 
 // XMFLOAT3値を補間する演出タスク
-class Vector3TweenTask : public SequenceTask {
+class Vector3TweenTask : public TweenTask {
 public:
     XMFLOAT3 m_startValue = { 0.0f, 0.0f, 0.0f };
     XMFLOAT3 m_targetValue = { 0.0f, 0.0f, 0.0f };
     XMFLOAT3 m_endValue = { 0.0f, 0.0f, 0.0f };
     XMFLOAT3 m_currentValue = { 0.0f, 0.0f, 0.0f };
-    float m_duration = 0.0f;
-    float m_holdDuration = 0.0f;
 
     void Start() override {
         SequenceTask::Start();

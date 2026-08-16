@@ -24,6 +24,8 @@
 #include "Engine/Framework/Component/camera_component.h"
 #include "Engine/Framework/Component/rigidbody_component.h"
 
+using namespace CameraEffectTaskHelper;
+
 namespace {
     #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
 
@@ -70,20 +72,7 @@ void CameraControlBehavior::Start()
         }
     }
 
-    // タスクのリセット
-    m_fovTask.m_currentValue = m_context.runtimeState.fov;
-    m_cameraDistanceTask.m_currentValue = m_context.runtimeState.followDistance;
-    m_cameraOffsetTask.m_currentValue = m_context.runtimeState.lookAtOffset;
-    m_cameraLocalOffsetTask.m_currentValue = m_context.runtimeState.lookAtLocalOffset;
-    m_fovTask.m_endValue = m_context.settings().fov;
-    m_cameraDistanceTask.m_endValue = m_context.settings().followDistance;
-    m_cameraOffsetTask.m_endValue = m_context.settings().lookAtOffset;
-    m_cameraLocalOffsetTask.m_endValue = m_context.settings().lookAtLocalOffset;
-
-    m_fovTask.Reset();
-    m_cameraDistanceTask.Reset();
-    m_cameraOffsetTask.Reset();
-    m_cameraLocalOffsetTask.Reset();
+    m_context.cameraEffect.Initialize(m_context);
 }
 
 void CameraControlBehavior::Update()
@@ -98,7 +87,7 @@ void CameraControlBehavior::Update()
     }
 
     float deltaTime = FPS_GetUnscaledDeltaTime();
-    UpdateCameraEffectTasks(deltaTime);
+    m_context.cameraEffect.UpdateCameraEffectTasks(m_context, deltaTime);
 
     UpdateCameraInputActivation();
 
@@ -134,9 +123,9 @@ void CameraControlBehavior::Update()
     currentCameraPosition = MiMath::SmoothDamp(currentCameraPosition, targetCameraPosition, state.cameraPositionVelocity, settings.cameraPositionSmoothTime, deltaTime);
 
     // === カメラシェイクの適用 ===
-    if (m_isShaking) {
-        currentCameraAtPosition = MiMath::Add(currentCameraAtPosition, m_shakeOffset);
-        currentCameraPosition = MiMath::Add(currentCameraPosition, m_shakeOffset);
+    if (m_context.cameraEffect.IsCameraShaking()) {
+        currentCameraAtPosition = MiMath::Add(currentCameraAtPosition, m_context.cameraEffect.GetShakeOffset());
+        currentCameraPosition = MiMath::Add(currentCameraPosition, m_context.cameraEffect.GetShakeOffset());
     }
 
     // === カメラの適用処理 ===
@@ -180,19 +169,19 @@ void CameraControlBehavior::DrawComponentInspector()
             ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
 
             if (ImGui::Button("Change Distance")) {
-                ChangeCameraDistance(distance, duration);
+                ChangeCameraEffect(this, CameraEffect::EffectTaskTarget::Distance, distance, duration);
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Temporary")) {
-                ChangeCameraDistanceTemporary(distance, duration, holdDuration);
+                ChangeCameraEffectTemporary(this, CameraEffect::EffectTaskTarget::Distance, distance, duration, holdDuration);
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Reset")) {
-                ResetCameraDistance(duration);
+                ResetCameraEffect(this, CameraEffect::EffectTaskTarget::Distance, duration);
             }
 
             ImGui::TreePop();
@@ -208,19 +197,19 @@ void CameraControlBehavior::DrawComponentInspector()
             ImGui::DragFloat("Hold Duration", &holdDuration, 0.01f, 0.0f, 5.0f);
 
             if (ImGui::Button("Change Local Offset")) {
-                ChangeCameraLocalOffset(offset, duration);
+                ChangeCameraEffect(this, CameraEffect::EffectTaskTarget::LocalOffset, offset, duration);
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Temporary")) {
-                ChangeCameraLocalOffsetTemporary(offset, duration, holdDuration);
+                ChangeCameraEffectTemporary(this, CameraEffect::EffectTaskTarget::LocalOffset, offset, duration, holdDuration);
             }
 
             ImGui::SameLine();
 
             if (ImGui::Button("Reset")) {
-                ResetCameraLocalOffset(duration);
+                ResetCameraEffect(this, CameraEffect::EffectTaskTarget::LocalOffset, duration);
             }
 
             ImGui::TreePop();
@@ -240,146 +229,17 @@ bool CameraControlBehavior::IsCameraInputEnabled() const
     return m_context.runtimeState.isInputEnabled;
 }
 
-// ------------------------------- public Effect Tasks
-
-void CameraControlBehavior::ChangeFOV(float fov, float duration)
+void CameraControlBehavior::RequestCameraEffectTask(CameraEffect::EffectTaskTarget target, const CameraEffect::RequestEffectTaskInfo& requestInfo)
 {
-    if (!m_context.camera) return;
-
-    m_fovTask.Reset();
-
-    m_fovTask.m_startValue = m_context.runtimeState.fov;
-    m_fovTask.m_targetValue = fov;
-    m_fovTask.m_endValue = fov;
-    m_fovTask.m_duration = duration;
-    m_fovTask.m_holdDuration = 0.0f;
-    m_fovTask.Start();
-}
-
-void CameraControlBehavior::ChangeFOVTemporary(float fov, float duration, float holdDuration)
-{
-    if (!m_context.camera || !m_context.settingsAsset) return;
-
-    m_fovTask.Reset();
-
-    m_fovTask.m_startValue = m_context.runtimeState.fov;
-    m_fovTask.m_targetValue = fov;
-    m_fovTask.m_endValue = m_context.settings().fov;
-    m_fovTask.m_duration = duration;
-    m_fovTask.m_holdDuration = holdDuration;
-    m_fovTask.Start();
-}
-
-void CameraControlBehavior::ResetFOV(float duration)
-{
-    if (!m_context.settingsAsset) return;
-    ChangeFOV(m_context.settings().fov, duration);
-}
-
-void CameraControlBehavior::ChangeCameraDistance(float distance, float duration)
-{
-    m_cameraDistanceTask.Reset();
-
-    m_cameraDistanceTask.m_startValue = m_context.runtimeState.followDistance;
-    m_cameraDistanceTask.m_targetValue = distance;
-    m_cameraDistanceTask.m_endValue = distance;
-    m_cameraDistanceTask.m_duration = duration;
-    m_cameraDistanceTask.m_holdDuration = 0.0f;
-    m_cameraDistanceTask.Start();
-}
-
-void CameraControlBehavior::ChangeCameraDistanceTemporary(float distance, float duration, float holdDuration)
-{
-    m_cameraDistanceTask.Reset();
-    if (!m_context.settingsAsset) return;
-    m_cameraDistanceTask.m_startValue = m_context.runtimeState.followDistance;
-    m_cameraDistanceTask.m_targetValue = distance;
-    m_cameraDistanceTask.m_endValue = m_context.settings().followDistance;
-    m_cameraDistanceTask.m_duration = duration;
-    m_cameraDistanceTask.m_holdDuration = holdDuration;
-    m_cameraDistanceTask.Start();
-}
-
-void CameraControlBehavior::ResetCameraDistance(float duration)
-{
-    if (!m_context.settingsAsset) return;
-    ChangeCameraDistance(m_context.settings().followDistance, duration);
-}
-
-void CameraControlBehavior::ChangeCameraOffset(const XMFLOAT3& offset, float duration)
-{
-    m_cameraOffsetTask.Reset();
-
-    m_cameraOffsetTask.m_startValue = m_context.runtimeState.lookAtOffset;
-    m_cameraOffsetTask.m_targetValue = offset;
-    m_cameraOffsetTask.m_endValue = offset;
-    m_cameraOffsetTask.m_duration = duration;
-    m_cameraOffsetTask.m_holdDuration = 0.0f;
-    m_cameraOffsetTask.Start();
-}
-
-void CameraControlBehavior::ChangeCameraOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
-{
-    if (!m_context.settingsAsset) return;
-    m_cameraOffsetTask.Reset();
-
-    m_cameraOffsetTask.m_startValue = m_context.runtimeState.lookAtOffset;
-    m_cameraOffsetTask.m_targetValue = offset;
-    m_cameraOffsetTask.m_endValue = m_context.settings().lookAtOffset;
-    m_cameraOffsetTask.m_duration = duration;
-    m_cameraOffsetTask.m_holdDuration = holdDuration;
-    m_cameraOffsetTask.Start();
-}
-
-void CameraControlBehavior::ResetCameraOffset(float duration)
-{
-    if (!m_context.settingsAsset) return;
-    ChangeCameraOffset(m_context.settings().lookAtOffset, duration);
-}
-
-void CameraControlBehavior::ChangeCameraLocalOffset(const XMFLOAT3& offset, float duration)
-{
-    m_cameraLocalOffsetTask.Reset();
-
-    m_cameraLocalOffsetTask.m_startValue = m_context.runtimeState.lookAtLocalOffset;
-    m_cameraLocalOffsetTask.m_targetValue = offset;
-    m_cameraLocalOffsetTask.m_endValue = offset;
-    m_cameraLocalOffsetTask.m_duration = duration;
-    m_cameraLocalOffsetTask.m_holdDuration = 0.0f;
-    m_cameraLocalOffsetTask.Start();
-}
-
-void CameraControlBehavior::ChangeCameraLocalOffsetTemporary(const XMFLOAT3& offset, float duration, float holdDuration)
-{
-    if (!m_context.settingsAsset) return;
-    m_cameraLocalOffsetTask.Reset();
-
-    m_cameraLocalOffsetTask.m_startValue = m_context.runtimeState.lookAtLocalOffset;
-    m_cameraLocalOffsetTask.m_targetValue = offset;
-    m_cameraLocalOffsetTask.m_endValue = m_context.settings().lookAtLocalOffset;
-    m_cameraLocalOffsetTask.m_duration = duration;
-    m_cameraLocalOffsetTask.m_holdDuration = holdDuration;
-    m_cameraLocalOffsetTask.Start();
-}
-
-void CameraControlBehavior::ResetCameraLocalOffset(float duration)
-{
-    if (!m_context.settingsAsset) return;
-    ChangeCameraLocalOffset(m_context.settings().lookAtLocalOffset, duration);
+    m_context.cameraEffect.RequestEffectTask(m_context, target, requestInfo);
 }
 
 void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 {
-    m_cameraShakeTask.Reset();
-    m_cameraShakeTask.m_duration = duration;
-    m_cameraShakeTask.m_magnitude = magnitude;
-    m_cameraShakeTask.m_shakeFrequency = m_context.settingsAsset
-        ? m_context.settings().shakeFrequency
-        : 35.0f;
-    m_cameraShakeTask.Start();
+    m_context.cameraEffect.PlayCameraShake(m_context, duration, magnitude);
 }
 
-// ------------------------------- private
+// ----- private method -----
 
 void CameraControlBehavior::UpdateCameraInputActivation()
 {
@@ -390,45 +250,6 @@ void CameraControlBehavior::UpdateCameraInputActivation()
         else {
             SetCameraInputEnabled(true);
         }
-    }
-}
-
-void CameraControlBehavior::UpdateCameraEffectTasks(float deltaTime)
-{
-    //タスクが実行中かどうか
-    bool fovTaskRunning = !m_fovTask.IsFinished();
-    bool distanceTaskRunning = !m_cameraDistanceTask.IsFinished();
-    bool offsetTaskRunning = !m_cameraOffsetTask.IsFinished();
-    bool localOffsetTaskRunning = !m_cameraLocalOffsetTask.IsFinished();
-    bool cameraShakeTaskRunning = !m_cameraShakeTask.IsFinished();
-
-    // タスクの更新
-    m_fovTask.Update(deltaTime);
-    m_cameraDistanceTask.Update(deltaTime);
-    m_cameraOffsetTask.Update(deltaTime);
-    m_cameraLocalOffsetTask.Update(deltaTime);
-    m_cameraShakeTask.Update(deltaTime);
-
-    // タスクの更新後に値を適用
-    if (fovTaskRunning && m_context.camera) {
-        m_context.runtimeState.fov = m_fovTask.m_currentValue;
-        m_context.camera->SetFov(m_context.runtimeState.fov);
-    }
-    if (distanceTaskRunning) {
-        m_context.runtimeState.followDistance = m_cameraDistanceTask.m_currentValue;
-    }
-    if (offsetTaskRunning) {
-        m_context.runtimeState.lookAtOffset = m_cameraOffsetTask.m_currentValue;
-    }
-    if (localOffsetTaskRunning) {
-        m_context.runtimeState.lookAtLocalOffset = m_cameraLocalOffsetTask.m_currentValue;
-    }
-    if (cameraShakeTaskRunning) {
-        m_isShaking = true;
-        m_shakeOffset = m_cameraShakeTask.m_shakeOffset;
-    }
-    else {
-        m_isShaking = false;
     }
 }
 
@@ -494,36 +315,4 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetCameraPosition(const XMFLOAT3& ca
         MiMath::Multiply(cameraForward, m_context.runtimeState.followDistance));
 
     return targetCameraPosition;
-}
-
-// カメラシェイクタスクの更新
-void CameraControlBehavior::CameraShakeTask::Update(float deltaTime)
-{
-    SequenceTask::Update(deltaTime);
-    if (IsFinished()) return;
-
-    switch (m_taskStep) {
-        case 0: {
-            float t = 1.0f;
-            if (m_duration > 0.0f) {
-                t = (std::min)(m_taskTimer / m_duration, 1.0f);
-            }
-
-            float elapsed = m_taskTimer;
-
-            // シェイクの強さを時間経過に応じて減衰させる
-            m_magnitude = MiMath::Lerp(m_magnitude, 0.0f, t * t);
-
-            // Perlinノイズを使用してシェイクのオフセットを生成
-            m_shakeOffset = { 0.0f, 0.0f, 0.0f };
-            m_shakeOffset.x = MiSignal::Perlin1D(elapsed * m_shakeFrequency) * m_magnitude;
-            m_shakeOffset.y = MiSignal::Perlin1D((elapsed + 100.0f) * m_shakeFrequency) * m_magnitude;
-
-            // タスクの終了判定
-            if (m_taskTimer >= m_duration) {
-                Finish();
-            }
-            break;
-        }
-    }
 }

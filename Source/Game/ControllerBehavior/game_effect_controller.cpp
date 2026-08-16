@@ -232,20 +232,20 @@ void GameEffectController::ResetTimeScale(float duration)
 void GameEffectController::ChangeFOV(float fov, float duration)
 {
     if (m_cameraControl) {
-        m_cameraControl->ChangeFOV(fov, duration);
+        CameraEffectTaskHelper::ChangeCameraEffect(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, fov, duration);
     }
 }
 void GameEffectController::ChangeFOVTemporary(float fov, float duration, float holdDuration)
 {
     if (m_cameraControl) {
-        m_cameraControl->ChangeFOVTemporary(fov, duration, holdDuration);
+        CameraEffectTaskHelper::ChangeCameraEffectTemporary(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, fov, duration, holdDuration);
     }
 }
 // FOVを元に戻す
 void GameEffectController::ResetFOV(float duration)
 {
     if (m_cameraControl) {
-        m_cameraControl->ResetFOV(duration);
+        CameraEffectTaskHelper::ResetCameraEffect(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, duration);
     }
 }
 
