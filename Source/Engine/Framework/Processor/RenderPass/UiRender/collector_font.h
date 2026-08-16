@@ -1,7 +1,7 @@
 //----------------------------------------------------
 // collector_font.h
 // 
-// Author：Miu Kitamura (from Ushi)
+// Author：Miu Kitamura
 // Date  ：2025/11/18
 //----------------------------------------------------
 #ifndef RENDERER_FONT_PROCESSOR_H

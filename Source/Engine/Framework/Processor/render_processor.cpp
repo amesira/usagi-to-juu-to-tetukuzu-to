@@ -112,18 +112,24 @@ void RenderProcessor::Process(IScene* pScene)
     m_lightingPass.BindLightCB(false);
 
     // 5.PostEffect描画
-    if (m_renderView->enablePostEffect) {
-        Direct3D_ClearSceneTarget(m_renderView->postEffectRTV.Get(), nullptr);
-        m_postEffectPass.Process(pScene, *m_renderView);
+    //if (m_renderView->enablePostEffect) {
+    //    Direct3D_ClearSceneTarget(m_renderView->postEffectRTV.Get(), nullptr);
+    //    m_postEffectPass.Process(pScene, *m_renderView);
 
-        Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
-        EngineServiceLocator::BindShader(ShaderBase::FullScreen);
-        SetBlendState(BLENDSTATE_NONE);
-        SetDepthState(DEPTHSTATE_DISABLE);
-        m_pContext->PSSetShaderResources(0, 1, m_renderView->postEffectSRV.GetAddressOf());
-        m_pContext->Draw(3, 0); // フルスクリーン三角形を描画
-        
-    }
+    //    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+    //    EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+    //    SetBlendState(BLENDSTATE_NONE);
+    //    SetDepthState(DEPTHSTATE_DISABLE);
+    //    m_pContext->PSSetShaderResources(0, 1, m_renderView->postEffectSRV.GetAddressOf());
+    //    m_pContext->Draw(3, 0); // フルスクリーン三角形を描画
+    //    
+    //}
+
+    //EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+    //SetBlendState(BLENDSTATE_NONE);
+    //SetDepthState(DEPTHSTATE_DISABLE);
+    //m_pContext->PSSetShaderResources(0, 1, m_renderView->postEffectSRV.GetAddressOf());
+    //m_pContext->Draw(3, 0); // フルスクリーン三角形を描画
 
     // 6.2DScreen描画
     if (m_renderView->enableUI) {

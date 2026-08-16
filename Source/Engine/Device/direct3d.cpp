@@ -241,6 +241,7 @@ void Direct3D_Clear()
 // スワップチェーンの表示
 void Direct3D_Present()
 {
+    // (1,0) は垂直同期を有効にする設定
     g_pSwapChain->Present(1, 0);
 }
 

@@ -90,7 +90,7 @@ void GameWorld::Render()
     m_mainGameRenderViewIndex = 0;
 
     // シーンカメラの描画情報をRenderViewに反映
-    SetSceneRenderView(scene);
+   // SetSceneRenderView(scene);
     
     // 描画制御プロセッサー処理
     for (int i = 0; i < m_renderViews.size(); i++) {
