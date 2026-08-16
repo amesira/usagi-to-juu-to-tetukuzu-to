@@ -285,15 +285,7 @@ void DataEditorWindow::RefreshAssetList()
         if (iterator->is_regular_file(error) && iterator->path().extension() == ".json" && iterator->path().stem().extension() == ".data") 
         {
             // データアセットの型名を取得する
-            const DataAsset* asset = DATA_LOADER->GetAsset(iterator->path());
-            if (!asset)
-            {
-                // 型名の取得に失敗した場合は、次のファイルに進む
-                iterator.increment(error);
-                continue;
-            }
-
-            std::string typeName = asset->GetAssetTypeName().data();
+            std::string typeName = DATA_LOADER->GetAssetTypeName(iterator->path());
 
             auto it = std::find_if(m_assetPaths.begin(), m_assetPaths.end(),
                 [&](const DataAssetPathEntry& entry) { return entry.typeName == typeName; });

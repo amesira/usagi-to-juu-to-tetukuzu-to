@@ -88,6 +88,7 @@ public:
         if (it != m_dataAssetCache.end()) {
             return it->second.get();
         }
+
         return nullptr;
     }
 
@@ -107,4 +108,6 @@ public:
 
         return defaultAsset->CreateDefaultInstance();
     }
+
+    std::string GetAssetTypeName(const std::filesystem::path& filePath);
 };

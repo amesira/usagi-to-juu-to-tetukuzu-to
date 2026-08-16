@@ -126,3 +126,31 @@ bool DataAssetLoader::ReloadDataAsset(const std::filesystem::path& filePath)
 
     return true;
 }
+
+/// @brief 指定されたファイルパスのDataAssetの種類を取得する。キャッシュに無い場合はファイルを開いて確認する
+std::string DataAssetLoader::GetAssetTypeName(const std::filesystem::path& filePath)
+{
+    // 現在のキャッシュを確認する
+    const std::filesystem::path cacheKey = filePath.lexically_normal();
+    auto it = m_dataAssetCache.find(cacheKey);
+    if (it != m_dataAssetCache.end()) {
+        return std::string(it->second->GetAssetTypeName());
+    }
+
+    // キャッシュに無い場合はファイルを開いて確認する
+    std::ifstream ifs(filePath);
+    if (!ifs.is_open()) return "";
+
+    try
+    {
+        json root;
+        ifs >> root;
+        if (!root.is_object()) return "";
+        return root.value("type", "");
+    }
+    catch (const json::exception& error)
+    {
+        // JSONの解析に失敗
+        return "";
+    }
+}
