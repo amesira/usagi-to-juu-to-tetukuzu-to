@@ -25,18 +25,8 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
         else {
             float gravityScale = 1.0f; // 重力のスケール（必要に応じて調整可能）
 
-            // 上昇中
-            if (context.runtimeState.m_physicsVelocity.y > 0.1f) {
-                gravityScale = context.settings().gravityScale.Evaluate(1.0f); // 上昇時の重力スケールを使用
-            }
-            // 下降中
-            else if (context.runtimeState.m_physicsVelocity.y < -0.1f) {
-                gravityScale = context.settings().gravityScale.Evaluate(-1.0f); // 下降時の重力スケールを使用
-            }
-            // 頂上付近
-            else {
-                gravityScale = context.settings().gravityScale.Evaluate(0.0f); // 頂上付近の重力スケールを使用
-            }
+            float normalizedYVelocity = context.runtimeState.m_physicsVelocity.y / 0.1f;
+            gravityScale = context.settings().gravityScale.Evaluate(normalizedYVelocity);
 
             // 重力加速度を計算する
             float gravityAcceleration = -9.81f * gravityScale;
@@ -44,13 +34,23 @@ void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerM
         }
     }
 
-    if (intent.canMove) {
-
-        XMFLOAT3 inputVelocity = MiMath::Multiply(intent.moveDirection, intent.moveInputMagnitude * context.settings().moveSpeed * intent.speedMultiplier);
+    if (intent.canMove) 
+    {
+        float moveSpeed = context.settings().moveSpeed * intent.speedMultiplier * intent.moveInputMagnitude;
+        if (!context.runtimeState.m_isGrounded) {
+            moveSpeed *= context.settings().airSpeedMultiplier;
+        }
+        XMFLOAT3 inputVelocity = MiMath::Multiply(intent.moveDirection, moveSpeed);
         inputVelocity.y = 0.0f;
 
         // 移動入力がある場合は通常の平滑化時間、移動入力がない場合は停止時の平滑化時間を使用する
-        float smoothTime = (intent.moveInputMagnitude > 0.01f) ? context.settings().smoothTime : context.settings().stopSmoothTime;
+        float smoothTime = context.settings().smoothTime;
+        if (intent.moveInputMagnitude < 0.01f) {
+            smoothTime = context.runtimeState.m_isGrounded ? context.settings().stopSmoothTime : context.settings().stopAirSmoothTime;
+        }
+        else {
+            smoothTime = context.runtimeState.m_isGrounded ? context.settings().smoothTime : context.settings().airSmoothTime;
+        }
 
         // SmoothDampを使用して、現在の速度から目標速度に向かって平滑化する
         float desiredVelocityX = MiMath::SmoothDamp(

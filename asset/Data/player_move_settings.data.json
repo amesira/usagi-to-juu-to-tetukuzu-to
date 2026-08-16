@@ -1,5 +1,7 @@
 {
     "data": {
+        "airSmoothTime": 0.20000000298023224,
+        "airSpeedMultiplier": 0.8999999761581421,
         "gravityScale": {
             "keys": [
                 {
@@ -12,7 +14,7 @@
                 },
                 {
                     "time": 1.0,
-                    "value": 3.0
+                    "value": 3.5
                 }
             ]
         },
@@ -20,7 +22,9 @@
         "moveSpeed": 20.0,
         "rotationSpeed": 20.0,
         "smoothTime": 0.10000000149011612,
-        "stopSmoothTime": 0.019999999552965164
+        "stopAirSmoothTime": 0.30000001192092896,
+        "stopSmoothTime": 0.019999999552965164,
+        "this_is_header_field": null
     },
     "formatVersion": 0,
     "name": "player_move_settings.data",

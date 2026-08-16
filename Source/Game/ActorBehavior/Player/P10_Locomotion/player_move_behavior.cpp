@@ -27,10 +27,6 @@
 
 #include <cmath>
 
-namespace {
-    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
-}
-
 void PlayerMoveBehavior::Start() {}
 
 void PlayerMoveBehavior::Update() {}

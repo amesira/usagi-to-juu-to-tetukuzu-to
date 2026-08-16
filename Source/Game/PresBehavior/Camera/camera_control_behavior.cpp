@@ -110,26 +110,7 @@ void CameraControlBehavior::Update()
 
     // 3.追従アンカー位置を更新する
     XMFLOAT3 targetFollowAnchorPosition = CalculateTargetFollowAnchorPosition();
-
-    state.followAnchorPosition.x = MiMath::SmoothDamp(
-        state.followAnchorPosition.x, 
-        targetFollowAnchorPosition.x, 
-        state.followAnchorVelocity.x, 
-        settings.followAnchorHorizontalSmoothTime,
-        deltaTime);
-    state.followAnchorPosition.z = MiMath::SmoothDamp(
-        state.followAnchorPosition.z, 
-        targetFollowAnchorPosition.z, 
-        state.followAnchorVelocity.z, 
-        settings.followAnchorHorizontalSmoothTime,
-        deltaTime);
-
-    state.followAnchorPosition.y = MiMath::SmoothDamp(
-        state.followAnchorPosition.y, 
-        targetFollowAnchorPosition.y, 
-        state.followAnchorVelocity.y, 
-        settings.followAnchorVerticalSmoothTime,
-        deltaTime);
+    UpdateFollowAnchorPosition(targetFollowAnchorPosition, deltaTime);
 
     // 絶対的なオフセットをここで加算（補間を行ないたくないパラメータ）
     XMFLOAT3 lookAtPosition = MiMath::Add(
@@ -299,6 +280,45 @@ XMFLOAT3 CameraControlBehavior::CalculateTargetFollowAnchorPosition()
 {
     XMFLOAT3 targetPosition = m_context.references.targetTransform->GetPosition();
     return targetPosition;
+}
+
+/// @brief 追従アンカー位置を滑らかに更新する
+void CameraControlBehavior::UpdateFollowAnchorPosition(const XMFLOAT3 targetPosition, float deltaTime)
+{
+    CameraRuntimeState& state = m_context.runtimeState;
+    const CameraSettings::Data& settings = m_context.settings();
+
+    // === 平面方向の追従 ===
+    state.followAnchorPosition.x = MiMath::SmoothDamp(
+        state.followAnchorPosition.x,
+        targetPosition.x,
+        state.followAnchorVelocity.x,
+        settings.followAnchorPlanarSmoothTime,
+        deltaTime);
+    state.followAnchorPosition.z = MiMath::SmoothDamp(
+        state.followAnchorPosition.z,
+        targetPosition.z,
+        state.followAnchorVelocity.z,
+        settings.followAnchorPlanarSmoothTime,
+        deltaTime);
+
+    // === 上下方向の追従 ===
+    float smoothTime = 0.0f;
+    if (state.followAnchorPosition.y > targetPosition.y) {
+        // 追従アンカーがターゲットより上にある場合は、下方向の追従時間を使用
+        smoothTime = settings.followAnchorDownwardSmoothTime;
+    }
+    else {
+        // 追従アンカーがターゲットより下にある場合は、上方向の追従時間を使用
+        smoothTime = settings.followAnchorUpwardSmoothTime;
+    }
+
+    state.followAnchorPosition.y = MiMath::SmoothDamp(
+        state.followAnchorPosition.y,
+        targetPosition.y,
+        state.followAnchorVelocity.y,
+        smoothTime,
+        deltaTime);
 }
 
 /// @brief カメラの注視点のオフセットを計算する

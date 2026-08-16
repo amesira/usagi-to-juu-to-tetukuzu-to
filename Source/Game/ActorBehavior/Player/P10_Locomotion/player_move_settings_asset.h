@@ -13,14 +13,21 @@ namespace PlayerMoveSettings {
     /// @brief PlayerMoveの設定値を保持する構造体
     struct Data
     {
+        // === 基本設定 ===
         float   moveSpeed = 10.0f;
         float   jumpForce = 10.0f;
+        float   airSpeedMultiplier = 0.9f;    // 空中での移動制御の強さ（0.0f～1.0f）
 
+        // === 回転設定 ===
         float   rotationSpeed = 10.0f;
 
-        float   smoothTime = 0.1f; // 平滑化の時間（秒）
-        float   stopSmoothTime = 0.05f; // 停止時の平滑化の時間（秒）
+        // === 平滑化設定 ===
+        float   smoothTime = 0.1f;          // 平滑化の時間（秒）
+        float   airSmoothTime = 0.2f;       // 空中での平滑化の時間（秒）
+        float   stopSmoothTime = 0.05f;     // 停止時の平滑化の時間（秒）
+        float   stopAirSmoothTime = 0.1f;   // 空中での停止時の平滑化の時間（秒）
 
+        // === 重力設定 ===
         MiCurve::FloatCurve gravityScale = {
             .keys = {
                 MiCurve::CurveKey{ 1.0f, 1.0f },    // 上昇
@@ -37,6 +44,8 @@ namespace PlayerMoveSettings {
         using MoveSettings = Data;
 
         static const auto& schema = FieldSchema{
+            // === 基本設定 ===
+            MakeHeaderField("Basic Settings"),
             MakeField(
                 "moveSpeed",
                 "Move Speed",
@@ -53,7 +62,17 @@ namespace PlayerMoveSettings {
                     .dragSpeed = 1.0f,
                     .minValue = 0.0f,
                     .maxValue = 100.0f }),
+            MakeField(
+                "airSpeedMultiplier",
+                "Air Speed Multiplier",
+                &MoveSettings::airSpeedMultiplier,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
 
+            // === 回転設定 ===
+            MakeHeaderField("Rotation Settings"),
             MakeField(
                 "rotationSpeed",
                 "Rotation Speed",
@@ -63,10 +82,20 @@ namespace PlayerMoveSettings {
                     .minValue = 0.0f,
                     .maxValue = 100.0f }),
 
+            // === 平滑化設定 ===
+            MakeHeaderField("Smoothing Settings"),
             MakeField(
                 "smoothTime",
                 "Smooth Time",
                 &MoveSettings::smoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "airSmoothTime",
+                "Air Smooth Time",
+                &MoveSettings::airSmoothTime,
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.01f,
@@ -79,7 +108,17 @@ namespace PlayerMoveSettings {
                     .dragSpeed = 0.01f,
                     .minValue = 0.01f,
                     .maxValue = 10.0f }),
+            MakeField(
+                "stopAirSmoothTime",
+                "Stop Air Smooth Time",
+                &MoveSettings::stopAirSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
 
+            // === 重力設定 ===
+            MakeHeaderField("Gravity Settings"),
             MakeField(
                 "gravityScale",
                 "Gravity Scale",

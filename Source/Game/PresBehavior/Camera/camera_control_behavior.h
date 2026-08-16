@@ -50,6 +50,9 @@ private:
 
     /// @brief 追従アンカー位置のターゲット値を計算する
     XMFLOAT3 CalculateTargetFollowAnchorPosition();
+    /// @brief 追従アンカー位置を滑らかに更新する
+    void UpdateFollowAnchorPosition(const XMFLOAT3 targetPosition, float deltaTime);
+
     /// @brief カメラの注視点のオフセットを計算する
     XMFLOAT3 CalculateCompositionOffset();
 
