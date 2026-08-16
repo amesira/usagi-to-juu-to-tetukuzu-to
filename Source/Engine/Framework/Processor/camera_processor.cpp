@@ -101,7 +101,7 @@ void CameraProcessor::SetRenderViews(std::vector<RenderView>& outViews)
             view.enable3D = true;
             view.enableLighting = true;
             view.enableUI = true;
-            view.enablePostEffect = true;
+            view.enablePostEffect = false;
             view.enableShadowMap = true;
             view.enableDebugDraw = false;
 
