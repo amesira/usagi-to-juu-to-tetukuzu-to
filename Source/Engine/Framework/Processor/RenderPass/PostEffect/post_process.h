@@ -56,8 +56,6 @@ private:
     ShaderProgramResource* m_brightnessExtractShader;
     // ガウスブラー用のシェーダー
     ShaderProgramResource* m_gaussianBlurShader;
-    // 4tapダウンサンプル用のシェーダー
-    ShaderProgramResource* m_downsample4TapShader;
     // Bloomの各縮小レベルを合成するシェーダー
     ShaderProgramResource* m_bloomCombineShader;
     // トーンマッピング用のシェーダー

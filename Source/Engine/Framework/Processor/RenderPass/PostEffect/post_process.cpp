@@ -65,13 +65,6 @@ void PostProcess::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
     gaussianBlurShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("gaussian_blur_ps.cso");
     m_gaussianBlurShader = SHADER_REPOSITORY->GenerateShaderProgramResource(gaussianBlurShaderResource);
 
-    // 4tapダウンサンプル：縮小時に周辺4点を平均化し、細い明部の欠けを抑える
-    ShaderProgramResource downsample4TapShaderResource;
-    downsample4TapShaderResource.name = "Downsample4Tap";
-    downsample4TapShaderResource.baseShader = m_fullScreenShader;
-    downsample4TapShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("downsample_4tap_ps.cso");
-    m_downsample4TapShader = SHADER_REPOSITORY->GenerateShaderProgramResource(downsample4TapShaderResource);
-
     // Bloom合成：各縮小レベルのBloom素材を1枚にまとめる
     ShaderProgramResource bloomCombineShaderResource;
     bloomCombineShaderResource.name = "BloomCombine";
@@ -145,7 +138,7 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
 
         // 2-a. 前レベルの結果を1段小さいバッファへ縮小する
         Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
-        EngineServiceLocator::BindShader(m_downsample4TapShader);
+        EngineServiceLocator::BindShader(ShaderBase::FullScreen);
         const int previousResultIndex = (i - 1) * 2;
         m_context->PSSetShaderResources(0, 1, m_downsampledSRV[previousResultIndex].GetAddressOf());
         m_context->Draw(3, 0);
