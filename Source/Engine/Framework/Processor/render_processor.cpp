@@ -49,13 +49,16 @@ void RenderProcessor::Process(IScene* pScene)
 {
     if (!m_renderView) return; // RenderViewがバインドされていない場合は処理しない
 
-    //----------------------------------- 描画前の準備
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+
     // 1.ライト設定パス
-    m_lightingPass.Process(pScene, *m_renderView);
+    if (m_renderView->enableLighting) {
+        m_lightingPass.Process(pScene, *m_renderView);
+    }
 
     // 2.シャドウマップパス
+    m_shadowMapPass.UnbindShadowTexture();
     if (m_renderView->enableShadowMap) {
-        m_shadowMapPass.UnbindShadowTexture();
         Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
         Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
 
@@ -67,20 +70,23 @@ void RenderProcessor::Process(IScene* pScene)
     }
 
     //----------------------------------- Scene描画開始
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
     Direct3D_ClearSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
     Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
 
     Bind3DCameraCB(m_renderView);
 
     // 3.スカイボックスパス
-    m_skyboxPass.Process(pScene, *m_renderView);
+    //m_skyboxPass.Process(pScene, *m_renderView);
 
     if (m_renderView->enable3D){
         //----------------------------------- 3Dオブジェクト描画
         m_lightingPass.BindLightCB(m_renderView->enableLighting);
 
-        m_shadowMapPass.BindShadowCB();
-        m_shadowMapPass.BindShadowTexture();
+        if (m_renderView->enableShadowMap) {
+            m_shadowMapPass.BindShadowCB();
+            m_shadowMapPass.BindShadowTexture();
+        }
 
         // 不透明物体
         m_opaqueRenderPass.Process(pScene, *m_renderView);
@@ -103,6 +109,7 @@ void RenderProcessor::Process(IScene* pScene)
 
     if (m_renderView->enableDebugDraw) {
         // デバッグ描画
+        Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
         Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
         m_lightingPass.BindLightCB(false);
         m_decalRenderPass.CollectDebugDraw(pScene);
@@ -125,7 +132,6 @@ void RenderProcessor::Process(IScene* pScene)
         SetDepthState(DEPTHSTATE_DISABLE);
         m_pContext->PSSetShaderResources(0, 1, m_renderView->postEffectSRV.GetAddressOf());
         m_pContext->Draw(3, 0); // フルスクリーン三角形を描画
-        
     }
 
     // 6.2DScreen描画
@@ -149,8 +155,8 @@ void RenderProcessor::Bind3DCameraCB(const RenderView* view)
 // 2D描画時のカメラCBバインド
 void RenderProcessor::Bind2DCameraCB(const RenderView* view)
 {
-    const float SCREEN_WIDTH = (float)Direct3D_GetBackBufferWidth();
-    const float SCREEN_HEIGHT = (float)Direct3D_GetBackBufferHeight();
+    const float SCREEN_WIDTH = Direct3D_GetBackBufferWidth();
+    const float SCREEN_HEIGHT = Direct3D_GetBackBufferHeight();
 
     EngineServiceLocator::UpdateCameraCB({
         XMMatrixIdentity(),

@@ -115,8 +115,8 @@ void MiEngine::Render()
     IScene* scene = m_gameWorld.GetSceneManager().GetCurrentScene();
     m_editorContext->scene = scene;
     m_editorContext->sceneSettings = &(scene->GetSceneSettings());
-    m_editorContext->sceneRenderView = &m_gameWorld.GetMainSceneRenderView();
-    m_editorContext->gameRenderView = &m_gameWorld.GetMainGameRenderView();
+    m_editorContext->sceneRenderView = &m_gameWorld.GetSceneRenderView();
+    m_editorContext->gameRenderView = &m_gameWorld.GetGameRenderView();
     m_editorContext->canvasRenderView = &m_gameWorld.GetCanvasRenderView();
     m_editorManager.Render();
 

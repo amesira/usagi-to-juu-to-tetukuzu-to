@@ -26,10 +26,12 @@ void GameWorld::Initialize()
     m_renderProcessor.Initialize();
 
     // RenderViewの初期化
-    m_renderViews.resize(8);
-    for (RenderView& view : m_renderViews) {
-        view.Initialize();
+    m_gameRenderViews.resize(4); // 最大4つのゲーム用RenderViewを確保
+    for (RenderView& view : m_gameRenderViews) {
+        view.Initialize(1920, 1080);
     }
+    m_sceneRenderView.Initialize(1280, 720);
+    m_canvasRenderView.Initialize(1280, 720);
 }
 
 // GameWorldの終了処理
@@ -53,7 +55,7 @@ void GameWorld::Finalize()
     m_sceneManager.Finalize();
 
     // RenderViewの解放
-    m_renderViews.clear();
+    m_gameRenderViews.clear();
 }
 
 // GameWorldの更新処理
@@ -80,24 +82,34 @@ void GameWorld::Render()
     m_physicsProcessor.CollectDebugDraw(scene);
 
     // RenderViewの無効化
-    for (RenderView& view : m_renderViews) {
+    for (RenderView& view : m_gameRenderViews) {
         view.enabled = false;
     }
 
     // カメラ設定・描画情報の取得
     m_cameraProcessor.Process(scene);
-    m_cameraProcessor.SetRenderViews(m_renderViews);
+    m_cameraProcessor.SetRenderViews(m_gameRenderViews);
     m_mainGameRenderViewIndex = 0;
 
     // シーンカメラの描画情報をRenderViewに反映
-    //SetSceneRenderView(scene);
+    SetSceneRenderView(scene);
     
     // 描画制御プロセッサー処理
-    for (int i = 0; i < m_renderViews.size(); i++) {
-        if (!m_renderViews[i].enabled) continue;
+    for (int i = 0; i < m_gameRenderViews.size(); i++) {
+        if (!m_gameRenderViews[i].enabled) continue;
 
-        RenderView& view = m_renderViews[i];
+        RenderView& view = m_gameRenderViews[i];
         m_renderProcessor.BindRenderView(&view);
+        m_renderProcessor.Process(scene);
+    }
+
+    if (m_sceneRenderView.enabled) {
+        m_renderProcessor.BindRenderView(&m_sceneRenderView);
+        m_renderProcessor.Process(scene);
+    }
+
+    if (m_canvasRenderView.enabled) {
+        m_renderProcessor.BindRenderView(&m_canvasRenderView);
         m_renderProcessor.Process(scene);
     }
 }
@@ -112,48 +124,37 @@ void GameWorld::SetSceneRenderView(IScene* scene)
     sceneSettings.UpdateCameraSettings();
     const SceneCameraSettings& sceneCameraSettings = sceneSettings.GetCameraSettings();
 
-    int viewNumber = 0;
+    {
+        RenderView& sceneView = m_sceneRenderView;
+        sceneView.enabled = true;
 
-    for (int i = 0; i < m_renderViews.size(); i++) {
-        if (m_renderViews[i].enabled) continue;
+        sceneView.viewMatrix = sceneCameraSettings.GetViewMatrix();
+        sceneView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
+        sceneView.eyePosition = sceneCameraSettings.GetPosition();
+        sceneView.aspectRatio = sceneCameraSettings.GetAspect();
 
-        RenderView& view = m_renderViews[i];
-        view.enabled = true;
+        sceneView.enable3D = true;
+        sceneView.enableLighting = true;
+        sceneView.enableShadowMap = true;
+        sceneView.enablePostEffect = false;
+        sceneView.enableUI = false;
+        sceneView.enableDebugDraw = true;
+    }
 
-        // Scene View
-        if(viewNumber == 0){
-            RenderView& sceneView = view;
-            sceneView.viewMatrix = sceneCameraSettings.GetViewMatrix();
-            sceneView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-            sceneView.eyePosition = sceneCameraSettings.GetPosition();
-            sceneView.aspectRatio = sceneCameraSettings.GetAspect();
+    {
+        RenderView& canvasView = m_canvasRenderView;
+        canvasView.enabled = true;
 
-            sceneView.enable3D = true;
-            sceneView.enableLighting = true;
-            sceneView.enablePostEffect = true;
-            sceneView.enableUI = false;
-            sceneView.enableDebugDraw = true;
+        canvasView.viewMatrix = {};
+        canvasView.projectionMatrix = {};
+        canvasView.eyePosition = {};
+        canvasView.aspectRatio = sceneCameraSettings.GetAspect();
 
-            m_mainSceneRenderViewIndex = i;
-
-            viewNumber++;
-        }
-        else if (viewNumber == 1) {
-            RenderView& canvasView = view;
-            canvasView.viewMatrix = sceneCameraSettings.GetViewMatrix();
-            canvasView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-            canvasView.eyePosition = sceneCameraSettings.GetPosition();
-            canvasView.aspectRatio = sceneCameraSettings.GetAspect();
-
-            canvasView.enable3D = false;
-            canvasView.enableLighting = false;
-            canvasView.enablePostEffect = false;
-            canvasView.enableUI = true;
-            canvasView.enableDebugDraw = false;
-
-            m_canvasRenderViewIndex = i;
-
-            viewNumber++;
-        }
+        canvasView.enable3D = false;
+        canvasView.enableLighting = false;
+        canvasView.enableShadowMap = false;
+        canvasView.enablePostEffect = false;
+        canvasView.enableUI = true;
+        canvasView.enableDebugDraw = false;
     }
 }

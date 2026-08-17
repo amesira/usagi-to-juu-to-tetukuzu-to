@@ -18,6 +18,7 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
+    // ポストエフェクトの各種エフェクト
     BloomEffect m_bloomEffect;
     MonoMaskEffect m_monoMaskEffect;
     RadialBlurEffect m_radialBlurEffect;

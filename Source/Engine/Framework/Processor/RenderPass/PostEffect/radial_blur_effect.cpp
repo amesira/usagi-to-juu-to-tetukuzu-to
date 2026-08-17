@@ -25,6 +25,8 @@ void RadialBlurEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderT
 {
     if (!m_context || !inputSRV || !outputRTV || !m_constantBuffer) return;
 
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+
     ConstantBufferData parameters = {};
     parameters.sampleCount = (std::max)(sampleCount, 1);
     parameters.strength = strength;
@@ -46,4 +48,6 @@ void RadialBlurEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderT
 
     ID3D11ShaderResourceView* nullSRV = nullptr;
     m_context->PSSetShaderResources(0, 1, &nullSRV);
+
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 }

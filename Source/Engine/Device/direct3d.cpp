@@ -21,8 +21,6 @@ static IDXGISwapChain*      g_pSwapChain = nullptr;
 
 // バックバッファ関連
 static ID3D11RenderTargetView*      g_pRenderTargetView = nullptr;
-static ID3D11Texture2D*             g_pDepthStencilBuffer = nullptr;
-static ID3D11DepthStencilView*      g_pDepthStencilView = nullptr;
 static D3D11_TEXTURE2D_DESC         g_BackBufferDecs{};
 static D3D11_VIEWPORT               g_Viewport{};
 
@@ -239,10 +237,9 @@ void Direct3D_Clear()
     /* バックバッファクリア */
     float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
     g_pDeviceContext->ClearRenderTargetView(g_pRenderTargetView, clear_color);
-    g_pDeviceContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     /* レンダーターゲットビューとデプスステンシルビューの設定 */
-    g_pDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
+    g_pDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, nullptr);
 
     Direct3D_ResetViewport();
 }
@@ -251,7 +248,7 @@ void Direct3D_Clear()
 void Direct3D_Present()
 {
     // (1,0) は垂直同期を有効にする設定
-    g_pSwapChain->Present(1, 0);
+    g_pSwapChain->Present(0, 0);
 }
 
 // ビューポートの設定
@@ -314,42 +311,7 @@ bool configureBackBuffer()
 
     // バックバッファの状態（情報）を取得
     back_buffer_pointer->GetDesc(&g_BackBufferDecs);
-
     back_buffer_pointer->Release(); // バックバッファのポインタは不要なので開放
-
-    // デプスステンシルバッファの生成
-    D3D11_TEXTURE2D_DESC depth_stencil_desc{};
-    depth_stencil_desc.Width = g_BackBufferDecs.Width;
-    depth_stencil_desc.Height = g_BackBufferDecs.Height;
-    depth_stencil_desc.MipLevels = 1;
-    depth_stencil_desc.ArraySize = 1;
-    depth_stencil_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depth_stencil_desc.SampleDesc.Count = 1;
-    depth_stencil_desc.SampleDesc.Quality = 0;
-    depth_stencil_desc.Usage = D3D11_USAGE_DEFAULT;
-    depth_stencil_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depth_stencil_desc.CPUAccessFlags = 0;
-    depth_stencil_desc.MiscFlags = 0;
-    hr = g_pDevice->CreateTexture2D(&depth_stencil_desc, nullptr, &g_pDepthStencilBuffer);
-
-    if (FAILED(hr)) {
-        hal::dout << "デプスステンシルバッファの生成に失敗しました" << std::endl;
-        return false;
-    }
-
-    // デプスステンシルビューの作成
-    D3D11_DEPTH_STENCIL_VIEW_DESC depth_stencil_view_desc{};
-    depth_stencil_view_desc.Format = depth_stencil_desc.Format;
-    depth_stencil_view_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depth_stencil_view_desc.Texture2D.MipSlice = 0;
-    depth_stencil_view_desc.Flags = 0;
-    hr = g_pDevice->CreateDepthStencilView(g_pDepthStencilBuffer, &depth_stencil_view_desc,
-        &g_pDepthStencilView);
-
-    if (FAILED(hr)) {
-        hal::dout << "デプスステンシルビューの生成に失敗しました" << std::endl;
-        return false;
-    }
 
     /* ビューポートの設定 */
     g_Viewport.TopLeftX = 0.0f;
@@ -369,16 +331,6 @@ void releaseBackBuffer()
     if (g_pRenderTargetView) {
         g_pRenderTargetView->Release();
         g_pRenderTargetView = nullptr;
-    }
-
-    if (g_pDepthStencilBuffer) {
-        g_pDepthStencilBuffer->Release();
-        g_pDepthStencilBuffer = nullptr;
-    }
-
-    if (g_pDepthStencilView) {
-        g_pDepthStencilView->Release();
-        g_pDepthStencilView = nullptr;
     }
 }
 
@@ -518,7 +470,8 @@ void Direct3D_CreateColorBuffer(
 }
 
 // シーンテクスチャの深度ステンシルバッファとビューの生成
-void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv)
+void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv, 
+    unsigned int width, unsigned int height)
 {
     if (!tex || !dsv || !srv) return;
     *tex = nullptr;
@@ -526,8 +479,8 @@ void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** 
     *srv = nullptr;
 
     D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = g_BackBufferDecs.Width;
-    desc.Height = g_BackBufferDecs.Height;
+    desc.Width = width;
+    desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
     desc.Format = DXGI_FORMAT_R24G8_TYPELESS;

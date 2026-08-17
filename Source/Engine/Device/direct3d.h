@@ -95,6 +95,8 @@ void Direct3D_CreateColorBuffer(
 void Direct3D_CreateDepthBuffer(
     ID3D11Texture2D** tex, 
     ID3D11DepthStencilView** dsv, 
-    ID3D11ShaderResourceView** srv);
+    ID3D11ShaderResourceView** srv,
+    unsigned int width = 1920,
+    unsigned int height = 1080);
 
 #endif

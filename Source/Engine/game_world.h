@@ -31,14 +31,15 @@ private:
     ParticleSystemProcessor m_particleSystemProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
-    std::vector<RenderView> m_renderViews;
+    std::vector<RenderView> m_gameRenderViews; // ゲーム用RenderView群
+    RenderView m_sceneRenderView; // シーン用RenderView
+    RenderView m_canvasRenderView; // UI描画用RenderView
+
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
 
     // RenderViewインデックス
-    int m_mainSceneRenderViewIndex = 0; // メインシーン用RenderViewのインデックス
-    int m_mainGameRenderViewIndex = 1;  // メインゲーム用RenderViewのインデックス
-    int m_canvasRenderViewIndex = 2;    // UI描画用RenderViewのインデックス
+    int m_mainGameRenderViewIndex = 0;  // メインゲーム用RenderViewのインデックス
 
 public:
     void Initialize();
@@ -49,10 +50,10 @@ public:
     // SceneManagerへのアクセス
     SceneManager& GetSceneManager() { return m_sceneManager; }
     // RenderViewへのアクセス
-    std::vector<RenderView>& GetRenderViews() { return m_renderViews; }
-    RenderView& GetMainSceneRenderView() { return m_renderViews[m_mainSceneRenderViewIndex]; }
-    RenderView& GetMainGameRenderView() { return m_renderViews[m_mainGameRenderViewIndex]; }
-    RenderView& GetCanvasRenderView() { return m_renderViews[m_canvasRenderViewIndex]; }
+    std::vector<RenderView>& GetGameRenderViews() { return m_gameRenderViews; }
+    RenderView& GetSceneRenderView() { return m_sceneRenderView; }
+    RenderView& GetGameRenderView() { return m_gameRenderViews[m_mainGameRenderViewIndex]; }
+    RenderView& GetCanvasRenderView() { return m_canvasRenderView; }
 
 private:
     // SceneRenderViewの設定

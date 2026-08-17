@@ -43,8 +43,7 @@ void PostEffectPass::Finalize()
 // ポストエフェクト処理
 void PostEffectPass::Process(IScene* pScene, const RenderView& view)
 {
-    const CustomPostEffectState& state =
-        pScene->GetSceneSettings().GetPostProcessSettings().m_customPostEffectState;
+    const CustomPostEffectState& state = pScene->GetSceneSettings().GetPostProcessSettings().m_customPostEffectState;
 
     // 1. Bloom
     m_bloomEffect.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());

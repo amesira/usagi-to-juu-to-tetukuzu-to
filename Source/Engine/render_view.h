@@ -27,6 +27,9 @@ struct RenderView {
     bool enableDebugDraw;     // デバッグ描画の有効・無効
     bool enableUI;            // UI描画の有効・無効
 
+    float screenWidth;  // バッファの幅
+    float screenHeight; // バッファの高さ
+
     RenderLayerMask cullingMask;
     RenderLayerMask maskCullingMask;
 
@@ -49,7 +52,6 @@ struct RenderView {
     ComPtr<ID3D11RenderTargetView>      postEffectRTV;
     ComPtr<ID3D11ShaderResourceView>    postEffectSRV;
 
-
     RenderView() :
         viewMatrix(XMMatrixIdentity()),
         projectionMatrix(XMMatrixIdentity()),
@@ -65,10 +67,17 @@ struct RenderView {
         maskCullingMask(0) {
     }
 
-    void Initialize() {
-        Direct3D_CreateColorBuffer(colorBufferTexture.GetAddressOf(), colorBufferRTV.GetAddressOf(), colorBufferSRV.GetAddressOf());
-        Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
-        Direct3D_CreateColorBuffer(maskColorBufferTexture.GetAddressOf(), maskColorBufferRTV.GetAddressOf(), maskColorBufferSRV.GetAddressOf());
-        Direct3D_CreateColorBuffer(postEffectTexture.GetAddressOf(), postEffectRTV.GetAddressOf(), postEffectSRV.GetAddressOf());
+    static const DXGI_FORMAT DEFAULT_COLOR_BUFFER_FORMAT = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    static const DXGI_FORMAT MASK_COLOR_BUFFER_FORMAT = DXGI_FORMAT_R32G32B32A32_FLOAT;
+    static const DXGI_FORMAT POST_EFFECT_BUFFER_FORMAT = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+    void Initialize(unsigned int width, unsigned int height) 
+    {
+        Direct3D_CreateColorBuffer(colorBufferTexture.GetAddressOf(), colorBufferRTV.GetAddressOf(), colorBufferSRV.GetAddressOf(),width, height, DEFAULT_COLOR_BUFFER_FORMAT);
+        Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf(), width, height);
+        Direct3D_CreateColorBuffer(maskColorBufferTexture.GetAddressOf(), maskColorBufferRTV.GetAddressOf(), maskColorBufferSRV.GetAddressOf(), width, height, MASK_COLOR_BUFFER_FORMAT);
+        Direct3D_CreateColorBuffer(postEffectTexture.GetAddressOf(), postEffectRTV.GetAddressOf(), postEffectSRV.GetAddressOf(), width, height, POST_EFFECT_BUFFER_FORMAT);
+        screenWidth = (float)width;
+        screenHeight = (float)height;
     }
 };
