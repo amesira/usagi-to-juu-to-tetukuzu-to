@@ -150,7 +150,9 @@
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
@@ -211,7 +213,6 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
@@ -334,7 +335,9 @@
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h" />
@@ -429,7 +432,6 @@
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h" />

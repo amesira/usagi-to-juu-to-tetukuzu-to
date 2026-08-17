@@ -9,17 +9,18 @@
 #include "Engine/Core/pass.h"
 #include "Engine/Device/direct3d.h"
 
-#include "./PostEffect/post_process.h"
-#include "./PostEffect/custom_post_effect.h"
+#include "./PostEffect/bloom_effect.h"
+#include "./PostEffect/mono_mask_effect.h"
+#include "./PostEffect/radial_blur_effect.h"
 
 class PostEffectPass : public Pass {
 private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    // PostProcessのインスタンス
-    PostProcess m_postProcess;
-    CustomPostEffect m_customPostEffect;
+    BloomEffect m_bloomEffect;
+    MonoMaskEffect m_monoMaskEffect;
+    RadialBlurEffect m_radialBlurEffect;
 
     // 一時バッファ用のテクスチャ
     ComPtr<ID3D11Texture2D> m_tempTexture[2];

@@ -8,6 +8,7 @@
 
 #include "Engine/Core/scene_interface.h"
 #include "Engine/render_view.h"
+#include "Engine/Settings/scene_settings.h"
 
 // ポストエフェクト初期化
 void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -29,23 +30,42 @@ void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
         );
     }
 
-    m_postProcess.Initialize(m_pDevice, m_pContext);
-    m_customPostEffect.Initialize(m_pDevice, m_pContext);
+    m_bloomEffect.Initialize(m_pDevice, m_pContext);
+    m_monoMaskEffect.Initialize(m_pDevice, m_pContext);
+    m_radialBlurEffect.Initialize(m_pDevice, m_pContext);
 }
 
 // ポストエフェクト終了
 void PostEffectPass::Finalize()
 {
-    m_postProcess.Finalize();
-    m_customPostEffect.Finalize();
 }
 
 // ポストエフェクト処理
 void PostEffectPass::Process(IScene* pScene, const RenderView& view)
 {
-    // PostProcess
-    m_postProcess.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());
+    const CustomPostEffectState& state =
+        pScene->GetSceneSettings().GetPostProcessSettings().m_customPostEffectState;
 
-    // CustomPostEffect
-    m_customPostEffect.Process(pScene, m_tempSRV[0].Get(), view.postEffectRTV.Get(), view.maskColorBufferSRV.Get());
+    // 1. Bloom
+    m_bloomEffect.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());
+
+    // 2. MonoMask（既存の処理順を維持）
+    ID3D11ShaderResourceView* maskSRV = view.maskColorBufferSRV
+        ? view.maskColorBufferSRV.Get()
+        : state.monoMaskTextureSRV;
+    m_monoMaskEffect.Process(
+        m_tempSRV[0].Get(),
+        m_tempRTV[1].Get(),
+        maskSRV,
+        state.monoMask.monoColor,
+        state.monoMask.strength);
+
+    // 3. RadialBlur
+    m_radialBlurEffect.Process(
+        m_tempSRV[1].Get(),
+        view.postEffectRTV.Get(),
+        state.radialBlur.sampleCount,
+        state.radialBlur.strength);
+
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 }
