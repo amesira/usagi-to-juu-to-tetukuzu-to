@@ -12,10 +12,6 @@
 
 #include "Engine/engine_service_locator.h"
 
-namespace {
-    #define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
-}
-
 /// @brief 新しいデータアセットを作成する
 void DataEditorDocument::New()
 {

@@ -36,7 +36,7 @@ void GameWorld::Initialize()
 void GameWorld::Finalize()
 {
     if (ParticleSystemAssetLoader* loader =
-        EngineServiceLocator::GetParticleAssetLoader()) {
+        EngineServiceLocator::ParticleLoader()) {
         loader->SetReloadCallback({});
     }
 

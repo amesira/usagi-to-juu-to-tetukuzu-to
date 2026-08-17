@@ -30,10 +30,6 @@ struct PostProcessBuffer {
             float threshold; // 輝度抽出の閾値
             float padding[3]; // パディング
         } brightnessExtract;
-        struct Downsample4Tap {
-            XMFLOAT2 texelSize; // 入力テクスチャのテクセルサイズ（1.0 / テクスチャサイズ）
-            XMFLOAT2 padding; // パディング
-        } downsample4Tap;
         struct GaussianBlur {
             XMFLOAT2 texelSize; // テクセルサイズ（1.0 / テクスチャサイズ）
             XMFLOAT2 direction; // ブラーの方向（水平: (1, 0), 垂直: (0, 1)）
@@ -75,9 +71,9 @@ private:
     PostProcessBuffer m_postProcessBufferData;
 
     // 一時バッファ用のテクスチャ
-    ComPtr<ID3D11Texture2D> m_tempTexture[2];
-    ComPtr<ID3D11RenderTargetView> m_tempRTV[2];
-    ComPtr<ID3D11ShaderResourceView> m_tempSRV[2];
+    ComPtr<ID3D11Texture2D> m_tempTexture;
+    ComPtr<ID3D11RenderTargetView> m_tempRTV;
+    ComPtr<ID3D11ShaderResourceView> m_tempSRV;
 
     // ダウンサンプリング用のテクスチャ
     enum class DownsampleLevel {

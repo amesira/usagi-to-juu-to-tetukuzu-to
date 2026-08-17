@@ -33,25 +33,17 @@ cbuffer GaussianBlurBuffer : register(b0) {
 // main関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    // 中心は0.0fとする
-    float4 color = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    
-    float2 texOffset = float2(0.0f, 0.0f);
-    for (int i = 0; i < 4; i++)
-    {
-        texOffset = g_GaussianBlur.direction * g_GaussianBlur.texelSize * g_GaussianBlur.offsets[i];
-        
-        // テクスチャからサンプリングして、重みを掛けて加算
-        color += g_Texture.Sample(g_SamplerState, ps_in.texcoord + texOffset) * g_GaussianBlur.weights[i];
-        
-        if (i > 0) // 中心以外は反対方向もサンプリング
-        color += g_Texture.Sample(g_SamplerState, ps_in.texcoord - texOffset) * g_GaussianBlur.weights[i];
-    }
-    
-    if (color.a <= 0.01f)
-    {
-       // discard;
-    }
-    
-    return color * g_GaussianBlur.blur;
+    const float centerWeight = 0.264151f;
+    const float combinedWeight = 0.367925f;
+    const float combinedOffset = 1.384615f;
+
+    float2 texOffset = g_GaussianBlur.direction
+        * g_GaussianBlur.texelSize
+        * combinedOffset
+        * g_GaussianBlur.blur;
+
+    float4 color = g_Texture.Sample(g_SamplerState, ps_in.texcoord) * centerWeight;
+    color += g_Texture.Sample(g_SamplerState, ps_in.texcoord + texOffset) * combinedWeight;
+    color += g_Texture.Sample(g_SamplerState, ps_in.texcoord - texOffset) * combinedWeight;
+    return color;
 }

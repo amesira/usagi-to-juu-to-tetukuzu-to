@@ -29,7 +29,7 @@ namespace
     {
         if (!particleSystem) return false;
 
-        ParticleSystemAssetLoader* loader = EngineServiceLocator::GetParticleAssetLoader();
+        ParticleSystemAssetLoader* loader = EngineServiceLocator::ParticleLoader();
         if (!loader) return false;
 
         ParticleSystemAsset* asset = loader->GetParticle(assetPath);

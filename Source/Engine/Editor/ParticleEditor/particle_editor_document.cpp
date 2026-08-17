@@ -12,7 +12,7 @@
 #include "Engine/engine_service_locator.h"
 
 namespace {
-    #define PARTICLE_LOADER EngineServiceLocator::GetAssetManager()->GetParticleAssetLoader()
+    #define PARTICLE_LOADER EngineServiceLocator::Asset()->GetParticleAssetLoader()
 }
 
 /// @brief 新しいパーティクルアセットを作成する

@@ -10,21 +10,8 @@ struct PS_INPUT
     float2 texcoord : TEXCOORD;
 };
 
-cbuffer Downsample4TapBuffer : register(b0)
-{
-    float2 g_TexelSize;
-    float2 g_Padding;
-};
-
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float2 uv = ps_in.texcoord;
-
-    float4 color = 0.0f;
-    color += g_Texture.Sample(g_SamplerState, uv + g_TexelSize * float2(-0.5f, -0.5f));
-    color += g_Texture.Sample(g_SamplerState, uv + g_TexelSize * float2( 0.5f, -0.5f));
-    color += g_Texture.Sample(g_SamplerState, uv + g_TexelSize * float2(-0.5f,  0.5f));
-    color += g_Texture.Sample(g_SamplerState, uv + g_TexelSize * float2( 0.5f,  0.5f));
-
-    return color * 0.25f;
+    // 出力が入力の1/2サイズの場合、線形補間の1サンプルで入力2x2の平均になる
+    return g_Texture.Sample(g_SamplerState, ps_in.texcoord);
 }

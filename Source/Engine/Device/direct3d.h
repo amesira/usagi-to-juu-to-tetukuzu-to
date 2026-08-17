@@ -67,6 +67,13 @@ enum RASTERIZERSTATE {
 };
 void SetRasterizerState(RASTERIZERSTATE state);
 
+enum SAMPLERSTATE {
+    SAMPLERSTATE_POINT_WRAP,
+    SAMPLERSTATE_LINEAR_CLAMP,
+    SAMPLERSTATE_MAX,
+};
+void SetSamplerState(SAMPLERSTATE state);
+
 // スナップショット用シーンテクスチャSRVの作成
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 

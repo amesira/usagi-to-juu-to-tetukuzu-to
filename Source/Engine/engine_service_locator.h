@@ -40,7 +40,7 @@ public:
     }
 
     // ShaderManagerへのアクセス
-    static ShaderManager* GetShaderManager() {
+    static ShaderManager* Shader() {
         return s_engineInstance ? &s_engineInstance->GetShaderManager() : nullptr;
     }
     static void BindShader(ShaderBase shaderBase) {
@@ -70,22 +70,24 @@ public:
     }
 
     // AssetManagerへのアクセス
-    static AssetManager* GetAssetManager() {
+    static AssetManager* Asset() {
         return s_engineInstance ? &s_engineInstance->GetAssetManager() : nullptr;
     }
-    static ParticleSystemAssetLoader* GetParticleAssetLoader() {
+    static ParticleSystemAssetLoader* ParticleLoader() {
         return s_engineInstance ? s_engineInstance->GetAssetManager().GetParticleAssetLoader() : nullptr;
     }
-    static DataAssetLoader* GetDataAssetLoader() {
+    static DataAssetLoader* DataLoader() {
         return s_engineInstance ? s_engineInstance->GetAssetManager().GetDataAssetLoader() : nullptr;
     }
 };
+
+using Engine = EngineServiceLocator;
 
 #define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
-#define DATA_LOADER EngineServiceLocator::GetAssetManager()->GetDataAssetLoader()
+#define DATA_LOADER EngineServiceLocator::DataLoader()
 
 #endif // ENGINE_SERVICE_LOCATOR_H

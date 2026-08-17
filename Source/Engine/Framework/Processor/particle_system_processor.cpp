@@ -230,7 +230,7 @@ void ParticleSystemProcessor::Initialize()
     m_pendingAssetReloads.clear();
 
     // ParticleSystemAssetLoaderのリロードコールバックを設定
-    if (ParticleSystemAssetLoader* loader = EngineServiceLocator::GetParticleAssetLoader()) {
+    if (ParticleSystemAssetLoader* loader = EngineServiceLocator::ParticleLoader()) {
         loader->SetReloadCallback(
             [this](const std::filesystem::path& path, const ParticleSystemAsset& asset) {
                     OnParticleAssetReloaded(path, asset);

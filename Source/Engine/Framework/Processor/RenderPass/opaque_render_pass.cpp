@@ -23,7 +23,7 @@ using namespace DirectX;
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
-#define SHADER_MANAGER EngineServiceLocator::GetShaderManager()
+#define SHADER_MANAGER EngineServiceLocator::Shader()
 
 // OpaqueRenderPassの初期化処理
 void OpaqueRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -20,15 +20,13 @@ void PostProcess::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
     unsigned int SCREEN_WIDTH = Direct3D_GetBackBufferWidth();
     unsigned int SCREEN_HEIGHT = Direct3D_GetBackBufferHeight();
 
-    for (int i = 0; i < 2; i++) {
-        Direct3D_CreateColorBuffer(
-            m_tempTexture[i].GetAddressOf(),
-            m_tempRTV[i].GetAddressOf(),
-            m_tempSRV[i].GetAddressOf(),
-            SCREEN_WIDTH,
-            SCREEN_HEIGHT
-        );
-    }
+    Direct3D_CreateColorBuffer(
+        m_tempTexture.GetAddressOf(),
+        m_tempRTV.GetAddressOf(),
+        m_tempSRV.GetAddressOf(),
+        SCREEN_WIDTH,
+        SCREEN_HEIGHT
+    );
 
     // Bloom用に 1/2, 1/4, 1/8, 1/16 の縮小バッファを用意する
     // 各レベルで 4tapダウンサンプル結果 と 縦横ブラー用 の2枚を使い回す
@@ -103,8 +101,10 @@ void PostProcess::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTarget
 {
     Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
 
-    // 現状はBloomのみを適用する
+    // 1. Bloom処理
     Bloom(inputSRV, outputRTV);
+
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 }
 
 void PostProcess::ToneMapping(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
@@ -123,17 +123,26 @@ void PostProcess::ToneMapping(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTa
     UnbindShaderResources(0, 1);
 }
 
+/// @brief Bloom処理を行う
 void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
 {
-    // 1. 入力画像からBloom対象になる明るいピクセルだけを抽出する
-    Direct3D_ResetViewport();
-    Direct3D_ClearSceneTarget(m_tempRTV[0].Get(), nullptr, 1.0f);
-    Direct3D_SetSceneTarget(m_tempRTV[0].Get(), nullptr);
-    EngineServiceLocator::BindShader(m_brightnessExtractShader);
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+
+    // 1. HDR入力を最初の1/2バッファへダウンサンプリングする
+    Direct3D_SetViewport(m_downsampledWidth[0], m_downsampledHeight[0]);
+    Direct3D_SetSceneTarget(m_downsampledRTV[0].Get(), nullptr);
+    EngineServiceLocator::BindShader(m_downsample4TapShader);
 
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
     m_context->PSSetShaderResources(0, 1, &inputSRV);
+    m_context->Draw(3, 0);
+    UnbindShaderResources(0, 1);
+
+    // 2. 1/2バッファからBloom対象になる明るいピクセルだけを抽出する
+    Direct3D_SetSceneTarget(m_downsampledRTV[1].Get(), nullptr);
+    EngineServiceLocator::BindShader(m_brightnessExtractShader);
+    m_context->PSSetShaderResources(0, 1, m_downsampledSRV[0].GetAddressOf());
 
     m_postProcessBufferData.Reset();
     {
@@ -145,62 +154,42 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     m_context->Draw(3, 0);
     UnbindShaderResources(0, 1);
 
-    // 2. 各縮小レベルで 4tapダウンサンプル → 横ブラー → 縦ブラー の順に処理する
+    // 3. 各レベルをダウンサンプルし、3サンプルの横・縦ガウシアンブラーをかける
     for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
-        const unsigned int inputWidth = (i == 0) ? Direct3D_GetBackBufferWidth() : m_downsampledWidth[i - 1];
-        const unsigned int inputHeight = (i == 0) ? Direct3D_GetBackBufferHeight() : m_downsampledHeight[i - 1];
-
-        // 2-a. 前段の画像を4tapで平均化しながら1段小さいバッファへ縮小する
         Direct3D_SetViewport(m_downsampledWidth[i], m_downsampledHeight[i]);
-        Direct3D_ClearSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr, 1.0f);
-        Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
 
-        EngineServiceLocator::BindShader(m_downsample4TapShader);
-        SetBlendState(BLENDSTATE_NONE);
-        SetDepthState(DEPTHSTATE_DISABLE);
-
-        m_postProcessBufferData.Reset();
-        {
-            auto& ds = m_postProcessBufferData.downsample4Tap;
-            ds.texelSize = XMFLOAT2(1.0f / inputWidth, 1.0f / inputHeight);
+        if (i > 0) {
+            // 3-a. 前レベルのブラー結果を1段小さいバッファへ縮小する
+            Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
+            EngineServiceLocator::BindShader(m_downsample4TapShader);
+            const int previousResultIndex = (i == 1) ? 1 : (i - 1) * 2;
+            m_context->PSSetShaderResources(0, 1, m_downsampledSRV[previousResultIndex].GetAddressOf());
+            m_context->Draw(3, 0);
+            UnbindShaderResources(0, 1);
         }
-        UpdateConstantBuffer();
 
-        if (i == 0) {
-            m_context->PSSetShaderResources(0, 1, m_tempSRV[0].GetAddressOf());
-        }
-        else {
-            m_context->PSSetShaderResources(0, 1, m_downsampledSRV[(i - 1) * 2].GetAddressOf());
-        }
-        m_context->Draw(3, 0);
-        UnbindShaderResources(0, 1);
-
-        // 2-b. 横方向のガウスブラーをかける
-        Direct3D_ClearSceneTarget(m_downsampledRTV[i * 2 + 1].Get(), nullptr, 1.0f);
-        Direct3D_SetSceneTarget(m_downsampledRTV[i * 2 + 1].Get(), nullptr);
+        // 3-b. 横方向のガウシアンブラーをかける
+        const int horizontalInputIndex = (i == 0) ? 1 : i * 2;
+        const int horizontalOutputIndex = (i == 0) ? 0 : i * 2 + 1;
+        Direct3D_SetSceneTarget(m_downsampledRTV[horizontalOutputIndex].Get(), nullptr);
 
         EngineServiceLocator::BindShader(m_gaussianBlurShader);
-        SetBlendState(BLENDSTATE_NONE);
-        SetDepthState(DEPTHSTATE_DISABLE);
-
         m_postProcessBufferData.Reset();
         {
             auto& gb = m_postProcessBufferData.gaussianBlur;
             gb.texelSize = XMFLOAT2(1.0f / m_downsampledWidth[i], 1.0f / m_downsampledHeight[i]);
             gb.direction = XMFLOAT2(1, 0);
             gb.blur = 1.0f;
-            gb.weights = XMFLOAT4(0.227027f, 0.1945946f, 0.1216216f, 0.054054f);
-            gb.offsets = XMFLOAT4(0, 1, 2, 3);
         }
         UpdateConstantBuffer();
 
-        m_context->PSSetShaderResources(0, 1, m_downsampledSRV[i * 2].GetAddressOf());
+        m_context->PSSetShaderResources(0, 1, m_downsampledSRV[horizontalInputIndex].GetAddressOf());
         m_context->Draw(3, 0);
         UnbindShaderResources(0, 1);
 
-        // 2-c. 横ブラーの結果へ縦方向のガウスブラーをかけ、最終結果を偶数側のバッファへ戻す
-        Direct3D_ClearSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr, 1.0f);
-        Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
+        // 3-c. 横ブラーの結果へ縦方向のガウシアンブラーをかける
+        const int verticalOutputIndex = (i == 0) ? 1 : i * 2;
+        Direct3D_SetSceneTarget(m_downsampledRTV[verticalOutputIndex].Get(), nullptr);
 
         {
             auto& gb = m_postProcessBufferData.gaussianBlur;
@@ -208,27 +197,28 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
         }
         UpdateConstantBuffer();
 
-        m_context->PSSetShaderResources(0, 1, m_downsampledSRV[i * 2 + 1].GetAddressOf());
+        m_context->PSSetShaderResources(0, 1, m_downsampledSRV[horizontalOutputIndex].GetAddressOf());
         m_context->Draw(3, 0);
         UnbindShaderResources(0, 1);
     }
 
-    // 3. 各縮小レベルのBloom素材をフルサイズの一時バッファへ合成する
+    // 4. 各縮小レベルのBloom素材をフルサイズの一時バッファへ合成する
     Direct3D_ResetViewport();
-    Direct3D_ClearSceneTarget(m_tempRTV[1].Get(), nullptr, 1.0f);
-    Direct3D_SetSceneTarget(m_tempRTV[1].Get(), nullptr);
+    Direct3D_ClearSceneTarget(m_tempRTV.Get(), nullptr, 1.0f);
+    Direct3D_SetSceneTarget(m_tempRTV.Get(), nullptr);
 
     EngineServiceLocator::BindShader(m_bloomCombineShader);
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
 
     for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
-        m_context->PSSetShaderResources(i, 1, m_downsampledSRV[i * 2].GetAddressOf());
+        const int resultIndex = (i == 0) ? 1 : i * 2;
+        m_context->PSSetShaderResources(i, 1, m_downsampledSRV[resultIndex].GetAddressOf());
     }
     m_context->Draw(3, 0);
     UnbindShaderResources(0, static_cast<UINT>(DownsampleLevel::MAX));
 
-    // 4. 元画像を出力先へ描画する
+    // 5. 元画像を出力先へ描画する
     Direct3D_ResetViewport();
     Direct3D_SetSceneTarget(outputRTV, nullptr);
     EngineServiceLocator::BindShader(m_fullScreenShader);
@@ -239,10 +229,10 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     m_context->Draw(3, 0);
     UnbindShaderResources(0, 1);
 
-    // 5. 合成済みBloomを加算ブレンドで重ねる
+    // 6. 合成済みBloomを加算ブレンドで重ねる
     SetBlendState(BLENDSTATE_ADD);
     SetDepthState(DEPTHSTATE_DISABLE);
-    m_context->PSSetShaderResources(0, 1, m_tempSRV[1].GetAddressOf());
+    m_context->PSSetShaderResources(0, 1, m_tempSRV.GetAddressOf());
     m_context->Draw(3, 0);
     UnbindShaderResources(0, 1);
 }
