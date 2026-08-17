@@ -458,7 +458,7 @@ void Direct3D_CreateColorBuffer(
     ID3D11Texture2D** tex, 
     ID3D11RenderTargetView** rtv, 
     ID3D11ShaderResourceView** srv,
-    unsigned int width, unsigned int height)
+    unsigned int width, unsigned int height, DXGI_FORMAT format)
 {
     if (!tex && !srv && !rtv) return;
 
@@ -471,7 +471,7 @@ void Direct3D_CreateColorBuffer(
     desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // HDRレンダリング用にフォーマットを変更
+    desc.Format = format;
     desc.SampleDesc.Count = 1;
     desc.SampleDesc.Quality = 0;
     desc.Usage = D3D11_USAGE_DEFAULT;

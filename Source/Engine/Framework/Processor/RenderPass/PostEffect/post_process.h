@@ -35,9 +35,6 @@ struct PostProcessBuffer {
             XMFLOAT2 direction; // ブラーの方向（水平: (1, 0), 垂直: (0, 1)）
             float blur;
             float padding1[3];
-
-            XMFLOAT4 weights;
-            XMFLOAT4 offsets;
         } gaussianBlur;
     };
     void Reset() {
@@ -69,11 +66,6 @@ private:
     // 定数バッファ
     ConstantBufferResource* m_postProcessCB;
     PostProcessBuffer m_postProcessBufferData;
-
-    // 一時バッファ用のテクスチャ
-    ComPtr<ID3D11Texture2D> m_tempTexture;
-    ComPtr<ID3D11RenderTargetView> m_tempRTV;
-    ComPtr<ID3D11ShaderResourceView> m_tempSRV;
 
     // ダウンサンプリング用のテクスチャ
     enum class DownsampleLevel {

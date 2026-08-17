@@ -88,7 +88,8 @@ void Direct3D_CreateColorBuffer(
     ID3D11RenderTargetView** rtv, 
     ID3D11ShaderResourceView** srv,
     unsigned int width = 1920,
-    unsigned int height = 1080);
+    unsigned int height = 1080,
+    DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 // シーン用デプステンシルの作成・解放
 void Direct3D_CreateDepthBuffer(

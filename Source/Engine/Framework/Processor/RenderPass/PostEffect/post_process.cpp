@@ -20,27 +20,21 @@ void PostProcess::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
     unsigned int SCREEN_WIDTH = Direct3D_GetBackBufferWidth();
     unsigned int SCREEN_HEIGHT = Direct3D_GetBackBufferHeight();
 
-    Direct3D_CreateColorBuffer(
-        m_tempTexture.GetAddressOf(),
-        m_tempRTV.GetAddressOf(),
-        m_tempSRV.GetAddressOf(),
-        SCREEN_WIDTH,
-        SCREEN_HEIGHT
-    );
-
     // Bloom用に 1/2, 1/4, 1/8, 1/16 の縮小バッファを用意する
-    // 各レベルで 4tapダウンサンプル結果 と 縦横ブラー用 の2枚を使い回す
+    // 1/2は輝度抽出結果のみ、以降は縮小結果と縦横ブラー用の2枚を使い回す
     for (int level = 0; level < static_cast<int>(DownsampleLevel::MAX); level++) {
         m_downsampledWidth[level] = SCREEN_WIDTH >> (level + 1);
         m_downsampledHeight[level] = SCREEN_HEIGHT >> (level + 1);
 
-        for (int i = 0; i < 2; i++) {
+        const int bufferCount = (level == 0) ? 1 : 2;
+        for (int i = 0; i < bufferCount; i++) {
             Direct3D_CreateColorBuffer(
                 m_downsampledTexture[level * 2 + i].GetAddressOf(),
                 m_downsampledRTV[level * 2 + i].GetAddressOf(),
                 m_downsampledSRV[level * 2 + i].GetAddressOf(),
                 m_downsampledWidth[level],
-                m_downsampledHeight[level]
+                m_downsampledHeight[level],
+                DXGI_FORMAT_R16G16B16A16_FLOAT
             );
         }
     }
@@ -99,8 +93,6 @@ void PostProcess::Finalize()
 
 void PostProcess::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
 {
-    Direct3D_ClearSceneTarget(outputRTV, nullptr, 1.0f);
-
     // 1. Bloom処理
     Bloom(inputSRV, outputRTV);
 
@@ -128,21 +120,13 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
 {
     SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
 
-    // 1. HDR入力を最初の1/2バッファへダウンサンプリングする
-    Direct3D_SetViewport(m_downsampledWidth[0], m_downsampledHeight[0]);
-    Direct3D_SetSceneTarget(m_downsampledRTV[0].Get(), nullptr);
-    EngineServiceLocator::BindShader(m_downsample4TapShader);
-
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
-    m_context->PSSetShaderResources(0, 1, &inputSRV);
-    m_context->Draw(3, 0);
-    UnbindShaderResources(0, 1);
 
-    // 2. 1/2バッファからBloom対象になる明るいピクセルだけを抽出する
-    Direct3D_SetSceneTarget(m_downsampledRTV[1].Get(), nullptr);
+    // 1. HDR入力を1/2へダウンサンプリングしながら輝度抽出する
+    Direct3D_SetViewport(m_downsampledWidth[0], m_downsampledHeight[0]);
+    Direct3D_SetSceneTarget(m_downsampledRTV[0].Get(), nullptr);
     EngineServiceLocator::BindShader(m_brightnessExtractShader);
-    m_context->PSSetShaderResources(0, 1, m_downsampledSRV[0].GetAddressOf());
 
     m_postProcessBufferData.Reset();
     {
@@ -151,26 +135,25 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
     }
     UpdateConstantBuffer();
 
+    m_context->PSSetShaderResources(0, 1, &inputSRV);
     m_context->Draw(3, 0);
     UnbindShaderResources(0, 1);
 
-    // 3. 各レベルをダウンサンプルし、3サンプルの横・縦ガウシアンブラーをかける
-    for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
+    // 2. 1/4以降をダウンサンプルし、3サンプルの横・縦ガウシアンブラーをかける
+    for (int i = 1; i < static_cast<int>(DownsampleLevel::MAX); i++) {
         Direct3D_SetViewport(m_downsampledWidth[i], m_downsampledHeight[i]);
 
-        if (i > 0) {
-            // 3-a. 前レベルのブラー結果を1段小さいバッファへ縮小する
-            Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
-            EngineServiceLocator::BindShader(m_downsample4TapShader);
-            const int previousResultIndex = (i == 1) ? 1 : (i - 1) * 2;
-            m_context->PSSetShaderResources(0, 1, m_downsampledSRV[previousResultIndex].GetAddressOf());
-            m_context->Draw(3, 0);
-            UnbindShaderResources(0, 1);
-        }
+        // 2-a. 前レベルの結果を1段小さいバッファへ縮小する
+        Direct3D_SetSceneTarget(m_downsampledRTV[i * 2].Get(), nullptr);
+        EngineServiceLocator::BindShader(m_downsample4TapShader);
+        const int previousResultIndex = (i - 1) * 2;
+        m_context->PSSetShaderResources(0, 1, m_downsampledSRV[previousResultIndex].GetAddressOf());
+        m_context->Draw(3, 0);
+        UnbindShaderResources(0, 1);
 
-        // 3-b. 横方向のガウシアンブラーをかける
-        const int horizontalInputIndex = (i == 0) ? 1 : i * 2;
-        const int horizontalOutputIndex = (i == 0) ? 0 : i * 2 + 1;
+        // 2-b. 横方向のガウシアンブラーをかける
+        const int horizontalInputIndex = i * 2;
+        const int horizontalOutputIndex = i * 2 + 1;
         Direct3D_SetSceneTarget(m_downsampledRTV[horizontalOutputIndex].Get(), nullptr);
 
         EngineServiceLocator::BindShader(m_gaussianBlurShader);
@@ -187,8 +170,8 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
         m_context->Draw(3, 0);
         UnbindShaderResources(0, 1);
 
-        // 3-c. 横ブラーの結果へ縦方向のガウシアンブラーをかける
-        const int verticalOutputIndex = (i == 0) ? 1 : i * 2;
+        // 2-c. 横ブラーの結果へ縦方向のガウシアンブラーをかける
+        const int verticalOutputIndex = i * 2;
         Direct3D_SetSceneTarget(m_downsampledRTV[verticalOutputIndex].Get(), nullptr);
 
         {
@@ -202,39 +185,19 @@ void PostProcess::Bloom(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetVi
         UnbindShaderResources(0, 1);
     }
 
-    // 4. 各縮小レベルのBloom素材をフルサイズの一時バッファへ合成する
-    Direct3D_ResetViewport();
-    Direct3D_ClearSceneTarget(m_tempRTV.Get(), nullptr, 1.0f);
-    Direct3D_SetSceneTarget(m_tempRTV.Get(), nullptr);
-
-    EngineServiceLocator::BindShader(m_bloomCombineShader);
-    SetBlendState(BLENDSTATE_NONE);
-    SetDepthState(DEPTHSTATE_DISABLE);
-
-    for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
-        const int resultIndex = (i == 0) ? 1 : i * 2;
-        m_context->PSSetShaderResources(i, 1, m_downsampledSRV[resultIndex].GetAddressOf());
-    }
-    m_context->Draw(3, 0);
-    UnbindShaderResources(0, static_cast<UINT>(DownsampleLevel::MAX));
-
-    // 5. 元画像を出力先へ描画する
+    // 3. 元のHDR画像と各Bloomレベルを最終出力へ1パスで合成する
     Direct3D_ResetViewport();
     Direct3D_SetSceneTarget(outputRTV, nullptr);
-    EngineServiceLocator::BindShader(m_fullScreenShader);
 
-    SetBlendState(BLENDSTATE_NONE);
-    SetDepthState(DEPTHSTATE_DISABLE);
+    EngineServiceLocator::BindShader(m_bloomCombineShader);
     m_context->PSSetShaderResources(0, 1, &inputSRV);
-    m_context->Draw(3, 0);
-    UnbindShaderResources(0, 1);
 
-    // 6. 合成済みBloomを加算ブレンドで重ねる
-    SetBlendState(BLENDSTATE_ADD);
-    SetDepthState(DEPTHSTATE_DISABLE);
-    m_context->PSSetShaderResources(0, 1, m_tempSRV.GetAddressOf());
+    for (int i = 0; i < static_cast<int>(DownsampleLevel::MAX); i++) {
+        const int resultIndex = i * 2;
+        m_context->PSSetShaderResources(i + 1, 1, m_downsampledSRV[resultIndex].GetAddressOf());
+    }
     m_context->Draw(3, 0);
-    UnbindShaderResources(0, 1);
+    UnbindShaderResources(0, static_cast<UINT>(DownsampleLevel::MAX) + 1);
 }
 
 void PostProcess::UpdateConstantBuffer()

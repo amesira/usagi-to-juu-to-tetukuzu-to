@@ -22,9 +22,6 @@ struct GaussianBlur
     float2 direction;  // ブラーの方向（例：水平なら(1,0)、垂直なら(0,1)）
     float  blur;        // ブラーの強さ（例：1.0f）
     float3 padding;
-    
-    float4 weights; // ブラーの重み
-    float4 offsets;
 };
 cbuffer GaussianBlurBuffer : register(b0) {
     GaussianBlur g_GaussianBlur;
