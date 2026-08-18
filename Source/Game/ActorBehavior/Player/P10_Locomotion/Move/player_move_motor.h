@@ -19,7 +19,7 @@ private:
 
 public:
     /// @brief PlayerMoveMotorの移動処理を更新する
-    void UpdateMove_Motor(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);
+    void UpdateMotor(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);
 
 private:
     /// @brief 現在の状況に応じた平滑化時間を計算する

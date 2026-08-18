@@ -26,6 +26,10 @@ public:
 
     /// @brief PlayerMoveBehaviorのコンテキストを設定する
     void SetupContext(const class PlayerContext& playerContext);
+    /// @brief 走行時の砂埃パーティクルを設定する
+    void SetupRunDustParticle(class ParticleSystemComponent* particle) {
+        m_context.references.runDustParticle = particle;
+    }
 
     /// @brief PlayerMoveBehaviorの更新処理を行う（PlayerBehaviorのUpdate()から呼び出す）
     void UpdateMove(

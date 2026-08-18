@@ -76,7 +76,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
 {
     m_context.runtimeState.m_isGrounded = CheckGrounded();
 
-    // 移動アクション類の更新要求などはここ？（ジャンプやブリンクなど）
+    // 移動アクション類の更新要求（ジャンプやブリンクなど）
     if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded) {
         // ジャンプ処理の要求をここで行う
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce; // ジャンプ力を設定
@@ -86,28 +86,43 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // 現在位置の取得
     m_context.runtimeState.m_desiredPosition = m_context.transform->GetPosition();
 
+    // ブリンク要求（仮）
+    if (input.triggerDashCommand) {
+        // ブリンク処理の要求をここで行う
+        XMFLOAT3 blinkDirection = moveIntent.moveDirection;
+        float blinkDistance = 5.0f; // ブリンク距離（仮）
+        XMFLOAT3 blinkOffset = MiMath::Multiply(blinkDirection, blinkDistance);
+        m_context.runtimeState.m_desiredPosition = MiMath::Add(m_context.runtimeState.m_desiredPosition, blinkOffset);
+    }
+
     // Blinkや攻撃による進みなどMoveWithCollision的な移動はここ（位置の上書き的な挙動に近い移動処理）
 
-    // 移動処理の更新
-    m_context.moveMotor.UpdateMove_Motor(m_context, moveIntent, deltaTime);
+    // === 移動処理 ===
+    m_context.moveMotor.UpdateMotor(m_context, moveIntent, deltaTime);
 
-    // 速度で目標位置を更新
-    ApplyControlVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
-    ApplyPhysicsVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
+    // === 目標位置を算出し、速度を逆算 ===
+    {
+        // 速度で目標位置を更新
+        ApplyControlVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
+        ApplyPhysicsVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
 
-    // 現在位置と目標位置の差分を計算してRigidbodyに反映
-    XMFLOAT3 currentPosition = m_context.transform->GetPosition();
-    XMFLOAT3 desiredPosition = m_context.runtimeState.m_desiredPosition;
-    XMFLOAT3 deltaPosition = MiMath::Subtract(desiredPosition, currentPosition);
+        // 現在位置と目標位置の差分を計算してRigidbodyに反映
+        XMFLOAT3 currentPosition = m_context.transform->GetPosition();
+        XMFLOAT3 desiredPosition = m_context.runtimeState.m_desiredPosition;
+        XMFLOAT3 deltaPosition = MiMath::Subtract(desiredPosition, currentPosition);
 
-    // Rigidbodyの速度を設定
-    XMFLOAT3 newVelocity = MiMath::Multiply(deltaPosition, 1.0f / deltaTime);
-    m_context.rigidbody->SetVelocity(newVelocity);
-
-    // 回転処理
-    if (moveIntent.canRotate && MiMath::Length(moveIntent.rotateDirection) > 0.01f) {
-        m_context.moveRotate.UpdateMove_Rotate(m_context, moveIntent, deltaTime);
+        // Rigidbodyの速度を設定
+        XMFLOAT3 newVelocity = MiMath::Multiply(deltaPosition, 1.0f / deltaTime);
+        m_context.rigidbody->SetVelocity(newVelocity);
     }
+
+    // === 回転処理 ===
+    if (moveIntent.canRotate && MiMath::Length(moveIntent.rotateDirection) > 0.01f) {
+        m_context.moveRotate.UpdateRotate(m_context, moveIntent, deltaTime);
+    }
+
+    // === エフェクト処理 ===
+    m_context.moveEffects.UpdateEffects(m_context, deltaTime);
 
     // === 仮：アニメーション更新 ===
     if (m_animationComponent) {

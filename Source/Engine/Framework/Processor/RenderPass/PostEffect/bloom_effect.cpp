@@ -43,32 +43,26 @@ void BloomEffect::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
         "BloomEffectBuffer", 0, sizeof(ConstantBufferData), false, true, ConstantBufferUsage::Dynamic);
 
     // ブルームエフェクト用のシェーダーを作成する
-    ShaderProgramResource* fullScreenShader =
-        SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::FullScreen);
+    ShaderProgramResource* fullScreenShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::FullScreen);
 
     ShaderProgramResource brightnessShaderResource;
     brightnessShaderResource.name = "BloomBrightnessExtract";
     brightnessShaderResource.baseShader = fullScreenShader;
-    brightnessShaderResource.overridePixelShader =
-        SHADER_REPOSITORY->GetPixelShaderResource("brightness_extract_ps.cso");
+    brightnessShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("brightness_extract_ps.cso");
     brightnessShaderResource.additionalConstantBuffers.push_back(m_constantBuffer);
-    m_brightnessExtractShader =
-        SHADER_REPOSITORY->GenerateShaderProgramResource(brightnessShaderResource);
+    m_brightnessExtractShader = SHADER_REPOSITORY->GenerateShaderProgramResource(brightnessShaderResource);
 
     ShaderProgramResource gaussianShaderResource;
     gaussianShaderResource.name = "BloomGaussianBlur";
     gaussianShaderResource.baseShader = fullScreenShader;
-    gaussianShaderResource.overridePixelShader =
-        SHADER_REPOSITORY->GetPixelShaderResource("gaussian_blur_ps.cso");
+    gaussianShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("gaussian_blur_ps.cso");
     gaussianShaderResource.additionalConstantBuffers.push_back(m_constantBuffer);
-    m_gaussianBlurShader =
-        SHADER_REPOSITORY->GenerateShaderProgramResource(gaussianShaderResource);
+    m_gaussianBlurShader = SHADER_REPOSITORY->GenerateShaderProgramResource(gaussianShaderResource);
 
     ShaderProgramResource combineShaderResource;
     combineShaderResource.name = "BloomCombineEffect";
     combineShaderResource.baseShader = fullScreenShader;
-    combineShaderResource.overridePixelShader =
-        SHADER_REPOSITORY->GetPixelShaderResource("bloom_combine_ps.cso");
+    combineShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("bloom_combine_ps.cso");
     m_combineShader = SHADER_REPOSITORY->GenerateShaderProgramResource(combineShaderResource);
 }
 

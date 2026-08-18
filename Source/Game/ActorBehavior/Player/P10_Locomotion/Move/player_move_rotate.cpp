@@ -17,7 +17,7 @@ using namespace DirectX;
 #include "Engine/Framework/Component/transform_component.h"
 
 /// @brief PlayerMoveの回転処理を更新する
-void PlayerMoveRotate::UpdateMove_Rotate(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
+void PlayerMoveRotate::UpdateRotate(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
 {
     XMFLOAT4 targetRot = MiMath::LookRotation(intent.rotateDirection, { 0.0f, 1.0f, 0.0f });
     if (intent.applyRotateRightNow) {

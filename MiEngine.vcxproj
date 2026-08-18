@@ -161,10 +161,10 @@
     <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_action_executer.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.cpp" />
@@ -358,7 +358,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_settings_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_action_executer.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.h" />

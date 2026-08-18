@@ -15,6 +15,7 @@
 #include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
@@ -69,6 +70,7 @@ namespace PrefabFactory
 
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
         PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
+        PlayerMoveBehavior* playerMoveBehavior = prefab.player->GetComponent<PlayerMoveBehavior>();
 
         // 走行時の砂埃パーティクル生成
         prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(
@@ -83,6 +85,7 @@ namespace PrefabFactory
                 settings.runDustEffect.positionOffset,
                 true,
                 false);
+            playerMoveBehavior->SetupRunDustParticle(prefab.runDustParticle->GetComponent<ParticleSystemComponent>());
         }
         // チャージ時の吸収パーティクル生成
         prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position);

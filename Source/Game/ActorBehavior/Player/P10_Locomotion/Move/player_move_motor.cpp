@@ -16,11 +16,11 @@
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
 
 /// @brief PlayerMoveMotorの移動処理を更新する
-void PlayerMoveMotor::UpdateMove_Motor(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
+void PlayerMoveMotor::UpdateMotor(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
 {
     if (intent.useGravity) {
         if (context.runtimeState.m_isGrounded) {
-            context.runtimeState.m_physicsVelocity.y = -9.81f;
+            context.runtimeState.m_physicsVelocity.y = -0.1f;
         }
         else {
             float normalizedYVelocity = context.runtimeState.m_physicsVelocity.y / 0.1f;

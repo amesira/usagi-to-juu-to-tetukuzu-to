@@ -30,7 +30,7 @@ struct PlayerMoveRuntimeState
 /// @brief PlayerMoveの参照情報を保持する構造体
 struct PlayerMoveReferences
 {
-
+    class ParticleSystemComponent* runDustParticle = nullptr; // 走行時の砂埃パーティクル
 };
 
 /// @brief PlayerMoveBehaviorのコンテキストを保持する構造体

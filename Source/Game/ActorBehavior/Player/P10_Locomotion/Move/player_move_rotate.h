@@ -12,6 +12,6 @@ private:
 
 public:
     /// @brief PlayerMoveの回転処理を更新する
-    void UpdateMove_Rotate(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);
+    void UpdateRotate(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);
 
 };
