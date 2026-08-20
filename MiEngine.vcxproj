@@ -149,7 +149,11 @@
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_shape.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\overlap_test.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\raycast_test.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\sweep_test.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
@@ -334,7 +338,12 @@
     <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h" />
     <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_shape.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_types.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\overlap_test.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\raycast_test.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\sweep_test.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
