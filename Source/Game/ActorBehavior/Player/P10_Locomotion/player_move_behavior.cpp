@@ -51,7 +51,7 @@ void PlayerMoveBehavior::DrawComponentInspector()
 // -----------------------------------------------
 
 /// @brief PlayerMoveBehaviorのコンテキストを設定する
-void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
+void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMoveReferences& references, PlayerMoveSettingsAsset* settings)
 {
     m_context.owner = this;
 
@@ -64,9 +64,9 @@ void PlayerMoveBehavior::SetupContext(const PlayerContext& playerContext)
     m_context.moveRotate = {};
     m_context.moveEffects = {};
 
-    if (m_context.settingsAsset == nullptr) {
-        m_context.settingsAsset = DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>("asset/Data/player_move_settings.data.json", true);
-    }
+    m_context.runtimeState = {};
+    m_context.references = references;
+    m_context.settingsAsset = settings;
 
     // 仮
     m_animationComponent = player->GetComponent<AnimationComponent>();

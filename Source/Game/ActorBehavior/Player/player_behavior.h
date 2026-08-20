@@ -14,6 +14,8 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 
 class TransformComponent;
 class CameraComponent;
@@ -24,6 +26,9 @@ private:
     PlayerContext m_context;
     PlayerInput m_input;
 
+    PlayerMoveReferences m_moveReferences;
+    PlayerMoveSettingsAsset* m_moveSettings;
+
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
 
@@ -33,6 +38,11 @@ public:
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
+
+    void SetupPlayerMove(PlayerMoveReferences& references, PlayerMoveSettingsAsset* settings) {
+        m_moveReferences = references;
+        m_moveSettings = settings;
+    }
 
 private:
     /// @brief プレイヤーの入力を更新する

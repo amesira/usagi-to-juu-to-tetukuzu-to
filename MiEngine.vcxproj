@@ -366,6 +366,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_intent.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_settings_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_base.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
@@ -373,6 +374,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_input.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_health_behavior.h" />

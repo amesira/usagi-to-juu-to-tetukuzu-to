@@ -72,10 +72,10 @@ GameObject* ActorFactory::CreatePlayer(
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
-
     player->AddComponent<PlayerMoveBehavior>();
-    player->AddComponent<PlayerAttackBehavior>();
-    player->AddComponent<PlayerDodgeBehavior>();
+
+   /* player->AddComponent<PlayerAttackBehavior>();
+    player->AddComponent<PlayerDodgeBehavior>();*/
 
     player->AddComponent<HitStopBehavior>();
     return player;

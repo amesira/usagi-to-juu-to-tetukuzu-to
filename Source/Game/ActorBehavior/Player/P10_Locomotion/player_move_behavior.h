@@ -24,11 +24,14 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
-    /// @brief PlayerMoveBehaviorのコンテキストを設定する
-    void SetupContext(const class PlayerContext& playerContext);
-    /// @brief 走行時の砂埃パーティクルを設定する
-    void SetupRunDustParticle(class ParticleSystemComponent* particle) {
-        m_context.references.runDustParticle = particle;
+    /// @brief PlayerMoveBehaviorの初期化処理
+    void Initialize(const class PlayerContext& playerContext, struct PlayerMoveReferences& references, class PlayerMoveSettingsAsset* settings);
+    /// @brief PlayerMoveBehaviorの終了処理
+    void Finalize(){
+        m_context.owner = nullptr;
+        m_context.transform = nullptr;
+        m_context.rigidbody = nullptr;
+        m_context.references.runDustParticle = nullptr;
     }
 
     /// @brief PlayerMoveBehaviorの更新処理を行う（PlayerBehaviorのUpdate()から呼び出す）

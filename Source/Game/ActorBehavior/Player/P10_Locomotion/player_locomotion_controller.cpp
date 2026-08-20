@@ -56,6 +56,24 @@ namespace {
     }
 }
 
+// ---------------------------------------------------
+
+/// @brief 初期化処理
+void PlayerLocomotionController::Initialize()
+{
+    for (int i = 0; i < 8; i++) {
+        m_locomotionRequests[i] = nullptr;
+    }
+}
+
+/// @brief 終了処理
+void PlayerLocomotionController::Finalize()
+{
+    for (int i = 0; i < 8; i++) {
+        m_locomotionRequests[i] = nullptr;
+    }
+}
+
 /// @brief 新しいLocomotionRequestを追加する
 int PlayerLocomotionController::AddLocomotionRequest(const LocomotionRequest& request)
 {
@@ -65,6 +83,8 @@ int PlayerLocomotionController::AddLocomotionRequest(const LocomotionRequest& re
             return i;
         }
     }
+
+    return -1; // 空きがない場合は-1を返す
 }
 
 /// @brief 指定されたLocomotionRequestを削除する

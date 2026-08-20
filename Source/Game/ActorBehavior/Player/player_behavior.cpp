@@ -43,7 +43,7 @@ void PlayerBehavior::Start()
     m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
 
     // セットアップ処理
-    m_context.moveBehavior->SetupContext(m_context);
+    m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -60,19 +60,9 @@ void PlayerBehavior::Update()
     const float deltaTime = FPS_GetDeltaTime();
     m_input = UpdateInput();
 
+    // プレイヤーの移動挙動を更新する
     PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);
     m_context.moveBehavior->UpdateMove(m_context, m_input, intent, deltaTime);
-
-   /* PlayerMoveBehavior::PlayerMoveRequest moveRequest;
-    if (m_context.moveBehavior) {
-        if (m_context.attackBehavior && m_context.attackBehavior->IsMovementLocked()) {
-            moveRequest.canMove = false;
-            moveRequest.canRotate = false;
-        }
-
-        m_context.moveBehavior->UpdateMove(m_context, m_input, moveRequest, deltaTime);
-        m_context.moveBehavior->UpdateRotation(m_context, m_input, moveRequest, deltaTime);
-    }*/
 }
 
 void PlayerBehavior::DrawComponentInspector()
