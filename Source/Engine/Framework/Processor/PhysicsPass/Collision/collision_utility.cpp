@@ -136,7 +136,8 @@ void CollisionUtility::CheckAABB(CollisionResult& result, Bounds a, Bounds b)
 #pragma endregion
 
 #pragma region 当たり判定の本格チェック
-// Box同士の衝突判定
+
+/// @brief OBB同士の衝突判定
 void CollisionUtility::CheckOBB(
     /*out*/ CollisionResult& result,
     TransformComponent* tA, BoxColliderComponent* cA,
@@ -144,197 +145,224 @@ void CollisionUtility::CheckOBB(
 {
     result.isCollision = false;
 
-    // コライダーのワールド座標を取得
-    XMFLOAT3 posA = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
-    posA.x += tA->GetPosition().x;
-    posA.y += tA->GetPosition().y;
-    posA.z += tA->GetPosition().z;
-    XMFLOAT3 posB = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
-    posB.x += tB->GetPosition().x;
-    posB.y += tB->GetPosition().y;
-    posB.z += tB->GetPosition().z;
+    // 速度適用前の位置を取得
+    const XMFLOAT3& prevPosA = tA->GetPrevPosition();
+    const XMFLOAT3& prevPosB = tB->GetPrevPosition();
 
-    // 中心点間のベクトル
-    XMFLOAT3 diff = {
-        posB.x - posA.x,
-        posB.y - posA.y,
-        posB.z - posA.z
-    };
+    // 現在位置を取得
+    const XMFLOAT3& currPosA = tA->GetPosition();
+    const XMFLOAT3& currPosB = tB->GetPosition();
 
-    // 分離軸の情報
-    XMFLOAT3 ea1 = {cA->GetScale().x * 0.5f, 0.0f, 0.0f};
-    ea1 = MiMath::RotateVector(tA->GetRotation(), ea1);
-    XMFLOAT3 ea2 = { 0.0f, cA->GetScale().y * 0.5f, 0.0f };
-    ea2 = MiMath::RotateVector(tA->GetRotation(), ea2);
-    XMFLOAT3 ea3 = { 0.0f, 0.0f, cA->GetScale().z * 0.5f };
-    ea3 = MiMath::RotateVector(tA->GetRotation(), ea3);
+    // CCBのステップ数を取得
+    int ccbStep = (std::max)(1, (std::max)(cA->GetCCBStep(), cB->GetCCBStep()));
 
-    XMFLOAT3 eb1 = { cB->GetScale().x * 0.5f, 0.0f, 0.0f };
-    eb1 = MiMath::RotateVector(tB->GetRotation(), eb1);
-    XMFLOAT3 eb2 = { 0.0f, cB->GetScale().y * 0.5f, 0.0f };
-    eb2 = MiMath::RotateVector(tB->GetRotation(), eb2);
-    XMFLOAT3 eb3 = { 0.0f, 0.0f, cB->GetScale().z * 0.5f };
-    eb3 = MiMath::RotateVector(tB->GetRotation(), eb3);
+    for (int i = 0; i <= ccbStep; i++) {
+        // 補間位置を計算
+        float t = static_cast<float>(i) / static_cast<float>(ccbStep);
+        
+        // コライダーのワールド座標を取得
+        XMFLOAT3 posA = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
+        posA = MiMath::Add(posA, MiMath::Lerp(prevPosA, currPosA, t));
+        XMFLOAT3 posB = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
+        posB = MiMath::Add(posB, MiMath::Lerp(prevPosB, currPosB, t));
 
-    XMFLOAT3 c11 = MiMath::Cross(ea1, eb1);
-    XMFLOAT3 c12 = MiMath::Cross(ea1, eb2);
-    XMFLOAT3 c13 = MiMath::Cross(ea1, eb3);
-
-    XMFLOAT3 c21 = MiMath::Cross(ea2, eb1);
-    XMFLOAT3 c22 = MiMath::Cross(ea2, eb2);
-    XMFLOAT3 c23 = MiMath::Cross(ea2, eb3);
-
-    XMFLOAT3 c31 = MiMath::Cross(ea3, eb1);
-    XMFLOAT3 c32 = MiMath::Cross(ea3, eb2);
-    XMFLOAT3 c33 = MiMath::Cross(ea3, eb3);
-
-    XMFLOAT3 L[15] = {
-        ea1, ea2, ea3,
-        eb1, eb2, eb3,
-        c11, c12, c13,
-        c21, c22, c23,
-        c31, c32, c33
-    };
-
-    // mtv用の保持変数
-    float minOverlap = 1000000.0f;
-    XMFLOAT3 mtvAxis = { 0.0f,0.0f,0.0f };
-
-    //----------------------------------------------------
-    // 衝突判定処理
-	//----------------------------------------------------
-    for(int i = 0; i < 15; i++){
-        if (MiMath::Length(L[i]) < 0.001f) continue;
-
-        XMFLOAT3 l = MiMath::Normalize(L[i]);
-
-        // 中心点間の距離を投影
-        float interval = abs(MiMath::Dot(diff, l));
-
-        // 半径を投影
-        float rA =
-            fabsf(MiMath::Dot(ea1, l)) +
-            fabsf(MiMath::Dot(ea2, l)) +
-            fabsf(MiMath::Dot(ea3, l));
-        float rB =
-            fabsf(MiMath::Dot(eb1, l)) +
-            fabsf(MiMath::Dot(eb2, l)) +
-            fabsf(MiMath::Dot(eb3, l));
-
-        // 衝突判定
-        if (interval > (rA + rB)) {
-            // 衝突していない
-            result.isCollision = false;
-            return;
-        }
-
-        // 最小移動ベクトルの計算
-        if(minOverlap > (rA + rB) - interval){
-            minOverlap = rA + rB - interval;
-            mtvAxis = l;
-        }
-    }
-
-    //----------------------------------------------------
-    // resultの設定
-	//----------------------------------------------------
-    result.isCollision = true;
-
-    // mtvの設定
-    if (MiMath::Dot(diff, mtvAxis) > 0.0f) { // 方向を反転
-        mtvAxis = {
-            -mtvAxis.x,
-            -mtvAxis.y,
-            -mtvAxis.z
+        // 中心点間のベクトル
+        XMFLOAT3 diff = {
+            posB.x - posA.x,
+            posB.y - posA.y,
+            posB.z - posA.z
         };
+
+        // 分離軸の情報
+        XMFLOAT3 ea1 = { cA->GetScale().x * 0.5f, 0.0f, 0.0f };
+        ea1 = MiMath::RotateVector(tA->GetRotation(), ea1);
+        XMFLOAT3 ea2 = { 0.0f, cA->GetScale().y * 0.5f, 0.0f };
+        ea2 = MiMath::RotateVector(tA->GetRotation(), ea2);
+        XMFLOAT3 ea3 = { 0.0f, 0.0f, cA->GetScale().z * 0.5f };
+        ea3 = MiMath::RotateVector(tA->GetRotation(), ea3);
+
+        XMFLOAT3 eb1 = { cB->GetScale().x * 0.5f, 0.0f, 0.0f };
+        eb1 = MiMath::RotateVector(tB->GetRotation(), eb1);
+        XMFLOAT3 eb2 = { 0.0f, cB->GetScale().y * 0.5f, 0.0f };
+        eb2 = MiMath::RotateVector(tB->GetRotation(), eb2);
+        XMFLOAT3 eb3 = { 0.0f, 0.0f, cB->GetScale().z * 0.5f };
+        eb3 = MiMath::RotateVector(tB->GetRotation(), eb3);
+
+        XMFLOAT3 c11 = MiMath::Cross(ea1, eb1);
+        XMFLOAT3 c12 = MiMath::Cross(ea1, eb2);
+        XMFLOAT3 c13 = MiMath::Cross(ea1, eb3);
+
+        XMFLOAT3 c21 = MiMath::Cross(ea2, eb1);
+        XMFLOAT3 c22 = MiMath::Cross(ea2, eb2);
+        XMFLOAT3 c23 = MiMath::Cross(ea2, eb3);
+
+        XMFLOAT3 c31 = MiMath::Cross(ea3, eb1);
+        XMFLOAT3 c32 = MiMath::Cross(ea3, eb2);
+        XMFLOAT3 c33 = MiMath::Cross(ea3, eb3);
+
+        XMFLOAT3 L[15] = {
+            ea1, ea2, ea3,
+            eb1, eb2, eb3,
+            c11, c12, c13,
+            c21, c22, c23,
+            c31, c32, c33
+        };
+
+        // mtv用の保持変数
+        float minOverlap = 1000000.0f;
+        XMFLOAT3 mtvAxis = { 0.0f,0.0f,0.0f };
+
+        bool isCollision = true;
+
+        // === 衝突判定処理 ===
+        for (int j = 0; j < 15; j++) {
+            if (MiMath::Length(L[j]) < 0.001f) continue;
+
+            XMFLOAT3 l = MiMath::Normalize(L[j]);
+
+            // 中心点間の距離を投影
+            float interval = abs(MiMath::Dot(diff, l));
+
+            // 半径を投影
+            float rA =
+                fabsf(MiMath::Dot(ea1, l)) +
+                fabsf(MiMath::Dot(ea2, l)) +
+                fabsf(MiMath::Dot(ea3, l));
+            float rB =
+                fabsf(MiMath::Dot(eb1, l)) +
+                fabsf(MiMath::Dot(eb2, l)) +
+                fabsf(MiMath::Dot(eb3, l));
+
+            // 分離軸が見つかった場合は衝突していない
+            if (interval > (rA + rB)) {
+                isCollision = false;
+                break;
+            }
+
+            // 最小移動ベクトルの計算
+            if (minOverlap > (rA + rB) - interval) {
+                minOverlap = rA + rB - interval;
+                mtvAxis = l;
+            }
+        }
+
+        if (!isCollision) continue;
+
+        // === 衝突している場合の処理 ===
+        result.isCollision = true;
+
+        // mtvの設定
+        // TODO: minOverlapではなく、CCB対応のために補正値を加える必要がある
+        if (MiMath::Dot(diff, mtvAxis) > 0.0f) { // 方向を反転
+            mtvAxis = {
+                -mtvAxis.x,
+                -mtvAxis.y,
+                -mtvAxis.z
+            };
+        }
+        result.mtv = {
+            mtvAxis.x * minOverlap,
+            mtvAxis.y * minOverlap,
+            mtvAxis.z * minOverlap
+        };
+
+        return;
     }
-    result.mtv = {
-        mtvAxis.x * minOverlap,
-        mtvAxis.y * minOverlap,
-        mtvAxis.z * minOverlap
-    };
+   
 }
 
-// BoxとSphereの衝突判定
+/// @brief OBBとSphereの衝突判定
 void CollisionUtility::CheckOBBSphere(
     /*out*/ CollisionResult& result,
     TransformComponent* tA, BoxColliderComponent* cA,
     TransformComponent* tB, SphereColliderComponent* cB)
 {
-    // ワールド座標系での中心座標を計算
-    XMFLOAT3 boxPos = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
-    boxPos.x += tA->GetPosition().x;
-    boxPos.y += tA->GetPosition().y;
-    boxPos.z += tA->GetPosition().z;
-    XMFLOAT3 spherePos = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
-    spherePos.x += tB->GetPosition().x;
-    spherePos.y += tB->GetPosition().y;
-    spherePos.z += tB->GetPosition().z;
+    // 速度適用前の位置
+    const XMFLOAT3& prevPosA = tA->GetPrevPosition();
+    const XMFLOAT3& prevPosB = tB->GetPrevPosition();
 
-    // BoxColliderから見たSphereColliderのローカル座標を計算
-    // ・BoxColliderをAABBとして扱うため
-    XMFLOAT3 localSpherePos = MiMath::RotateVector(
-        XMFLOAT4(
-            -tA->GetRotation().x,
-            -tA->GetRotation().y,
-            -tA->GetRotation().z,
-            tA->GetRotation().w
-        ),
-        {
-            spherePos.x - boxPos.x,
-            spherePos.y - boxPos.y,
-            spherePos.z - boxPos.z
-        });
+    // 速度適用後の現在位置
+    const XMFLOAT3& currPosA = tA->GetPosition();
+    const XMFLOAT3& currPosB = tB->GetPosition();
 
-    // AABBの各軸に沿った最近接点を計算
-    XMFLOAT3 halfExtents = {
-        cA->GetScale().x * 0.5f,
-        cA->GetScale().y * 0.5f,
-        cA->GetScale().z * 0.5f
-    };
-    XMFLOAT3 closestPoint = {
-        MiMath::Clamp(localSpherePos.x, -halfExtents.x, halfExtents.x),
-        MiMath::Clamp(localSpherePos.y, -halfExtents.y, halfExtents.y),
-        MiMath::Clamp(localSpherePos.z, -halfExtents.z, halfExtents.z)
-    };
+    // CCBのステップ数を取得
+    int ccbStep = (std::max)(1, (std::max)(cA->GetCCBStep(), cB->GetCCBStep()));
 
-    // 円の方程式による衝突判定
-    XMFLOAT3 difference = {
-        closestPoint.x - localSpherePos.x,
-        closestPoint.y - localSpherePos.y,
-        closestPoint.z - localSpherePos.z
-    };
-    float distanceSquared = {
-        MiMath::Pow(difference.x, 2) +
-        MiMath::Pow(difference.y, 2) +
-        MiMath::Pow(difference.z, 2)
-    };
+    for (int i = 0; i <= ccbStep; i++) {
+        // 補間係数
+        float t = static_cast<float>(i) / static_cast<float>(ccbStep);
+        
+        // === ワールド座標系での中心座標を計算 ===
+        XMFLOAT3 boxPos = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
+        boxPos = MiMath::Add(boxPos, MiMath::Lerp(prevPosA, currPosA, t));
+        XMFLOAT3 spherePos = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
+        spherePos = MiMath::Add(spherePos, MiMath::Lerp(prevPosB, currPosB, t));
 
-    float radius = cB->GetRadius();
+        // BoxColliderから見たSphereColliderのローカル座標を計算
+        // ・BoxColliderをAABBとして扱うため
+        XMFLOAT3 localSpherePos = MiMath::RotateVector(
+            // 逆回転を適用
+            XMFLOAT4(
+                -tA->GetRotation().x,
+                -tA->GetRotation().y,
+                -tA->GetRotation().z,
+                tA->GetRotation().w
+            ),
+            MiMath::Subtract(spherePos, boxPos)
+            );
 
-    if (distanceSquared < MiMath::Pow(radius, 2)) {
-        // 衝突している
-        result.isCollision = true;
-
-        // 最小移動ベクトルの計算
-        float distance = sqrtf(distanceSquared);
-        float overlap = radius - distance;
-
-        // ローカル座標系での最小移動ベクトル
-        XMFLOAT3 localMtv = MiMath::Normalize(difference);
-        localMtv = {
-            localMtv.x * overlap,
-            localMtv.y * overlap,
-            localMtv.z * overlap
+        // AABBの各軸に沿った最近接点を計算
+        XMFLOAT3 halfExtents = MiMath::Multiply(cA->GetScale(), 0.5f);
+        XMFLOAT3 closestPoint = {
+            MiMath::Clamp(localSpherePos.x, -halfExtents.x, halfExtents.x),
+            MiMath::Clamp(localSpherePos.y, -halfExtents.y, halfExtents.y),
+            MiMath::Clamp(localSpherePos.z, -halfExtents.z, halfExtents.z)
         };
 
-        // ワールド座標系に変換
-        XMFLOAT3 worldMtv = MiMath::RotateVector(
-            tA->GetRotation(),
-            localMtv
-        );
+        // 円の方程式による衝突判定
+        XMFLOAT3 difference = MiMath::Subtract(closestPoint, localSpherePos);
+        float distanceSquared = {
+            MiMath::Pow(difference.x, 2) +
+            MiMath::Pow(difference.y, 2) +
+            MiMath::Pow(difference.z, 2)
+        };
 
-        result.mtv = worldMtv;
+        float radius = cB->GetRadius();
+
+        // === 衝突判定 ===
+        constexpr float CONTACT_EPSILON = 0.0001f;
+        if (distanceSquared <= radius * radius + CONTACT_EPSILON) {
+            // 衝突している
+            result.isCollision = true;
+
+            // 最小移動ベクトルの計算
+            float distance = sqrtf(distanceSquared);
+            float overlap = radius - distance;
+
+
+            // === CCB対応 ===
+            // 現在判定中の位置と、実際に移動する位置の差を計算
+            float diffA = MiMath::Distance(boxPos, currPosA);
+            float diffB = MiMath::Distance(spherePos, currPosB);
+            float diffMax = diffA > diffB ? diffA : diffB;
+
+            // ローカル座標系での最小移動ベクトル
+            XMFLOAT3 localMtv = MiMath::Normalize(difference);
+            localMtv = {
+                localMtv.x * (overlap + diffMax),
+                localMtv.y * (overlap + diffMax),
+                localMtv.z * (overlap + diffMax)
+            };
+
+            // ワールド座標系に変換
+            XMFLOAT3 worldMtv = MiMath::RotateVector(
+                tA->GetRotation(),
+                localMtv
+            );
+
+            result.mtv = worldMtv;
+            return;
+        }
     }
 }
 
@@ -344,48 +372,62 @@ void CollisionUtility::CheckSphere(
     TransformComponent* tA, SphereColliderComponent* cA,
     TransformComponent* tB, SphereColliderComponent* cB)
 {
-    // ワールド座標系での中心座標、半径を計算
-    DirectX::XMFLOAT3 posA = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
-    posA.x += tA->GetPosition().x;
-    posA.y += tA->GetPosition().y;
-    posA.z += tA->GetPosition().z;
-    DirectX::XMFLOAT3 posB = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
-    posB.x += tB->GetPosition().x;
-    posB.y += tB->GetPosition().y;
-    posB.z += tB->GetPosition().z;
+    // 速度適用前の位置を取得
+    const XMFLOAT3& prevPosA = tA->GetPrevPosition();
+    const XMFLOAT3& prevPosB = tB->GetPrevPosition();
+
+    // 速度適用後の現在位置を取得
+    const XMFLOAT3& currPosA = tA->GetPosition();
+    const XMFLOAT3& currPosB = tB->GetPosition();
 
     float radiusA = cA->GetRadius();
     float radiusB = cB->GetRadius();
 
-    // コライダー間の距離の二乗を計算
-    float interval = {
-        MiMath::Pow((posB.x - posA.x), 2) +
-        MiMath::Pow((posB.y - posA.y), 2) +
-        MiMath::Pow((posB.z - posA.z), 2)
-    };
+    // CCBのステップ数を取得
+    int ccbStep = (std::max)(1, (std::max)(cA->GetCCBStep(), cB->GetCCBStep()));
 
-    // 半径の和の二乗を計算
-    float radiusSum = MiMath::Pow((radiusA + radiusB), 2);
+    for (int i = 0; i <= ccbStep; i++) {
+        // 補間係数
+        float t = static_cast<float>(i) / static_cast<float>(ccbStep);
 
-    // 衝突判定
-    if (interval <= radiusSum) {
-        // 衝突している
-        result.isCollision = true;
+        // ワールド座標系での中心座標、半径を計算
+        DirectX::XMFLOAT3 posA = MiMath::RotateVector(tA->GetRotation(), cA->GetCenter());
+        posA = MiMath::Add(posA, MiMath::Lerp(prevPosA, currPosA, t));
+        DirectX::XMFLOAT3 posB = MiMath::RotateVector(tB->GetRotation(), cB->GetCenter());
+        posB = MiMath::Add(posB, MiMath::Lerp(prevPosB, currPosB, t));
 
-        // 最小移動ベクトルの計算
-        // ・Aが移動すべき最小のベクトルを計算
-        float i = sqrtf(interval);
-        float overlap = i - (radiusA + radiusB);
-        DirectX::XMFLOAT3 direction = {
-            (posA.x - posB.x) / i,
-            (posA.y - posB.y) / i,
-            (posA.z - posB.z) / i
+        // コライダー間の距離の二乗を計算
+        float interval = {
+            MiMath::Pow((posB.x - posA.x), 2) +
+            MiMath::Pow((posB.y - posA.y), 2) +
+            MiMath::Pow((posB.z - posA.z), 2)
         };
-        result.mtv = {
-            -direction.x * overlap,
-            -direction.y * overlap,
-            -direction.z * overlap
-        };
+
+        // 半径の和の二乗を計算
+        float radiusSum = MiMath::Pow((radiusA + radiusB), 2);
+
+        // 衝突判定
+        if (interval <= radiusSum) {
+            // 衝突している
+            result.isCollision = true;
+
+            // 最小移動ベクトルの計算
+            // ・Aが移動すべき最小のベクトルを計算
+            float iSqrt = (std::max)(0.0000001f, sqrtf(interval));
+            float overlap = iSqrt - (radiusA + radiusB);
+            DirectX::XMFLOAT3 direction = {
+                (posA.x - posB.x) / iSqrt,
+                (posA.y - posB.y) / iSqrt,
+                (posA.z - posB.z) / iSqrt
+            };
+            result.mtv = {
+                -direction.x * overlap,
+                -direction.y * overlap,
+                -direction.z * overlap
+            };
+
+            return;
+        }
     }
 }
 

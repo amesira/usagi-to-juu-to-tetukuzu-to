@@ -23,21 +23,58 @@ using namespace DirectX;
 
 namespace
 {
-    // 速度に応じたCCBステップ数の計算用定数
-    constexpr float VELOCITY_CCB_THRESHOLD = 200.0f;
-    constexpr float VELOCITY_CCB_RANGE = 70.0f;
+    constexpr float CCD_MOVE_FRACTION = 0.5f;
+    constexpr float CCD_MIN_STEP_DISTANCE = 0.05f;
+    constexpr int CCD_MAX_STEP = 16;
 
-    // 速度に応じたCCBステップ数の計算
-    int CalculateCCBStep(RigidbodyComponent* rb, float deltaTime)
+    /// @brief コライダーの最小サイズを取得する
+    float GetColliderMinimumSize(ColliderComponent* collider)
     {
-        XMFLOAT3 vel = rb->GetVelocity();
-        float velocityMag = vel.x * vel.x + vel.y * vel.y + vel.z * vel.z;
+        if (auto* box = dynamic_cast<BoxColliderComponent*>(collider)) {
+            const XMFLOAT3 scale = box->GetScale();
 
-        if (velocityMag > VELOCITY_CCB_THRESHOLD) {
-            return static_cast<int>((velocityMag - VELOCITY_CCB_THRESHOLD) / VELOCITY_CCB_RANGE) + 1;
+            return (std::min)({
+                std::abs(scale.x),
+                std::abs(scale.y),
+                std::abs(scale.z)
+                });
         }
 
-        return 1;
+        if (auto* sphere = dynamic_cast<SphereColliderComponent*>(collider)) {
+            return sphere->GetRadius() * 2.0f;
+        }
+
+        return 1.0f;
+    }
+
+    /// @brief 連続衝突判定のステップ数を計算する
+    int CalculateCCBStep(
+        RigidbodyComponent* rigidbody,
+        ColliderComponent* collider,
+        float deltaTime)
+    {
+        if (!rigidbody || !collider || deltaTime <= 0.0f) {
+            return 1;
+        }
+
+        if (!rigidbody->GetEnable() || rigidbody->GetIsKinematic()) {
+            return 1;
+        }
+
+        // 移動距離とコライダーの最小サイズからステップ数を計算
+        const float speed = MiMath::Length(rigidbody->GetVelocity());
+        const float moveDistance = speed * deltaTime;
+
+        const float colliderSize = GetColliderMinimumSize(collider);
+
+        const float maxStepDistance = (std::max)(
+            colliderSize * CCD_MOVE_FRACTION,
+            CCD_MIN_STEP_DISTANCE
+            );
+
+        const int step = static_cast<int>(std::ceil(moveDistance / maxStepDistance));
+
+        return MiMath::Clamp(step, 1, CCD_MAX_STEP);
     }
 
     // 解決の補正値の割合を作成
@@ -97,7 +134,7 @@ void CollisionPass::Process(IScene* pScene)
                 continue;
             }
 
-            int ccbStep = CalculateCCBStep(rb, deltaTime);
+            int ccbStep = CalculateCCBStep(rb, collider, deltaTime);
             ColliderComponent::Internal::SetCCBStep(collider, ccbStep);
         }
     }
