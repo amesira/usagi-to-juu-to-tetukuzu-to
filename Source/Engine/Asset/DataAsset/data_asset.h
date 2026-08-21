@@ -6,6 +6,9 @@
 // ・DataAssetの基底クラスを定義する
 // ・DataAssetはシリアライズ、デシリアライズ、エディタ描画の責務も持つ
 // ・AssetTypeNameとFormatVersionはDataAssetの種類ごとに異なるため、派生クラスで定義する
+// 
+// ・将来的にはSerializeFields処理などをテンプレート化し、処理の責務をLoaderやEditorに任せた方が良いかも
+// （ParticleSystemの形式に寄せるイメージ）
 //---------------------------------------------------
 #pragma once
 #include "Engine/Asset/i_asset.h"

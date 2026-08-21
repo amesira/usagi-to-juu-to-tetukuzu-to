@@ -84,4 +84,60 @@ namespace MiCurveJson
         outCurve = std::move(loadedCurve);
         return true;
     }
+
+    inline json Serialize(const MiCurve::Float3Curve& curve)
+    {
+        return {
+            { "x", Serialize(curve.x) },
+            { "y", Serialize(curve.y) },
+            { "z", Serialize(curve.z) }
+        };
+    }
+
+    inline bool Deserialize(const json& jsonValue, MiCurve::Float3Curve& outCurve)
+    {
+        if (!jsonValue.is_object()) return false;
+
+        MiCurve::Float3Curve loadedCurve = outCurve;
+        const auto xIt = jsonValue.find("x");
+        const auto yIt = jsonValue.find("y");
+        const auto zIt = jsonValue.find("z");
+        if (xIt == jsonValue.end() || yIt == jsonValue.end() || zIt == jsonValue.end()) return false;
+        if (!Deserialize(*xIt, loadedCurve.x) ||
+            !Deserialize(*yIt, loadedCurve.y) ||
+            !Deserialize(*zIt, loadedCurve.z)) return false;
+
+        outCurve = std::move(loadedCurve);
+        return true;
+    }
+
+    inline json Serialize(const MiCurve::ColorCurve& curve)
+    {
+        return {
+            { "r", Serialize(curve.r) },
+            { "g", Serialize(curve.g) },
+            { "b", Serialize(curve.b) },
+            { "a", Serialize(curve.a) }
+        };
+    }
+
+    inline bool Deserialize(const json& jsonValue, MiCurve::ColorCurve& outCurve)
+    {
+        if (!jsonValue.is_object()) return false;
+
+        MiCurve::ColorCurve loadedCurve = outCurve;
+        const auto rIt = jsonValue.find("r");
+        const auto gIt = jsonValue.find("g");
+        const auto bIt = jsonValue.find("b");
+        const auto aIt = jsonValue.find("a");
+        if (rIt == jsonValue.end() || gIt == jsonValue.end() ||
+            bIt == jsonValue.end() || aIt == jsonValue.end()) return false;
+        if (!Deserialize(*rIt, loadedCurve.r) ||
+            !Deserialize(*gIt, loadedCurve.g) ||
+            !Deserialize(*bIt, loadedCurve.b) ||
+            !Deserialize(*aIt, loadedCurve.a)) return false;
+
+        outCurve = std::move(loadedCurve);
+        return true;
+    }
 }

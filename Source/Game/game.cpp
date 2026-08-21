@@ -30,7 +30,7 @@
 
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
-#include "Game/ControllerBehavior/game_effect_controller.h"
+#include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
 // ゲームシーン初期化処理

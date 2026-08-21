@@ -23,9 +23,7 @@ private:
     std::unordered_map<std::string, std::unique_ptr<DataAsset>> m_defaultAssetMap;
 
 public:
-    /// @brief DataAssetLoaderを初期化する
     void Initialize();
-    /// @brief DataAssetLoaderを終了する
     void Finalize();
 
     /// @brief DataAssetをJSON形式で保存する

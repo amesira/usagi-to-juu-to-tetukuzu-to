@@ -28,9 +28,7 @@ private:
     ReloadCallback m_reloadCallback;
 
 public:
-    /// @brief ParticleSystemAssetLoaderを初期化する
     void Initialize();
-    /// @brief ParticleSystemAssetLoaderを終了する
     void Finalize();
 
     /// @brief ParticleSystemAssetをJSON形式で保存する
