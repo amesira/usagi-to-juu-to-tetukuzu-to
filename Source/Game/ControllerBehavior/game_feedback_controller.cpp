@@ -1,10 +1,10 @@
 //===================================================
-// game_effect_controller.cpp
+// game_feedback_controller.cpp
 // 
 // Author：Miu Kitamura
 // Date  ：2026/04/27
 //===================================================
-#include "game_effect_controller.h"
+#include "game_feedback_controller.h"
 
 #include "Engine/Device/mi_fps.h"
 #include "game_controller_locator.h"
@@ -20,7 +20,7 @@
 
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
-GameEffectController::GameEffectController()
+GameFeedbackController::GameFeedbackController()
 {
     s_instanceCount++;
 
@@ -36,7 +36,7 @@ GameEffectController::GameEffectController()
     m_changeTimeScaleTask.Reset();
 }
 
-GameEffectController::~GameEffectController()
+GameFeedbackController::~GameFeedbackController()
 {
     if (GameControllerLocator::s_gameEffectController == this) {
         GameControllerLocator::s_gameEffectController = nullptr;
@@ -45,7 +45,7 @@ GameEffectController::~GameEffectController()
     s_instanceCount--;
 }
 
-void GameEffectController::Start()
+void GameFeedbackController::Start()
 {
     IScene* scene = GetOwner()->GetScene();
 
@@ -58,7 +58,7 @@ void GameEffectController::Start()
     }
 }
 
-void GameEffectController::Update()
+void GameFeedbackController::Update()
 {
     float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
 
@@ -66,7 +66,7 @@ void GameEffectController::Update()
     m_changeTimeScaleTask.Update(unscaledDeltaTime);
 }
 
-void GameEffectController::DrawComponentInspector()
+void GameFeedbackController::DrawComponentInspector()
 {
     if (InspectorViewWindow::BeginComponentSection(this, "Game Effect Controller")) {
         if (ImGui::TreeNode("Time Scale")) {
@@ -146,7 +146,7 @@ void GameEffectController::DrawComponentInspector()
 //------------------------------- private
 
 // タイムスケール変更タスクの更新
-void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
+void GameFeedbackController::ChangeTimeScaleTask::Update(float deltaTime)
 {
     if (!m_isRunning) return;
     SequenceTask::Update(deltaTime);
@@ -200,7 +200,7 @@ void GameEffectController::ChangeTimeScaleTask::Update(float deltaTime)
 //------------------------------- public
 
 // タイムスケール変更
-void GameEffectController::ChangeTimeScale(float timeScale, float duration)
+void GameFeedbackController::ChangeTimeScale(float timeScale, float duration)
 {
     m_changeTimeScaleTask.Reset();
 
@@ -210,7 +210,7 @@ void GameEffectController::ChangeTimeScale(float timeScale, float duration)
     m_changeTimeScaleTask.m_holdDuration = 0.0f;
     m_changeTimeScaleTask.Start();
 }
-void GameEffectController::ChangeTimeScaleTemporary(float timeScale, float duration, float holdDuration)
+void GameFeedbackController::ChangeTimeScaleTemporary(float timeScale, float duration, float holdDuration)
 {
     m_changeTimeScaleTask.Reset();
 
@@ -221,7 +221,7 @@ void GameEffectController::ChangeTimeScaleTemporary(float timeScale, float durat
     m_changeTimeScaleTask.Start();
 }
 // タイムスケールを元に戻す
-void GameEffectController::ResetTimeScale(float duration)
+void GameFeedbackController::ResetTimeScale(float duration)
 {
     ChangeTimeScale(1.0f, duration);
 }
@@ -229,20 +229,20 @@ void GameEffectController::ResetTimeScale(float duration)
 // ----- CameraControlBehaviorを介した実装の窓口
 
 // FOV変更
-void GameEffectController::ChangeFOV(float fov, float duration)
+void GameFeedbackController::ChangeFOV(float fov, float duration)
 {
     if (m_cameraControl) {
         CameraEffectTaskHelper::ChangeCameraEffect(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, fov, duration);
     }
 }
-void GameEffectController::ChangeFOVTemporary(float fov, float duration, float holdDuration)
+void GameFeedbackController::ChangeFOVTemporary(float fov, float duration, float holdDuration)
 {
     if (m_cameraControl) {
         CameraEffectTaskHelper::ChangeCameraEffectTemporary(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, fov, duration, holdDuration);
     }
 }
 // FOVを元に戻す
-void GameEffectController::ResetFOV(float duration)
+void GameFeedbackController::ResetFOV(float duration)
 {
     if (m_cameraControl) {
         CameraEffectTaskHelper::ResetCameraEffect(m_cameraControl, CameraEffect::EffectTaskTarget::FOV, duration);
@@ -250,7 +250,7 @@ void GameEffectController::ResetFOV(float duration)
 }
 
 // カメラシェイク再生
-void GameEffectController::PlayCameraShake(float duration, float magnitude)
+void GameFeedbackController::PlayCameraShake(float duration, float magnitude)
 {
     if (m_cameraControl) {
         m_cameraControl->PlayCameraShake(duration, magnitude);

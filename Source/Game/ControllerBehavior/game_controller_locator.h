@@ -7,19 +7,19 @@
 #ifndef GAME_CONTROLLER_LOCATOR_H
 #define GAME_CONTROLLER_LOCATOR_H
 
-class GameEffectController;
+class GameFeedbackController;
 class CustomPostEffectController;
 
 class GameControllerLocator {
 private:
-    friend class GameEffectController;
+    friend class GameFeedbackController;
     friend class CustomPostEffectController;
 
-    static inline GameEffectController* s_gameEffectController = nullptr;
+    static inline GameFeedbackController* s_gameEffectController = nullptr;
     static inline CustomPostEffectController* s_customPostEffectController = nullptr;
 
 public:
-    static GameEffectController* GetGameEffectController() {
+    static GameFeedbackController* GetGameFeedbackController() {
         return s_gameEffectController;
     }
 

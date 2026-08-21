@@ -22,7 +22,7 @@
 #include "Game/ActorBehavior/Player/P30_Action/Dodge/player_dodge_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
-#include "Game/ControllerBehavior/game_effect_controller.h"
+#include "Game/ControllerBehavior/game_feedback_controller.h"
 
 #include "Utility/mi_math.h"
 

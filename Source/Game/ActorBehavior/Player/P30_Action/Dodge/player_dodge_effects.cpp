@@ -2,12 +2,12 @@
 
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/game_controller_locator.h"
-#include "Game/ControllerBehavior/game_effect_controller.h"
+#include "Game/ControllerBehavior/game_feedback_controller.h"
 
 namespace {
-    GameEffectController* GameEffect()
+    GameFeedbackController* GameFeedback()
     {
-        return GameControllerLocator::GetGameEffectController();
+        return GameControllerLocator::GetGameFeedbackController();
     }
 
     CustomPostEffectController* CustomPostEffect()
@@ -18,7 +18,7 @@ namespace {
 
 void PlayerDodgeEffects::Play(PlayerDodgeEffectType type)
 {
-    GameEffectController* gameEffect = GameEffect();
+    GameFeedbackController* gameEffect = GameFeedback();
     if (!gameEffect) return;
 
     switch (type) {

@@ -13,7 +13,7 @@ using namespace DirectX;
 
 class CameraControlBehavior;
 
-class GameEffectController : public BehaviorComponent {
+class GameFeedbackController : public BehaviorComponent {
 private:
     static inline int s_instanceCount = 0;
 
@@ -21,8 +21,8 @@ private:
     CameraControlBehavior* m_cameraControl = nullptr;
 
 public:
-    GameEffectController();
-    ~GameEffectController();
+    GameFeedbackController();
+    ~GameFeedbackController();
 
     void Start() override;
     void Update() override;

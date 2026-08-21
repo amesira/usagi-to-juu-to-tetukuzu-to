@@ -7,6 +7,7 @@
 // ・PlayerActionMachineから呼ばれる
 //---------------------------------------------------
 #pragma once
+#include <string>
 
 class PlayerContext;
 class PlayerInput;
@@ -23,9 +24,11 @@ public:
 protected:
     ActionState m_state = ActionState::None;
 
-    // 行動の優先度（数値が大きいほど優先度が高い）
-    int m_priority = 0;
+    // アクションのID（ActionMachineで行動を識別するために使用）
+    std::string m_actionID;
 
+    // アクションの優先度（数値が大きいほど優先度が高い）
+    int m_priority = 0;
     // 割り込み可能かどうか
     // （割り込み可能なアクションは、優先度が高いアクションに置き換えられる）
     bool m_isInterruptible = true;
@@ -33,17 +36,17 @@ protected:
 public:
     virtual ~PlayerActionBase() = default;
     
-    /// @brief この行動を開始できるかどうか
+    /// @brief このアクションを開始できるかどうか
     virtual bool CanStart(const PlayerContext& context, const PlayerInput& input) = 0;
 
-    /// @brief 行動開始処理
+    /// @brief アクション開始処理
     virtual void Start(PlayerContext& context, const PlayerInput& input) = 0;
-    /// @brief 行動更新処理
+    /// @brief アクション更新処理
     virtual void Update(PlayerContext& context, const PlayerInput& input, float deltaTime) = 0;
-    /// @brief 行動終了処理（ActionState::WaitingToFinishに遷移したときに、ActionMachineから呼ばれる）
+    /// @brief アクション終了処理（ActionState::WaitingToFinishに遷移したときに、ActionMachineから呼ばれる）
     virtual void Finish(PlayerContext& context, const PlayerInput& input) = 0;
 
-    /// @brief 行動のアクティブ状態に関わらず、常に呼ばれる更新処理
+    /// @brief アクションのアクティブ状態に関わらず、常に呼ばれる更新処理
     virtual void UpdateBackground(PlayerContext& context, const PlayerInput& input, float deltaTime) {
 
     }

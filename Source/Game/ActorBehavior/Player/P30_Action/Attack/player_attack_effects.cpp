@@ -10,7 +10,7 @@
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/game_controller_locator.h"
-#include "Game/ControllerBehavior/game_effect_controller.h"
+#include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Utility/mi_math.h"
 
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
@@ -19,9 +19,9 @@ using namespace DirectX;
 using namespace CameraEffectTaskHelper;
 
 namespace {
-    GameEffectController* GetGameEffect()
+    GameFeedbackController* GetGameFeedback()
     {
-        return GameControllerLocator::GetGameEffectController();
+        return GameControllerLocator::GetGameFeedbackController();
     }
 
     CustomPostEffectController* GetCustomPostEffect()
@@ -64,7 +64,7 @@ void PlayerAttackEffects::SetupChargeLight(LightComponent* chargeLight)
 
 void PlayerAttackEffects::Play(PlayerAttackEffectType type)
 {
-    GameEffectController* gameEffect = GetGameEffect();
+    GameFeedbackController* gameEffect = GetGameFeedback();
     CustomPostEffectController* postEffect = GetCustomPostEffect();
     if (!gameEffect || !postEffect || !m_cameraController) return;
 
@@ -114,7 +114,7 @@ void PlayerAttackEffects::Play(PlayerAttackEffectType type)
             m_hitStopBehavior->StartHitStop(
                 0.2f,
                 [this]() {
-                    if (GameEffectController* effect = GetGameEffect()) {
+                    if (GameFeedbackController* effect = GetGameFeedback()) {
                         effect->ChangeFOVTemporary(78.0f, 0.10f, 0.06f);
                         ChangeCameraEffectTemporary(m_cameraController, CameraEffect::EffectTaskTarget::CompositionCameraLocalOffset, { 0.15f, 0.0f, 0.25f }, 0.08f, 0.08f);
                         effect->PlayCameraShake(0.16f, 0.30f);

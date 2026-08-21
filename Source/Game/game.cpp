@@ -42,7 +42,7 @@ void GameScene::Initialize()
     GameObject* gameControllerObj = this->CreateGameObject();
     gameControllerObj->SetName("GameController");
     gameControllerObj->AddComponent<TransformComponent>();
-    gameControllerObj->AddComponent<GameEffectController>();
+    gameControllerObj->AddComponent<GameFeedbackController>();
     gameControllerObj->AddComponent<CustomPostEffectController>();
 
     // camera

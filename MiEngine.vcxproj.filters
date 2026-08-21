@@ -319,7 +319,7 @@
       <Filter>Sources\Engine\Framework\Component</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
-    <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
@@ -667,7 +667,7 @@
     </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
-    <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
     <ClInclude Include="Source\Engine\Editor\editor_window_manager.h" />
@@ -917,5 +917,9 @@
     <None Include="Source\Game\Factory\ui_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
   </ItemGroup>
 </Project>
