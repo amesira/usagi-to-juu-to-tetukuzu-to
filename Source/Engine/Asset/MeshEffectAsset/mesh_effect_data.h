@@ -93,7 +93,7 @@ namespace MeshEffectData
     /// @brief RendererModuleの定義（メッシュの描画設定を行うモジュール）
     struct RendererModule {
         std::string meshPath;
-        std::string materialPath;
+        std::string texturePath;
 
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };       // テクスチャのUV矩形
 
