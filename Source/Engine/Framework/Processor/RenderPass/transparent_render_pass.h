@@ -31,7 +31,9 @@ private:
     ComPtr<ID3D11Buffer> m_pParticleInstanceBuffer;
     ComPtr<ID3D11Buffer> m_pLineVertexBuffer;
     ComPtr<ID3D11Buffer> m_pLineInstanceBuffer;
-    ComPtr<ID3D11Buffer> m_pMeshEffectBuffer;
+
+    class ShaderProgramResource* m_pMeshEffectShaderProgram = nullptr;
+    class ConstantBufferResource* m_pMeshEffectConstantBuffer = nullptr;
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

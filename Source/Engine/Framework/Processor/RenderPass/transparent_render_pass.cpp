@@ -65,13 +65,19 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
         m_pDevice->CreateBuffer(&bd, NULL, m_pLineInstanceBuffer.GetAddressOf());
     }
     {
-        // MeshEffect用CBの作成
-        D3D11_BUFFER_DESC bd = {};
-        bd.Usage = D3D11_USAGE_DYNAMIC;
-        bd.ByteWidth = sizeof(MeshEffectRenderData::MeshEffectBuffer);
-        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        m_pDevice->CreateBuffer(&bd, NULL, m_pMeshEffectBuffer.GetAddressOf());
+        // MeshEffectShaderの登録
+        m_pMeshEffectConstantBuffer = SHADER_REPOSITORY->GenerateConstantBufferResource(
+            "MeshEffectBuffer", 0, sizeof(MeshEffectRenderData::MeshEffectBuffer), false, true, ConstantBufferUsage::Dynamic);
+
+        // メッシュエフェクト用のシェーダーを作成する
+        ShaderProgramResource* baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Unlit);
+
+        ShaderProgramResource shaderResource;
+        shaderResource.name = "MeshEffectUnlit";
+        shaderResource.baseShader = baseShader;
+        shaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("mesh_effect_unlit_ps.cso");
+        shaderResource.additionalConstantBuffers.push_back(m_pMeshEffectConstantBuffer);
+        m_pMeshEffectShaderProgram = SHADER_REPOSITORY->GenerateShaderProgramResource(shaderResource);
     }
 }
 
@@ -116,6 +122,8 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     }
 
     if (meshEffectPool) {
+        Engine::BindShader(m_pMeshEffectShaderProgram);
+
         auto& meshEffects = meshEffectPool->GetList();
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
@@ -144,6 +152,8 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     }
 
     if (meshEffectPool) {
+        Engine::BindShader(m_pMeshEffectShaderProgram);
+
         auto& meshEffects = meshEffectPool->GetList();
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
@@ -235,8 +245,15 @@ void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, cons
     Engine::UpdateTransformCB({ worldMatrix, XMMatrixTranspose(worldMatrix) });
 
     // 定数バッファの更新
-    MeshEffectRenderUtility::UpdatePixelConstantBuffer(m_pContext, m_pMeshEffectBuffer.Get(), meshEffect.EvaluatedState().buffer);
+    MeshEffectRenderUtility::UpdatePixelConstantBuffer(m_pContext, m_pMeshEffectConstantBuffer->buffer.Get(), meshEffect.EvaluatedState().buffer);
+
+    // テクスチャの設定
+    TextureResource* texture = meshEffect.GetTextureResource() ? meshEffect.GetTextureResource() : m_defaultTexture;
+    if (texture) {
+        m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
+    }
 
     // 描画
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     MeshEffectRenderUtility::DrawGeometry(m_pContext, meshEffect);
 }
