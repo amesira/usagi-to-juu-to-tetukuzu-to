@@ -93,6 +93,13 @@ public:
         return XMLoadFloat4(&m_rotation);
     }
 
+    XMMATRIX GetWorldMatrix() const {
+        XMMATRIX scaling = XMMatrixScaling(m_scaling.x, m_scaling.y, m_scaling.z);
+        XMMATRIX rotation = XMMatrixRotationQuaternion(GetRotationVector());
+        XMMATRIX translation = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+        return scaling * rotation * translation;
+    }
+
 };
 
 

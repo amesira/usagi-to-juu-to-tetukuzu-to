@@ -20,7 +20,7 @@ namespace
     const std::filesystem::path DATA_ASSET_DIRECTORY = "asset/Data";
 
     // データアセットのロードを簡略化するためのマクロ
-    #define DATA_LOADER EngineServiceLocator::Asset()->GetDataAssetLoader()
+    #define DATA_LOADER EngineServiceLocator::Asset()->DataAssetLoader()
 
     /// @brief DataAssetセクションの開始
     bool BeginDataAssetSection(const char* name)

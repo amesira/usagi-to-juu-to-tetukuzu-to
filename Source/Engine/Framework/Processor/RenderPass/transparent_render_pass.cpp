@@ -13,8 +13,11 @@
 #include "Engine/Framework/Component/particle_system_component.h"
 #include "Engine/Framework/Component/line_renderer_component.h"
 #include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Framework/Component/mesh_effect_component.h"
+
 #include "Engine/Framework/Processor/RenderPass/RenderUtility/line_render_utility.h"
 #include "Engine/Framework/Processor/RenderPass/RenderUtility/particle_render_utility.h"
+#include "Engine/Framework/Processor/RenderPass/RenderUtility/mesh_effect_render_utility.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -61,6 +64,15 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
         bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         m_pDevice->CreateBuffer(&bd, NULL, m_pLineInstanceBuffer.GetAddressOf());
     }
+    {
+        // MeshEffect用CBの作成
+        D3D11_BUFFER_DESC bd = {};
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.ByteWidth = sizeof(MeshEffectRenderData::MeshEffectBuffer);
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_pDevice->CreateBuffer(&bd, NULL, m_pMeshEffectBuffer.GetAddressOf());
+    }
 }
 
 void TransparentRenderPass::Finalize()
@@ -74,7 +86,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* particlePool = pScene->GetComponentPool<ParticleSystemComponent>();
     auto* linePool = pScene->GetComponentPool<LineRendererComponent>();
-    if (!transformPool && !particlePool && !linePool) return;
+    auto* meshEffectPool = pScene->GetComponentPool<MeshEffectComponent>();
 
     // アルファブレンドのパーティクルを描画
     SetBlendState(BLENDSTATE_ALFA);
@@ -103,6 +115,20 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
         }
     }
 
+    if (meshEffectPool) {
+        auto& meshEffects = meshEffectPool->GetList();
+        for (MeshEffectComponent& meshEffect : meshEffects) {
+            if (!meshEffect.GetOwner()->GetActive()) continue;
+            if (!meshEffect.GetEnable()) continue;
+            if (!meshEffect.EvaluatedState().visible) continue;
+            if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::AlphaBlend) continue;
+            TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
+            if (!transform) continue;
+
+            DrawMeshEffect(meshEffect, view, *transform);
+        }
+    }
+
     // 加算合成のパーティクルを描画
     SetBlendState(BLENDSTATE_ADD);
 
@@ -114,6 +140,20 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
             if (particleSystem.GetDesc().rendererModule.blendMode != ParticleSystemData::BlendMode::Additive) continue;
 
             DrawParticleSystem(particleSystem, view);
+        }
+    }
+
+    if (meshEffectPool) {
+        auto& meshEffects = meshEffectPool->GetList();
+        for (MeshEffectComponent& meshEffect : meshEffects) {
+            if (!meshEffect.GetOwner()->GetActive()) continue;
+            if (!meshEffect.GetEnable()) continue;
+            if (!meshEffect.EvaluatedState().visible) continue;
+            if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::Additive) continue;
+            TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
+            if (!transform) continue;
+
+            DrawMeshEffect(meshEffect, view, *transform);
         }
     }
 
@@ -181,4 +221,22 @@ void TransparentRenderPass::DrawLineRenderer(LineRendererComponent& lineRenderer
 
     m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     m_pContext->DrawInstanced(4, instanceCount, 0, 0);
+}
+
+void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, const RenderView& view, const TransformComponent& transform)
+{
+    // ビルボード行列の計算
+    XMMATRIX billboardRotation = MeshEffectRenderUtility::CreateBillboardRotation(
+        meshEffect.Renderer().billboardMode,
+        view);
+
+    // ワールド行列の設定
+    XMMATRIX worldMatrix = transform.GetWorldMatrix() * billboardRotation * meshEffect.EvaluatedState().localEffectMatrix;
+    Engine::UpdateTransformCB({ worldMatrix, XMMatrixTranspose(worldMatrix) });
+
+    // 定数バッファの更新
+    MeshEffectRenderUtility::UpdatePixelConstantBuffer(m_pContext, m_pMeshEffectBuffer.Get(), meshEffect.EvaluatedState().buffer);
+
+    // 描画
+    MeshEffectRenderUtility::DrawGeometry(m_pContext, meshEffect);
 }

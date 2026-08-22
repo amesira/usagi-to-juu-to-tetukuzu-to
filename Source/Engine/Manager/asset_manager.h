@@ -8,6 +8,7 @@
 #pragma once
 #include "Engine/Asset/ParticleAsset/particle_system_asset_loader.h"
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
+#include "Engine/Asset/MeshEffectAsset/mesh_effect_asset_loader.h"
 
 class AssetManager {
 private:
@@ -15,6 +16,8 @@ private:
     DataAssetLoader m_dataAssetLoader;
     // ParticleSystemAssetLoaderのインスタンス
     ParticleSystemAssetLoader m_particleAssetLoader;
+    // MeshEffectAssetLoaderのインスタンス
+    MeshEffectAssetLoader m_meshEffectAssetLoader;
 
 public:
     /// @brief AssetManagerを初期化する
@@ -23,8 +26,10 @@ public:
     void Finalize();
 
     /// @brief DataAssetLoaderを取得
-    DataAssetLoader* GetDataAssetLoader() { return &m_dataAssetLoader; }
+    DataAssetLoader* DataAssetLoader() { return &m_dataAssetLoader; }
     /// @brief ParticleSystemAssetLoaderを取得
-    ParticleSystemAssetLoader* GetParticleAssetLoader() { return &m_particleAssetLoader; }
+    ParticleSystemAssetLoader* ParticleAssetLoader() { return &m_particleAssetLoader; }
+    /// @brief MeshEffectAssetLoaderを取得
+    MeshEffectAssetLoader* MeshEffectAssetLoader() { return &m_meshEffectAssetLoader; }
 
 };

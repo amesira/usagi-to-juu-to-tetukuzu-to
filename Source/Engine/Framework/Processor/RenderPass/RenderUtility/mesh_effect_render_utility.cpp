@@ -9,14 +9,14 @@
 #include "Engine/Framework/Processor/RenderPass/RenderUtility/model_render_utility.h"
 #include "Engine/render_view.h"
 
-namespace MeshEffectRenderUtility {
+using namespace DirectX;
 
+namespace MeshEffectRenderUtility {
+    /// @brief ビルボード回転行列を作成する
     DirectX::XMMATRIX CreateBillboardRotation(
         MeshEffectData::BillboardMode billboardMode,
         const RenderView& view)
     {
-        using namespace DirectX;
-
         switch (billboardMode) {
         case MeshEffectData::BillboardMode::View: {
             XMMATRIX billboard = XMMatrixInverse(nullptr, view.viewMatrix);
@@ -43,13 +43,12 @@ namespace MeshEffectRenderUtility {
         }
     }
 
+    /// @brief ワールド行列を作成する
     DirectX::XMMATRIX CreateWorldMatrix(
         const TransformComponent& transform,
         const MeshEffectRenderData::MeshEffectEvaluatedState& evaluatedState,
         const DirectX::XMMATRIX& billboardRotation)
     {
-        using namespace DirectX;
-
         const XMFLOAT3 position = transform.GetPosition();
         const XMMATRIX translation = XMMatrixTranslation(position.x, position.y, position.z);
 
@@ -63,6 +62,7 @@ namespace MeshEffectRenderUtility {
             translation;
     }
 
+    /// @brief ピクセルシェーダー用の定数バッファを更新する
     bool UpdatePixelConstantBuffer(
         ID3D11DeviceContext* context,
         ID3D11Buffer* constantBuffer,
@@ -84,6 +84,7 @@ namespace MeshEffectRenderUtility {
         return true;
     }
 
+    /// @brief ジオメトリを描画する
     void DrawGeometry(
         ID3D11DeviceContext* context,
         const MeshEffectComponent& meshEffect)
@@ -96,6 +97,7 @@ namespace MeshEffectRenderUtility {
         ModelRenderUtility::DrawMeshListGeometry(context, modelResource->meshes);
     }
 
+    /// @brief シーン内の有効なMeshEffectComponentをすべて列挙し、コールバック関数を呼び出す
     void ForEachRenderableMeshEffect(
         IScene* scene,
         const std::function<void(MeshEffectComponent&, TransformComponent&)>& callback)

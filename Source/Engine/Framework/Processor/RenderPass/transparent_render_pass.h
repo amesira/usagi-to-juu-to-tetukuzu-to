@@ -16,6 +16,8 @@ using Microsoft::WRL::ComPtr;
 
 class ParticleSystemComponent;
 class LineRendererComponent;
+class MeshEffectComponent;
+class TransformComponent;
 
 class TransparentRenderPass : public Pass {
 private:
@@ -25,11 +27,11 @@ private:
     // デフォルトテクスチャ
     TextureResource* m_defaultTexture = nullptr;
 
-    // ParticleRenderer用の頂点バッファ
     ComPtr<ID3D11Buffer> m_pParticleVertexBuffer;
     ComPtr<ID3D11Buffer> m_pParticleInstanceBuffer;
     ComPtr<ID3D11Buffer> m_pLineVertexBuffer;
     ComPtr<ID3D11Buffer> m_pLineInstanceBuffer;
+    ComPtr<ID3D11Buffer> m_pMeshEffectBuffer;
 
 public:
     void Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -37,9 +39,9 @@ public:
     void Process(IScene* pScene, const RenderView& view) override;
 
 private:
-    // パーティクルシステムの描画
     void DrawParticleSystem(ParticleSystemComponent& particleSystem, const RenderView& view);
     void DrawLineRenderer(LineRendererComponent& lineRenderer, const RenderView& view);
+    void DrawMeshEffect(MeshEffectComponent& meshEffect, const RenderView& view, const TransformComponent& transform);
 
 };
 

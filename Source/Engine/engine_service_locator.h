@@ -74,10 +74,13 @@ public:
         return s_engineInstance ? &s_engineInstance->GetAssetManager() : nullptr;
     }
     static ParticleSystemAssetLoader* ParticleLoader() {
-        return s_engineInstance ? s_engineInstance->GetAssetManager().GetParticleAssetLoader() : nullptr;
+        return s_engineInstance ? s_engineInstance->GetAssetManager().ParticleAssetLoader() : nullptr;
     }
     static DataAssetLoader* DataLoader() {
-        return s_engineInstance ? s_engineInstance->GetAssetManager().GetDataAssetLoader() : nullptr;
+        return s_engineInstance ? s_engineInstance->GetAssetManager().DataAssetLoader() : nullptr;
+    }
+    static MeshEffectAssetLoader* MeshEffectLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().MeshEffectAssetLoader() : nullptr;
     }
 };
 
