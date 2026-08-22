@@ -7,7 +7,7 @@
 #include "transform_constraint_behavior.h"
 
 #include "Engine/Core/game_object.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/transform_component.h"
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 

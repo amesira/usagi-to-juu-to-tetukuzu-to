@@ -8,14 +8,14 @@
 #define GAME_WORLD_H
 #include "./Manager/scene_manager.h"
 
-#include "Engine/Framework/Processor/physics_processor.h"
-#include "Engine/Framework/Processor/behavior_processor.h"
-#include "Engine/Framework/Processor/camera_processor.h"
-#include "Engine/Framework/Processor/render_processor.h"
-#include "Engine/Framework/Processor/animation_processor.h"
-#include "Engine/Framework/Processor/sprite_animation_processor.h"
-#include "Engine/Framework/Processor/particle_system_processor.h"
-#include "Engine/Framework/Processor/mesh_effect_processor.h"
+#include "Engine/Processor/physics_processor.h"
+#include "Engine/Processor/behavior_processor.h"
+#include "Engine/Processor/camera_processor.h"
+#include "Engine/Processor/render_processor.h"
+#include "Engine/Processor/animation_processor.h"
+#include "Engine/Processor/sprite_animation_processor.h"
+#include "Engine/Processor/particle_system_processor.h"
+#include "Engine/Processor/mesh_effect_processor.h"
 
 #include <vector>
 #include "Engine/render_view.h"

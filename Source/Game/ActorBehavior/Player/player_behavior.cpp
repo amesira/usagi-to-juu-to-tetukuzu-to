@@ -14,8 +14,8 @@
 #include "Engine/Device/mouse.h"
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/transform_component.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"

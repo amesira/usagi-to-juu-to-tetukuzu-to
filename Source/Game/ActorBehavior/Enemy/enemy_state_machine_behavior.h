@@ -7,7 +7,7 @@
 #ifndef ENEMY_STATE_MACHINE_BEHAVIOR_H
 #define ENEMY_STATE_MACHINE_BEHAVIOR_H
 
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "enemy_context.h"
 
 class EnemyStateMachineBehavior : public BehaviorComponent {

@@ -9,13 +9,13 @@
 #include "Engine/Core/scene_base.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/collider_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/animation_component.h"
-#include "Engine/Framework/Component/sprite_renderer_component.h"
-#include "Engine/Framework/Component/sprite_animation_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/animation_component.h"
+#include "Engine/Component/sprite_renderer_component.h"
+#include "Engine/Component/sprite_animation_component.h"
 
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"

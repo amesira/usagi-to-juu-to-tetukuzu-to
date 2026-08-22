@@ -7,7 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include "Engine/Asset/ParticleAsset/particle_system_asset.h"
-#include "Engine/Framework/Processor/particle_system_processor.h"
+#include "Engine/Processor/particle_system_processor.h"
 
 struct EditorContext;
 class GameObject;

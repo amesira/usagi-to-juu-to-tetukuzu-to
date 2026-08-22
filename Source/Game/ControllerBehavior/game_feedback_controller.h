@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef GAME_EFFECT_CONTROLLER_H
 #define GAME_EFFECT_CONTROLLER_H
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
 #include "Engine/Core/GamePlay/sequence_task.h"

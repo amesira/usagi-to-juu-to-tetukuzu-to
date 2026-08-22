@@ -11,8 +11,8 @@
 #include "Utility/mi_math.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/rigidbody_component.h"
 
 void PlayerDodgeBehavior::Start()
 {

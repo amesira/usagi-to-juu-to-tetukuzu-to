@@ -7,8 +7,8 @@
 #ifndef BULLET_BEHAVIOR_H
 #define BULLET_BEHAVIOR_H
 #include "Engine/Core/game_object_layer.h"
-#include "Engine/Framework/Component/behavior_component.h"
-#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_utility.h"
+#include "Engine/Component/behavior_component.h"
+#include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
 
 #include <functional>
 

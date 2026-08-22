@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef TRANSFORM_CONSTRAINT_BEHAVIOR_H
 #define TRANSFORM_CONSTRAINT_BEHAVIOR_H
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "Engine/Device/direct3d.h"
 
 using namespace DirectX;

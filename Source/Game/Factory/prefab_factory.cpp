@@ -4,11 +4,11 @@
 #include "Engine/Core/scene_base.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/decal_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/light_component.h"
-#include "Engine/Framework/Component/rect_transform_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/decal_component.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/light_component.h"
+#include "Engine/Component/rect_transform_component.h"
 
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"

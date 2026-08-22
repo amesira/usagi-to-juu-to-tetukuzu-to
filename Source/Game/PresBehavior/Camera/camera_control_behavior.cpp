@@ -20,9 +20,9 @@
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/rigidbody_component.h"
 
 using namespace CameraEffectTaskHelper;
 

@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef PLAYER_MOVE_BEHAVIOR_H
 #define PLAYER_MOVE_BEHAVIOR_H
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"

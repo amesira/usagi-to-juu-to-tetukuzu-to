@@ -14,7 +14,7 @@ using namespace DirectX;
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/transform_component.h"
 
 /// @brief PlayerMoveの回転処理を更新する
 void PlayerMoveRotate::UpdateRotate(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)

@@ -7,8 +7,8 @@
 #include "player_attack_behavior.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/camera_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
 
 #include "Game/ActorBehavior/Player/player_behavior.h"
 

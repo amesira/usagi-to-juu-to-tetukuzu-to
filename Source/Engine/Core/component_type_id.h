@@ -5,8 +5,8 @@
 
 #include "component.h"
 
-#include "Engine/Framework/Component/collider_component.h"
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/behavior_component.h"
 
 class ComponentTypeID {
 private:

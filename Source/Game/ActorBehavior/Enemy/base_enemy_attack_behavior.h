@@ -7,7 +7,7 @@
 #ifndef BASE_ENEMY_ATTACK_BEHAVIOR_H
 #define BASE_ENEMY_ATTACK_BEHAVIOR_H
 
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "enemy_context.h"
 
 class BaseEnemyAttackBehavior : public BehaviorComponent {

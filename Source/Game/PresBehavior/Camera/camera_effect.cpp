@@ -13,7 +13,7 @@
 #include "camera_context.h"
 #include "camera_control_behavior.h"
 
-#include "Engine/Framework/Component/camera_component.h"
+#include "Engine/Component/camera_component.h"
 
 /// @brief カメラエフェクトを初期化する
 void CameraEffect::Initialize(CameraContext& context)

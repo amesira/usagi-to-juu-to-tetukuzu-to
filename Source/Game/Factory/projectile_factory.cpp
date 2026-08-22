@@ -9,9 +9,9 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/transform_component.h"
 
 #include "Game/ActorBehavior/Bullet/bullet_behavior.h"
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"

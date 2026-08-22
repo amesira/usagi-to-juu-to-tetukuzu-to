@@ -9,9 +9,9 @@
 
 #include "Utility/utility_master.h"
 
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/particle_system_component.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"

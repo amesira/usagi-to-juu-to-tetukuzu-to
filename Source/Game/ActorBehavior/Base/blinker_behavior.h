@@ -8,7 +8,7 @@
 #define BLINKER_BEHAVIOR_H
 
 #include "Engine/Core/GamePlay/tween_task.h"
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 
 #include <DirectXMath.h>
 #include <vector>

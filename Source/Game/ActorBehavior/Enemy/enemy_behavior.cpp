@@ -9,10 +9,10 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Device/mi_fps.h"
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/rigidbody_component.h"
 
-#include "Engine/Framework/Component/camera_component.h"
+#include "Engine/Component/camera_component.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"

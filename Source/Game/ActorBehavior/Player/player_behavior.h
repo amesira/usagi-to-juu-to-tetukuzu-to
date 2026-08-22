@@ -8,7 +8,7 @@
 #ifndef PLAYER_BEHAVIOR_H
 #define PLAYER_BEHAVIOR_H
 
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"

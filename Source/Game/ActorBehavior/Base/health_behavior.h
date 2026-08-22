@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef HEALTH_BEHAVIOR_H
 #define HEALTH_BEHAVIOR_H
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 
 #include <functional>
 

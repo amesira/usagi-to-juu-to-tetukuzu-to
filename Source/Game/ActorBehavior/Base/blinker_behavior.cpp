@@ -11,8 +11,8 @@
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/sprite_renderer_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/sprite_renderer_component.h"
 #include "Engine/Graphics/material_resource.h"
 #include "Utility/mi_math.h"
 

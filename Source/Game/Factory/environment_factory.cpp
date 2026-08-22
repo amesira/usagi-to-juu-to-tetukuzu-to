@@ -9,9 +9,9 @@
 #include "Engine/Core/scene_base.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/light_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/light_component.h"
 
 // behavior
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"

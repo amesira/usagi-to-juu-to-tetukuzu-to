@@ -8,7 +8,7 @@
 #include "player_locomotion_controller.h"
 
 // engine
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/transform_component.h"
 
 // game
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"

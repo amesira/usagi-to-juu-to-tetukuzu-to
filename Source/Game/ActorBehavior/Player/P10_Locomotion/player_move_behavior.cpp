@@ -14,13 +14,13 @@
 #include "Engine/engine_service_locator.h"
 
 // === Component ===
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/collider_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/animation_component.h"
-#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
-#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_utility.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/animation_component.h"
+#include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
+#include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
 
 // === Player ===
 #include "Game/ActorBehavior/Player/player_behavior.h"

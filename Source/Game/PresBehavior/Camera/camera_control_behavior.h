@@ -6,7 +6,7 @@
 //---------------------------------------------------
 #ifndef CAMERA_CONTROL_BEHAVIOR_H
 #define CAMERA_CONTROL_BEHAVIOR_H
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "Engine/Core/GamePlay/sequence_task.h"
 #include "Engine/Core/GamePlay/tween_task.h"
 #include "camera_context.h"

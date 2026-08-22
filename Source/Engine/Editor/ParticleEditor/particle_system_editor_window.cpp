@@ -11,7 +11,7 @@
 #include <cstring>
 
 #include "Engine/Editor/editor_context.h"
-#include "Engine/Framework/Component/particle_system_component.h"
+#include "Engine/Component/particle_system_component.h"
 #include "Engine/render_view.h"
 
 namespace

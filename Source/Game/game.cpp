@@ -19,14 +19,14 @@
 
 #include "Engine/Manager/scene_manager.h"
 
-#include "Engine/Framework/Component/text_component.h"
-#include "Engine/Framework/Component/image_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/rect_transform_component.h"
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/decal_component.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/text_component.h"
+#include "Engine/Component/image_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/decal_component.h"
+#include "Engine/Component/transform_component.h"
 
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 

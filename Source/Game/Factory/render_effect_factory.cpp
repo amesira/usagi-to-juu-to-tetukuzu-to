@@ -9,9 +9,9 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_base.h"
 #include "Engine/Core/scene_interface.h"
-#include "Engine/Framework/Component/decal_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/decal_component.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/transform_component.h"
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_string.h"
 

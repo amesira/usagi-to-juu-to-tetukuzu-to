@@ -7,7 +7,7 @@
 #ifndef PLAYER_ATTACK_BEHAVIOR_H
 #define PLAYER_ATTACK_BEHAVIOR_H
 
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "player_attack_effects.h"
 

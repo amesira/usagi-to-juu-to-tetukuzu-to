@@ -3,10 +3,10 @@
 #include <algorithm>
 
 #include "Engine/Core/game_object.h"
-#include "Engine/Framework/Component/light_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/sprite_animation_component.h"
+#include "Engine/Component/light_component.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/sprite_animation_component.h"
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/game_controller_locator.h"

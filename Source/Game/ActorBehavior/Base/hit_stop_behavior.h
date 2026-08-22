@@ -7,7 +7,7 @@
 #ifndef HIT_STOP_BEHAVIOR_H
 #define HIT_STOP_BEHAVIOR_H
 
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/behavior_component.h"
 #include "Engine/Core/GamePlay/sequence_task.h"
 
 #include <functional>

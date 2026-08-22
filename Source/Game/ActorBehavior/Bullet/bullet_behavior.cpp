@@ -9,10 +9,10 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/model_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/model_component.h"
 
-#include "Engine/Framework/Processor/PhysicsPass/Collision/collision_query.h"
+#include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"

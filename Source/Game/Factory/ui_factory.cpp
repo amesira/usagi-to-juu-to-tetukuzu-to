@@ -9,10 +9,10 @@
 #include "Engine/Core/scene_base.h"
 
 // component
-#include "Engine/Framework/Component/rect_transform_component.h"
-#include "Engine/Framework/Component/image_component.h"
-#include "Engine/Framework/Component/text_component.h"
-#include "Engine/Framework/Component/slider_component.h"
+#include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/image_component.h"
+#include "Engine/Component/text_component.h"
+#include "Engine/Component/slider_component.h"
 
 #include "Engine/engine_service_locator.h"
 
