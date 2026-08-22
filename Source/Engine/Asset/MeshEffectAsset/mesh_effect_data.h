@@ -78,7 +78,7 @@ namespace MeshEffectData
     struct WaveModule {
         bool enabled = false;
         WaveType type = WaveType::Vertex;   // 波の種類
-        XMFLOAT3 direction = { 0.0f, 1.0f, 0.0f };      // 波の方向
+        XMFLOAT2 direction = { 0.0f, 1.0f };      // 波の方向
         MiCurve::FloatCurve amplitudeOverLifetime = {}; // 波の振幅の変化
         float frequency = 1.0f; // 波の周波数
         float speed = 1.0f;     // 波の速度
@@ -92,7 +92,7 @@ namespace MeshEffectData
 
     /// @brief RendererModuleの定義（メッシュの描画設定を行うモジュール）
     struct RendererModule {
-        std::string meshPath;
+        std::string modelPath;
         std::string texturePath;
 
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };       // テクスチャのUV矩形
@@ -101,3 +101,14 @@ namespace MeshEffectData
         BlendMode blendMode = BlendMode::AlphaBlend;        // ブレンドモード
     };
 }
+
+/// @brief MeshEffectの設定をまとめた構造体
+struct MeshEffectDesc {
+    MeshEffectData::MainModule mainModule;
+    MeshEffectData::TransformModule transformModule;
+    MeshEffectData::FlipbookModule flipbookModule;
+    MeshEffectData::ScrollModule scrollModule;
+    MeshEffectData::WaveModule waveModule;
+    MeshEffectData::GradientModule gradientModule;
+    MeshEffectData::RendererModule rendererModule;
+};

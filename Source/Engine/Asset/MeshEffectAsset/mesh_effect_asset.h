@@ -9,17 +9,6 @@
 #include "Engine/Asset/i_asset.h"
 #include "mesh_effect_data.h"
 
-/// @brief MeshEffectを構成する各モジュールのデータ
-struct MeshEffectDesc {
-    MeshEffectData::MainModule mainModule;
-    MeshEffectData::TransformModule transformModule;
-    MeshEffectData::FlipbookModule flipbookModule;
-    MeshEffectData::ScrollModule scrollModule;
-    MeshEffectData::WaveModule waveModule;
-    MeshEffectData::GradientModule gradientModule;
-    MeshEffectData::RendererModule rendererModule;
-};
-
 /// @brief MeshEffectのアセットクラス
 class MeshEffectAsset : public IAsset {
 private:

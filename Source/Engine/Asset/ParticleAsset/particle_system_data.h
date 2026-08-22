@@ -130,7 +130,7 @@ namespace ParticleSystemData
     // パーティクルの描画に関する設定を行うモジュール
     struct RendererModule {
         std::string texturePath;         // パーティクルに使用するテクスチャ
-        TextureResource* textureResource = nullptr;
+        TextureResource* textureResource = nullptr; // FIXここではなくParticleComponentに入れておくべきかも
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };       // テクスチャのUV矩形
 
         BillboardMode billboardMode = BillboardMode::View;  // ビルボードの種類

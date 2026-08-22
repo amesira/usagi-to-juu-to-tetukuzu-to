@@ -166,7 +166,7 @@ namespace MeshEffectSchema
     {
         using Module = MeshEffectData::RendererModule;
         static const auto schema = FieldSchema{
-            MakeField("meshPath", "Mesh Path", &Module::meshPath),
+            MakeField("modelPath", "Model Path", &Module::modelPath),
             MakeField("texturePath", "Texture Path", &Module::texturePath),
             MakeField("uvRect", "UV Rect", &Module::uvRect,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),

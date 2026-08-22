@@ -260,6 +260,7 @@ void ParticleSystemProcessor::OnParticleAssetReloaded(
         return;
     }
 
+    // 新しいリロード要求を追加
     m_pendingAssetReloads.push_back({ normalizedPath, &asset });
 }
 
@@ -270,6 +271,7 @@ void ParticleSystemProcessor::Process(IScene* pScene)
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* particlePool = pScene->GetComponentPool<ParticleSystemComponent>();
 
+    // === リロード要求がある場合は処理 ===
     if (particlePool && !m_pendingAssetReloads.empty()) {
         TextureRepository* textureRepository =
             EngineServiceLocator::GetTextureRepository();

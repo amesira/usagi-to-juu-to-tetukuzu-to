@@ -73,13 +73,11 @@ private:
 
 public:
     // === アセットの設定・取得 ===
-
     void SetAsset(ParticleSystemAsset* asset) { m_asset = asset; }
     ParticleSystemAsset* GetAsset() { return m_asset; }
     const ParticleSystemAsset* GetAsset() const { return m_asset; }
 
     // === テクスチャのオーバーライドパスの設定・取得 ===
-
     void SetTextureOverridePath(const std::filesystem::path& path) {
         m_textureOverridePath = path.lexically_normal();
     }
