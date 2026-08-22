@@ -158,6 +158,8 @@
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Framework\Processor\mesh_effect_processor.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
@@ -353,6 +355,8 @@
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\bloom_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.h" />
+    <ClInclude Include="Source\Engine\Framework\Processor\mesh_effect_processor.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h" />
     <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h" />

@@ -48,21 +48,27 @@ namespace
     /// @brief FlipbookModuleを評価して、UVオフセット・UVスケーリングを計算する
     void EvaluateFlipbookModule(
         const MeshEffectData::FlipbookModule& flipbookModule,
+        const DirectX::XMFLOAT4& rendererUvRect,
+        float currentTime,
         float normalizedTime,
-        DirectX::XMFLOAT2& outUvOffset,
-        DirectX::XMFLOAT2& outUvTiling)
+        DirectX::XMFLOAT4& outFrameUvRect)
     {
-        int totalFrames = flipbookModule.tileX * flipbookModule.tileY;
-        int currentFrame = 0;
+        const int tileX = (std::max)(flipbookModule.tileX, 1);
+        const int tileY = (std::max)(flipbookModule.tileY, 1);
+        const int atlasFrameCount = tileX * tileY;
+        const int startFrame = std::clamp(flipbookModule.startFrame, 0, atlasFrameCount - 1);
+        const int availableFrames = atlasFrameCount - startFrame;
+        const int frameCount = std::clamp(flipbookModule.frameCount, 1, availableFrames);
+        int animationFrame = 0;
 
         // TimeModeに応じて現在のフレームを計算
         switch (flipbookModule.timeMode) {
         case MeshEffectData::TimeMode::Lifetime: {
-            currentFrame = static_cast<int>(normalizedTime * totalFrames);
+            animationFrame = static_cast<int>(normalizedTime * frameCount);
             break;
         }
         case MeshEffectData::TimeMode::Speed: {
-            currentFrame = static_cast<int>(normalizedTime * flipbookModule.framePerSecond);
+            animationFrame = static_cast<int>(currentTime * (std::max)(flipbookModule.framePerSecond, 0.0f));
             break;
         }
         }
@@ -70,19 +76,24 @@ namespace
         // 再生モードに応じてフレームを調整
         switch (flipbookModule.playbackMode) {
             case MeshEffectData::FlipbookPlaybackMode::Once: {
-                currentFrame = (std::min)(currentFrame, totalFrames - 1);
+                animationFrame = (std::min)(animationFrame, frameCount - 1);
                 break;
             }
             case MeshEffectData::FlipbookPlaybackMode::Loop: {
-                currentFrame %= totalFrames;
+                animationFrame %= frameCount;
                 break;
             }
             case MeshEffectData::FlipbookPlaybackMode::PingPong:
             {
-                int pingPongFrameCount = totalFrames * 2 - 2; // PingPongのフレーム数
-                currentFrame %= pingPongFrameCount;
-                if (currentFrame >= totalFrames) {
-                    currentFrame = pingPongFrameCount - currentFrame; // 逆再生
+                if (frameCount > 1) {
+                    const int pingPongFrameCount = frameCount * 2 - 2;
+                    animationFrame %= pingPongFrameCount;
+                    if (animationFrame >= frameCount) {
+                        animationFrame = pingPongFrameCount - animationFrame;
+                    }
+                }
+                else {
+                    animationFrame = 0;
                 }
                 break;
             }
@@ -90,16 +101,16 @@ namespace
         }
 
         // UV座標の計算
-        int tileX = flipbookModule.tileX;
-        int tileY = flipbookModule.tileY;
-        float uSize = 1.0f / tileX;
-        float vSize = 1.0f / tileY;
+        const int currentFrame = startFrame + animationFrame;
+        const float uSize = 1.0f / tileX;
+        const float vSize = 1.0f / tileY;
         int frameX = currentFrame % tileX;
         int frameY = currentFrame / tileX;
-        outUvOffset.x = frameX * uSize; // U offset
-        outUvOffset.y = frameY * vSize; // V offset
-        outUvTiling.x = uSize;           // U scale
-        outUvTiling.y = vSize;           // V scale
+
+        outFrameUvRect.x = rendererUvRect.x + frameX * uSize * rendererUvRect.z;
+        outFrameUvRect.y = rendererUvRect.y + frameY * vSize * rendererUvRect.w;
+        outFrameUvRect.z = uSize * rendererUvRect.z;
+        outFrameUvRect.w = vSize * rendererUvRect.w;
     }
 }
 
@@ -121,14 +132,33 @@ void MeshEffectProcessor::Process(IScene* pScene)
     auto* meshEffectPool = pScene->GetComponentPool<MeshEffectComponent>();
 
     // === リロード要求がある場合は処理 ===
+    if (meshEffectPool && !m_pendingAssetReloads.empty()) {
+        for (const PendingAssetReload& pending : m_pendingAssetReloads) {
+            if (!pending.asset) continue;
+
+            for (MeshEffectComponent& meshEffect : meshEffectPool->GetList()) {
+                if (meshEffect.GetAsset() != pending.asset) continue;
+                meshEffect.GetDesc() = pending.asset->GetDesc();
+                meshEffect.SetModelResource(nullptr);
+                meshEffect.SetTextureResource(nullptr);
+            }
+        }
+        m_pendingAssetReloads.clear();
+    }
 
     // === MeshEffectの更新処理 ===
     if (!meshEffectPool) return;
     auto& meshEffects = meshEffectPool->GetList();
 
     for (auto& meshEffect : meshEffects) {
+        auto& evaluatedState = meshEffect.EvaluatedState();
+        evaluatedState.visible = false;
+
+        if (!meshEffect.GetOwner()->GetActive()) continue;
+        if (!meshEffect.GetEnable()) continue;
+
         // playOnAwakeが有効で、まだ再生されていない場合は再生する
-        if (meshEffect.Main().playOnAwake && !meshEffect.IsPlaying()) {
+        if (meshEffect.Main().playOnAwake && !meshEffect.HasPlayed()) {
             meshEffect.Play();
         }
 
@@ -155,7 +185,19 @@ void MeshEffectProcessor::Process(IScene* pScene)
             meshEffect.Stop();
         }
 
-        float normalizedTime = currentTime / meshEffect.Main().duration;
+        const float duration = meshEffect.Main().duration;
+        const float normalizedTime = duration > 0.0f
+            ? std::clamp(currentTime / duration, 0.0f, 1.0f)
+            : 0.0f;
+
+        // モジュール無効時に前フレームの値が残らないよう中立値へ戻す
+        evaluatedState.scale = { 1.0f, 1.0f, 1.0f };
+        evaluatedState.rotation = { 0.0f, 0.0f, 0.0f };
+        evaluatedState.localEffectMatrix = XMMatrixIdentity();
+        evaluatedState.buffer = {};
+        evaluatedState.buffer.frameUVRect = meshEffect.Renderer().uvRect;
+        evaluatedState.buffer.effectTime = currentTime;
+        evaluatedState.blendMode = meshEffect.Renderer().blendMode;
 
         // === Transformの更新 ===
         if (meshEffect.Transform().enabled) {
@@ -171,45 +213,56 @@ void MeshEffectProcessor::Process(IScene* pScene)
         if (meshEffect.Flipbook().enabled) {
             EvaluateFlipbookModule(
                 meshEffect.Flipbook(),
+                meshEffect.Renderer().uvRect,
+                currentTime,
                 normalizedTime,
-                meshEffect.EvaluatedState().buffer.uvOffset,
-                meshEffect.EvaluatedState().buffer.uvTiling);
+                evaluatedState.buffer.frameUVRect);
         }
 
-        // === Scrollの更新 === FIX: Flipbookが有効の場合は上手くいかないかも
+        // === Scrollの更新 ===
         if (meshEffect.Scroll().enabled) {
-            // ScrollのUVオフセットを更新
-            meshEffect.EvaluatedState().buffer.uvOffset.x += meshEffect.Scroll().scrollSpeed.x * scaledDeltaTime;
-            meshEffect.EvaluatedState().buffer.uvOffset.y += meshEffect.Scroll().scrollSpeed.y * scaledDeltaTime;
-            // UVオフセットを0.0～1.0の範囲にラップ
-            meshEffect.EvaluatedState().buffer.uvOffset.x = std::fmod(meshEffect.EvaluatedState().buffer.uvOffset.x, 1.0f);
-            meshEffect.EvaluatedState().buffer.uvOffset.y = std::fmod(meshEffect.EvaluatedState().buffer.uvOffset.y, 1.0f);
+            evaluatedState.buffer.uvTiling = meshEffect.Scroll().tiling;
+            evaluatedState.buffer.uvOffset.x = std::fmod(
+                meshEffect.Scroll().offset.x + meshEffect.Scroll().scrollSpeed.x * currentTime,
+                1.0f);
+            evaluatedState.buffer.uvOffset.y = std::fmod(
+                meshEffect.Scroll().offset.y + meshEffect.Scroll().scrollSpeed.y * currentTime,
+                1.0f);
         }
 
         // === Waveの更新 ===
-        if (meshEffect.Wave().enabled) {
+        if (meshEffect.Wave().enabled &&
+            meshEffect.Wave().type == MeshEffectData::WaveType::UV) {
             // Waveの評価
             float waveValue = meshEffect.Wave().amplitudeOverLifetime.Evaluate(normalizedTime);
-            meshEffect.EvaluatedState().buffer.uvWaveDirection = meshEffect.Wave().direction;
-            meshEffect.EvaluatedState().buffer.uvWaveAmplitude = waveValue;
-            meshEffect.EvaluatedState().buffer.uvWaveFrequency = meshEffect.Wave().frequency;
-            meshEffect.EvaluatedState().buffer.uvWaveSpeed = meshEffect.Wave().speed;
+            evaluatedState.buffer.uvWaveDirection = meshEffect.Wave().direction;
+            evaluatedState.buffer.uvWaveAmplitude = waveValue;
+            evaluatedState.buffer.uvWaveFrequency = meshEffect.Wave().frequency;
+            evaluatedState.buffer.uvWaveSpeed = meshEffect.Wave().speed;
         }
 
         // === Gradientの更新 ===
         if (meshEffect.Gradient().enabled) {
             // Gradientの評価
-            meshEffect.EvaluatedState().buffer.effectColor = meshEffect.Gradient().color.Evaluate(normalizedTime);
+            evaluatedState.buffer.effectColor = meshEffect.Gradient().color.Evaluate(normalizedTime);
         }
 
-        if (meshEffect.GetTextureResource() == nullptr) {
+        TextureRepository* textureRepository = Engine::GetTextureRepository();
+        ModelRepository* modelRepository = Engine::GetModelRepository();
+        if (meshEffect.GetTextureResource() == nullptr && textureRepository) {
             std::string texturePath = meshEffect.Renderer().texturePath;
-            meshEffect.SetTextureResource(Engine::GetTextureRepository()->GetTextureResource(texturePath));
+            if (!texturePath.empty()) {
+                meshEffect.SetTextureResource(textureRepository->GetTextureResource(texturePath));
+            }
         }
-        if (meshEffect.GetModelResource() == nullptr) {
+        if (meshEffect.GetModelResource() == nullptr && modelRepository) {
             std::string modelPath = meshEffect.Renderer().modelPath;
-            meshEffect.SetModelResource(Engine::GetModelRepository()->GetModel(modelPath));
+            if (!modelPath.empty()) {
+                meshEffect.SetModelResource(modelRepository->GetModel(modelPath));
+            }
         }
+
+        evaluatedState.visible = meshEffect.IsPlaying() && meshEffect.GetModelResource();
     }
 }
 

@@ -15,6 +15,7 @@
 #include "Engine/Framework/Processor/animation_processor.h"
 #include "Engine/Framework/Processor/sprite_animation_processor.h"
 #include "Engine/Framework/Processor/particle_system_processor.h"
+#include "Engine/Framework/Processor/mesh_effect_processor.h"
 
 #include <vector>
 #include "Engine/render_view.h"
@@ -29,6 +30,7 @@ private:
     AnimationProcessor m_animationProcessor;
     SpriteAnimationProcessor m_spriteAnimationProcessor;
     ParticleSystemProcessor m_particleSystemProcessor;
+    MeshEffectProcessor m_meshEffectProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
     std::vector<RenderView> m_gameRenderViews; // ゲーム用RenderView群

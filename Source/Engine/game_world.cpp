@@ -21,6 +21,7 @@ void GameWorld::Initialize()
     m_animationProcessor.Initialize();
     m_spriteAnimationProcessor.Initialize();
     m_particleSystemProcessor.Initialize();
+    m_meshEffectProcessor.Initialize();
     m_behaviorProcessor.Initialize();
     m_cameraProcessor.Initialize();
     m_renderProcessor.Initialize();
@@ -47,6 +48,7 @@ void GameWorld::Finalize()
     m_animationProcessor.Finalize();
     m_spriteAnimationProcessor.Finalize();
     m_particleSystemProcessor.Finalize();
+    m_meshEffectProcessor.Finalize();
     m_behaviorProcessor.Finalize();
     m_cameraProcessor.Finalize();
     m_renderProcessor.Finalize();
@@ -70,6 +72,7 @@ void GameWorld::Update()
     m_animationProcessor.Process(scene); // アニメーション制御プロセッサー処理
     m_spriteAnimationProcessor.Process(scene); // スプライトアニメーション制御プロセッサー処理
     m_particleSystemProcessor.Process(scene);
+    m_meshEffectProcessor.Process(scene);
     m_behaviorProcessor.Process(scene); // Behavior制御プロセッサー処理
 }
 
