@@ -9,6 +9,7 @@
 #include <iostream>
 #include <filesystem>
 
+#include "Engine/Asset/ParticleAsset/particle_system_asset_loader.h"
 #include "Engine/engine_service_locator.h"
 
 namespace {

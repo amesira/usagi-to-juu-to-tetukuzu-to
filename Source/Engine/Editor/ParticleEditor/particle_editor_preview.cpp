@@ -27,12 +27,12 @@ namespace
 ParticleEditorPreview::ParticleEditorPreview(EditorContext* editorContext)
     : m_editorContext(editorContext)
 {
-    // m_processor.Initialize();
+    m_processor.Initialize();
 }
 
 ParticleEditorPreview::~ParticleEditorPreview()
 {
-    // m_processor.Finalize();
+    m_processor.Finalize();
 }
 
 /// @brief プレビュー用のパーティクルシステムを作成する
@@ -41,7 +41,7 @@ bool ParticleEditorPreview::GeneratePreviewObject(const ParticleSystemDesc& desc
     // EditorContextが有効で、シーンが存在する場合のみプレビューオブジェクトを生成する
     if (!m_editorContext || !m_editorContext->scene) return false;
 
-    if (m_scene != m_editorContext->scene || !IsPreviewObjectValid())
+    if (m_scene != m_editorContext->scene || !m_particleSystem)
     {
         // 既存のプレビューオブジェクトが存在する場合は破棄する
         Cleanup();
@@ -61,7 +61,6 @@ bool ParticleEditorPreview::GeneratePreviewObject(const ParticleSystemDesc& desc
             return false;
         }
 
-        m_objectId = object->GetID();
         Apply(desc, true); // 初期設定を適用して再生を開始する
     }
     return true;
@@ -93,15 +92,8 @@ void ParticleEditorPreview::Apply(const ParticleSystemDesc& desc, bool restart)
 /// @brief プレビュー用のパーティクルシステムを更新する
 void ParticleEditorPreview::Update()
 {
-    // プレビュー用のオブジェクトが有効でない場合は、パーティクルシステムを破棄する
-    if (!IsPreviewObjectValid())
-    {
-        m_particleSystem = nullptr;
-        return;
-    }
-
-    // Pause中、またはパーティクルシステムが再生中でない場合は更新しない
-    if (m_paused || !m_particleSystem->IsPlaying()) return;
+    if (!m_particleSystem) return;
+    if (!m_particleSystem->IsPlaying()) return;
 
     // === EditorモードがEditの場合のみ、ParticleSystemProcessorを使用してパーティクルシステムを更新する ===
     // FIX: ここにProcessorの更新を持たせるべきかは、もう少し考えた方が良いかも
@@ -114,66 +106,53 @@ void ParticleEditorPreview::Update()
 /// @brief プレビュー用のオブジェクトを破棄する
 void ParticleEditorPreview::Cleanup()
 {
-    if (IsPreviewObjectValid())
+    if (m_particleSystem)
     {
-        if (GameObject* object = m_scene->GetGameObjectByID(m_objectId))
+        if (GameObject* object = m_scene->GetGameObjectByID(m_particleSystem->GetOwner()->GetID()))
         {
             object->SetActive(false);
             object->Destroy();
         }
     }
 
-    m_objectId = static_cast<unsigned int>(-1);
     m_particleSystem = nullptr;
-    m_paused = false;
 }
 
 /// @brief シーンリロード時の処理
 void ParticleEditorPreview::OnSceneDestroyed()
 {
     m_scene = nullptr;
-    m_objectId = static_cast<unsigned int>(-1);
     m_particleSystem = nullptr;
-    m_paused = false;
 }
 
-/// @brief プレビュー用のパーティクルシステムが再生中かどうかを確認する
-bool ParticleEditorPreview::IsPlaying() const
-{
-    return m_particleSystem && m_particleSystem->IsPlaying() && !m_paused;
-}
-
-/// @brief プレビュー用のオブジェクトが有効かどうかを確認する
-bool ParticleEditorPreview::IsPreviewObjectValid() const
-{
-    if (!m_scene || !m_particleSystem || m_objectId == static_cast<unsigned int>(-1)) return false;
-
-    // プレビュー用のオブジェクトが存在し、名前が一致するかどうかを確認する
-    GameObject* object = m_scene->GetGameObjectByID(m_objectId);
-    return object && object->GetName() == PreviewObjectName &&
-        object->GetComponent<ParticleSystemComponent>() == m_particleSystem;
-}
-
-/// @brief ParticleEditorのPlay
+#pragma region ParticleSystemComponentの関数のラッパー
 void ParticleEditorPreview::Play()
 {
     if (!m_particleSystem) return;
-    m_paused = false;
     m_particleSystem->Play();
 }
 
-/// @brief ParticleEditorのPause
 void ParticleEditorPreview::Pause()
 {
     if (!m_particleSystem) return;
-    m_paused = true;
     m_particleSystem->Pause();
 }
 
-/// @brief ParticleEditorのStop
 void ParticleEditorPreview::Stop()
 {
     if (!m_particleSystem) return;
-    m_paused = false;
     m_particleSystem->Stop();
 }
+
+bool ParticleEditorPreview::IsPlaying() const
+{
+    if (!m_particleSystem) return false;
+    return m_particleSystem->IsPlaying();
+}
+
+int ParticleEditorPreview::GetParticleCount() const
+{
+    if (!m_particleSystem) return -1;
+    return m_particleSystem->Particles().size();
+}
+#pragma endregion

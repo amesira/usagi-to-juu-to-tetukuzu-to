@@ -19,13 +19,10 @@ private:
     IScene* m_scene = nullptr;
 
     // === プレビュー用のオブジェクト ===
-    unsigned int m_objectId = static_cast<unsigned int>(-1);
     ParticleSystemComponent* m_particleSystem = nullptr;
 
     // MEMO: 通常はPlay中にGameWorldにて更新するが、Edit中はEditorが更新するため、Processorを保持しておく
     ParticleSystemProcessor m_processor;
-
-    bool m_paused = false;
 
 public:
     explicit ParticleEditorPreview(EditorContext* editorContext);
@@ -36,9 +33,7 @@ public:
 
     /// @brief プレビュー用のパーティクルシステムに設定を適用する
     void Apply(const ParticleSystemDesc& desc, bool restart);
-    /// @brief プレビュー用のパーティクルシステムを更新する
     void Update();
-    /// @brief プレビュー用のオブジェクトを破棄する
     void Cleanup();
 
     /// @brief シーンリロード時の処理
@@ -48,11 +43,8 @@ public:
     void Pause();
     void Stop();
 
-    bool IsCreated() const { return m_particleSystem != nullptr; }
     bool IsPlaying() const;
-    ParticleSystemComponent* GetParticleSystem() { return m_particleSystem; }
 
-private:
-    bool IsPreviewObjectValid() const;
+    int GetParticleCount() const;
 
 };

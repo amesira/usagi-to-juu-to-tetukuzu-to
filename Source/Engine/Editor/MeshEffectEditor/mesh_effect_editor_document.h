@@ -1,28 +1,28 @@
 //---------------------------------------------------
-// File  ：_/Editor/ParticleEditor/particle_editor_document.h
-// Date  ：2026/07/26
+// File  ：_/Editor/MeshEffectEditor/mesh_effect_editor_document.h
+// Date  ：2026/08/23
 // Author：Miu Kitamura
 // 
-// ・ParticleEditorのドキュメント管理クラス（アセットの読み書き、編集状態の管理など）
+// ・MeshEffectEditorのドキュメント管理クラス
+// （アセットの読み書き、編集状態の管理など）
 //---------------------------------------------------
 #pragma once
 #include <filesystem>
 #include <string>
 
-#include "Engine/Asset/ParticleAsset/particle_system_asset.h"
+#include "Engine/Asset/MeshEffectAsset/mesh_effect_asset.h"
 
-class ParticleEditorDocument {
+class MeshEffectEditorDocument {
 private:
-    // === 編集中のパーティクルアセットとそのパス ===
-    ParticleSystemAsset m_asset;
+    MeshEffectAsset m_asset;
     std::filesystem::path m_assetPath;
 
-    // === 編集状態の管理 ===
+    // 編集状態の管理
     bool m_dirty = false;
     std::string m_statusMessage;
 
 public:
-    ParticleEditorDocument() { New(); }
+    MeshEffectEditorDocument() { New(); }
 
     void New();
     bool Open(const std::filesystem::path& path);
@@ -31,16 +31,16 @@ public:
         std::filesystem::path& path,
         bool liveApplyToScene = true);
 
-    ParticleSystemDesc& GetEditingDesc() { return const_cast<ParticleSystemDesc&>(m_asset.GetDesc()); }
-    const ParticleSystemDesc& GetEditingDesc() const { return m_asset.GetDesc(); }
-
+    MeshEffectDesc& GetEditingDesc() { return const_cast<MeshEffectDesc&>(m_asset.GetDesc()); }
+    const MeshEffectDesc& GetEditingDesc() const { return m_asset.GetDesc(); }
+    
     const std::filesystem::path& GetAssetPath() const { return m_assetPath; }
     bool HasAssetPath() const { return !m_assetPath.empty(); }
-
-    // 編集状態の管理
+    
+    // 変更状態の管理
     bool IsDirty() const { return m_dirty; }
     void MarkDirty() { m_dirty = true; }
 
+    /// @brief 現在のステータスメッセージを取得する
     const std::string& GetStatusMessage() const { return m_statusMessage; }
-
 };

@@ -179,11 +179,8 @@ void ParticleSystemEditorWindow::DrawPreview()
     ImGui::SameLine();
     if (ImGui::Button("Stop")) m_preview.Stop();
 
-    if (ParticleSystemComponent* particleSystem = m_preview.GetParticleSystem())
-    {
-        ImGui::SameLine();
-        ImGui::TextDisabled("Particles: %zu", particleSystem->Particles().size());
-    }
+    ImGui::SameLine();
+    ImGui::TextDisabled("Particles: %zu", m_preview.GetParticleCount());
 
     // SceneViewのレンダリング結果を表示する子ウィンドウを作成する
     ImGui::BeginChild("ParticlePreview", { 0.0f, 0.0f }, true);
