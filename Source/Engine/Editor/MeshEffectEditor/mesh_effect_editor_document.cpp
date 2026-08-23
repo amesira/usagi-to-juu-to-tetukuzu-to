@@ -46,6 +46,7 @@ bool MeshEffectEditorDocument::Open(const std::filesystem::path& path)
         return false;
     }
 
+    // 成功した場合は、読み込んだアセットをドキュメントに設定する
     m_asset = std::move(loadedAsset);
     m_assetPath = path.lexically_normal();
     m_dirty = false;
@@ -100,6 +101,7 @@ bool MeshEffectEditorDocument::SaveAs(
         return false;
     }
 
+    // 成功した場合は、保存したパスをドキュメントに設定する
     m_assetPath = path.lexically_normal();
     m_dirty = false;
     loader->Reload(path, liveApplyToScene);

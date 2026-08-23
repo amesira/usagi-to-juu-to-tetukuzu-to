@@ -269,30 +269,106 @@ namespace FieldEditor
         static bool Draw(const char* label, MiCurve::Float3Curve& curve, const DefaultFieldOptions& options)
         {
             if (!ImGui::TreeNode(label)) return false;
-
             bool changed = false;
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("X", curve.x, options);
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("Y", curve.y, options);
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("Z", curve.z, options);
+            for (int index = 0; index < static_cast<int>(curve.keys.size()); index++)
+            {
+                ImGui::PushID(index);
+                changed |= ImGui::DragFloat("Time", &curve.keys[index].time, 0.01f, 0.0f, 1.0f);
+                changed |= ImGui::DragFloat3("Value", &curve.keys[index].value.x, 0.01f);
+
+                if (ImGui::Button("Remove")) {
+                    curve.keys.erase(curve.keys.begin() + index);
+                    changed = true;
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::Separator();
+                ImGui::PopID();
+            }
+            if (ImGui::Button("Add Key")) {
+                curve.keys.push_back({ 1.0f, { 1.0f, 1.0f, 1.0f} });
+                changed = true;
+            }
+            if (changed) {
+                std::sort(curve.keys.begin(), curve.keys.end(), [](const auto& left, const auto& right) {
+                    return left.time < right.time;
+                    });
+            }
 
             ImGui::TreePop();
             return changed;
         }
     };
 
-    /// @brief FieldEditorのColorCurve型の特殊化
+    /// @brief FieldEditorのFloat4Curve型の特殊化
     template<>
-    class FieldEditor<MiCurve::ColorCurve, DefaultFieldOptions> {
+    class FieldEditor<MiCurve::Float4Curve, DefaultFieldOptions> {
     public:
-        static bool Draw(const char* label, MiCurve::ColorCurve& curve, const DefaultFieldOptions& options)
+        static bool Draw(const char* label, MiCurve::Float4Curve& curve, const DefaultFieldOptions& options)
         {
             if (!ImGui::TreeNode(label)) return false;
-
             bool changed = false;
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("R", curve.r, options);
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("G", curve.g, options);
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("B", curve.b, options);
-            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("A", curve.a, options);
+            for (int index = 0; index < static_cast<int>(curve.keys.size()); index++)
+            {
+                ImGui::PushID(index);
+                changed |= ImGui::DragFloat("Time", &curve.keys[index].time, 0.01f, 0.0f, 1.0f);
+                changed |= ImGui::DragFloat4("Value", &curve.keys[index].value.x, 0.01f);
+
+                if (ImGui::Button("Remove")) {
+                    curve.keys.erase(curve.keys.begin() + index);
+                    changed = true;
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::Separator();
+                ImGui::PopID();
+            }
+            if (ImGui::Button("Add Key")) {
+                curve.keys.push_back({ 1.0f, { 1.0f, 1.0f, 1.0f, 1.0f} });
+                changed = true;
+            }
+            if (changed) {
+                std::sort(curve.keys.begin(), curve.keys.end(), [](const auto& left, const auto& right) {
+                    return left.time < right.time;
+                    });
+            }
+
+            ImGui::TreePop();
+            return changed;
+        }
+    };
+
+    template<>
+    class FieldEditor<MiCurve::Float4Curve, ColorFieldOptions> {
+    public:
+        static bool Draw(const char* label, MiCurve::Float4Curve& curve, const ColorFieldOptions& options)
+        {
+            if (!ImGui::TreeNode(label)) return false;
+            bool changed = false;
+            for (int index = 0; index < static_cast<int>(curve.keys.size()); index++)
+            {
+                ImGui::PushID(index);
+                changed |= ImGui::DragFloat("Time", &curve.keys[index].time, 0.01f, 0.0f, 1.0f);
+                changed |= ImGui::ColorEdit4("Value", &curve.keys[index].value.x, options.useAlpha ? 0 : ImGuiColorEditFlags_NoAlpha);
+
+                if (ImGui::Button("Remove")) {
+                    curve.keys.erase(curve.keys.begin() + index);
+                    changed = true;
+                    ImGui::PopID();
+                    break;
+                }
+                ImGui::Separator();
+                ImGui::PopID();
+            }
+            if (ImGui::Button("Add Key")) {
+                curve.keys.push_back({ 1.0f, { 1.0f, 1.0f, 1.0f, 1.0f} });
+                changed = true;
+            }
+            if (changed) {
+                std::sort(curve.keys.begin(), curve.keys.end(), [](const auto& left, const auto& right) {
+                    return left.time < right.time;
+                    });
+            }
 
             ImGui::TreePop();
             return changed;

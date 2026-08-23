@@ -51,7 +51,6 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     // Waveを適用
     const float phase = dot(uv, g_UVWaveDirection) * g_UVWaveFrequency + g_EffectTime * g_UVWaveSpeed;
     uv += g_UVWaveDirection * sin(phase) * g_UVWaveAmplitude;
-    uv = frac(uv); // 0～1の範囲に収める
     
     // 最後にアトラス上の対象領域へ変換
     uv = g_FrameUVRect.xy + uv * g_FrameUVRect.zw;

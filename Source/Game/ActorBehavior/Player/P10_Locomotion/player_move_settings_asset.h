@@ -36,9 +36,9 @@ namespace PlayerMoveSettings {
         // === 重力設定 ===
         MiCurve::FloatCurve gravityScale = {
             .keys = {
-                MiCurve::CurveKey{ 1.0f, 1.0f },    // 上昇
-                MiCurve::CurveKey{ 0.0f, 0.3f },    // 頂上付近
-                MiCurve::CurveKey{ -1.0f, 1.5f },   // 下降
+                MiCurve::FloatCurveKey{ 1.0f, 1.0f },    // 上昇
+                MiCurve::FloatCurveKey{ 0.0f, 0.3f },    // 頂上付近
+                MiCurve::FloatCurveKey{ -1.0f, 1.5f },   // 下降
             }
         };
     };

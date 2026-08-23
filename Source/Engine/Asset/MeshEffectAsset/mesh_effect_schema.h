@@ -31,6 +31,7 @@ namespace MeshEffectSchema
     {
         static const EnumFieldOptions<MeshEffectData::BillboardMode> options{
             {
+                { MeshEffectData::BillboardMode::None, "None", "None" },
                 { MeshEffectData::BillboardMode::View, "View", "View" },
                 { MeshEffectData::BillboardMode::Horizontal, "Horizontal", "Horizontal" }
             }
@@ -157,7 +158,7 @@ namespace MeshEffectSchema
         using Module = MeshEffectData::GradientModule;
         static const auto schema = FieldSchema{
             MakeField("enabled", "Enabled", &Module::enabled),
-            MakeField("color", "Color", &Module::color)
+            MakeField("color", "Color", &Module::color, ColorFieldOptions{})
         };
         return schema;
     }

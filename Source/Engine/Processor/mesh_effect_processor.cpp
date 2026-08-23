@@ -231,12 +231,8 @@ void MeshEffectProcessor::Process(IScene* pScene)
         // === Scrollの更新 ===
         if (meshEffect.Scroll().enabled) {
             evaluatedState.buffer.uvTiling = meshEffect.Scroll().tiling;
-            evaluatedState.buffer.uvOffset.x = std::fmod(
-                meshEffect.Scroll().offset.x + meshEffect.Scroll().scrollSpeed.x * currentTime,
-                1.0f);
-            evaluatedState.buffer.uvOffset.y = std::fmod(
-                meshEffect.Scroll().offset.y + meshEffect.Scroll().scrollSpeed.y * currentTime,
-                1.0f);
+            evaluatedState.buffer.uvOffset.x = meshEffect.Scroll().offset.x + meshEffect.Scroll().scrollSpeed.x * currentTime;
+            evaluatedState.buffer.uvOffset.y = meshEffect.Scroll().offset.y + meshEffect.Scroll().scrollSpeed.y * currentTime;
         }
 
         // === Waveの更新 ===

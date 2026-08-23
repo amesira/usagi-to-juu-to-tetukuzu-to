@@ -20,6 +20,7 @@ namespace MeshEffectData
         Speed,
     };
     enum BillboardMode {
+        None,
         View,
         Horizontal,
     };
@@ -33,7 +34,7 @@ namespace MeshEffectData
         PingPong,
     };
     enum class WaveType {
-        Vertex,
+        Vertex, // 未実装
         UV,
     };
 
@@ -48,8 +49,8 @@ namespace MeshEffectData
     /// @brief TransformModuleの定義（サイズ変化や回転などの変換を行うモジュール）
     struct TransformModule {
         bool enabled = true;
-        MiCurve::Float3Curve scaleOverLifetime = MiCurve::Float3Curve(1.0f);
-        MiCurve::Float3Curve rotationOverLifetime = MiCurve::Float3Curve(0.0f);
+        MiCurve::Float3Curve scaleOverLifetime = { { {0.0f, {1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f}} } };
+        MiCurve::Float3Curve rotationOverLifetime = { { {0.0f, {0.0f, 0.0f, 0.0f}}, {1.0f, {0.0f, 0.0f, 0.0f}} } };
     };
 
     /// @brief FlipbookModuleの定義（フリップブックアニメーションを行うモジュール）
@@ -87,7 +88,8 @@ namespace MeshEffectData
     /// @brief GradientModuleの定義（色の変化を行うモジュール）
     struct GradientModule {
         bool enabled = false;
-        MiCurve::ColorCurve color = {};
+        // UV座標などによって色を変化させたい
+        MiCurve::Float4Curve color = {}; // 色の変化
     };
 
     /// @brief RendererModuleの定義（メッシュの描画設定を行うモジュール）
@@ -97,7 +99,7 @@ namespace MeshEffectData
 
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };       // テクスチャのUV矩形
 
-        BillboardMode billboardMode = BillboardMode::View;  // ビルボードの種類
+        BillboardMode billboardMode = BillboardMode::None;  // ビルボードの種類
         BlendMode blendMode = BlendMode::AlphaBlend;        // ブレンドモード
     };
 }

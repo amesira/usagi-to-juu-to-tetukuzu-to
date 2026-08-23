@@ -250,16 +250,16 @@ namespace FieldSerialization
         }
     };
 
-    /// @brief FieldSerializerのColorCurve型の特殊化
+    /// @brief FieldSerializerのFloat4Curve型の特殊化
     template<class TOptions>
-    class FieldSerializer<MiCurve::ColorCurve, TOptions> {
+    class FieldSerializer<MiCurve::Float4Curve, TOptions> {
     public:
-        static json Serialize(const MiCurve::ColorCurve& value, const TOptions& options)
+        static json Serialize(const MiCurve::Float4Curve& value, const TOptions& options)
         {
             return MiCurveJson::Serialize(value);
         }
 
-        static bool Deserialize(const json& jsonValue, MiCurve::ColorCurve& value, const TOptions& options)
+        static bool Deserialize(const json& jsonValue, MiCurve::Float4Curve& value, const TOptions& options)
         {
             return MiCurveJson::Deserialize(jsonValue, value);
         }

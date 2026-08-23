@@ -19,32 +19,24 @@ namespace MiCurveJson
     inline json Serialize(const MiCurve::FloatCurve& curve)
     {
         json keys = json::array();
-
-        for (const MiCurve::CurveKey& key : curve.keys)
+        for (const MiCurve::FloatCurveKey& key : curve.keys)
         {
             keys.push_back({
                 { "time", key.time },
                 { "value", key.value },
             });
         }
-
         return json{ { "keys", std::move(keys) } };
     }
 
     /// @brief JSONからMiCurve::FloatCurveをデシリアライズする
     inline bool Deserialize(const json& jsonValue, MiCurve::FloatCurve& outCurve)
     {
-        if (!jsonValue.is_object())
-        {
-            return false;
-        }
+        if (!jsonValue.is_object()) return false;
 
         // "keys"フィールドが存在し、配列であることを確認
         const auto keysIt = jsonValue.find("keys");
-        if (keysIt == jsonValue.end() || !keysIt->is_array())
-        {
-            return false;
-        }
+        if (keysIt == jsonValue.end() || !keysIt->is_array()) return false;
 
         MiCurve::FloatCurve loadedCurve;
         loadedCurve.keys.clear();
@@ -53,10 +45,7 @@ namespace MiCurveJson
         // === 各キーをデシリアライズ ===
         for (const json& keyJson : *keysIt)
         {
-            if (!keyJson.is_object())
-            {
-                return false;
-            }
+            if (!keyJson.is_object()) return false;
 
             const auto timeIt = keyJson.find("time");
             const auto valueIt = keyJson.find("value");
@@ -76,7 +65,7 @@ namespace MiCurveJson
         std::stable_sort(
             loadedCurve.keys.begin(),
             loadedCurve.keys.end(),
-            [](const MiCurve::CurveKey& lhs, const MiCurve::CurveKey& rhs)
+            [](const MiCurve::FloatCurveKey& lhs, const MiCurve::FloatCurveKey& rhs)
             {
                 return lhs.time < rhs.time;
             });
@@ -87,55 +76,135 @@ namespace MiCurveJson
 
     inline json Serialize(const MiCurve::Float3Curve& curve)
     {
-        return {
-            { "x", Serialize(curve.x) },
-            { "y", Serialize(curve.y) },
-            { "z", Serialize(curve.z) }
-        };
+        json keys = json::array();
+        for (const MiCurve::Float3CurveKey& key : curve.keys)
+        {
+            keys.push_back({
+                { "time", key.time },
+                { "valueX", key.value.x },
+                { "valueY", key.value.y },
+                { "valueZ", key.value.z },
+                });
+        }
+        return json{ { "keys", std::move(keys) } };
     }
 
     inline bool Deserialize(const json& jsonValue, MiCurve::Float3Curve& outCurve)
     {
         if (!jsonValue.is_object()) return false;
 
-        MiCurve::Float3Curve loadedCurve = outCurve;
-        const auto xIt = jsonValue.find("x");
-        const auto yIt = jsonValue.find("y");
-        const auto zIt = jsonValue.find("z");
-        if (xIt == jsonValue.end() || yIt == jsonValue.end() || zIt == jsonValue.end()) return false;
-        if (!Deserialize(*xIt, loadedCurve.x) ||
-            !Deserialize(*yIt, loadedCurve.y) ||
-            !Deserialize(*zIt, loadedCurve.z)) return false;
+        // "keys"フィールドが存在し、配列であることを確認
+        const auto keysIt = jsonValue.find("keys");
+        if (keysIt == jsonValue.end() || !keysIt->is_array()) return false;
+
+        MiCurve::Float3Curve loadedCurve;
+        loadedCurve.keys.clear();
+        loadedCurve.keys.reserve(keysIt->size());
+
+        // === 各キーをデシリアライズ ===
+        for (const json& keyJson : *keysIt)
+        {
+            if (!keyJson.is_object()) return false;
+
+            const auto timeIt = keyJson.find("time");
+            const auto valueXIt = keyJson.find("valueX");
+            const auto valueYIt = keyJson.find("valueY");
+            const auto valueZIt = keyJson.find("valueZ");
+            if (timeIt == keyJson.end() || !timeIt->is_number() ||
+                valueXIt == keyJson.end() || !valueXIt->is_number() ||
+                valueYIt == keyJson.end() || !valueYIt->is_number() ||
+                valueZIt == keyJson.end() || !valueZIt->is_number())
+            {
+                return false;
+            }
+
+            loadedCurve.keys.push_back({
+                timeIt->get<float>(),
+                {
+                    valueXIt->get<float>(),
+                    valueYIt->get<float>(),
+                    valueZIt->get<float>(),
+                }});
+        }
+
+        // キーを時間順にソートする
+        std::stable_sort(
+            loadedCurve.keys.begin(),
+            loadedCurve.keys.end(),
+            [](const MiCurve::Float3CurveKey& lhs, const MiCurve::Float3CurveKey& rhs)
+            {
+                return lhs.time < rhs.time;
+            });
 
         outCurve = std::move(loadedCurve);
         return true;
     }
 
-    inline json Serialize(const MiCurve::ColorCurve& curve)
+    inline json Serialize(const MiCurve::Float4Curve& curve)
     {
-        return {
-            { "r", Serialize(curve.r) },
-            { "g", Serialize(curve.g) },
-            { "b", Serialize(curve.b) },
-            { "a", Serialize(curve.a) }
-        };
+        json keys = json::array();
+        for (const MiCurve::Float4CurveKey& key : curve.keys)
+        {
+            keys.push_back({
+                { "time", key.time },
+                { "valueX", key.value.x },
+                { "valueY", key.value.y },
+                { "valueZ", key.value.z },
+                { "valueW", key.value.w },
+                });
+        }
+        return json{ { "keys", std::move(keys) } };
     }
 
-    inline bool Deserialize(const json& jsonValue, MiCurve::ColorCurve& outCurve)
+    inline bool Deserialize(const json& jsonValue, MiCurve::Float4Curve& outCurve)
     {
         if (!jsonValue.is_object()) return false;
 
-        MiCurve::ColorCurve loadedCurve = outCurve;
-        const auto rIt = jsonValue.find("r");
-        const auto gIt = jsonValue.find("g");
-        const auto bIt = jsonValue.find("b");
-        const auto aIt = jsonValue.find("a");
-        if (rIt == jsonValue.end() || gIt == jsonValue.end() ||
-            bIt == jsonValue.end() || aIt == jsonValue.end()) return false;
-        if (!Deserialize(*rIt, loadedCurve.r) ||
-            !Deserialize(*gIt, loadedCurve.g) ||
-            !Deserialize(*bIt, loadedCurve.b) ||
-            !Deserialize(*aIt, loadedCurve.a)) return false;
+        // "keys"フィールドが存在し、配列であることを確認
+        const auto keysIt = jsonValue.find("keys");
+        if (keysIt == jsonValue.end() || !keysIt->is_array()) return false;
+
+        MiCurve::Float4Curve loadedCurve;
+        loadedCurve.keys.clear();
+        loadedCurve.keys.reserve(keysIt->size());
+
+        // === 各キーをデシリアライズ ===
+        for (const json& keyJson : *keysIt)
+        {
+            if (!keyJson.is_object()) return false;
+
+            const auto timeIt = keyJson.find("time");
+            const auto valueXIt = keyJson.find("valueX");
+            const auto valueYIt = keyJson.find("valueY");
+            const auto valueZIt = keyJson.find("valueZ");
+            const auto valueWIt = keyJson.find("valueW");
+            if (timeIt == keyJson.end() || !timeIt->is_number() ||
+                valueXIt == keyJson.end() || !valueXIt->is_number() ||
+                valueYIt == keyJson.end() || !valueYIt->is_number() ||
+                valueZIt == keyJson.end() || !valueZIt->is_number() ||
+                valueWIt == keyJson.end() || !valueWIt->is_number())
+            {
+                return false;
+            }
+
+            loadedCurve.keys.push_back({
+                timeIt->get<float>(),
+                {
+                    valueXIt->get<float>(),
+                    valueYIt->get<float>(),
+                    valueZIt->get<float>(),
+                    valueWIt->get<float>(),
+                } });
+        }
+
+        // キーを時間順にソートする
+        std::stable_sort(
+            loadedCurve.keys.begin(),
+            loadedCurve.keys.end(),
+            [](const MiCurve::Float4CurveKey& lhs, const MiCurve::Float4CurveKey& rhs)
+            {
+                return lhs.time < rhs.time;
+            });
 
         outCurve = std::move(loadedCurve);
         return true;

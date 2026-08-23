@@ -12,167 +12,91 @@
         },
         "gradient": {
             "color": {
-                "a": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 1.0
-                        }
-                    ]
-                },
-                "b": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 0.6700000166893005
-                        }
-                    ]
-                },
-                "g": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 0.7099999785423279
-                        }
-                    ]
-                },
-                "r": {
-                    "keys": [
-                        {
-                            "time": 1.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 1.0
-                        }
-                    ]
-                }
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    }
+                ]
             },
             "enabled": true
         },
         "main": {
-            "duration": 1.0,
+            "duration": 34.70000076293945,
             "loop": true,
             "playOnAwake": true,
             "simulationSpeed": 1.0
         },
         "renderer": {
-            "billboardMode": "Horizontal",
-            "blendMode": "AlphaBlend",
-            "modelPath": "asset/Model/bullet.fbx",
-            "texturePath": "asset/Texture/hologram_noise.png",
+            "billboardMode": "None",
+            "blendMode": "Additive",
+            "modelPath": "asset/Model/cube.fbx",
+            "texturePath": "asset/Texture/Dither.png",
             "uvRect": [
                 0.0,
                 0.0,
-                0.5,
+                1.0,
                 1.0
             ]
         },
         "scroll": {
-            "enabled": false,
+            "enabled": true,
             "offset": [
                 0.0,
                 0.0
             ],
             "scrollSpeed": [
-                0.0,
-                0.8700000047683716
+                2.2799999713897705,
+                0.699999988079071
             ],
             "tiling": [
-                1.0,
-                1.0
+                9.470000267028809,
+                9.489999771118164
             ]
         },
         "transform": {
-            "enabled": true,
+            "enabled": false,
             "rotationOverLifetime": {
-                "x": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 0.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 0.0
-                        }
-                    ]
-                },
-                "y": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 0.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 0.0
-                        }
-                    ]
-                },
-                "z": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 0.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 0.0
-                        }
-                    ]
-                }
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 0.0,
+                        "valueY": 0.0,
+                        "valueZ": 0.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueX": 0.0,
+                        "valueY": 0.0,
+                        "valueZ": 0.0
+                    }
+                ]
             },
             "scaleOverLifetime": {
-                "x": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 1.3799999952316284
-                        }
-                    ]
-                },
-                "y": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 1.0
-                        }
-                    ]
-                },
-                "z": {
-                    "keys": [
-                        {
-                            "time": 0.0,
-                            "value": 1.0
-                        },
-                        {
-                            "time": 1.0,
-                            "value": 1.0
-                        }
-                    ]
-                }
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    }
+                ]
             }
         },
         "wave": {
@@ -180,11 +104,7 @@
                 "keys": [
                     {
                         "time": 0.0,
-                        "value": 1.0
-                    },
-                    {
-                        "time": 1.0,
-                        "value": 1.0
+                        "value": 0.10000000149011612
                     }
                 ]
             },
@@ -193,8 +113,8 @@
                 1.0
             ],
             "enabled": true,
-            "frequency": 1.0,
-            "speed": 1.0,
+            "frequency": 46.599998474121094,
+            "speed": 19.100000381469727,
             "type": "UV"
         }
     },
