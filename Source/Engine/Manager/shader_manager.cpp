@@ -107,9 +107,6 @@ void ShaderManager::BindTransformCB(const TransformBuffer& transformData)
         tb->invWorld = XMMatrixInverse(nullptr, transposedWorld);
     }
     m_pContext->Unmap(m_transformCB->buffer.Get(), 0);
-
-    /*TransformBuffer data = { transposedWorld, transposedNormal, XMMatrixInverse(nullptr, transposedWorld) };
-    m_pContext->UpdateSubresource(m_transformCB->buffer.Get(), 0, nullptr, &data, 0, 0);*/
 }
 // CameraBufferを更新する関数
 void ShaderManager::BindCameraCB(const CameraBuffer& cameraData)

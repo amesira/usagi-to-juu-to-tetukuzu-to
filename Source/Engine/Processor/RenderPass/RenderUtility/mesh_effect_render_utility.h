@@ -34,7 +34,7 @@ namespace MeshEffectRenderUtility {
         const DirectX::XMMATRIX& billboardRotation);
 
     /// @brief ピクセルシェーダー用の定数バッファを更新する
-    bool UpdatePixelConstantBuffer(
+    bool UpdateCB(
         ID3D11DeviceContext* context,
         ID3D11Buffer* constantBuffer,
         const MeshEffectRenderData::MeshEffectBuffer& bufferData);

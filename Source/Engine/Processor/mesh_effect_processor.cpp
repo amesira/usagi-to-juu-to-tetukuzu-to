@@ -205,6 +205,7 @@ void MeshEffectProcessor::Process(IScene* pScene)
         evaluatedState.buffer = {};
         evaluatedState.buffer.frameUVRect = meshEffect.Renderer().uvRect;
         evaluatedState.buffer.effectTime = currentTime;
+        evaluatedState.buffer.effectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
         evaluatedState.blendMode = meshEffect.Renderer().blendMode;
 
         // === Transformの更新 ===

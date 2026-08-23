@@ -63,23 +63,18 @@ namespace MeshEffectRenderUtility {
     }
 
     /// @brief ピクセルシェーダー用の定数バッファを更新する
-    bool UpdatePixelConstantBuffer(
+    bool UpdateCB(
         ID3D11DeviceContext* context,
         ID3D11Buffer* constantBuffer,
         const MeshEffectRenderData::MeshEffectBuffer& bufferData)
     {
         if (!context || !constantBuffer) return false;
-
-        D3D11_MAPPED_SUBRESOURCE mappedResource = {};
-        const HRESULT hr = context->Map(
-            constantBuffer,
-            0,
-            D3D11_MAP_WRITE_DISCARD,
-            0,
-            &mappedResource);
-        if (FAILED(hr)) return false;
-
-        *static_cast<MeshEffectRenderData::MeshEffectBuffer*>(mappedResource.pData) = bufferData;
+        D3D11_MAPPED_SUBRESOURCE msr = {};
+        context->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+        {
+            MeshEffectRenderData::MeshEffectBuffer* cbData = (MeshEffectRenderData::MeshEffectBuffer*)msr.pData;
+            *cbData = bufferData;
+        }
         context->Unmap(constantBuffer, 0);
         return true;
     }

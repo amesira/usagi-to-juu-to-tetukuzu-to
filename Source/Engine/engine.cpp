@@ -91,6 +91,7 @@ void MiEngine::Update()
 
         // シーン破棄時の処理を呼び出す
         m_editorContext->selectedObject = nullptr; // 選択オブジェクトをリセット
+        m_editorContext->scene = nullptr;
         m_editorManager.OnSceneDestroyed(); // Editor側のシーン破棄処理を呼び出す
     }
 

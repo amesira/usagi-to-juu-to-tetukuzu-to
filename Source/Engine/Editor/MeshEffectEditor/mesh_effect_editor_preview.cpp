@@ -26,7 +26,6 @@ MeshEffectEditorPreview::MeshEffectEditorPreview(EditorContext* editorContext)
 
 MeshEffectEditorPreview::~MeshEffectEditorPreview()
 {
-    Cleanup();
     m_processor.Finalize();
 }
 
@@ -78,7 +77,7 @@ void MeshEffectEditorPreview::Update()
 
 void MeshEffectEditorPreview::Cleanup()
 {
-    if (m_meshEffect && m_editorContext && m_editorContext->scene) {
+    if (m_meshEffect && m_editorContext->scene) {
         // プレビュー用のGameObjectを破棄する
         if (GameObject* object = m_editorContext->scene->GetGameObjectByID(
             m_meshEffect->GetOwner()->GetID())) {

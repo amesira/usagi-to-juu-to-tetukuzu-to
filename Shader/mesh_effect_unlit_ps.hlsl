@@ -38,6 +38,7 @@ cbuffer MeshEffectPixelBuffer : register(b9)
     float  g_UVWaveSpeed;
     float  g_EffectTime;
     float  g_AlphaCutoff;
+    float padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
@@ -50,11 +51,12 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     // Waveを適用
     const float phase = dot(uv, g_UVWaveDirection) * g_UVWaveFrequency + g_EffectTime * g_UVWaveSpeed;
     uv += g_UVWaveDirection * sin(phase) * g_UVWaveAmplitude;
-
+    uv = frac(uv); // 0～1の範囲に収める
+    
     // 最後にアトラス上の対象領域へ変換
     uv = g_FrameUVRect.xy + uv * g_FrameUVRect.zw;
 
-    float4 color = g_Texture.Sample(g_SamplerState, uv) * ps_in.color * g_EffectColor;
+    float4 color = g_Texture.Sample(g_SamplerState, uv) * g_EffectColor;
 
     if (color.a <= g_AlphaCutoff) discard;
     return color;

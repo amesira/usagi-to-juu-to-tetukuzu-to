@@ -41,7 +41,6 @@ namespace MeshEffectRenderData{
         float  uvWaveSpeed = 0.0f;
         float  effectTime = 0.0f;
         float  alphaCutoff = 0.01f;
-
         float padding = 0.0f;
     };
     static_assert(sizeof(MeshEffectBuffer) % 16 == 0);

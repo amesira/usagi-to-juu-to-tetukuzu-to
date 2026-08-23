@@ -67,7 +67,7 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
     {
         // MeshEffectShaderの登録
         m_pMeshEffectConstantBuffer = SHADER_REPOSITORY->GenerateConstantBufferResource(
-            "MeshEffectBuffer", 0, sizeof(MeshEffectRenderData::MeshEffectBuffer), false, true, ConstantBufferUsage::Dynamic);
+            "MeshEffectBuffer", 9, sizeof(MeshEffectRenderData::MeshEffectBuffer), false, true, ConstantBufferUsage::Dynamic);
 
         // メッシュエフェクト用のシェーダーを作成する
         ShaderProgramResource* baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::Unlit);
@@ -97,10 +97,11 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     // アルファブレンドのパーティクルを描画
     SetBlendState(BLENDSTATE_ALFA);
     SetDepthState(DEPTHSTATE_ENABLE);
-
-    EngineServiceLocator::BindShader(ShaderBase::Particle);
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     if (particlePool) {
+        EngineServiceLocator::BindShader(ShaderBase::Particle);
+
         auto& particleSystems = particlePool->GetList();
         for (ParticleSystemComponent& particleSystem : particleSystems) {
             if (!particleSystem.GetOwner()->GetActive()) continue;
@@ -112,6 +113,8 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     }
 
     if (linePool) {
+        EngineServiceLocator::BindShader(ShaderBase::Particle);
+
         auto& lineRenderers = linePool->GetList();
         for (LineRendererComponent& lineRenderer : lineRenderers) {
             if (!lineRenderer.GetOwner()->GetActive()) continue;
@@ -141,6 +144,8 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     SetBlendState(BLENDSTATE_ADD);
 
     if (particlePool) {
+        EngineServiceLocator::BindShader(ShaderBase::Particle);
+
         auto& particleSystems = particlePool->GetList();
         for (ParticleSystemComponent& particleSystem : particleSystems) {
             if (!particleSystem.GetOwner()->GetActive()) continue;
@@ -167,6 +172,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
         }
     }
 
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
     SetBlendState(BLENDSTATE_NONE);
 }
 
@@ -245,7 +251,7 @@ void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, cons
     Engine::UpdateTransformCB({ worldMatrix, XMMatrixTranspose(worldMatrix) });
 
     // 定数バッファの更新
-    MeshEffectRenderUtility::UpdatePixelConstantBuffer(m_pContext, m_pMeshEffectConstantBuffer->buffer.Get(), meshEffect.EvaluatedState().buffer);
+    MeshEffectRenderUtility::UpdateCB(m_pContext, m_pMeshEffectConstantBuffer->buffer.Get(), meshEffect.EvaluatedState().buffer);
 
     // テクスチャの設定
     TextureResource* texture = meshEffect.GetTextureResource() ? meshEffect.GetTextureResource() : m_defaultTexture;
@@ -254,6 +260,6 @@ void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, cons
     }
 
     // 描画
-    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     MeshEffectRenderUtility::DrawGeometry(m_pContext, meshEffect);
 }
