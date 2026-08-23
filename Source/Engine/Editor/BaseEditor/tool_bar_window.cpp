@@ -87,6 +87,7 @@ void ToolBarWindow::Draw()
             drawWindowToggle("Settings", EditorWindowId::Settings);
             ImGui::Separator();
             drawWindowToggle("Particle System Editor", EditorWindowId::ParticleSystemEditor);
+            drawWindowToggle("Mesh Effect Editor", EditorWindowId::MeshEffectEditor);
             drawWindowToggle("Data Editor", EditorWindowId::DataEditor);
         }
         ImGui::EndPopup();

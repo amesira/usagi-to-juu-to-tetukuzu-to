@@ -10,7 +10,7 @@
 #include "Engine/Asset/MeshEffectAsset/mesh_effect_asset.h"
 #include "Engine/Processor/mesh_effect_processor.h"
 
-class EditorContext;
+struct EditorContext;
 
 class MeshEffectEditorPreview {
 private:

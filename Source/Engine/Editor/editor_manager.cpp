@@ -19,6 +19,7 @@ void EditorManager::Initialize(HWND hWnd)
 void EditorManager::Finalize()
 {
     m_particleSystemEditorWindow.OnWindowClosed();
+    m_meshEffectEditorWindow.OnWindowClosed();
     m_imguiBackend.Finalize();
 }
 
@@ -43,6 +44,7 @@ void EditorManager::Render()
 void EditorManager::OnSceneDestroyed()
 {
     m_particleSystemEditorWindow.OnSceneDestroyed();
+    m_meshEffectEditorWindow.OnSceneDestroyed();
 }
 
 void EditorManager::RegisterWindows()
@@ -127,6 +129,15 @@ void EditorManager::RegisterWindows()
         false,
         { 120.0f, 80.0f },
         { 1600.0f, 850.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::MeshEffectEditor,
+        &m_meshEffectEditorWindow,
+        "Mesh Effect Editor",
+        "MeshEffectEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
 }
 
 void EditorManager::SyncWindowLifecycle()
@@ -139,6 +150,11 @@ void EditorManager::SyncWindowLifecycle()
     if (!m_windowManager.IsOpen(EditorWindowId::DataEditor))
     {
         m_dataEditorWindow.OnWindowClosed();
+    }
+
+    if (!m_windowManager.IsOpen(EditorWindowId::MeshEffectEditor))
+    {
+        m_meshEffectEditorWindow.OnWindowClosed();
     }
 }
 

@@ -128,20 +128,17 @@ void ParticleEditorPreview::OnSceneDestroyed()
 #pragma region ParticleSystemComponentの関数のラッパー
 void ParticleEditorPreview::Play()
 {
-    if (!m_particleSystem) return;
-    m_particleSystem->Play();
+    if (m_particleSystem) m_particleSystem->Play();
 }
 
 void ParticleEditorPreview::Pause()
 {
-    if (!m_particleSystem) return;
-    m_particleSystem->Pause();
+    if (m_particleSystem) m_particleSystem->Pause();
 }
 
 void ParticleEditorPreview::Stop()
 {
-    if (!m_particleSystem) return;
-    m_particleSystem->Stop();
+    if (m_particleSystem) m_particleSystem->Stop();
 }
 
 bool ParticleEditorPreview::IsPlaying() const

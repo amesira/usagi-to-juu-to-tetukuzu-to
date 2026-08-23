@@ -256,6 +256,10 @@
     <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.cpp" />
     <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.cpp" />
     <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.cpp" />
     <ClCompile Include="Source\Game\Factory\ui_factory.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
@@ -505,6 +509,10 @@
     <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.h" />
     <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.h" />
     <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.h" />
     <ClInclude Include="Source\Engine\Editor\Schema\enum_field_editor.h" />
     <ClInclude Include="Source\Engine\Editor\Schema\field_editor.h" />
     <ClInclude Include="Source\Engine\Component\transform_component.h" />

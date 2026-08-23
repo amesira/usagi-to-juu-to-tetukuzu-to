@@ -28,6 +28,7 @@ enum class EditorWindowId
     Settings,
 
     ParticleSystemEditor,
+    MeshEffectEditor,
     DataEditor,
 
     Count,

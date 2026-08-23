@@ -21,6 +21,7 @@
 #include "BaseEditor/game_view_window.h"
 #include "BaseEditor/canvas_view_window.h"
 #include "ParticleEditor/particle_system_editor_window.h"
+#include "MeshEffectEditor/mesh_effect_editor_window.h"
 #include "DataEditor/data_editor_window.h"
 
 class EditorManager {
@@ -45,6 +46,7 @@ private:
     CanvasViewWindow    m_canvasViewWindow;     // CanvasViewウィンドウ
 
     ParticleSystemEditorWindow m_particleSystemEditorWindow;
+    MeshEffectEditorWindow m_meshEffectEditorWindow;
     DataEditorWindow m_dataEditorWindow;
 
 public:
@@ -58,6 +60,7 @@ public:
         , m_gameViewWindow(&m_editorContext)
         , m_canvasViewWindow(&m_editorContext)
         , m_particleSystemEditorWindow(&m_editorContext)
+        , m_meshEffectEditorWindow(&m_editorContext)
         , m_dataEditorWindow(&m_editorContext)
     {
     }
