@@ -42,6 +42,10 @@ void GameWorld::Finalize()
         EngineServiceLocator::ParticleLoader()) {
         loader->SetReloadCallback({});
     }
+    if (MeshEffectAssetLoader* loader =
+        EngineServiceLocator::MeshEffectLoader()) {
+        loader->SetReloadCallback({});
+    }
 
     // Processor群の終了処理
     m_physicsProcessor.Finalize();

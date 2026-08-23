@@ -261,6 +261,43 @@ namespace FieldEditor
             return changed;
         }
     };
+
+    /// @brief FieldEditorのFloat3Curve型の特殊化
+    template<>
+    class FieldEditor<MiCurve::Float3Curve, DefaultFieldOptions> {
+    public:
+        static bool Draw(const char* label, MiCurve::Float3Curve& curve, const DefaultFieldOptions& options)
+        {
+            if (!ImGui::TreeNode(label)) return false;
+
+            bool changed = false;
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("X", curve.x, options);
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("Y", curve.y, options);
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("Z", curve.z, options);
+
+            ImGui::TreePop();
+            return changed;
+        }
+    };
+
+    /// @brief FieldEditorのColorCurve型の特殊化
+    template<>
+    class FieldEditor<MiCurve::ColorCurve, DefaultFieldOptions> {
+    public:
+        static bool Draw(const char* label, MiCurve::ColorCurve& curve, const DefaultFieldOptions& options)
+        {
+            if (!ImGui::TreeNode(label)) return false;
+
+            bool changed = false;
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("R", curve.r, options);
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("G", curve.g, options);
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("B", curve.b, options);
+            changed |= FieldEditor<MiCurve::FloatCurve, DefaultFieldOptions>::Draw("A", curve.a, options);
+
+            ImGui::TreePop();
+            return changed;
+        }
+    };
 #pragma endregion
 
     /// @brief FieldEditorのAngleFieldOptions特殊化

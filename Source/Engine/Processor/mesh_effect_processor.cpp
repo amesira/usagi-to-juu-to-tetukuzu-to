@@ -117,6 +117,14 @@ namespace
 void MeshEffectProcessor::Initialize()
 {
     m_pendingAssetReloads.clear();
+
+    // MeshEffectAssetLoaderのリロードコールバックを設定
+    if (MeshEffectAssetLoader* loader = EngineServiceLocator::MeshEffectLoader()) {
+        loader->SetReloadCallback(
+            [this](const std::filesystem::path& path, const MeshEffectAsset& asset) {
+                OnMeshEffectAssetReloaded(path, asset);
+            });
+    }
 }
 
 void MeshEffectProcessor::Finalize()
