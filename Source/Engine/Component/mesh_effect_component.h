@@ -43,7 +43,7 @@ namespace MeshEffectRenderData{
         // Fresnal
         int    useFresnel = 0;
         float  fresnelThreshold = 0.0f;
-        float  fresnelIntensity = 0.0f;
+        float  fresnelIntensity = 1.0f;
         
         float  effectTime = 0.0f;
         float  alphaCutoff = 0.01f;

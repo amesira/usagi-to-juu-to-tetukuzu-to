@@ -252,12 +252,11 @@ void MeshEffectProcessor::Process(IScene* pScene)
         // === Gradientの更新 ===
         if (meshEffect.Gradient().enabled) {
             XMFLOAT4 gradientOverDuration = meshEffect.Gradient().gradientOverDuration.Evaluate(normalizedTime);
-            XMFLOAT4 gradientOverUV = meshEffect.Gradient().gradientOverUV.Evaluate(normalizedTime);
 
-            evaluatedState.buffer.effectColor.x *= gradientOverDuration.x * gradientOverUV.x;
-            evaluatedState.buffer.effectColor.y *= gradientOverDuration.y * gradientOverUV.y;
-            evaluatedState.buffer.effectColor.z *= gradientOverDuration.z * gradientOverUV.z;
-            evaluatedState.buffer.effectColor.w *= gradientOverDuration.w * gradientOverUV.w;
+            evaluatedState.buffer.effectColor.x *= gradientOverDuration.x;
+            evaluatedState.buffer.effectColor.y *= gradientOverDuration.y;
+            evaluatedState.buffer.effectColor.z *= gradientOverDuration.z;
+            evaluatedState.buffer.effectColor.w *= gradientOverDuration.w;
         }
 
         // === Fresnelの更新 ===
