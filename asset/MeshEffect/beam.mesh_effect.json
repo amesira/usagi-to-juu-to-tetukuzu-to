@@ -1,10 +1,10 @@
 {
     "data": {
         "flipbook": {
-            "enabled": true,
+            "enabled": false,
             "frameCount": 8,
             "framePerSecond": 30.0,
-            "playbackMode": "Loop",
+            "playbackMode": "Once",
             "startFrame": 0,
             "tileX": 3,
             "tileY": 3,
@@ -12,21 +12,21 @@
         },
         "fresnel": {
             "color": [
-                0.04878056049346924,
                 1.0,
+                0.0,
                 0.0,
                 1.0
             ],
             "enabled": false,
-            "intensity": 10.0,
+            "intensity": 2.0,
             "threshold": 0.0
         },
         "gradient": {
             "enabled": true,
             "gradientEndColor": [
+                0.0,
                 1.0,
-                1.0,
-                1.0,
+                0.9756097793579102,
                 1.0
             ],
             "gradientEndPosition": 1.0,
@@ -50,14 +50,14 @@
             },
             "gradientStartColor": [
                 1.0,
-                0.0,
-                0.0,
-                1.0
+                1.0,
+                1.0,
+                0.0
             ],
-            "gradientStartPosition": 0.0
+            "gradientStartPosition": 0.20000000298023224
         },
         "main": {
-            "duration": 0.30000001192092896,
+            "duration": 0.5,
             "loop": true,
             "playOnAwake": true,
             "simulationSpeed": 1.0
@@ -66,15 +66,15 @@
             "billboardMode": "None",
             "blendMode": "Additive",
             "color": [
-                0.41463422775268555,
                 1.0,
-                0.0,
+                1.0,
+                1.0,
                 1.0
             ],
-            "intensity": 10.0,
-            "modelPath": "asset/Model/EffectModel/cylinder_A.fbx",
+            "intensity": 1.0,
+            "modelPath": "asset/Model/EffectModel/beamdome.fbx",
             "textureMappingMode": "MeshUV",
-            "texturePath": "asset/Texture/EffectTexture/impact_spritesheet.png",
+            "texturePath": "asset/Texture/EffectTexture/impact_pillar.png",
             "uvRect": [
                 0.0,
                 0.0,
@@ -89,12 +89,12 @@
                 0.0
             ],
             "scrollSpeed": [
-                0.0,
-                0.0
+                0.5,
+                3.0
             ],
             "tiling": [
-                5.0,
-                1.0
+                1.5,
+                3.0
             ]
         },
         "transform": {
@@ -125,9 +125,9 @@
                     },
                     {
                         "time": 1.0,
-                        "valueX": 1.0,
+                        "valueX": 1.2000000476837158,
                         "valueY": 1.0,
-                        "valueZ": 1.0
+                        "valueZ": 1.2000000476837158
                     }
                 ]
             }
@@ -147,15 +147,15 @@
             },
             "direction": [
                 0.0,
-                1.0
+                0.0
             ],
             "enabled": false,
-            "frequency": 1.0,
-            "speed": 1.0,
-            "type": "Vertex"
+            "frequency": 0.0,
+            "speed": 0.0,
+            "type": "UV"
         }
     },
     "formatVersion": 1,
-    "name": "impact_pillar.mesh_effect",
+    "name": "beam.mesh_effect",
     "type": "MeshEffect"
 }

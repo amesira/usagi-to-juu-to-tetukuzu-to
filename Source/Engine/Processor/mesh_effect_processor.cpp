@@ -211,6 +211,7 @@ void MeshEffectProcessor::Process(IScene* pScene)
         evaluatedState.buffer.frameUVRect = meshEffect.Renderer().uvRect;
         evaluatedState.buffer.effectTime = currentTime;
         evaluatedState.buffer.effectColor = meshEffect.Renderer().color;
+        evaluatedState.buffer.rendererIntensity = meshEffect.Renderer().intensity;
         evaluatedState.blendMode = meshEffect.Renderer().blendMode;
         evaluatedState.buffer.useWorldProjection = meshEffect.Renderer().textureMappingMode 
             == MeshEffectData::TextureMappingMode::WorldProjection ? 1 : 0;
@@ -253,7 +254,7 @@ void MeshEffectProcessor::Process(IScene* pScene)
 
         // === Gradientの更新 ===
         if (meshEffect.Gradient().enabled) {
-            XMFLOAT4 gradientOverDuration = meshEffect.Gradient().gradientOverDuration.Evaluate(normalizedTime);
+            XMFLOAT4 gradientOverDuration = meshEffect.Gradient().gradientOverDuration.Evaluate(normalizedLoopTime);
 
             evaluatedState.buffer.effectColor.x *= gradientOverDuration.x;
             evaluatedState.buffer.effectColor.y *= gradientOverDuration.y;

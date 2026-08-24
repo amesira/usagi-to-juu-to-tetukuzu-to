@@ -55,7 +55,7 @@ cbuffer MeshEffectPixelBuffer : register(b9)
     float g_GradientStartPosition;
     float g_GradientEndPosition;
     uint  g_UseGradientOverUV;
-    float g_GradientPadding;
+    float g_RendererIntensity;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
@@ -99,6 +99,8 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
 
         color.rgb += g_FresnelColor.rgb * mask * g_FresnelIntensity;
     }
+
+    color.rgb *= g_RendererIntensity;
 
     if (color.a <= g_AlphaCutoff) discard;
     return color;

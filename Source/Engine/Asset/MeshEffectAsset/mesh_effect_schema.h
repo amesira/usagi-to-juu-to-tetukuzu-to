@@ -194,6 +194,8 @@ namespace MeshEffectSchema
             MakeField("modelPath", "Model Path", &Module::modelPath),
             MakeField("texturePath", "Texture Path", &Module::texturePath),
             MakeField("color", "Color", &Module::color, ColorFieldOptions{}),
+            MakeField("intensity", "Intensity", &Module::intensity,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("textureMappingMode", "Texture Mapping Mode", &Module::textureMappingMode, GetTextureMappingModeOptions()),
             MakeField("uvRect", "UV Rect", &Module::uvRect,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),

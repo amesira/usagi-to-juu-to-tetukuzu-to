@@ -56,7 +56,7 @@ namespace MeshEffectRenderData{
         float gradientStartPosition = 0.0f;
         float gradientEndPosition = 1.0f;
         int useGradientOverUV = 0;
-        float gradientPadding = 0.0f;
+        float rendererIntensity = 1.0f;
     };
     static_assert(sizeof(MeshEffectBuffer) % 16 == 0);
 

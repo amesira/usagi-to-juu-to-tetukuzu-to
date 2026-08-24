@@ -122,6 +122,7 @@ namespace MeshEffectData
 
         TextureMappingMode textureMappingMode = TextureMappingMode::MeshUV;
         XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float intensity = 1.0f;
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 
         BillboardMode billboardMode = BillboardMode::None;
