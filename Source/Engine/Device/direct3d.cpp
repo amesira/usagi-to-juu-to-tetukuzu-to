@@ -139,6 +139,7 @@ bool Direct3D_Initialize(HWND hWnd)
 
         // αブレンド
         blendDesc.RenderTarget[0].BlendEnable = TRUE;
+        blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
         g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ALFA]);
 
         // 加算合成

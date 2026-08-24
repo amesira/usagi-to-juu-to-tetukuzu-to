@@ -96,7 +96,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
 
     // アルファブレンドのパーティクルを描画
     SetBlendState(BLENDSTATE_ALFA);
-    SetDepthState(DEPTHSTATE_NOWRITE);
+    SetDepthState(DEPTHSTATE_DISABLE);
     SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     if (particlePool) {

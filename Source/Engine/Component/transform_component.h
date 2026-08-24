@@ -24,6 +24,8 @@ private:
     // 前フレームの位置を保存する変数
     XMFLOAT3   m_prevPosition = { 0.0f,0.0f,0.0f };
 
+    XMFLOAT3   m_eulerRawAngle = { 0.0f,0.0f,0.0f };
+
 public:
     // 位置、回転、スケーリングの設定・取得
     void    SetPosition(const XMFLOAT3& position) { m_position = position; }
@@ -56,37 +58,42 @@ public:
 
     // Euler角での設定・取得（ラジアン角で扱う）
     void    SetEulerAngle(const XMFLOAT3& euler) {
-        XMVECTOR q = XMQuaternionRotationRollPitchYaw(
-            euler.x, euler.y, euler.z
-        );
-        q = XMQuaternionNormalize(q);
-        XMStoreFloat4(&m_rotation, q);
+        const float pitch = std::remainder(euler.x, XM_2PI);
+        const float yaw = std::remainder(euler.y, XM_2PI);
+        const float roll = std::remainder(euler.z, XM_2PI);
+
+        XMVECTOR quaternion = XMQuaternionRotationRollPitchYaw(pitch, yaw, roll);
+
+        quaternion = XMQuaternionNormalize(quaternion);
+        XMStoreFloat4(&m_rotation, quaternion);
     }
     XMFLOAT3    GetEulerAngle()const {
-        const XMFLOAT4& q = m_rotation;
+        XMVECTOR rotation = XMQuaternionNormalize(XMLoadFloat4(&m_rotation));
 
-        float sinX = 2.0f * q.y * q.z - 2.0f * q.x * q.w;
-        const float e = 0.001f;
+        XMFLOAT4 q;
+        XMStoreFloat4(&q, rotation);
 
-        // X軸の回転が0付近の場合は丸める
-        if (std::abs(sinX) < e) {
-            sinX = 0.0f;
-        }
+        // Pitch（X）
+        const float sinPitch = 2.0f * (q.w * q.x - q.y * q.z);
+        const float pitch = std::asin(sinPitch);
 
-        float x = std::asinf(-sinX);
-        float cosX = std::cosf(x);
+        // Yaw（Y）
+        const float sinYaw = 2.0f * (q.w * q.y + q.x * q.z);
+        const float cosYaw = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+        const float yaw = std::atan2(sinYaw, cosYaw);
 
-        float sinY = (2.0f * q.x * q.z + 2.0f * q.y * q.w) / cosX;
-        float cosY = (2.0f * MiMath::Pow(q.w, 2) + 2.0f * MiMath::Pow(q.z, 2) - 1.0f) / cosX;
-        float y = std::atan2f(sinY, cosY);
+        // Roll（Z）
+        const float sinRoll = 2.0f * (q.w * q.z + q.x * q.y);
+        const float cosRoll = 1.0f - 2.0f * (q.x * q.x + q.z * q.z);
+        const float roll = std::atan2(sinRoll, cosRoll);
 
-        float sinZ = (2.0f * q.x * q.y + 2.0f * q.z * q.w) / cosX;
-        float cosZ = (2.0f * MiMath::Pow(q.w, 2) + 2.0f * MiMath::Pow(q.y, 2) - 1.0f) / cosX;
-        float z = std::atan2f(sinZ, cosZ);
-
-        XMFLOAT3 euler = { x, y, z };
-        return euler;
+        return { pitch, yaw, roll };
     }
+    void    SetEulerRawAngle(const XMFLOAT3& euler) { 
+        m_eulerRawAngle = euler;
+        SetEulerAngle(euler);
+    }
+    XMFLOAT3    GetEulerRawAngle()const { return m_eulerRawAngle; }
 
     // XMVECTORの取得
     XMVECTOR GetRotationVector() const {

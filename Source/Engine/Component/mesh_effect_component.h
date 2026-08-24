@@ -46,7 +46,7 @@ namespace MeshEffectRenderData{
         float  fresnelIntensity = 1.0f;
         
         float  effectTime = 0.0f;
-        float  alphaCutoff = 0.01f;
+        float  alphaCutoff = 0.0f;
         int    useWorldProjection = 0;
         float padding = 0.0f;
     };

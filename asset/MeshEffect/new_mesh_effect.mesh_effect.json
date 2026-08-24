@@ -77,14 +77,14 @@
             "billboardMode": "None",
             "blendMode": "AlphaBlend",
             "color": [
-                1.0,
-                1.0,
-                1.0,
+                0.8943089246749878,
+                0.3708110451698303,
+                0.3708110451698303,
                 1.0
             ],
             "modelPath": "asset/MeshEffect/Mesh/slash.fbx",
             "textureMappingMode": "MeshUV",
-            "texturePath": "asset/Texture/test.jpg",
+            "texturePath": "asset/Texture/border.png",
             "uvRect": [
                 0.0,
                 0.0,
@@ -100,7 +100,7 @@
             ],
             "scrollSpeed": [
                 0.0,
-                2.190000057220459
+                1.0
             ],
             "tiling": [
                 1.0,
@@ -159,7 +159,7 @@
                 1.0,
                 0.0
             ],
-            "enabled": true,
+            "enabled": false,
             "frequency": 10.0,
             "speed": 1.0,
             "type": "UV"
