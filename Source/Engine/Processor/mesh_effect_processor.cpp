@@ -35,8 +35,8 @@ namespace
         DirectX::XMFLOAT3& outRotation,
         DirectX::XMMATRIX& localMatrix)
     {
-        outScale = transformModule.scaleOverLifetime.Evaluate(normalizedTime);
-        outRotation = transformModule.rotationOverLifetime.Evaluate(normalizedTime);
+        outScale = transformModule.scaleOverDuration.Evaluate(normalizedTime);
+        outRotation = transformModule.rotationOverDuration.Evaluate(normalizedTime);
         XMMATRIX scaleMatrix = XMMatrixScaling(outScale.x, outScale.y, outScale.z);
         XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYaw(
             XMConvertToRadians(outRotation.x),
@@ -63,7 +63,7 @@ namespace
 
         // TimeModeに応じて現在のフレームを計算
         switch (flipbookModule.timeMode) {
-        case MeshEffectData::TimeMode::Lifetime: {
+        case MeshEffectData::TimeMode::Duration: {
             animationFrame = static_cast<int>(normalizedTime * frameCount);
             break;
         }
@@ -176,15 +176,17 @@ void MeshEffectProcessor::Process(IScene* pScene)
         // === シミュレーションの更新 ===
         const float scaledDeltaTime = deltaTime * meshEffect.Main().simulationSpeed;
         float currentTime = meshEffect.GetTime() + scaledDeltaTime;
+        float currentLoopTime = meshEffect.GetLoopTime() + scaledDeltaTime;
 
         // durationを超えたらループするか停止する
         bool inDuration = true;
         if (meshEffect.Main().duration > 0.0f && currentTime >= meshEffect.Main().duration) {
             if (meshEffect.Main().loop) {
-                currentTime = std::fmod(currentTime, meshEffect.Main().duration);
+                currentLoopTime = std::fmod(currentLoopTime, meshEffect.Main().duration);
             }
             else {
                 currentTime = meshEffect.Main().duration;
+                currentLoopTime = meshEffect.Main().duration;
                 inDuration = false;
             }
         }
@@ -194,8 +196,9 @@ void MeshEffectProcessor::Process(IScene* pScene)
         }
 
         const float duration = meshEffect.Main().duration;
-        const float normalizedTime = duration > 0.0f
-            ? std::clamp(currentTime / duration, 0.0f, 1.0f)
+        const float normalizedTime = std::fmod(currentTime, duration) / duration;
+        const float normalizedLoopTime = duration > 0.0f
+            ? std::clamp(currentLoopTime / duration, 0.0f, 1.0f)
             : 0.0f;
 
         // モジュール無効時に前フレームの値が残らないよう中立値へ戻す
@@ -205,14 +208,16 @@ void MeshEffectProcessor::Process(IScene* pScene)
         evaluatedState.buffer = {};
         evaluatedState.buffer.frameUVRect = meshEffect.Renderer().uvRect;
         evaluatedState.buffer.effectTime = currentTime;
-        evaluatedState.buffer.effectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        evaluatedState.buffer.effectColor = meshEffect.Renderer().color;
         evaluatedState.blendMode = meshEffect.Renderer().blendMode;
+        evaluatedState.buffer.useWorldProjection = meshEffect.Renderer().textureMappingMode 
+            == MeshEffectData::TextureMappingMode::WorldProjection ? 1 : 0;
 
         // === Transformの更新 ===
         if (meshEffect.Transform().enabled) {
             EvaluateTransformModule(
                 meshEffect.Transform(),
-                normalizedTime,
+                normalizedLoopTime,
                 meshEffect.EvaluatedState().scale,
                 meshEffect.EvaluatedState().rotation,
                 meshEffect.EvaluatedState().localEffectMatrix);
@@ -224,7 +229,7 @@ void MeshEffectProcessor::Process(IScene* pScene)
                 meshEffect.Flipbook(),
                 meshEffect.Renderer().uvRect,
                 currentTime,
-                normalizedTime,
+                normalizedLoopTime,
                 evaluatedState.buffer.frameUVRect);
         }
 
@@ -236,10 +241,8 @@ void MeshEffectProcessor::Process(IScene* pScene)
         }
 
         // === Waveの更新 ===
-        if (meshEffect.Wave().enabled &&
-            meshEffect.Wave().type == MeshEffectData::WaveType::UV) {
-            // Waveの評価
-            float waveValue = meshEffect.Wave().amplitudeOverLifetime.Evaluate(normalizedTime);
+        if (meshEffect.Wave().enabled && meshEffect.Wave().type == MeshEffectData::WaveType::UV) {
+            float waveValue = meshEffect.Wave().amplitudeOverDuration.Evaluate(normalizedTime);
             evaluatedState.buffer.uvWaveDirection = meshEffect.Wave().direction;
             evaluatedState.buffer.uvWaveAmplitude = waveValue;
             evaluatedState.buffer.uvWaveFrequency = meshEffect.Wave().frequency;
@@ -248,8 +251,21 @@ void MeshEffectProcessor::Process(IScene* pScene)
 
         // === Gradientの更新 ===
         if (meshEffect.Gradient().enabled) {
-            // Gradientの評価
-            evaluatedState.buffer.effectColor = meshEffect.Gradient().color.Evaluate(normalizedTime);
+            XMFLOAT4 gradientOverDuration = meshEffect.Gradient().gradientOverDuration.Evaluate(normalizedTime);
+            XMFLOAT4 gradientOverUV = meshEffect.Gradient().gradientOverUV.Evaluate(normalizedTime);
+
+            evaluatedState.buffer.effectColor.x *= gradientOverDuration.x * gradientOverUV.x;
+            evaluatedState.buffer.effectColor.y *= gradientOverDuration.y * gradientOverUV.y;
+            evaluatedState.buffer.effectColor.z *= gradientOverDuration.z * gradientOverUV.z;
+            evaluatedState.buffer.effectColor.w *= gradientOverDuration.w * gradientOverUV.w;
+        }
+
+        // === Fresnelの更新 ===
+        if (meshEffect.Fresnel().enabled) {
+            evaluatedState.buffer.fresnelColor = meshEffect.Fresnel().color;
+            evaluatedState.buffer.fresnelThreshold = meshEffect.Fresnel().threshold;
+            evaluatedState.buffer.fresnelIntensity = meshEffect.Fresnel().intensity;
+            evaluatedState.buffer.useFresnel = 1;
         }
 
         TextureRepository* textureRepository = Engine::GetTextureRepository();

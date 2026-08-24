@@ -21,6 +21,7 @@ public:
     bool DrawScroll(MeshEffectData::ScrollModule& module);
     bool DrawWave(MeshEffectData::WaveModule& module);
     bool DrawGradient(MeshEffectData::GradientModule& module);
+    bool DrawFresnel(MeshEffectData::FresnelModule& module);
     bool DrawRenderer(MeshEffectData::RendererModule& module);
 
 };

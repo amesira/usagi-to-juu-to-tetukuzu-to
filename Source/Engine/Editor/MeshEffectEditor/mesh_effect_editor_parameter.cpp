@@ -22,6 +22,7 @@ bool MeshEffectEditorParameter::Draw(MeshEffectDesc& desc)
     changed |= DrawScroll(desc.scrollModule);
     changed |= DrawWave(desc.waveModule);
     changed |= DrawGradient(desc.gradientModule);
+    changed |= DrawFresnel(desc.fresnelModule);
     changed |= DrawRenderer(desc.rendererModule);
     return changed;
 }
@@ -32,37 +33,36 @@ bool MeshEffectEditorParameter::DrawMain(MeshEffectData::MainModule& module)
     if (!ImGui::CollapsingHeader("Main", ImGuiTreeNodeFlags_DefaultOpen)) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetMainSchema());
 }
-
 bool MeshEffectEditorParameter::DrawTransform(MeshEffectData::TransformModule& module)
 {
     if (!ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetTransformSchema());
 }
-
 bool MeshEffectEditorParameter::DrawFlipbook(MeshEffectData::FlipbookModule& module)
 {
     if (!ImGui::CollapsingHeader("Flipbook", ImGuiTreeNodeFlags_DefaultOpen)) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetFlipbookSchema());
 }
-
 bool MeshEffectEditorParameter::DrawScroll(MeshEffectData::ScrollModule& module)
 {
     if (!ImGui::CollapsingHeader("Scroll")) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetScrollSchema());
 }
-
 bool MeshEffectEditorParameter::DrawWave(MeshEffectData::WaveModule& module)
 {
     if (!ImGui::CollapsingHeader("Wave")) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetWaveSchema());
 }
-
 bool MeshEffectEditorParameter::DrawGradient(MeshEffectData::GradientModule& module)
 {
     if (!ImGui::CollapsingHeader("Gradient")) return false;
     return FieldEditor::DrawFields(module, MeshEffectSchema::GetGradientSchema());
 }
-
+bool MeshEffectEditorParameter::DrawFresnel(MeshEffectData::FresnelModule& module)
+{
+    if (!ImGui::CollapsingHeader("Fresnel")) return false;
+    return FieldEditor::DrawFields(module, MeshEffectSchema::GetFresnelSchema());
+}
 bool MeshEffectEditorParameter::DrawRenderer(MeshEffectData::RendererModule& module)
 {
     if (!ImGui::CollapsingHeader("Renderer", ImGuiTreeNodeFlags_DefaultOpen)) return false;

@@ -14,19 +14,23 @@ using namespace DirectX;
 
 namespace MeshEffectData
 {
-    // === タイプ定義 ===
-    enum TimeMode {
-        Lifetime,
+    enum class TimeMode {
+        Duration,
         Speed,
     };
-    enum BillboardMode {
+    enum class BillboardMode {
         None,
         View,
         Horizontal,
     };
-    enum BlendMode {
+    enum class BlendMode {
         AlphaBlend,
         Additive,
+    };
+
+    enum class TextureMappingMode {
+        MeshUV,
+        WorldProjection
     };
     enum class FlipbookPlaybackMode {
         Once,
@@ -43,25 +47,28 @@ namespace MeshEffectData
         float duration = 1.0f;
         bool loop = true;
         bool playOnAwake = true;
+
         float simulationSpeed = 1.0f;
     };
 
     /// @brief TransformModuleの定義（サイズ変化や回転などの変換を行うモジュール）
     struct TransformModule {
         bool enabled = true;
-        MiCurve::Float3Curve scaleOverLifetime = { { {0.0f, {1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f}} } };
-        MiCurve::Float3Curve rotationOverLifetime = { { {0.0f, {0.0f, 0.0f, 0.0f}}, {1.0f, {0.0f, 0.0f, 0.0f}} } };
+
+        MiCurve::Float3Curve scaleOverDuration = { { {0.0f, {1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f}} } };
+        MiCurve::Float3Curve rotationOverDuration = { { {0.0f, {0.0f, 0.0f, 0.0f}}, {1.0f, {0.0f, 0.0f, 0.0f}} } };
     };
 
     /// @brief FlipbookModuleの定義（フリップブックアニメーションを行うモジュール）
     struct FlipbookModule {
         bool enabled = false;
-        int tileX = 1;        // テクスチャの横方向の分割数
-        int tileY = 1;        // テクスチャの縦方向の分割数p
-        int startFrame = 0;   // アニメーションの開始フレーム
-        int frameCount = 1;   // アニメーションの総フレーム数
 
-        TimeMode timeMode = TimeMode::Lifetime; // アニメーションの時間の種類
+        int tileX = 1;
+        int tileY = 1;
+        int startFrame = 0;
+        int frameCount = 1;
+
+        TimeMode timeMode = TimeMode::Duration; // アニメーションの時間の種類
         float framePerSecond = 30.0f;           // 1秒あたりのフレーム数 : TimeMode::Speedの場合に使用
 
         FlipbookPlaybackMode playbackMode = FlipbookPlaybackMode::Loop; // 再生モード
@@ -70,17 +77,21 @@ namespace MeshEffectData
     /// @brief ScrollModuleの定義（テクスチャのスクロールを行うモジュール）
     struct ScrollModule {
         bool enabled = false;
+
         XMFLOAT2 tiling = { 1.0f, 1.0f };
         XMFLOAT2 offset = { 0.0f, 0.0f };
+
         XMFLOAT2 scrollSpeed = { 0.0f, 0.0f };
     };
 
     /// @brief WaveModuleの定義（波の変形を行うモジュール）
     struct WaveModule {
         bool enabled = false;
-        WaveType type = WaveType::Vertex;   // 波の種類
-        XMFLOAT2 direction = { 0.0f, 1.0f };      // 波の方向
-        MiCurve::FloatCurve amplitudeOverLifetime = {}; // 波の振幅の変化
+
+        WaveType type = WaveType::Vertex;
+        XMFLOAT2 direction = { 0.0f, 1.0f };
+
+        MiCurve::FloatCurve amplitudeOverDuration = {}; // 波の振幅の変化
         float frequency = 1.0f; // 波の周波数
         float speed = 1.0f;     // 波の速度
     };
@@ -88,8 +99,17 @@ namespace MeshEffectData
     /// @brief GradientModuleの定義（色の変化を行うモジュール）
     struct GradientModule {
         bool enabled = false;
-        // UV座標などによって色を変化させたい
-        MiCurve::Float4Curve color = {}; // 色の変化
+
+        MiCurve::Float4Curve gradientOverDuration = { { {0.0f, {1.0f, 1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f, 1.0f}} } };
+        MiCurve::Float4Curve gradientOverUV = { { {0.0f, {1.0f, 1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f, 1.0f}} } };
+    };
+
+    struct FresnelModule {
+        bool enabled = false;
+
+        XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float threshold = 0.0f;
+        float intensity = 1.0f;
     };
 
     /// @brief RendererModuleの定義（メッシュの描画設定を行うモジュール）
@@ -97,10 +117,12 @@ namespace MeshEffectData
         std::string modelPath;
         std::string texturePath;
 
-        XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };       // テクスチャのUV矩形
+        TextureMappingMode textureMappingMode = TextureMappingMode::MeshUV;
+        XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
 
-        BillboardMode billboardMode = BillboardMode::None;  // ビルボードの種類
-        BlendMode blendMode = BlendMode::AlphaBlend;        // ブレンドモード
+        BillboardMode billboardMode = BillboardMode::None;
+        BlendMode blendMode = BlendMode::AlphaBlend;
     };
 }
 
@@ -112,5 +134,6 @@ struct MeshEffectDesc {
     MeshEffectData::ScrollModule scrollModule;
     MeshEffectData::WaveModule waveModule;
     MeshEffectData::GradientModule gradientModule;
+    MeshEffectData::FresnelModule fresnelModule;
     MeshEffectData::RendererModule rendererModule;
 };

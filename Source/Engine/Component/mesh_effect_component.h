@@ -24,6 +24,7 @@ namespace MeshEffectRenderData{
     {
         // GradientModule::colorを評価した結果
         XMFLOAT4 effectColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 fresnelColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
         // Flipbookを含めて計算した最終UV領域
         // xy: 左上、zw: 幅・高さ
@@ -39,8 +40,14 @@ namespace MeshEffectRenderData{
         float  uvWaveFrequency = 0.0f;
 
         float  uvWaveSpeed = 0.0f;
+        // Fresnal
+        int    useFresnel = 0;
+        float  fresnelThreshold = 0.0f;
+        float  fresnelIntensity = 0.0f;
+        
         float  effectTime = 0.0f;
         float  alphaCutoff = 0.01f;
+        int    useWorldProjection = 0;
         float padding = 0.0f;
     };
     static_assert(sizeof(MeshEffectBuffer) % 16 == 0);
@@ -76,7 +83,8 @@ private:
 
     bool m_isPlaying = false;
     bool m_hasPlayed = false;
-    float m_time = 0.0f;
+    float m_time = 0.0f;        // 経過時間（リセットは基本行なわない）
+    float m_loopTime = 0.0f;    // ループ時間（durationを超えた場合にリセットされる）
 
     MeshEffectRenderData::MeshEffectEvaluatedState m_evaluatedState;
 
@@ -108,6 +116,8 @@ public:
     bool HasPlayed() const { return m_hasPlayed; }
     void SetTime(float time) { m_time = time; }
     float GetTime() const { return m_time; }
+    void SetLoopTime(float loopTime) { m_loopTime = loopTime; }
+    float GetLoopTime() const { return m_loopTime; }
 
     MeshEffectRenderData::MeshEffectEvaluatedState& EvaluatedState() { return m_evaluatedState; }
     const MeshEffectRenderData::MeshEffectEvaluatedState& EvaluatedState() const { return m_evaluatedState; }
@@ -122,6 +132,7 @@ public:
     MeshEffectData::ScrollModule& Scroll() { return m_desc.scrollModule; }
     MeshEffectData::WaveModule& Wave() { return m_desc.waveModule; }
     MeshEffectData::GradientModule& Gradient() { return m_desc.gradientModule; }
+    MeshEffectData::FresnelModule& Fresnel() { return m_desc.fresnelModule; }
     MeshEffectData::RendererModule& Renderer() { return m_desc.rendererModule; }
     const MeshEffectData::RendererModule& Renderer() const { return m_desc.rendererModule; }
 #pragma endregion

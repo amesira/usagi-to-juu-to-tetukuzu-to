@@ -20,13 +20,12 @@ namespace MeshEffectSchema
     {
         static const EnumFieldOptions<MeshEffectData::TimeMode> options{
             {
-                { MeshEffectData::TimeMode::Lifetime, "Lifetime", "Lifetime" },
+                { MeshEffectData::TimeMode::Duration, "Duration", "Duration" },
                 { MeshEffectData::TimeMode::Speed, "Speed", "Speed" }
             }
         };
         return options;
     }
-
     inline const EnumFieldOptions<MeshEffectData::BillboardMode>& GetBillboardModeOptions()
     {
         static const EnumFieldOptions<MeshEffectData::BillboardMode> options{
@@ -38,7 +37,6 @@ namespace MeshEffectSchema
         };
         return options;
     }
-
     inline const EnumFieldOptions<MeshEffectData::BlendMode>& GetBlendModeOptions()
     {
         static const EnumFieldOptions<MeshEffectData::BlendMode> options{
@@ -50,6 +48,16 @@ namespace MeshEffectSchema
         return options;
     }
 
+    inline const EnumFieldOptions<MeshEffectData::TextureMappingMode>& GetTextureMappingModeOptions()
+    {
+        static const EnumFieldOptions<MeshEffectData::TextureMappingMode> options{
+            {
+                { MeshEffectData::TextureMappingMode::MeshUV, "MeshUV", "Mesh UV" },
+                { MeshEffectData::TextureMappingMode::WorldProjection, "WorldProjection", "World Projection" }
+            }
+        };
+        return options;
+    }
     inline const EnumFieldOptions<MeshEffectData::FlipbookPlaybackMode>& GetFlipbookPlaybackModeOptions()
     {
         static const EnumFieldOptions<MeshEffectData::FlipbookPlaybackMode> options{
@@ -61,7 +69,6 @@ namespace MeshEffectSchema
         };
         return options;
     }
-
     inline const EnumFieldOptions<MeshEffectData::WaveType>& GetWaveTypeOptions()
     {
         static const EnumFieldOptions<MeshEffectData::WaveType> options{
@@ -72,6 +79,7 @@ namespace MeshEffectSchema
         };
         return options;
     }
+
 
 #pragma endregion
 
@@ -94,8 +102,8 @@ namespace MeshEffectSchema
         using Module = MeshEffectData::TransformModule;
         static const auto schema = FieldSchema{
             MakeField("enabled", "Enabled", &Module::enabled),
-            MakeField("scaleOverLifetime", "Scale Over Lifetime", &Module::scaleOverLifetime),
-            MakeField("rotationOverLifetime", "Rotation Over Lifetime", &Module::rotationOverLifetime)
+            MakeField("scaleOverDuration", "Scale Over Duration", &Module::scaleOverDuration),
+            MakeField("rotationOverDuration", "Rotation Over Duration", &Module::rotationOverDuration)
         };
         return schema;
     }
@@ -144,7 +152,7 @@ namespace MeshEffectSchema
             MakeField("type", "Wave Type", &Module::type, GetWaveTypeOptions()),
             MakeField("direction", "Direction", &Module::direction,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 0.0f }),
-            MakeField("amplitudeOverLifetime", "Amplitude Over Lifetime", &Module::amplitudeOverLifetime),
+            MakeField("amplitudeOverDuration", "Amplitude Over Duration", &Module::amplitudeOverDuration),
             MakeField("frequency", "Frequency", &Module::frequency,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 0.0f }),
             MakeField("speed", "Speed", &Module::speed,
@@ -158,17 +166,30 @@ namespace MeshEffectSchema
         using Module = MeshEffectData::GradientModule;
         static const auto schema = FieldSchema{
             MakeField("enabled", "Enabled", &Module::enabled),
-            MakeField("color", "Color", &Module::color, ColorFieldOptions{})
+            MakeField("gradientOverDuration", "Gradient Over Duration", &Module::gradientOverDuration, ColorFieldOptions{}),
+            MakeField("gradientOverUV", "Gradient Over UV", &Module::gradientOverUV, ColorFieldOptions{})
         };
         return schema;
     }
-
+    inline const auto& GetFresnelSchema()
+    {
+        using Module = MeshEffectData::FresnelModule;
+        static const auto schema = FieldSchema{
+            MakeField("enabled", "Enabled", &Module::enabled),
+            MakeField("color", "Color", &Module::color, ColorFieldOptions{}),
+            MakeField("threshold", "Threshold", &Module::threshold, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("intensity", "Intensity", &Module::intensity, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f })
+        };
+        return schema;
+    }
     inline const auto& GetRendererSchema()
     {
         using Module = MeshEffectData::RendererModule;
         static const auto schema = FieldSchema{
             MakeField("modelPath", "Model Path", &Module::modelPath),
             MakeField("texturePath", "Texture Path", &Module::texturePath),
+            MakeField("color", "Color", &Module::color, ColorFieldOptions{}),
+            MakeField("textureMappingMode", "Texture Mapping Mode", &Module::textureMappingMode, GetTextureMappingModeOptions()),
             MakeField("uvRect", "UV Rect", &Module::uvRect,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
             MakeField("billboardMode", "Billboard Mode", &Module::billboardMode, GetBillboardModeOptions()),

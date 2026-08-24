@@ -8,10 +8,11 @@
             "startFrame": 0,
             "tileX": 1,
             "tileY": 1,
-            "timeMode": "Lifetime"
+            "timeMode": "Duration"
         },
         "gradient": {
-            "color": {
+            "enabled": true,
+            "gradientOverDuration": {
                 "keys": [
                     {
                         "time": 0.0,
@@ -29,44 +30,68 @@
                     }
                 ]
             },
-            "enabled": true
+            "gradientOverUV": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueW": 1.0,
+                        "valueX": 0.2520325183868408,
+                        "valueY": 0.10962390154600143,
+                        "valueZ": 0.10962390154600143
+                    }
+                ]
+            }
         },
         "main": {
-            "duration": 34.70000076293945,
+            "duration": 1.0,
             "loop": true,
             "playOnAwake": true,
             "simulationSpeed": 1.0
         },
         "renderer": {
             "billboardMode": "None",
-            "blendMode": "Additive",
-            "modelPath": "asset/Model/cube.fbx",
+            "blendMode": "AlphaBlend",
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "modelPath": "asset/MeshEffect/Mesh/slash.fbx",
+            "textureMappingMode": "WorldProjection",
             "texturePath": "asset/Texture/Dither.png",
             "uvRect": [
                 0.0,
                 0.0,
-                1.0,
-                1.0
+                5.0,
+                5.0
             ]
         },
         "scroll": {
-            "enabled": true,
+            "enabled": false,
             "offset": [
                 0.0,
                 0.0
             ],
             "scrollSpeed": [
-                2.2799999713897705,
-                0.699999988079071
+                0.0,
+                0.0
             ],
             "tiling": [
-                9.470000267028809,
-                9.489999771118164
+                1.0,
+                1.0
             ]
         },
         "transform": {
-            "enabled": false,
-            "rotationOverLifetime": {
+            "enabled": true,
+            "rotationOverDuration": {
                 "keys": [
                     {
                         "time": 0.0,
@@ -82,7 +107,7 @@
                     }
                 ]
             },
-            "scaleOverLifetime": {
+            "scaleOverDuration": {
                 "keys": [
                     {
                         "time": 0.0,
@@ -92,19 +117,23 @@
                     },
                     {
                         "time": 1.0,
-                        "valueX": 1.0,
-                        "valueY": 1.0,
+                        "valueX": 3.0299999713897705,
+                        "valueY": 3.299999952316284,
                         "valueZ": 1.0
                     }
                 ]
             }
         },
         "wave": {
-            "amplitudeOverLifetime": {
+            "amplitudeOverDuration": {
                 "keys": [
                     {
                         "time": 0.0,
-                        "value": 0.10000000149011612
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 1.0
                     }
                 ]
             },
@@ -112,10 +141,10 @@
                 0.0,
                 1.0
             ],
-            "enabled": true,
-            "frequency": 46.599998474121094,
-            "speed": 19.100000381469727,
-            "type": "UV"
+            "enabled": false,
+            "frequency": 1.0,
+            "speed": 1.0,
+            "type": "Vertex"
         }
     },
     "formatVersion": 1,
