@@ -49,14 +49,20 @@ namespace MeshEffectRenderData{
         float  alphaCutoff = 0.0f;
         int    useWorldProjection = 0;
         float padding = 0.0f;
+
+        // Gradient Over UV
+        XMFLOAT4 gradientStartColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 gradientEndColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float gradientStartPosition = 0.0f;
+        float gradientEndPosition = 1.0f;
+        int useGradientOverUV = 0;
+        float gradientPadding = 0.0f;
     };
     static_assert(sizeof(MeshEffectBuffer) % 16 == 0);
 
     /// @brief MeshEffectComponentの評価済み状態を保持する構造体
     struct MeshEffectEvaluatedState
     {
-        bool visible = false;
-
         // Transformカーブの評価結果
         DirectX::XMFLOAT3 scale = { 1.0f, 1.0f, 1.0f };
         DirectX::XMFLOAT3 rotation = { 0.0f, 0.0f, 0.0f };

@@ -101,7 +101,10 @@ namespace MeshEffectData
         bool enabled = false;
 
         MiCurve::Float4Curve gradientOverDuration = { { {0.0f, {1.0f, 1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f, 1.0f}} } };
-        MiCurve::Float4Curve gradientOverUV = { { {0.0f, {1.0f, 1.0f, 1.0f, 1.0f}}, {1.0f, {1.0f, 1.0f, 1.0f, 1.0f}} } }; // 未実装
+        XMFLOAT4 gradientStartColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT4 gradientEndColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float gradientStartPosition = 0.0f;
+        float gradientEndPosition = 1.0f;
     };
 
     struct FresnelModule {

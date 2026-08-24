@@ -9,10 +9,12 @@
 #include "Engine/Core/pass.h"
 
 #include "Engine/Device/direct3d.h"
-#include "Engine/Graphics/texture_resource.h"
 
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
+
+class TextureResource;
+class ModelResource;
 
 class ParticleSystemComponent;
 class LineRendererComponent;
@@ -26,6 +28,7 @@ private:
 
     // デフォルトテクスチャ
     TextureResource* m_defaultTexture = nullptr;
+    ModelResource* m_defaultModel = nullptr;
 
     ComPtr<ID3D11Buffer> m_pParticleVertexBuffer;
     ComPtr<ID3D11Buffer> m_pParticleInstanceBuffer;

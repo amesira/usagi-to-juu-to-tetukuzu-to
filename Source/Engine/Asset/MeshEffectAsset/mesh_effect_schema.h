@@ -167,7 +167,12 @@ namespace MeshEffectSchema
         static const auto schema = FieldSchema{
             MakeField("enabled", "Enabled", &Module::enabled),
             MakeField("gradientOverDuration", "Gradient Over Duration", &Module::gradientOverDuration, ColorFieldOptions{}),
-            MakeField("gradientOverUV", "Gradient Over UV", &Module::gradientOverUV, ColorFieldOptions{})
+            MakeField("gradientStartColor", "Gradient Start Color", &Module::gradientStartColor, ColorFieldOptions{}),
+            MakeField("gradientEndColor", "Gradient End Color", &Module::gradientEndColor, ColorFieldOptions{}),
+            MakeField("gradientStartPosition", "Gradient Start Position", &Module::gradientStartPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("gradientEndPosition", "Gradient End Position", &Module::gradientEndPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f })
         };
         return schema;
     }

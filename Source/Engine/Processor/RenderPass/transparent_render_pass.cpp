@@ -31,6 +31,7 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
     m_pContext = pContext;
 
     m_defaultTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
+    m_defaultModel = Engine::GetModelRepository()->GetModel("asset/Model/cube.fbx");
 
     {
         D3D11_BUFFER_DESC bd = {};
@@ -96,7 +97,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
 
     // アルファブレンドのパーティクルを描画
     SetBlendState(BLENDSTATE_ALFA);
-    SetDepthState(DEPTHSTATE_DISABLE);
+    SetDepthState(DEPTHSTATE_NOWRITE);
     SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     if (particlePool) {
@@ -125,19 +126,20 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     }
 
     if (meshEffectPool) {
+        SetRasterizerState(RASTERIZERSTATE_CULL_NONE);
         Engine::BindShader(m_pMeshEffectShaderProgram);
 
         auto& meshEffects = meshEffectPool->GetList();
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
             if (!meshEffect.GetEnable()) continue;
-            if (!meshEffect.EvaluatedState().visible) continue;
             if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::AlphaBlend) continue;
             TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
             if (!transform) continue;
 
             DrawMeshEffect(meshEffect, view, *transform);
         }
+        SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
     }
 
     // 加算合成のパーティクルを描画
@@ -157,19 +159,20 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     }
 
     if (meshEffectPool) {
+        SetRasterizerState(RASTERIZERSTATE_CULL_NONE);
         Engine::BindShader(m_pMeshEffectShaderProgram);
 
         auto& meshEffects = meshEffectPool->GetList();
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
             if (!meshEffect.GetEnable()) continue;
-            if (!meshEffect.EvaluatedState().visible) continue;
             if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::Additive) continue;
             TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
             if (!transform) continue;
 
             DrawMeshEffect(meshEffect, view, *transform);
         }
+        SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
     }
 
     SetDepthState(DEPTHSTATE_ENABLE);

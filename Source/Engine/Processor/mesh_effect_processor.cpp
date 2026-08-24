@@ -160,7 +160,6 @@ void MeshEffectProcessor::Process(IScene* pScene)
 
     for (auto& meshEffect : meshEffects) {
         auto& evaluatedState = meshEffect.EvaluatedState();
-        evaluatedState.visible = false;
 
         if (!meshEffect.GetOwner()->GetActive()) continue;
         if (!meshEffect.GetEnable()) continue;
@@ -260,6 +259,12 @@ void MeshEffectProcessor::Process(IScene* pScene)
             evaluatedState.buffer.effectColor.y *= gradientOverDuration.y;
             evaluatedState.buffer.effectColor.z *= gradientOverDuration.z;
             evaluatedState.buffer.effectColor.w *= gradientOverDuration.w;
+
+            evaluatedState.buffer.gradientStartColor = meshEffect.Gradient().gradientStartColor;
+            evaluatedState.buffer.gradientEndColor = meshEffect.Gradient().gradientEndColor;
+            evaluatedState.buffer.gradientStartPosition = std::clamp(meshEffect.Gradient().gradientStartPosition, 0.0f, 1.0f);
+            evaluatedState.buffer.gradientEndPosition = std::clamp(meshEffect.Gradient().gradientEndPosition, 0.0f, 1.0f);
+            evaluatedState.buffer.useGradientOverUV = 1;
         }
 
         // === Fresnelの更新 ===
@@ -284,8 +289,6 @@ void MeshEffectProcessor::Process(IScene* pScene)
                 meshEffect.SetModelResource(modelRepository->GetModel(modelPath));
             }
         }
-
-        evaluatedState.visible = meshEffect.IsPlaying() && meshEffect.GetModelResource();
     }
 }
 
