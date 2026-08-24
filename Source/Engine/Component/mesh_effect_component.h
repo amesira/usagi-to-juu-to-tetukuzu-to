@@ -108,8 +108,8 @@ public:
     TextureResource* GetTextureResource() const { return m_textureResource; }
 
     // === 再生制御 ===
-    void Play() { m_isPlaying = true; m_hasPlayed = true; m_time = 0.0f; }
-    void Stop() { m_isPlaying = false; m_time = 0.0f; m_evaluatedState.visible = false; }
+    void Play() { m_isPlaying = true; m_hasPlayed = true; m_time = 0.0f; m_loopTime = 0.0f; }
+    void Stop() { m_isPlaying = false; m_time = 0.0f; m_loopTime = 0.0f; }
     void Pause() { m_isPlaying = false; }
 
     bool IsPlaying() const { return m_isPlaying; }

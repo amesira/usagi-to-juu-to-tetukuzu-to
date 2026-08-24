@@ -43,10 +43,6 @@ namespace MeshEffectRenderUtility {
     void DrawGeometry(
         ID3D11DeviceContext* context,
         const MeshEffectComponent& meshEffect);
-    /// @brief シーン内のすべてのレンダリング可能なMeshEffectComponentに対してコールバックを実行する
-    void ForEachRenderableMeshEffect(
-        IScene* scene,
-        const std::function<void(MeshEffectComponent&, TransformComponent&)>& callback);
 
 }
 

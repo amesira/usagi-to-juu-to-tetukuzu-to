@@ -40,20 +40,21 @@ cbuffer MeshEffectPixelBuffer : register(b9)
 
     float  g_UVWaveSpeed;
     // Fresnel
-    float  g_UseFresnel; // 0: false, 1: true
+    uint   g_UseFresnel; // 0: false, 1: true
     float  g_FresnelTreshold;
     float  g_FresnelIntensity;
     
     float  g_EffectTime;
     float  g_AlphaCutoff;
-    float  g_UseWorldProjection; // 0: false, 1: true
+    uint  g_UseWorldProjection; // 0: false, 1: true
     float padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float2 uv = ps_in.texcoord * (1 - g_UseWorldProjection) + float2(ps_in.posW.x, ps_in.posW.y) * g_UseWorldProjection;
-
+    float2 baseUv = ps_in.texcoord * (1 - g_UseWorldProjection) + float2(ps_in.posW.x, ps_in.posW.y) * g_UseWorldProjection;
+    float2 uv = baseUv;
+    
     // UVにTiling・Scrollを適用
     uv = uv * g_UVTiling + g_UVOffset;
 
@@ -67,13 +68,17 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float4 color = g_Texture.Sample(g_SamplerState, uv) * g_EffectColor;
     
     // Fresnel効果を適用
-    // オブジェクトの端に行くほど明るくする
-    float3 viewDir = normalize(g_EyePosition.xyz - ps_in.posW.xyz);
-    float3 normal = normalize(ps_in.normal.xyz);
-    float edge = 1.0f - saturate(abs(dot(viewDir, normal)) - g_FresnelTreshold) * g_UseFresnel;
-    
-    // エッジ部分を強調
-    color.rgb *= edge * edge * g_FresnelColor.rgb * g_FresnelIntensity;
+    if (g_UseFresnel != 0)
+    {
+        float3 viewDir = normalize(g_EyePosition.xyz - ps_in.posW.xyz);
+        float3 normal = normalize(ps_in.normal.xyz);
+
+        float ndotv = saturate(abs(dot(normal, viewDir)));
+        float fresnel = 1.0f - ndotv;
+        float mask = smoothstep(g_FresnelTreshold, 1.0f, fresnel);
+
+        color.rgb += g_FresnelColor.rgb * mask * g_FresnelIntensity;
+    }
 
     if (color.a <= g_AlphaCutoff) discard;
     return color;

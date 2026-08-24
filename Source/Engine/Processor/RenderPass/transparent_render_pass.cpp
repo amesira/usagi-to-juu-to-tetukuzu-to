@@ -96,7 +96,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
 
     // アルファブレンドのパーティクルを描画
     SetBlendState(BLENDSTATE_ALFA);
-    SetDepthState(DEPTHSTATE_ENABLE);
+    SetDepthState(DEPTHSTATE_NOWRITE);
     SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     if (particlePool) {
@@ -172,6 +172,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
         }
     }
 
+    SetDepthState(DEPTHSTATE_ENABLE);
     SetSamplerState(SAMPLERSTATE_POINT_WRAP);
     SetBlendState(BLENDSTATE_NONE);
 }
@@ -242,12 +243,18 @@ void TransparentRenderPass::DrawLineRenderer(LineRendererComponent& lineRenderer
 void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, const RenderView& view, const TransformComponent& transform)
 {
     // ビルボード行列の計算
-    XMMATRIX billboardRotation = MeshEffectRenderUtility::CreateBillboardRotation(
-        meshEffect.Renderer().billboardMode,
-        view);
+    XMMATRIX billboardRotation = XMMatrixIdentity();
+    if (meshEffect.Renderer().billboardMode == MeshEffectData::BillboardMode::None) {
+        billboardRotation = XMMatrixRotationQuaternion(transform.GetRotationVector());
+    }
+    else {
+        billboardRotation = MeshEffectRenderUtility::CreateBillboardRotation(
+            meshEffect.Renderer().billboardMode,
+            view);
+    }
 
     // ワールド行列の設定
-    XMMATRIX worldMatrix = transform.GetWorldMatrix() * billboardRotation * meshEffect.EvaluatedState().localEffectMatrix;
+    XMMATRIX worldMatrix = MeshEffectRenderUtility::CreateWorldMatrix(transform, meshEffect.EvaluatedState(), billboardRotation);
     Engine::UpdateTransformCB({ worldMatrix, XMMatrixTranspose(worldMatrix) });
 
     // 定数バッファの更新

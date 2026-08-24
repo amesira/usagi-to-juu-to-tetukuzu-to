@@ -191,12 +191,15 @@ void MeshEffectProcessor::Process(IScene* pScene)
             }
         }
         meshEffect.SetTime(currentTime);
+        meshEffect.SetLoopTime(currentLoopTime);
         if (!inDuration) {
             meshEffect.Stop();
         }
 
         const float duration = meshEffect.Main().duration;
-        const float normalizedTime = std::fmod(currentTime, duration) / duration;
+        const float normalizedTime = duration > 0.0f
+            ? std::fmod(currentTime, duration) / duration
+            : 0.0f;
         const float normalizedLoopTime = duration > 0.0f
             ? std::clamp(currentLoopTime / duration, 0.0f, 1.0f)
             : 0.0f;

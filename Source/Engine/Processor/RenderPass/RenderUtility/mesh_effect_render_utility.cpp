@@ -70,7 +70,8 @@ namespace MeshEffectRenderUtility {
     {
         if (!context || !constantBuffer) return false;
         D3D11_MAPPED_SUBRESOURCE msr = {};
-        context->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+        HRESULT hr = context->Map(constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+        if (FAILED(hr)) return false;
         {
             MeshEffectRenderData::MeshEffectBuffer* cbData = (MeshEffectRenderData::MeshEffectBuffer*)msr.pData;
             *cbData = bufferData;
@@ -91,29 +92,4 @@ namespace MeshEffectRenderUtility {
 
         ModelRenderUtility::DrawMeshListGeometry(context, modelResource->meshes);
     }
-
-    /// @brief シーン内の有効なMeshEffectComponentをすべて列挙し、コールバック関数を呼び出す
-    void ForEachRenderableMeshEffect(
-        IScene* scene,
-        const std::function<void(MeshEffectComponent&, TransformComponent&)>& callback)
-    {
-        if (!scene || !callback) return;
-
-        auto* transformPool = scene->GetComponentPool<TransformComponent>();
-        auto* meshEffectPool = scene->GetComponentPool<MeshEffectComponent>();
-        if (!transformPool || !meshEffectPool) return;
-
-        for (MeshEffectComponent& meshEffect : meshEffectPool->GetList()) {
-            TransformComponent* transform =
-                transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
-            if (!transform) continue;
-            if (!meshEffect.GetOwner()->GetActive()) continue;
-            if (!meshEffect.GetEnable() || !transform->GetEnable()) continue;
-            if (!meshEffect.EvaluatedState().visible) continue;
-            if (!meshEffect.GetModelResource()) continue;
-
-            callback(meshEffect, *transform);
-        }
-    }
-
 }

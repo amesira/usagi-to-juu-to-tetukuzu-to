@@ -10,12 +10,30 @@
             "tileY": 1,
             "timeMode": "Duration"
         },
+        "fresnel": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "enabled": false,
+            "intensity": 1.0,
+            "threshold": 0.0
+        },
         "gradient": {
             "enabled": true,
             "gradientOverDuration": {
                 "keys": [
                     {
                         "time": 0.0,
+                        "valueW": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 0.5,
                         "valueW": 1.0,
                         "valueX": 1.0,
                         "valueY": 1.0,
@@ -23,7 +41,7 @@
                     },
                     {
                         "time": 1.0,
-                        "valueW": 1.0,
+                        "valueW": 0.0,
                         "valueX": 1.0,
                         "valueY": 1.0,
                         "valueZ": 1.0
@@ -42,9 +60,9 @@
                     {
                         "time": 1.0,
                         "valueW": 1.0,
-                        "valueX": 0.2520325183868408,
-                        "valueY": 0.10962390154600143,
-                        "valueZ": 0.10962390154600143
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
                     }
                 ]
             }
@@ -65,24 +83,24 @@
                 1.0
             ],
             "modelPath": "asset/MeshEffect/Mesh/slash.fbx",
-            "textureMappingMode": "WorldProjection",
-            "texturePath": "asset/Texture/Dither.png",
+            "textureMappingMode": "MeshUV",
+            "texturePath": "asset/Texture/test.jpg",
             "uvRect": [
                 0.0,
                 0.0,
-                5.0,
-                5.0
+                1.0,
+                1.0
             ]
         },
         "scroll": {
-            "enabled": false,
+            "enabled": true,
             "offset": [
                 0.0,
                 0.0
             ],
             "scrollSpeed": [
                 0.0,
-                0.0
+                2.190000057220459
             ],
             "tiling": [
                 1.0,
@@ -90,7 +108,7 @@
             ]
         },
         "transform": {
-            "enabled": true,
+            "enabled": false,
             "rotationOverDuration": {
                 "keys": [
                     {
@@ -138,13 +156,13 @@
                 ]
             },
             "direction": [
-                0.0,
-                1.0
+                1.0,
+                0.0
             ],
-            "enabled": false,
-            "frequency": 1.0,
+            "enabled": true,
+            "frequency": 10.0,
             "speed": 1.0,
-            "type": "Vertex"
+            "type": "UV"
         }
     },
     "formatVersion": 1,

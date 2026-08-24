@@ -61,6 +61,7 @@ bool MeshEffectAssetLoader::Save(const std::filesystem::path& filePath, const Me
             { "scroll", FieldSerialization::SerializeFields(desc.scrollModule, MeshEffectSchema::GetScrollSchema()) },
             { "wave", FieldSerialization::SerializeFields(desc.waveModule, MeshEffectSchema::GetWaveSchema()) },
             { "gradient", FieldSerialization::SerializeFields(desc.gradientModule, MeshEffectSchema::GetGradientSchema()) },
+            { "fresnel", FieldSerialization::SerializeFields(desc.fresnelModule, MeshEffectSchema::GetFresnelSchema()) },
             { "renderer", FieldSerialization::SerializeFields(desc.rendererModule, MeshEffectSchema::GetRendererSchema()) }
         } }
     };
@@ -101,6 +102,7 @@ bool MeshEffectAssetLoader::Load(const std::filesystem::path& filePath, MeshEffe
             !DeserializeModule(*dataIt, "scroll", loadedDesc.scrollModule, MeshEffectSchema::GetScrollSchema()) ||
             !DeserializeModule(*dataIt, "wave", loadedDesc.waveModule, MeshEffectSchema::GetWaveSchema()) ||
             !DeserializeModule(*dataIt, "gradient", loadedDesc.gradientModule, MeshEffectSchema::GetGradientSchema()) ||
+            !DeserializeModule(*dataIt, "fresnel", loadedDesc.fresnelModule, MeshEffectSchema::GetFresnelSchema()) ||
             !DeserializeModule(*dataIt, "renderer", loadedDesc.rendererModule, MeshEffectSchema::GetRendererSchema())) {
             return false;
         }
