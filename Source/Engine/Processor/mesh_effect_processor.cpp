@@ -263,9 +263,9 @@ void MeshEffectProcessor::Process(IScene* pScene)
 
             evaluatedState.buffer.gradientStartColor = meshEffect.Gradient().gradientStartColor;
             evaluatedState.buffer.gradientEndColor = meshEffect.Gradient().gradientEndColor;
+            evaluatedState.buffer.gradientDirection = meshEffect.Gradient().gradientDirection;
             evaluatedState.buffer.gradientStartPosition = std::clamp(meshEffect.Gradient().gradientStartPosition, 0.0f, 1.0f);
             evaluatedState.buffer.gradientEndPosition = std::clamp(meshEffect.Gradient().gradientEndPosition, 0.0f, 1.0f);
-            evaluatedState.buffer.useGradientOverUV = 1;
         }
 
         // === Fresnelの更新 ===

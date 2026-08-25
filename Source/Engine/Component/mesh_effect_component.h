@@ -48,15 +48,14 @@ namespace MeshEffectRenderData{
         float  effectTime = 0.0f;
         float  alphaCutoff = 0.0f;
         int    useWorldProjection = 0;
-        float padding = 0.0f;
+        float rendererIntensity = 1.0f;
 
         // Gradient Over UV
         XMFLOAT4 gradientStartColor = { 1.0f, 1.0f, 1.0f, 1.0f };
         XMFLOAT4 gradientEndColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+        XMFLOAT2 gradientDirection = { 0.0f, 1.0f };
         float gradientStartPosition = 0.0f;
         float gradientEndPosition = 1.0f;
-        int useGradientOverUV = 0;
-        float rendererIntensity = 1.0f;
     };
     static_assert(sizeof(MeshEffectBuffer) % 16 == 0);
 

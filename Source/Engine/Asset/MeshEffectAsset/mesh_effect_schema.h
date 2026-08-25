@@ -169,6 +169,8 @@ namespace MeshEffectSchema
             MakeField("gradientOverDuration", "Gradient Over Duration", &Module::gradientOverDuration, ColorFieldOptions{}),
             MakeField("gradientStartColor", "Gradient Start Color", &Module::gradientStartColor, ColorFieldOptions{}),
             MakeField("gradientEndColor", "Gradient End Color", &Module::gradientEndColor, ColorFieldOptions{}),
+            MakeField("gradientDirection", "Gradient Direction", &Module::gradientDirection,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
             MakeField("gradientStartPosition", "Gradient Start Position", &Module::gradientStartPosition,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
             MakeField("gradientEndPosition", "Gradient End Position", &Module::gradientEndPosition,

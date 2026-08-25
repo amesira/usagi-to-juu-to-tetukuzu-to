@@ -46,16 +46,15 @@ cbuffer MeshEffectPixelBuffer : register(b9)
     
     float  g_EffectTime;
     float  g_AlphaCutoff;
-    uint  g_UseWorldProjection; // 0: false, 1: true
-    float padding;
+    uint   g_UseWorldProjection; // 0: false, 1: true
+    float  g_RendererIntensity;
 
     // Gradient Over UV
     float4 g_GradientStartColor;
     float4 g_GradientEndColor;
-    float g_GradientStartPosition;
-    float g_GradientEndPosition;
-    uint  g_UseGradientOverUV;
-    float g_RendererIntensity;
+    float2 g_GradientDirection;
+    float  g_GradientStartPosition;
+    float  g_GradientEndPosition;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
@@ -74,16 +73,23 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     // 最後にアトラス上の対象領域へ変換
     uv = g_FrameUVRect.xy + uv * g_FrameUVRect.zw;
 
-    float4 uvGradientColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-    if (g_UseGradientOverUV != 0)
-    {
-        const float gradientRange = g_GradientEndPosition - g_GradientStartPosition;
-        const float gradientT = abs(gradientRange) > 0.0001f
-            ? saturate((originalUv.y - g_GradientStartPosition) / gradientRange)
-            : step(g_GradientStartPosition, originalUv.y);
+    const float directionLength = length(g_GradientDirection);
+    const float2 gradientDirection = directionLength > 0.0001f
+        ? g_GradientDirection / directionLength
+        : float2(0.0f, 1.0f);
 
-        uvGradientColor = lerp(g_GradientStartColor, g_GradientEndColor, gradientT);
-    }
+    // 単位正方形のUVを方向へ射影した範囲を0～1へ正規化する。
+    const float minProjection = min(0.0f, gradientDirection.x) + min(0.0f, gradientDirection.y);
+    const float maxProjection = max(0.0f, gradientDirection.x) + max(0.0f, gradientDirection.y);
+    const float projectionRange = max(maxProjection - minProjection, 0.0001f);
+    const float gradientPosition = saturate(
+        (dot(originalUv, gradientDirection) - minProjection) / projectionRange);
+
+    const float gradientRange = g_GradientEndPosition - g_GradientStartPosition;
+    const float gradientT = abs(gradientRange) > 0.0001f
+        ? saturate((gradientPosition - g_GradientStartPosition) / gradientRange)
+        : step(g_GradientStartPosition, gradientPosition);
+    const float4 uvGradientColor = lerp(g_GradientStartColor, g_GradientEndColor, gradientT);
 
     float4 color = g_Texture.Sample(g_SamplerState, uv) * g_EffectColor * uvGradientColor;
     
