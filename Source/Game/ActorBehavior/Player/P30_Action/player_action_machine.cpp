@@ -14,18 +14,14 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
-#include "Attack/DualPistols/player_dual_pistols_action.h"
-#include "Attack/Shotgun/player_shotgun_action.h"
-#include "Attack/WeaponTransform/player_weapon_transform_action.h"
-
 /// @brief 初期化処理
 void PlayerActionMachine::Initialize(const PlayerContext& context, const PlayerInput& input)
 {
     // 各Actionの初期化
     m_allActions.clear();
-    m_allActions.push_back(std::make_unique<PlayerDualPistolsAction>());
-    m_allActions.push_back(std::make_unique<PlayerShotgunAction>());
-    m_allActions.push_back(std::make_unique<PlayerWeaponTransformAction>());
+    m_allActions.push_back(&m_dualPistolsAction);
+    m_allActions.push_back(&m_shotgunAction);
+    m_allActions.push_back(&m_weaponTransformAction);
 
     m_activeActions.clear();
 
@@ -78,8 +74,8 @@ void PlayerActionMachine::Update(PlayerContext& context, const PlayerInput& inpu
     std::vector<PlayerActionBase*> newActiveActions;
     for (auto& action : m_allActions) {
         if (!action->CanStart(context, input)) continue;
-        if (std::find(m_activeActions.begin(), m_activeActions.end(), action.get()) != m_activeActions.end()) continue;
-        newActiveActions.push_back(action.get());
+        if (std::find(m_activeActions.begin(), m_activeActions.end(), action) != m_activeActions.end()) continue;
+        newActiveActions.push_back(action);
     }
     // 1フレーム内に開始と割り込み終了が起こるのを防ぎたいので、優先度の高い順にソートしてから開始する
     std::sort(newActiveActions.begin(), newActiveActions.end(), [](PlayerActionBase* a, PlayerActionBase* b) {

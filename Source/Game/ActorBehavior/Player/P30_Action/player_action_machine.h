@@ -12,12 +12,20 @@
 #include <memory>
 #include <unordered_map>
 
+#include "Attack/DualPistols/player_dual_pistols_action.h"
+#include "Attack/Shotgun/player_shotgun_action.h"
+#include "Attack/WeaponTransform/player_weapon_transform_action.h"
+
 class PlayerContext;
 class PlayerInput;
 
 class PlayerActionMachine {
 private:
-    std::vector<std::unique_ptr<PlayerActionBase>> m_allActions;
+    PlayerDualPistolsAction m_dualPistolsAction;
+    PlayerShotgunAction m_shotgunAction;
+    PlayerWeaponTransformAction m_weaponTransformAction;
+
+    std::vector<PlayerActionBase*> m_allActions;
     std::vector<PlayerActionBase*> m_activeActions;
 
     using ActionCategory = PlayerActionBase::ActionCategory;
