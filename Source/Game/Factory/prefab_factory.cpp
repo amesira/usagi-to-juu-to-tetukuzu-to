@@ -13,7 +13,6 @@
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
-#include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
@@ -74,7 +73,6 @@ namespace PrefabFactory
             true);
 
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
-        PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
         PlayerMoveBehavior* playerMoveBehavior = prefab.player->GetComponent<PlayerMoveBehavior>();
 
         // 走行時の砂埃パーティクル生成

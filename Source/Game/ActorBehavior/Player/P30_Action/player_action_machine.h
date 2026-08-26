@@ -18,7 +18,7 @@ private:
     // ここにPlayerActionBaseの派生クラスのインスタンスを保持する
 
     // 全アクションのリスト
-    std::vector<PlayerActionBase*> m_allActions;
+    std::vector<PlayerActionBase*> m_allActions = {};
     // 現在の行動
     PlayerActionBase* m_currentAction = nullptr;
 

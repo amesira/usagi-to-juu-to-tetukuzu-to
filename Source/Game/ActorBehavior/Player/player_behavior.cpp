@@ -18,8 +18,8 @@
 #include "Engine/Component/transform_component.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
-#include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
-#include "Game/ActorBehavior/Player/P30_Action/Dodge/player_dodge_behavior.h"
+#include "Game/ActorBehavior/Player/P20_Condition/player_condition_machine.h"
+#include "Game/ActorBehavior/Player/P30_Action/player_action_machine.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
@@ -35,19 +35,18 @@ void PlayerBehavior::Start()
 
     m_context.owner = this;
     m_context.transform = owner->GetComponent<TransformComponent>();
-
     m_context.locomotionController = &m_locomotionController;
-
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
-    m_context.attackBehavior = owner->GetComponent<PlayerAttackBehavior>();
-    m_context.dodgeBehavior = owner->GetComponent<PlayerDodgeBehavior>();
 
-    // セットアップ処理
+    // モジュール初期化
     m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
+
+    m_context.conditionMachine = &m_conditionMachine;
+    m_context.actionMachine = &m_actionMachine;
+    m_context.actionMachine->Initialize(m_context, m_input);
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
-
     GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
     if (mainCamera) {
         m_context.mainCameraTransform = mainCamera->GetComponent<TransformComponent>();
@@ -59,6 +58,9 @@ void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
     m_input = UpdateInput();
+
+    m_context.conditionMachine->Update(m_context, m_input);
+    m_context.actionMachine->Update(m_context, m_input);
 
     // プレイヤーの移動挙動を更新する
     PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);

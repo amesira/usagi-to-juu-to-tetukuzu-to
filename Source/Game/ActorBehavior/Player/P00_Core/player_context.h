@@ -20,8 +20,6 @@ public:
     class PlayerWeaponController* weaponController = nullptr;
 
     class PlayerMoveBehavior* moveBehavior = nullptr;
-    class PlayerDodgeBehavior* dodgeBehavior = nullptr;
-    class PlayerAttackBehavior* attackBehavior = nullptr;
 
     class CameraComponent* mainCamera = nullptr;
     TransformComponent* mainCameraTransform = nullptr;

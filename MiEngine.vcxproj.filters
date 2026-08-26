@@ -298,9 +298,6 @@
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\camera_control_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior</Filter>
@@ -317,7 +314,6 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\mask_render_pass.cpp">
       <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Engine\Component\collider_component.cpp">
       <Filter>Sources\Engine\Component</Filter>
     </ClCompile>
@@ -380,7 +376,6 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_window.cpp" />
@@ -653,9 +648,6 @@
     <ClInclude Include="Source\Game\Factory\projectile_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Player\PlayerState</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h">
       <Filter>Sources\Game\ActorBehavior</Filter>
@@ -675,7 +667,6 @@
     <ClInclude Include="Source\Game\Factory\actor_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
@@ -819,7 +810,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_health_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.h" />

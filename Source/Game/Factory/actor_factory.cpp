@@ -22,8 +22,6 @@
 #include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
-#include "Game/ActorBehavior/Player/P30_Action/Attack/player_attack_behavior.h"
-#include "Game/ActorBehavior/Player/P30_Action/Dodge/player_dodge_behavior.h"
 
 #include "Game/ActorBehavior/Base/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"

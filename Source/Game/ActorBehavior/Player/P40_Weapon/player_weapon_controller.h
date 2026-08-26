@@ -14,6 +14,12 @@ class PlayerContext;
 class PlayerInput;
 
 class PlayerWeaponController {
+public:
+    enum class WeaponMode {
+        DualPistols,
+        CombinedShotgun,
+    };
+
 private:
     // ここにPlayerWeaponBaseの派生クラスのインスタンスを保持する
     

@@ -17,6 +17,9 @@
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 
+#include "Game/ActorBehavior/Player/P20_Condition/player_condition_machine.h"
+#include "Game/ActorBehavior/Player/P30_Action/player_action_machine.h"
+
 class TransformComponent;
 class CameraComponent;
 
@@ -31,6 +34,8 @@ private:
 
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
+    PlayerConditionMachine m_conditionMachine;
+    PlayerActionMachine m_actionMachine;
 
 public:
     ~PlayerBehavior() = default;

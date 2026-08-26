@@ -8,3 +8,14 @@ enum class PlayerState {
     Dodge,
     Stunned,
 };
+
+class PlayerContext;
+class PlayerInput;
+
+class PlayerConditionMachine {
+private:
+
+public:
+    void Update(PlayerContext& context, const PlayerInput& input);
+
+};

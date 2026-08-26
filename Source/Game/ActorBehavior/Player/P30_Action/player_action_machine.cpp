@@ -17,12 +17,13 @@
 void PlayerActionMachine::Initialize(const PlayerContext& context, const PlayerInput& input)
 {
     // 各Actionの初期化
-
+    m_allActions.clear();
 }
 
 /// @brief 更新処理
 void PlayerActionMachine::Update(PlayerContext& context, const PlayerInput& input)
 {
+    if (m_allActions.empty()) return;
     float deltaTime = FPS_GetDeltaTime();
 
     // === バックグラウンド更新 ===

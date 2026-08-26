@@ -171,10 +171,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
@@ -220,7 +218,6 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\opaque_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\mask_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\post_effect_pass.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
@@ -381,12 +378,10 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_settings_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_base.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_input.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Dodge\player_dodge_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.h" />
@@ -456,7 +451,6 @@
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\opaque_render_pass.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\post_effect_pass.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.h" />

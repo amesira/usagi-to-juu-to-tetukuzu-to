@@ -14,7 +14,6 @@
 class PlayerMoveBehavior : public BehaviorComponent {
 private:
     PlayerMoveContext m_context;
-
     class AnimationComponent* m_animationComponent = nullptr;
 
 public:
