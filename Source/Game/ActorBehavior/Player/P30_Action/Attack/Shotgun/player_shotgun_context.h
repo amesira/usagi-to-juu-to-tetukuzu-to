@@ -43,7 +43,11 @@ struct PlayerShotgunContext
     }
 
     class TransformComponent* playerTransform = nullptr;
+
+    class TransformComponent* cameraTransform = nullptr;
+    class CameraComponent* cameraComponent = nullptr;
     class CameraControlBehavior* cameraControlBehavior = nullptr;
+
     class PlayerLocomotionController* locomotionController = nullptr;
     class PlayerWeaponController* weaponController = nullptr;
 

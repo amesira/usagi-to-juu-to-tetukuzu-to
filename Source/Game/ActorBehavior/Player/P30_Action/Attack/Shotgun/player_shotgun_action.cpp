@@ -20,6 +20,8 @@ void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgun
 {
     m_context.owner = this;
     m_context.playerTransform = context.transform;
+    m_context.cameraTransform = context.mainCameraTransform;
+    m_context.cameraComponent = context.mainCamera;
     m_context.cameraControlBehavior = context.cameraControlBehavior;
     m_context.locomotionController = context.locomotionController;
     m_context.weaponController = context.weaponController;
@@ -45,21 +47,30 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
+    // 終了チェック
+    if (!input.holdAimCommand) {
+        ChangePhase(Phase::Exiting);
+    }
+
     Phase currentPhase = m_context.runtimeState.phase;
+
     bool enteredPhase = m_enteredPhase;
     m_enteredPhase = false;
 
+    m_context.runtimeState.phaseTimer += deltaTime;
+
     switch (currentPhase) {
         case Phase::Entering: {
-            // エイムへ行くまでの処理（アニメーションやエフェクトなど）
-            ChangePhase(Phase::Aiming);
-            break;
-        }
-        case Phase::Aiming: {
             if (enteredPhase) {
                 m_context.aim.EnterAim(m_context);
             }
 
+            if (m_context.runtimeState.phaseTimer >= m_context.settings().aimTransitionTime) {
+                ChangePhase(Phase::Aiming);
+            }
+            break;
+        }
+        case Phase::Aiming: {
             m_context.aim.UpdateAim(m_context, deltaTime);
 
             if (input.triggerAttackCommand || input.holdAttackCommand) {
@@ -84,9 +95,14 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             break;
         }
         case Phase::Exiting: {
-            m_context.aim.ExitAim(m_context);
+            if (enteredPhase) {
+                m_context.aim.ExitAim(m_context);
+            }
 
-            ChangePhase(Phase::None);
+            if (m_context.runtimeState.phaseTimer >= m_context.settings().aimTransitionTime) {
+                ChangePhase(Phase::None);
+                SetState(ActionState::WaitingToFinish);
+            }
             break;
         }
         default: break;
