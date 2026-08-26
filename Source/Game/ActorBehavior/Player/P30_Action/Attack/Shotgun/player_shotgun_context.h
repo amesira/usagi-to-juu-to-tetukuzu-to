@@ -4,6 +4,7 @@
 #include "player_shotgun_settings_asset.h"
 #include "player_shotgun_aim.h"
 #include "player_shotgun_charging.h"
+#include "player_shotgun_firing.h"
 #include "player_shotgun_effects.h"
 
 struct PlayerShotgunRuntimeState 
@@ -53,6 +54,7 @@ struct PlayerShotgunContext
 
     PlayerShotgunAim aim;
     PlayerShotgunCharging charging;
+    PlayerShotgunFiring firing;
     PlayerShotgunEffects effects;
 
 };

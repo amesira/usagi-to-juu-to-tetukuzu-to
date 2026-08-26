@@ -29,15 +29,7 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
     m_isAiming = true;
 
     // エイムモードのためのカメラエフェクトを設定する
-    if (context.cameraControlBehavior) {
-        float duration = context.settings().aimTransitionTime;
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, 
-            context.settings().aimFOV, duration);
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, 
-            context.settings().aimCameraDistance, duration);
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset,
-            context.settings().aimCameraLocalOffset, duration);
-    }
+    SetAimingCameraEffect(context, true);
 
     // 移動リクエストを作成する
     if (context.locomotionController) {
@@ -80,16 +72,32 @@ void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)
     m_isAiming = false;
 
     // エイムモードのカメラエフェクトをリセットする
-    if (context.cameraControlBehavior) {
-        float duration = context.settings().aimTransitionTime;
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, duration);
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, duration);
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset, duration);
-    }
+    SetAimingCameraEffect(context, false);
 
     // 移動リクエストをリセットする
     if (context.locomotionController && m_locomotionRequestID != -1) {
         context.locomotionController->RemoveLocomotionRequestByIndex(m_locomotionRequestID);
         m_locomotionRequestID = -1;
+    }
+}
+
+/// @brief エイムモードのためのカメラエフェクトを設定する
+void PlayerShotgunAim::SetAimingCameraEffect(PlayerShotgunContext& context, bool enable)
+{
+    if (!context.cameraControlBehavior) return;
+
+    float duration = context.settings().aimTransitionTime;
+    if (enable) {
+        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, 
+            context.settings().aimFOV, duration);
+        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, 
+            context.settings().aimCameraDistance, duration);
+        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset,
+            context.settings().aimCameraLocalOffset, duration);
+    } 
+    else {
+        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, duration);
+        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, duration);
+        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset, duration);
     }
 }

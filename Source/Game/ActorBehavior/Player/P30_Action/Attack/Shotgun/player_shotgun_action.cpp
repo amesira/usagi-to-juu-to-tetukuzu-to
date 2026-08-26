@@ -47,13 +47,12 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
-    // 終了チェック
+    // 終了チェック（仮）
     if (!input.holdAimCommand) {
         ChangePhase(Phase::Exiting);
     }
 
     Phase currentPhase = m_context.runtimeState.phase;
-
     bool enteredPhase = m_enteredPhase;
     m_enteredPhase = false;
 
@@ -79,10 +78,14 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             break;
         }
         case Phase::Charging: {
-           /* m_context.charging.Update(m_context, input, deltaTime);
-            if (m_context.charging.IsChargeComplete()) {
+            if (enteredPhase) {
+                m_context.charging.Start(m_context);
+            }
+            m_context.charging.Update(m_context, deltaTime);
+
+            if (!input.holdAttackCommand) {
                 ChangePhase(Phase::Firing);
-            }*/
+            }
             break;
         }
         case Phase::Firing: {

@@ -22,6 +22,12 @@ namespace PlayerShotgunSettings {
         float   aimTransitionTime = 0.2f;    // エイムへの遷移時間（秒）
         float   aimMoveSpeedMultiplier = 0.7f;   // エイム時の移動速度倍率（0.0f～1.0f）
 
+        // === チャージ設定 ===
+        float   chargeFOV = 70.0f;           // チャージ時のカメラFOV（度）
+        float   chargeStartDelay = 0.1f;     // チャージ開始時の遅延（秒）
+        float   chargeStartTransitionTime = 0.2f; // チャージ開始時の遷移時間（秒）
+        float   chargeResetTransitionTime = 0.2f; // チャージリセット時の遷移時間（秒）
+
         // === エフェクト設定 ===
         float   muzzleFlashDuration = 0.1f; // マズルフラッシュの表示時間（秒）
         float   chargeLightIntensity = 5.0f; // チャージライトの強度
