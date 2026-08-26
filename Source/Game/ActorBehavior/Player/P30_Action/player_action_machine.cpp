@@ -21,7 +21,6 @@ void PlayerActionMachine::Initialize(const PlayerContext& context, const PlayerI
     m_allActions.clear();
     m_allActions.push_back(&m_dualPistolsAction);
     m_allActions.push_back(&m_shotgunAction);
-    m_allActions.push_back(&m_weaponTransformAction);
 
     m_activeActions.clear();
 

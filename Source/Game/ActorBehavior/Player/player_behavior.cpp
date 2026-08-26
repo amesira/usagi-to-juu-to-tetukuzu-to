@@ -23,6 +23,7 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Utility/mi_math.h"
 
@@ -38,12 +39,8 @@ void PlayerBehavior::Start()
     m_context.locomotionController = &m_locomotionController;
     m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
 
-    // モジュール初期化
-    m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
-
     m_context.conditionMachine = &m_conditionMachine;
     m_context.actionMachine = &m_actionMachine;
-    m_context.actionMachine->Initialize(m_context, m_input);
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -51,7 +48,15 @@ void PlayerBehavior::Start()
     if (mainCamera) {
         m_context.mainCameraTransform = mainCamera->GetComponent<TransformComponent>();
         m_context.mainCamera = mainCamera->GetComponent<CameraComponent>();
+
+        CameraControlBehavior* cameraControl = mainCamera->GetComponent<CameraControlBehavior>();
+        m_context.cameraControlBehavior = cameraControl;
     }
+
+    // 構成要素の初期化
+    m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
+    m_context.actionMachine->Initialize(m_context, m_input);
+
 }
 
 void PlayerBehavior::Update()

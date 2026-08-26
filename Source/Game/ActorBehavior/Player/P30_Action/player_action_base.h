@@ -51,7 +51,7 @@ public:
         m_actionID(actionID), m_category(category), m_priority(priority), m_isInterruptible(isInterruptible) {
     }
     virtual ~PlayerActionBase() = default;
-    
+
     /// @brief このアクションを開始できるかどうか
     virtual bool CanStart(const PlayerContext& context, const PlayerInput& input) = 0;
 

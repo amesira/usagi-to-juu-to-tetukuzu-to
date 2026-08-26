@@ -14,16 +14,16 @@
 
 #include "Attack/DualPistols/player_dual_pistols_action.h"
 #include "Attack/Shotgun/player_shotgun_action.h"
-#include "Attack/WeaponTransform/player_weapon_transform_action.h"
 
 class PlayerContext;
 class PlayerInput;
 
 class PlayerActionMachine {
 private:
+    // TODO: アクションの実体はPlayerBehaviorに移し、ActionMachineに登録関数を作る。
+    // ReferencesやSettingsAssetを用いた初期かもPlayerBehaviorで行う
     PlayerDualPistolsAction m_dualPistolsAction;
     PlayerShotgunAction m_shotgunAction;
-    PlayerWeaponTransformAction m_weaponTransformAction;
 
     std::vector<PlayerActionBase*> m_allActions;
     std::vector<PlayerActionBase*> m_activeActions;

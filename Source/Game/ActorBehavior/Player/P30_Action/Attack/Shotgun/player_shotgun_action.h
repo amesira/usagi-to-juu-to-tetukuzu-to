@@ -6,15 +6,26 @@
 // ・ショットガン攻撃アクション
 //---------------------------------------------------
 #pragma once
-
 #include "Game/ActorBehavior/Player/P30_Action/player_action_base.h"
+#include "player_shotgun_context.h"
 
 class PlayerShotgunAction : public PlayerActionBase {
+private:
+    PlayerShotgunContext m_context;
+
+    bool m_enteredPhase = false;
+
 public:
     PlayerShotgunAction() : PlayerActionBase("Shotgun", ActionCategory::Attack, 10, true) {}
+    void Initialize(const PlayerContext& context, PlayerShotgunReferences references, PlayerShotgunSettingsAsset* settingsAsset);
+
     bool CanStart(const PlayerContext& context, const PlayerInput& input) override;
 
     void Start(PlayerContext& context, const PlayerInput& input) override;
     void Update(PlayerContext& context, const PlayerInput& input, float deltaTime) override;
     void Finish(PlayerContext& context, const PlayerInput& input) override;
+
+private:
+    void ChangePhase(PlayerShotgunRuntimeState::Phase newPhase);
+
 };

@@ -24,6 +24,7 @@ public:
     class CameraComponent* mainCamera = nullptr;
     TransformComponent* mainCameraTransform = nullptr;
 
-    // FIX: この下にDataAssetで作成したSettingsを入れる予定
+    class CameraControlBehavior* cameraControlBehavior = nullptr;
 
+    // FIX: この下にDataAssetで作成したSettingsを入れる予定
 };
