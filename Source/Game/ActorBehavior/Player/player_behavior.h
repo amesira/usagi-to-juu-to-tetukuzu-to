@@ -19,6 +19,9 @@
 
 #include "Game/ActorBehavior/Player/P20_Condition/player_condition_machine.h"
 #include "Game/ActorBehavior/Player/P30_Action/player_action_machine.h"
+#include "Game/ActorBehavior/Player/P30_Action/Attack/DualPistols/player_dual_pistols_action.h"
+#include "Game/ActorBehavior/Player/P30_Action/Attack/Shotgun/player_shotgun_action.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
 
 class TransformComponent;
 class CameraComponent;
@@ -29,13 +32,21 @@ private:
     PlayerContext m_context;
     PlayerInput m_input;
 
-    PlayerMoveReferences m_moveReferences;
-    PlayerMoveSettingsAsset* m_moveSettings;
-
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
     PlayerConditionMachine m_conditionMachine;
     PlayerActionMachine m_actionMachine;
+    PlayerWeaponController m_weaponController;
+
+    PlayerMoveReferences m_moveReferences;
+    PlayerMoveSettingsAsset* m_moveSettings;
+
+    // === プレイヤーアクションの実体 ===
+    PlayerDualPistolsAction m_dualPistolsAction;
+    PlayerShotgunAction m_shotgunAction;
+
+    PlayerShotgunReferences m_shotgunReferences;
+    PlayerShotgunSettingsAsset* m_shotgunSettings = nullptr;
 
 public:
     ~PlayerBehavior() = default;
@@ -47,6 +58,11 @@ public:
     void SetupPlayerMove(PlayerMoveReferences& references, PlayerMoveSettingsAsset* settings) {
         m_moveReferences = references;
         m_moveSettings = settings;
+    }
+
+    void SetupPlayerShotgun(PlayerShotgunReferences references, PlayerShotgunSettingsAsset* settings) {
+        m_shotgunReferences = references;
+        m_shotgunSettings = settings;
     }
 
 private:

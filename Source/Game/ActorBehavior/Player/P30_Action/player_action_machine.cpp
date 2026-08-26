@@ -17,11 +17,7 @@
 /// @brief 初期化処理
 void PlayerActionMachine::Initialize(const PlayerContext& context, const PlayerInput& input)
 {
-    // 各Actionの初期化
     m_allActions.clear();
-    m_allActions.push_back(&m_dualPistolsAction);
-    m_allActions.push_back(&m_shotgunAction);
-
     m_activeActions.clear();
 
     m_categoryRestrictions.clear();
@@ -37,6 +33,16 @@ void PlayerActionMachine::Initialize(const PlayerContext& context, const PlayerI
         ActionCategoryMask(PlayerActionBase::ToMask(ActionCategory::Attack) | PlayerActionBase::ToMask(ActionCategory::Interaction)),
         {"Dodge", "Jet"}
     };
+}
+
+/// @brief PlayerBehaviorが所有するActionを登録する
+void PlayerActionMachine::RegisterAction(PlayerActionBase& action)
+{
+    if (std::find(m_allActions.begin(), m_allActions.end(), &action) != m_allActions.end()) {
+        return;
+    }
+
+    m_allActions.push_back(&action);
 }
 
 /// @brief 更新処理

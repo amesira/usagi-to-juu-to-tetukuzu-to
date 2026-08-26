@@ -9,22 +9,14 @@
 #pragma once
 #include "player_action_base.h"
 #include <vector>
-#include <memory>
 #include <unordered_map>
-
-#include "Attack/DualPistols/player_dual_pistols_action.h"
-#include "Attack/Shotgun/player_shotgun_action.h"
 
 class PlayerContext;
 class PlayerInput;
 
 class PlayerActionMachine {
 private:
-    // TODO: アクションの実体はPlayerBehaviorに移し、ActionMachineに登録関数を作る。
-    // ReferencesやSettingsAssetを用いた初期かもPlayerBehaviorで行う
-    PlayerDualPistolsAction m_dualPistolsAction;
-    PlayerShotgunAction m_shotgunAction;
-
+    // Actionの実体はPlayerBehaviorが所有する
     std::vector<PlayerActionBase*> m_allActions;
     std::vector<PlayerActionBase*> m_activeActions;
 
@@ -45,6 +37,8 @@ private:
 public:
     /// @brief 初期化処理
     void Initialize(const PlayerContext& context, const PlayerInput& input);
+    /// @brief PlayerBehaviorが所有するActionを登録する
+    void RegisterAction(PlayerActionBase& action);
     /// @brief 更新処理
     void Update(PlayerContext& context, const PlayerInput& input);
 

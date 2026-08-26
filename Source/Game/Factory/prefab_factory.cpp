@@ -48,17 +48,14 @@ namespace PrefabFactory
         constraint->SetConsiderScaling(considerScale);
     }
 
-    // ----------------------------------- プレハブ生成
-
     // プレイヤープレハブ生成
     PlayerPrefab PrefabFactory::CreatePlayerPrefab(IScene* scene, const XMFLOAT3& position)
     {
-        PlayerPrefab prefab{};
+        PlayerPrefab prefab = {};
         if (!scene) return prefab;
 
-        PlayerPrefabSettingsAsset* settingsAsset = DATA_LOADER->GetAsset<PlayerPrefabSettingsAsset>(
-                PLAYER_PREFAB_SETTINGS_PATH,
-                true);
+        PlayerPrefabSettingsAsset* settingsAsset 
+            = DATA_LOADER->GetAsset<PlayerPrefabSettingsAsset>(PLAYER_PREFAB_SETTINGS_PATH, true);
         if (!settingsAsset) return prefab;
 
         const PlayerPrefabSettings::Data& settings = settingsAsset->GetData();
@@ -67,13 +64,18 @@ namespace PrefabFactory
         prefab.player = ActorFactory::CreatePlayer(scene, position, settings);
         if (!prefab.player) return prefab;
 
+        TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
+        PlayerMoveBehavior* playerMoveBehavior = prefab.player->GetComponent<PlayerMoveBehavior>();
+
         PlayerMoveReferences moveReferences;
         PlayerMoveSettingsAsset* moveSettingsAsset = DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>(
             "asset/Data/player_move_settings.data.json",
             true);
 
-        TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
-        PlayerMoveBehavior* playerMoveBehavior = prefab.player->GetComponent<PlayerMoveBehavior>();
+        PlayerShotgunReferences shotgunReferences;
+        PlayerShotgunSettingsAsset* shotgunSettingsAsset = DATA_LOADER->GetAsset<PlayerShotgunSettingsAsset>(
+            "asset/Data/player_shotgun_settings.data.json",
+            true);
 
         // 走行時の砂埃パーティクル生成
         prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(
@@ -111,6 +113,7 @@ namespace PrefabFactory
         if (playerBehavior)
         {
             playerBehavior->SetupPlayerMove(moveReferences, moveSettingsAsset);
+            playerBehavior->SetupPlayerShotgun(shotgunReferences, shotgunSettingsAsset);
         }
         return prefab;
     }

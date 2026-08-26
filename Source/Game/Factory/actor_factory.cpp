@@ -72,9 +72,6 @@ GameObject* ActorFactory::CreatePlayer(
     player->AddComponent<PlayerBehavior>();
     player->AddComponent<PlayerMoveBehavior>();
 
-   /* player->AddComponent<PlayerAttackBehavior>();
-    player->AddComponent<PlayerDodgeBehavior>();*/
-
     player->AddComponent<HitStopBehavior>();
     return player;
 }

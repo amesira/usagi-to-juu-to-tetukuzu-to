@@ -9,7 +9,7 @@
 #include <DirectXMath.h>
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
-class PlayerShotgunContext;
+struct PlayerShotgunContext;
 
 class PlayerShotgunAim {
 public:

@@ -56,6 +56,11 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
 {
     // 照準UIの更新とか
 
+    if (!context.cameraTransform || !context.references.muzzleTransform) {
+        m_aimResult = {};
+        return;
+    }
+
     // AimResultの更新
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
     m_aimResult.cameraRayDirection = context.cameraTransform->GetForward();

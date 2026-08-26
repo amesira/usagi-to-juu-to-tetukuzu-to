@@ -38,7 +38,7 @@ struct PlayerShotgunContext
     PlayerShotgunRuntimeState runtimeState;
     PlayerShotgunReferences references;
     const PlayerShotgunSettingsAsset* settingsAsset = nullptr;
-    const auto& settings() {
+    const auto& settings() const {
         return settingsAsset->GetData();
     }
 

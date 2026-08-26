@@ -111,7 +111,10 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
 
 void PlayerShotgunAction::Finish(PlayerContext& context, const PlayerInput& input)
 {
-
+    // 割り込み終了でもカメラとLocomotionRequestを確実に復元する
+    m_context.aim.ExitAim(m_context);
+    m_context.runtimeState = {};
+    m_enteredPhase = false;
 }
 
 void PlayerShotgunAction::ChangePhase(PlayerShotgunRuntimeState::Phase newPhase)

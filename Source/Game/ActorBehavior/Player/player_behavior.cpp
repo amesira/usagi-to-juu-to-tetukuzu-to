@@ -41,6 +41,7 @@ void PlayerBehavior::Start()
 
     m_context.conditionMachine = &m_conditionMachine;
     m_context.actionMachine = &m_actionMachine;
+    m_context.weaponController = &m_weaponController;
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -54,8 +55,25 @@ void PlayerBehavior::Start()
     }
 
     // 構成要素の初期化
+    m_locomotionController.Initialize();
     m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
     m_context.actionMachine->Initialize(m_context, m_input);
+
+    // Shotgun用の参照が未設定の場合は、暫定的にPlayerのTransformを銃口として扱う
+    if (!m_shotgunReferences.muzzleTransform) {
+        m_shotgunReferences.muzzleTransform = m_context.transform;
+    }
+
+    // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
+    static PlayerShotgunSettingsAsset defaultShotgunSettings;
+    if (!m_shotgunSettings) {
+        m_shotgunSettings = &defaultShotgunSettings;
+    }
+
+    m_shotgunAction.Initialize(m_context, m_shotgunReferences, m_shotgunSettings);
+
+    m_context.actionMachine->RegisterAction(m_dualPistolsAction);
+    m_context.actionMachine->RegisterAction(m_shotgunAction);
 
 }
 
@@ -65,6 +83,7 @@ void PlayerBehavior::Update()
     m_input = UpdateInput();
 
     m_context.conditionMachine->Update(m_context, m_input);
+    m_weaponController.Update(m_context, m_input);
     m_context.actionMachine->Update(m_context, m_input);
 
     // プレイヤーの移動挙動を更新する
