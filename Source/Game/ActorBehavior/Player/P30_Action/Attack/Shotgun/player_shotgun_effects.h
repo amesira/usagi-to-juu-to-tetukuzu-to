@@ -16,6 +16,7 @@ public:
         AimEnter,   // エイムモードに入る
         StartCharge,  // チャージ開始
         ResetCharge,  // チャージリセット
+        ChargeComplete, // チャージ完了
     };
 
 private:

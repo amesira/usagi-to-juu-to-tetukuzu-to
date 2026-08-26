@@ -53,6 +53,11 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         );
         break;
     }
+    case EffectsType::ChargeComplete: {
+        // フレネルエフェクトとか出す
+
+        break;
+    }
     default: break;
     }
 }

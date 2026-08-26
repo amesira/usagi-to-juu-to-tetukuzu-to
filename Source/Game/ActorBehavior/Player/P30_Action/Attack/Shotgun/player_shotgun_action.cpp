@@ -84,6 +84,7 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             m_context.charging.Update(m_context, deltaTime);
 
             if (!input.holdAttackCommand) {
+                m_context.charging.Reset(m_context);
                 ChangePhase(Phase::Firing);
             }
             break;

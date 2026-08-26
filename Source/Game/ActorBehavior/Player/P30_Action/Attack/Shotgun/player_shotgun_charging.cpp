@@ -23,6 +23,10 @@ void PlayerShotgunCharging::Update(PlayerShotgunContext& context, float deltaTim
         m_isCharging = true;
         context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::StartCharge);
     }
+
+    if (IsChargeComplete(context)) {
+        
+    }
 }
 
 void PlayerShotgunCharging::Cancel(PlayerShotgunContext& context)
@@ -33,7 +37,7 @@ void PlayerShotgunCharging::Cancel(PlayerShotgunContext& context)
 
 void PlayerShotgunCharging::Reset(PlayerShotgunContext& context)
 {
-    m_chargeTime = 0.0f;
+    // ChargeRateを後に取得するため、m_chargeTimeはリセットせずに残す
 
     if (m_isCharging) {
         m_isCharging = false;
@@ -52,5 +56,7 @@ bool PlayerShotgunCharging::IsChargeComplete(const PlayerShotgunContext& context
 float PlayerShotgunCharging::GetChargeRate(const PlayerShotgunContext& context) const
 {
     if (context.settings().chargeTime <= 0.0f) return 1.0f;
+    // 遅延期間を脱していない場合はチャージ率は0.0fとして、通常弾の発射を行う
+    if (m_chargeTime <= context.settings().chargeStartDelay) return 0.0f;
     return m_chargeTime / context.settings().chargeTime;
 }
