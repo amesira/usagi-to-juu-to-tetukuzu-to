@@ -378,6 +378,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\WeaponTransform\player_weapon_transform_action.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
@@ -934,6 +936,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_action.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\WeaponTransform\player_weapon_transform_action.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
     <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_data.h" />

@@ -19,6 +19,7 @@ namespace {
 void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgunReferences references, PlayerShotgunSettingsAsset* settingsAsset)
 {
     m_context.owner = this;
+    m_context.scene = context.scene;
     m_context.playerTransform = context.transform;
     m_context.cameraTransform = context.mainCameraTransform;
     m_context.cameraComponent = context.mainCamera;
@@ -29,6 +30,7 @@ void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgun
     m_context.runtimeState = {};
     m_context.references = references;
     m_context.settingsAsset = settingsAsset;
+    m_context.effects.Initialize(m_context);
 }
 
 bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInput& input)
@@ -90,12 +92,14 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             break;
         }
         case Phase::Firing: {
-           // m_context.effects.Fire(m_context);
+            m_context.effects.PlayEffects(m_context, PlayerShotgunEffects::EffectsType::Fire);
             ChangePhase(Phase::Recovery);
             break;
         }
         case Phase::Recovery: {
-            
+            if (m_context.runtimeState.phaseTimer >= m_context.settings().recoveryTime) {
+                ChangePhase(Phase::Aiming);
+            }
             break;
         }
         case Phase::Exiting: {
@@ -117,6 +121,7 @@ void PlayerShotgunAction::Finish(PlayerContext& context, const PlayerInput& inpu
 {
     // 割り込み終了でもカメラとLocomotionRequestを確実に復元する
     m_context.aim.ExitAim(m_context);
+    m_context.effects.PlayEffects(m_context, PlayerShotgunEffects::EffectsType::ResetCharge);
     m_context.runtimeState = {};
     m_enteredPhase = false;
 }

@@ -1,0 +1,115 @@
+{
+    "data": {
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 0.0,
+            "rateOverTime": 20.0
+        },
+        "main": {
+            "duration": 1.0,
+            "gravity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "loop": true,
+            "playOnAwake": true,
+            "simulationSpace": "Local",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    0.0,
+                    0.8048779964447021,
+                    1.0,
+                    1.0
+                ],
+                "colorMax": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "colorMin": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "randomBetweenTwoColors": false
+            },
+            "startLifetime": {
+                "constant": 0.5,
+                "constantMax": 5.0,
+                "constantMin": 5.0,
+                "randomBetweenTwoConstants": false
+            },
+            "startSize": {
+                "constant": 0.10000000149011612,
+                "constantMax": 1.0,
+                "constantMin": 1.0,
+                "randomBetweenTwoConstants": false
+            },
+            "startSpeed": {
+                "constant": -7.0,
+                "constantMax": 5.0,
+                "constantMin": 5.0,
+                "randomBetweenTwoConstants": false
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "Additive",
+            "sortByDistance": true,
+            "texturePath": "",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 1.0
+            },
+            "enabled": true,
+            "randomDirectionAmount": 0.0,
+            "sphere": {
+                "emitFromShell": true,
+                "radius": 3.0
+            },
+            "type": "Sphere"
+        },
+        "sizeOverLifetime": {
+            "enabled": false,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 1.0
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": false,
+            "frameCount": 1,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 1,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "player_shotgun_charging.particle",
+    "type": "ParticleSystem"
+}

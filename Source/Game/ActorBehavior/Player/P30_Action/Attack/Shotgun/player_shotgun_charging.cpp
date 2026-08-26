@@ -13,6 +13,8 @@ void PlayerShotgunCharging::Start(PlayerShotgunContext& context)
 {
     // フェーズとしてはChargingに入ったが、チャージ開始の遅延時間があるため、すぐにはチャージ状態にならない
     m_chargeTime = 0.0f;
+    m_isCharging = false;
+    m_chargeCompleteEffectPlayed = false;
 }
 
 void PlayerShotgunCharging::Update(PlayerShotgunContext& context, float deltaTime)
@@ -24,8 +26,9 @@ void PlayerShotgunCharging::Update(PlayerShotgunContext& context, float deltaTim
         context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::StartCharge);
     }
 
-    if (IsChargeComplete(context)) {
-        
+    if (IsChargeComplete(context) && !m_chargeCompleteEffectPlayed) {
+        m_chargeCompleteEffectPlayed = true;
+        context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::ChargeComplete);
     }
 }
 
@@ -33,6 +36,7 @@ void PlayerShotgunCharging::Cancel(PlayerShotgunContext& context)
 {
     m_isCharging = false;
     m_chargeTime = 0.0f;
+    m_chargeCompleteEffectPlayed = false;
 }
 
 void PlayerShotgunCharging::Reset(PlayerShotgunContext& context)

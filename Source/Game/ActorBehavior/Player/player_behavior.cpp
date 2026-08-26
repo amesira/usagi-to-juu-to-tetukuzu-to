@@ -45,6 +45,7 @@ void PlayerBehavior::Start()
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
+    m_context.scene = scene;
     GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
     if (mainCamera) {
         m_context.mainCameraTransform = mainCamera->GetComponent<TransformComponent>();

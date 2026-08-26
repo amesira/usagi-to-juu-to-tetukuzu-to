@@ -13,6 +13,7 @@ class PlayerShotgunCharging {
 private:
     float m_chargeTime = 0.0f;
     bool m_isCharging = false;
+    bool m_chargeCompleteEffectPlayed = false; // チャージ完了エフェクトが再生済みかどうかのフラグ
 
 public:
     /// @brief チャージを開始する

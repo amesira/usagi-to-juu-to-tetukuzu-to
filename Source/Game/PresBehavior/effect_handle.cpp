@@ -19,7 +19,7 @@ EffectHandle::EffectHandle(GameObject* gameObject)
 /// @brief 有効なEffectHandleかどうかを判定する
 bool EffectHandle::IsValid() const
 {
-    if (!m_scene) return false;
+    if (!m_scene || m_gameObjectID == InvalidGameObjectID) return false;
     GameObject* gameObject = m_scene->GetGameObjectByID(m_gameObjectID);
     return gameObject != nullptr;
 }
@@ -69,10 +69,16 @@ void EffectHandle::SetActive(bool active)
 
 void EffectHandle::Destroy()
 {
-    if (!IsValid()) return;
     if (GameObject* gameObject = GetGameObject()) {
         gameObject->Destroy();
     }
+    Reset();
+}
+
+void EffectHandle::Reset()
+{
+    m_scene = nullptr;
+    m_gameObjectID = InvalidGameObjectID;
 }
 
 #pragma region GameObject/Component取得関連

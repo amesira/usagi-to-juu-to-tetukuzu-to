@@ -179,6 +179,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
@@ -223,7 +225,6 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\opaque_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\mask_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\post_effect_pass.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
     <ClCompile Include="Source\Engine\Processor\render_processor.cpp" />
@@ -385,6 +386,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
@@ -465,7 +467,6 @@
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\opaque_render_pass.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\post_effect_pass.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\player_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.h" />
     <ClInclude Include="Source\Game\Factory\render_effect_factory.h" />

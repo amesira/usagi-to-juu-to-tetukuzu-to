@@ -40,6 +40,7 @@ struct PlayerShotgunReferences
 struct PlayerShotgunContext 
 {
     class PlayerShotgunAction* owner = nullptr;
+    class IScene* scene = nullptr;
 
     PlayerShotgunRuntimeState runtimeState;
     PlayerShotgunReferences references;

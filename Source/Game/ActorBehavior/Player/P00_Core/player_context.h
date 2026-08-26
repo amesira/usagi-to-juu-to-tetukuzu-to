@@ -12,6 +12,7 @@
 class PlayerContext {
 public:
     class PlayerBehavior* owner = nullptr;
+    class IScene* scene = nullptr;
     class TransformComponent* transform = nullptr;
 
     class PlayerLocomotionController* locomotionController = nullptr;
