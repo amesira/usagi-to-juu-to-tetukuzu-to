@@ -72,18 +72,31 @@ public:
     PlayerLocomotionController() = default;
     ~PlayerLocomotionController() = default;
 
-    /// @brief 初期化処理
     void Initialize();
-    /// @brief 終了処理
     void Finalize();
 
-    /// @brief 新しいLocomotionRequestを追加する
-    int AddLocomotionRequest(const LocomotionRequest& request);
+    int AddLocomotionRequest(const LocomotionRequest& request) {
+        for (int i = 0; i < 8; i++) {
+            if (m_locomotionRequests[i] == nullptr) {
+                m_locomotionRequests[i] = &request;
+                return i;
+            }
+        }
+        return -1; // 追加できなかった場合は-1を返す
+    }
 
-    /// @brief 指定されたLocomotionRequestを削除する
-    void RemoveLocomotionRequest(const LocomotionRequest& request);
-    /// @brief 指定されたインデックスのLocomotionRequestを削除する
-    void RemoveLocomotionRequestByIndex(int index);
+    void RemoveLocomotionRequest(const LocomotionRequest& request) {
+        for (int i = 0; i < 8; i++) {
+            if (m_locomotionRequests[i] == &request) {
+                m_locomotionRequests[i] = nullptr;
+                return;
+            }
+        }
+    }
+    void RemoveLocomotionRequestByIndex(int index) {
+        if (index < 0 || index >= 8) return;
+        m_locomotionRequests[index] = nullptr;
+    }
 
     /// @brief プレイヤーの移動・回転意図を構築する
     PlayerMoveIntent BuildIntent(const class PlayerContext& context, const class PlayerInput& input);

@@ -9,6 +9,7 @@
 
 // engine
 #include "Engine/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
 
 // game
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
@@ -31,8 +32,8 @@ namespace {
                 break;
             }
             case PlayerLocomotionController::DirectionSource::CameraForward: {
-                if (context.owner && context.mainCameraTransform) {
-                    XMFLOAT3 forward = context.mainCameraTransform->GetForward();
+                if (context.owner && context.mainCamera) {
+                    XMFLOAT3 forward = context.mainCamera->GetForward();
                     dir = forward;
                 }
                 break;
@@ -71,41 +72,6 @@ void PlayerLocomotionController::Finalize()
 {
     for (int i = 0; i < 8; i++) {
         m_locomotionRequests[i] = nullptr;
-    }
-}
-
-/// @brief 新しいLocomotionRequestを追加する
-int PlayerLocomotionController::AddLocomotionRequest(const LocomotionRequest& request)
-{
-    for (int i = 0; i < 8; i++) {
-        if (m_locomotionRequests[i] == nullptr) {
-            m_locomotionRequests[i] = &request;
-            return i;
-        }
-    }
-
-    return -1; // 空きがない場合は-1を返す
-}
-
-/// @brief 指定されたLocomotionRequestを削除する
-void PlayerLocomotionController::RemoveLocomotionRequest(const LocomotionRequest& request)
-{
-    for (int i = 0; i < 8; i++) {
-        if (m_locomotionRequests[i] == &request) {
-            m_locomotionRequests[i] = nullptr;
-            return;
-        }
-    }
-}
-
-/// @brief 指定されたインデックスのLocomotionRequestを削除する
-void PlayerLocomotionController::RemoveLocomotionRequestByIndex(int index)
-{
-    for (int i = 0; i < 8; i++) {
-        if (i == index) {
-            m_locomotionRequests[i] = nullptr;
-            return;
-        }
     }
 }
 

@@ -21,7 +21,7 @@
         "groundCheckDistance": 0.30000001192092896,
         "groundCheckRadius": 0.20000000298023224,
         "jumpForce": 15.0,
-        "moveSpeed": 20.0,
+        "moveSpeed": 17.0,
         "rotationSpeed": 25.0,
         "smoothTime": 0.10000000149011612,
         "stopAirSmoothTime": 0.30000001192092896,

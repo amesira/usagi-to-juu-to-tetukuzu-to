@@ -14,6 +14,9 @@
 #include "Engine/Component/camera_component.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/custom_post_effect_controller.h"
+
 #include "Utility/mi_math.h"
 
 namespace {
@@ -42,14 +45,16 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
             .priority = 10,
             .moveDirSourceInfo = { PlayerLocomotionController::DirectionSource::MoveInput },
             .rotateDirSourceInfo = { PlayerLocomotionController::DirectionSource::CameraForward },
-            .speedMultiplier = 0.9f,
+            .speedMultiplier = context.settings().aimMoveSpeedMultiplier,
             .canMove = true,
             .canRotate = true,
             .useGravity = true,
-            .applyRotateRightNow = false
+            .applyRotateRightNow = true,
         };
         m_locomotionRequestID = context.locomotionController->AddLocomotionRequest(m_locomotionRequest);
     }
+
+    context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::AimEnter);
 }
 
 void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)

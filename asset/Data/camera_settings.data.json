@@ -11,7 +11,7 @@
             0.0
         ],
         "followAnchorDownwardSmoothTime": 0.20000000298023224,
-        "followAnchorPlanarSmoothTime": 0.10000000149011612,
+        "followAnchorPlanarSmoothTime": 0.05000000074505806,
         "followAnchorUpwardSmoothTime": 0.699999988079071,
         "followDistance": 8.0,
         "fov": 70.0,

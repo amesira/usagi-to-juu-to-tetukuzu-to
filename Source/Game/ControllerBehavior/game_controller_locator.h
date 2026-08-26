@@ -19,14 +19,15 @@ private:
     static inline CustomPostEffectController* s_customPostEffectController = nullptr;
 
 public:
-    static GameFeedbackController* GetGameFeedbackController() {
+    static GameFeedbackController* GameFeedback() {
         return s_gameEffectController;
     }
 
-    static CustomPostEffectController* GetCustomPostEffectController() {
+    static CustomPostEffectController* CustomPostEffect() {
         return s_customPostEffectController;
     }
-
 };
+
+using Game = GameControllerLocator;
 
 #endif // GAME_CONTROLLER_LOCATOR_H

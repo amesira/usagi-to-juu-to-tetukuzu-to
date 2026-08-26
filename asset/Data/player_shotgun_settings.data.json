@@ -1,6 +1,22 @@
 {
-    "data": {},
+    "data": {
+        "aimCameraDistance": 5.0,
+        "aimCameraLocalOffset": [
+            2.0,
+            3.0,
+            0.0
+        ],
+        "aimFOV": 60.0,
+        "aimSpeedMultiplier": 0.6000000238418579,
+        "aimTransitionTime": 0.10000000149011612,
+        "chargeLightIntensity": 5.0,
+        "chargeTime": 1.0,
+        "fireRate": 0.5,
+        "muzzleFlashDuration": 0.10000000149011612,
+        "recoveryTime": 0.30000001192092896,
+        "this_is_header_field": null
+    },
     "formatVersion": 0,
-    "name": "",
+    "name": "player_shotgun_settings.data",
     "type": "PlayerShotgunSettingsAsset"
 }

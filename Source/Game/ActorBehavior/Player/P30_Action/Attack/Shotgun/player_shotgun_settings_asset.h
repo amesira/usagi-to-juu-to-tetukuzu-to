@@ -20,6 +20,7 @@ namespace PlayerShotgunSettings {
         float   aimCameraDistance = 2.0f;    // エイム時のカメラ距離（メートル）
         DirectX::XMFLOAT3 aimCameraLocalOffset = { 1.0f, 0.5f, 0.0f }; // エイム時のカメラローカルオフセット（メートル）
         float   aimTransitionTime = 0.2f;    // エイムへの遷移時間（秒）
+        float   aimMoveSpeedMultiplier = 0.7f;   // エイム時の移動速度倍率（0.0f～1.0f）
 
         // === エフェクト設定 ===
         float   muzzleFlashDuration = 0.1f; // マズルフラッシュの表示時間（秒）
@@ -30,7 +31,94 @@ namespace PlayerShotgunSettings {
     using json = nlohmann::json;
     inline static const auto& GetSchema()
     {
-        static const auto& schema = FieldSchema{};
+        static const auto& schema = FieldSchema{
+            MakeHeaderField("Shotgun Base Settings"),
+            MakeField(
+                "chargeTime",
+                "Charge Time",
+                &Data::chargeTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "fireRate",
+                "Fire Rate",
+                &Data::fireRate,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "recoveryTime",
+                "Recovery Time",
+                &Data::recoveryTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+
+            MakeHeaderField("Shotgun Aim Settings"),
+            MakeField(
+                "aimFOV",
+                "Aim FOV",
+                &Data::aimFOV,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 1.0f,
+                    .maxValue = 180.0f }),
+            MakeField(
+                "aimCameraDistance",
+                "Aim Camera Distance",
+                &Data::aimCameraDistance,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.1f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "aimCameraLocalOffset",
+                "Aim Camera Local Offset",
+                &Data::aimCameraLocalOffset,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = -10.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "aimTransitionTime",
+                "Aim Transition Time",
+                &Data::aimTransitionTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "aimSpeedMultiplier",
+                "Aim Move Speed Multiplier",
+                &Data::aimMoveSpeedMultiplier,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
+
+            // === Shotgun Effect Settings ===
+            MakeHeaderField("Shotgun Effect Settings"),
+            MakeField(
+                "muzzleFlashDuration",
+                "Muzzle Flash Duration",
+                &Data::muzzleFlashDuration,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+            MakeField(
+                "chargeLightIntensity",
+                "Charge Light Intensity",
+                &Data::chargeLightIntensity,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = 0.0f,
+                    .maxValue = 100.0f }),
+        };
         return schema;
     }
 }

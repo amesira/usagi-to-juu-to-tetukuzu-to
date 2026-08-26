@@ -9,10 +9,7 @@
 
 class PlayerMoveEffects {
 public:
-    /// @brief 移動エフェクトの種類を表す列挙型
     enum class EffectsType {
-        None,
-
         Jump,   // ジャンプ
         Land,   // 着地
 
@@ -24,10 +21,7 @@ private:
     bool m_isRunDustParticleActive = false; // 走行時の砂埃パーティクルの有効/無効状態を保持する変数
 
 public:
-    /// @brief 移動エフェクトを再生する
     void PlayEffects(struct PlayerMoveContext context, EffectsType effectType);
-
-    /// @brief 移動エフェクトの更新処理を行う
     void UpdateEffects(struct PlayerMoveContext context, float deltaTime);
 
 private:
