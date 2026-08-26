@@ -21,11 +21,24 @@ public:
         WaitingToFinish,    // 行動終了待機中
     };
 
+    /// @brief 行動のカテゴリ
+    enum class ActionCategory : std::uint32_t {
+        None = 0,
+        Attack = 1u << 0,         // 攻撃
+        Interaction = 1u << 1,    // アイテムを拾う、話しかける、読むなどのインタラクション
+        Reaction = 1u << 2,       // ダメージを受ける、吹き飛ばされる、ノックバックするなどのリアクション
+    };
+    using ActionCategoryMask = std::uint32_t;
+    static constexpr ActionCategoryMask ToMask(ActionCategory category)
+    {
+        return static_cast<ActionCategoryMask>(category);
+    }
+
 protected:
     ActionState m_state = ActionState::None;
 
-    // アクションのID（ActionMachineで行動を識別するために使用）
     std::string m_actionID;
+    ActionCategory m_category = ActionCategory::None;
 
     // アクションの優先度（数値が大きいほど優先度が高い）
     int m_priority = 0;
@@ -34,6 +47,9 @@ protected:
     bool m_isInterruptible = true;
 
 public:
+    PlayerActionBase(std::string actionID, ActionCategory category, int priority, bool isInterruptible = true):
+        m_actionID(actionID), m_category(category), m_priority(priority), m_isInterruptible(isInterruptible) {
+    }
     virtual ~PlayerActionBase() = default;
     
     /// @brief このアクションを開始できるかどうか
@@ -53,16 +69,13 @@ public:
 
     // === getter/setter ===
 
-    // ActionStateのgetter/setter
     void SetState(ActionState state) { m_state = state; }
     ActionState GetState() const { return m_state; }
 
-    // 優先度のgetter/setter
-    void SetPriority(int priority) { m_priority = priority; }
-    int GetPriority() const { return m_priority; }
+    const std::string& GetActionID() const { return m_actionID; }
+    ActionCategory GetCategory() const { return m_category; }
 
-    // 割り込み可能かどうかのgetter/setter
-    void SetInterruptible(bool isInterruptible) { m_isInterruptible = isInterruptible; }
+    int GetPriority() const { return m_priority; }
     bool IsInterruptible() const { return m_isInterruptible; }
 
 };

@@ -9,23 +9,41 @@
 #pragma once
 #include "player_action_base.h"
 #include <vector>
+#include <memory>
+#include <unordered_map>
 
 class PlayerContext;
 class PlayerInput;
 
 class PlayerActionMachine {
 private:
-    // ここにPlayerActionBaseの派生クラスのインスタンスを保持する
+    std::vector<std::unique_ptr<PlayerActionBase>> m_allActions;
+    std::vector<PlayerActionBase*> m_activeActions;
 
-    // 全アクションのリスト
-    std::vector<PlayerActionBase*> m_allActions = {};
-    // 現在の行動
-    PlayerActionBase* m_currentAction = nullptr;
+    using ActionCategory = PlayerActionBase::ActionCategory;
+    using ActionCategoryMask = PlayerActionBase::ActionCategoryMask;
+
+    /// @brief 禁止アクションを表す構造体
+    /// 優先度や割り込みに関わらない、最上位の制約として扱う
+    /// 禁止マスク > 割り込み可能性 > 優先度
+    struct ActionRestriction {
+        ActionCategoryMask blockedCategories = 0;
+        std::vector<std::string> blockedActionIDs;
+    };
+
+    std::unordered_map<ActionCategory, ActionRestriction> m_categoryRestrictions; // カテゴリごとの禁止アクション
+    std::unordered_map<std::string, ActionRestriction> m_actionRestrictions;      // アクションIDごとの禁止アクション
 
 public:
     /// @brief 初期化処理
     void Initialize(const PlayerContext& context, const PlayerInput& input);
     /// @brief 更新処理
     void Update(PlayerContext& context, const PlayerInput& input);
+
+private:
+    /// @brief 指定されたアクションを開始できるかどうかを判定する
+    bool EvaluateStart(PlayerActionBase* action);
+    /// @brief 現在のアクションの制約を解決する
+    void ResolveRestrictions();
 
 };
