@@ -19,7 +19,7 @@
 
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"
-#include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
+#include "Prefab/player_prefab_settings_asset.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 

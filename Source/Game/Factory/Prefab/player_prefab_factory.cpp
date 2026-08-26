@@ -1,5 +1,5 @@
 // PrefabFactory.cpp
-#include "prefab_factory.h"
+#include "player_prefab_factory.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_base.h"
 
@@ -12,18 +12,19 @@
 
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
-#include "Game/ActorBehavior/Player/player_prefab_settings_asset.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
+
+#include "player_prefab_settings_asset.h"
 
 #include "Engine/engine_service_locator.h"
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
 
-#include "actor_factory.h"
-#include "render_effect_factory.h"
-#include "projectile_factory.h"
-#include "environment_factory.h"
-#include "ui_factory.h"
+#include "../actor_factory.h"
+#include "../render_effect_factory.h"
+#include "../projectile_factory.h"
+#include "../environment_factory.h"
+#include "../ui_factory.h"
 
 #include <array>
 #include <filesystem>
@@ -34,7 +35,7 @@ namespace
         "asset/Data/player_prefab_settings.data.json";
 }
 
-namespace PrefabFactory
+namespace PlayerPrefabFactory
 {
     // TransformConstraintBehaviorのセットアップ
     void SetupTransformConstraint(GameObject* element, 
@@ -49,7 +50,7 @@ namespace PrefabFactory
     }
 
     // プレイヤープレハブ生成
-    PlayerPrefab PrefabFactory::CreatePlayerPrefab(IScene* scene, const XMFLOAT3& position)
+    PlayerPrefab CreatePlayerPrefab(IScene* scene, const XMFLOAT3& position)
     {
         PlayerPrefab prefab = {};
         if (!scene) return prefab;
