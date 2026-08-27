@@ -6,22 +6,17 @@
 // ・プレイヤーのショットガンの発射処理を制御するクラス
 //---------------------------------------------------
 #pragma once
-
-#include "player_shotgun_aim.h"
-
+#include <DirectXMath.h>
 struct PlayerShotgunContext;
 
 class PlayerShotgunFiring {
 public:
     struct FireRequest {
-        PlayerShotgunAim::AimResult aimResult = {};
+        DirectX::XMFLOAT3 muzzlePosition{};
+        DirectX::XMFLOAT3 fireDirection{};
         float chargeRate = 0.0f;
     };
 
-    struct FireResult {
-        int projectileCount = 0;
-    };
-
     /// @brief 指定された照準情報とチャージ率で弾を発射する
-    FireResult Fire(PlayerShotgunContext& context, const FireRequest& request);
+    void Fire(PlayerShotgunContext& context, const FireRequest& request);
 };

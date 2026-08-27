@@ -83,6 +83,8 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             if (enteredPhase) {
                 m_context.charging.Start(m_context);
             }
+
+            m_context.aim.UpdateAim(m_context, deltaTime);  // エイムはチャージ中も更新する
             m_context.charging.Update(m_context, deltaTime);
 
             if (!input.holdAttackCommand) {
@@ -92,11 +94,21 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
             break;
         }
         case Phase::Firing: {
-            m_context.effects.PlayEffects(m_context, PlayerShotgunEffects::EffectsType::Fire);
+            if (enteredPhase) {
+                PlayerShotgunFiring::FireRequest fireRequest;
+                fireRequest.muzzlePosition = m_context.aim.GetAimResult().muzzlePosition;
+                fireRequest.fireDirection = m_context.aim.GetAimResult().fireDirection;
+                fireRequest.chargeRate = m_context.charging.GetChargeRate(m_context);
+                m_context.firing.Fire(m_context, fireRequest);
+            }
             ChangePhase(Phase::Recovery);
             break;
         }
         case Phase::Recovery: {
+            // リカバリー用のUI表示とか
+
+            m_context.aim.UpdateAim(m_context, deltaTime);  // エイムはリカバリー中も更新する
+
             if (m_context.runtimeState.phaseTimer >= m_context.settings().recoveryTime) {
                 ChangePhase(Phase::Aiming);
             }

@@ -8,7 +8,10 @@
 #include "player_shotgun_firing.h"
 #include "player_shotgun_context.h"
 
-PlayerShotgunFiring::FireResult PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest& request)
+void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest& request)
 {
-    return {};
+    // 弾の発射処理をここに実装する
+
+
+    context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::Fire);
 }
