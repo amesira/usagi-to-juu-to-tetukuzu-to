@@ -79,7 +79,7 @@ void EnemyBehavior::Start()
                     nullptr,
                     [this]() {
                         // 爆発エフェクトを生成
-                        RenderEffectFactory::CreateExplosionEffect(GetOwner()->GetScene(), m_context.transform->GetPosition());
+                       // RenderEffectFactory::CreateExplosionEffect(GetOwner()->GetScene(), m_context.transform->GetPosition());
                         if (GetOwner()) {
                             GetOwner()->Destroy(); // ヒットストップ終了後にオブジェクトを破棄
                         }

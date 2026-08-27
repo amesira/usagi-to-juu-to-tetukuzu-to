@@ -19,11 +19,6 @@
 
 namespace
 {
-    const std::filesystem::path GENERIC_PARTICLE_ASSET = "asset/Particle/generic_particle.particle.json";
-    const std::filesystem::path CHARGE_ABSORB_PARTICLE_ASSET = "asset/Particle/charge_absorb.particle.json";
-    const std::filesystem::path HIT_PARTICLE_ASSET = "asset/Particle/hit.particle.json";
-    const std::filesystem::path EXPLOSION_PARTICLE_ASSET = "asset/Particle/explosion.particle.json";
-
     bool ApplyParticleAsset(
         ParticleSystemComponent* particleSystem,
         const std::filesystem::path& assetPath,
@@ -122,58 +117,6 @@ GameObject* RenderEffectFactory::CreateDecalEffect(
         decal->SetDecalTexture(textureRepository->GetTextureResource(decalTexturePath));
     }
     return decalEffect;
-}
-
-GameObject* RenderEffectFactory::CreateParticleEffect(
-    IScene* scene,
-    const XMFLOAT3& position,
-    const std::wstring& texturePath)
-{
-    return CreateParticleObject(
-        scene,
-        "ParticleEffect",
-        position,
-        GENERIC_PARTICLE_ASSET,
-        &texturePath);
-}
-
-GameObject* RenderEffectFactory::CreateRunDustParticle(
-    IScene* scene,
-    GameObject* target,
-    const std::filesystem::path& particleAssetPath)
-{
-    if (!scene) return nullptr;
-    if (!target) return nullptr;
-
-    TransformComponent* targetTransform = target->GetComponent<TransformComponent>();
-    if (!targetTransform) return nullptr;
-
-    return CreateParticleObject(
-        scene,
-        "RunDustParticle",
-        { 0.0f, 0.0f, 0.0f },
-        particleAssetPath);
-}
-
-GameObject* RenderEffectFactory::CreateChargeAbsorbParticle(
-    IScene* scene,
-    const XMFLOAT3& position)
-{
-    return CreateParticleObject(
-        scene,
-        "ChargeAbsorbParticle",
-        position,
-        CHARGE_ABSORB_PARTICLE_ASSET);
-}
-
-GameObject* RenderEffectFactory::CreateHitEffect(IScene* scene, const XMFLOAT3& position)
-{
-    return CreateParticleObject(scene, "HitEffect", position, HIT_PARTICLE_ASSET);
-}
-
-GameObject* RenderEffectFactory::CreateExplosionEffect(IScene* scene, const XMFLOAT3& position)
-{
-    return CreateParticleObject(scene, "ExplosionEffect", position, EXPLOSION_PARTICLE_ASSET);
 }
 
 EffectHandle RenderEffectFactory::CreateAttachedParticleEffect(

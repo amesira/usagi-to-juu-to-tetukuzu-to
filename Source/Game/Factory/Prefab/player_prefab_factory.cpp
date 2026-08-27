@@ -79,36 +79,16 @@ namespace PlayerPrefabFactory
             true);
 
         // 走行時の砂埃パーティクル生成
-        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(
+        EffectHandle runDustEffectHandle = RenderEffectFactory::CreateAttachedParticleEffect(
             scene,
-            prefab.player,
-            settings.runDustEffect.particleAssetPath);
-        if (prefab.runDustParticle)
+            playerTransform,
+            "asset/Particle/run_dust.particle.json",
+            settings.runDustEffect.positionOffset);
+        prefab.runDustParticle = runDustEffectHandle.GetGameObject();
+        moveReferences.runDustParticle = runDustEffectHandle.GetParticleSystem();
         {
-            SetupTransformConstraint(
-                prefab.runDustParticle,
-                playerTransform,
-                settings.runDustEffect.positionOffset,
-                true,
-                false);
-            moveReferences.runDustParticle = prefab.runDustParticle->GetComponent<ParticleSystemComponent>();
+            moveReferences.runDustParticle->Main().playOnAwake = true;
         }
-        // チャージ時の吸収パーティクル生成
-        //prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position);
-        //{
-        //    SetupTransformConstraint(prefab.chargeEffectParticle, playerTransform, { 1.0f, -0.3f, 0.0f }, true, false);
-        //    ParticleSystemComponent* particleSystem = prefab.chargeEffectParticle->GetComponent<ParticleSystemComponent>();
-        //    particleSystem->Main().playOnAwake = false; // 最初は再生しない
-        //   // playerAttackBehavior->SetupChargeEffect(particleSystem);
-        //}
-        //// チャージ時のライト生成
-        //prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
-        //{
-        //    SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);
-        //    LightComponent* lightComp = prefab.chargeLight->GetComponent<LightComponent>();
-        //    lightComp->SetEnable(false); // 最初はライトをオフにする
-        //   // playerAttackBehavior->SetupChargeLight(lightComp);
-        //}
 
         PlayerBehavior* playerBehavior = prefab.player->GetComponent<PlayerBehavior>();
         if (playerBehavior)

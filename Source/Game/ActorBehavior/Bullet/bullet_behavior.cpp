@@ -170,14 +170,14 @@ void BulletBehavior::Finalize(bool isHitStop)
             nullptr,
             nullptr,
             [this]() {
-                RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
+                //RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
                 if (GetOwner()) {
                     GetOwner()->Destroy();
                 }
             });
     }
     else {
-        RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
+        //RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
         if (GetOwner()) {
             GetOwner()->Destroy();
         }
