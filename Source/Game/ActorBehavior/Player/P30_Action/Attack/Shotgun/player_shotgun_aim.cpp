@@ -17,10 +17,19 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
+#include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
+#include "Engine/Processor/PhysicsPass/Collision/collision_types.h"
+
 #include "Utility/mi_math.h"
 
 namespace {
     using CameraEffectTarget = CameraEffect::EffectTaskTarget;
+
+    constexpr float AIM_MAX_DISTANCE = 1000.0f;
+    constexpr CollisionLayerMask AIM_LAYER_MASK =
+        COLLISION_LAYER_MASK_ALL &
+        ~CollisionLayerToMask(CollisionLayer::Player) &
+        ~CollisionLayerToMask(CollisionLayer::Bullet);
 }
 
 void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
@@ -58,12 +67,31 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
         return;
     }
 
-    // AimResultの更新
+    // カメラ中央からRaycastし、命中点をマズルから狙う。
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
-    m_aimResult.cameraRayDirection = context.cameraTransform->GetForward();
+    m_aimResult.cameraRayDirection = MiMath::Normalize(context.cameraComponent->GetForward());
     m_aimResult.muzzlePosition = context.references.muzzleTransform->GetPosition();
-    m_aimResult.targetPosition = MiMath::Add(context.cameraTransform->GetPosition(), MiMath::Multiply(context.cameraTransform->GetForward(), 1000.0f));
-    m_aimResult.fireDirection = MiMath::Normalize(MiMath::Subtract(m_aimResult.targetPosition, m_aimResult.muzzlePosition));
+
+    RaycastHit hit;
+    m_aimResult.hasTargetHit = CollisionQuery::Raycast(
+        context.scene,
+        hit,
+        m_aimResult.cameraRayOrigin,
+        m_aimResult.cameraRayDirection,
+        AIM_MAX_DISTANCE,
+        AIM_LAYER_MASK);
+
+    if (m_aimResult.hasTargetHit) {
+        m_aimResult.targetPosition = hit.hitPoint;
+    }
+    else {
+        m_aimResult.targetPosition = MiMath::Add(
+            m_aimResult.cameraRayOrigin,
+            MiMath::Multiply(m_aimResult.cameraRayDirection, AIM_MAX_DISTANCE));
+    }
+
+    m_aimResult.fireDirection = MiMath::Normalize(
+        MiMath::Subtract(m_aimResult.targetPosition, m_aimResult.muzzlePosition));
 }
 
 void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)

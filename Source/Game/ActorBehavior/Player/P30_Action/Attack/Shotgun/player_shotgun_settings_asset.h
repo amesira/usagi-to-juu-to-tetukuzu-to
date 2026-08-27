@@ -12,7 +12,6 @@ namespace PlayerShotgunSettings {
     {
         // === 基本設定 ===
         float   chargeTime = 1.0f;          // チャージにかかる時間（秒）
-        float   fireRate = 0.5f;            // 発射レート（秒）
         float   recoveryTime = 0.3f;        // リカバリーにかかる時間（秒）
 
         // === エイム設定 ===
@@ -27,30 +26,18 @@ namespace PlayerShotgunSettings {
         float   chargeStartDelay = 0.1f;     // チャージ開始時の遅延（秒）
         float   chargeStartTransitionTime = 0.2f; // チャージ開始時の遷移時間（秒）
         float   chargeResetTransitionTime = 0.2f; // チャージリセット時の遷移時間（秒）
-
-        // === エフェクト設定 ===
-        float   muzzleFlashDuration = 0.1f; // マズルフラッシュの表示時間（秒）
-        float   chargeLightIntensity = 5.0f; // チャージライトの強度
-
     };
 
     using json = nlohmann::json;
     inline static const auto& GetSchema()
     {
         static const auto& schema = FieldSchema{
+            // === Shotgun Base Settings ===
             MakeHeaderField("Shotgun Base Settings"),
             MakeField(
                 "chargeTime",
                 "Charge Time",
                 &Data::chargeTime,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = 0.0f,
-                    .maxValue = 10.0f }),
-            MakeField(
-                "fireRate",
-                "Fire Rate",
-                &Data::fireRate,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = 0.0f,
@@ -63,7 +50,7 @@ namespace PlayerShotgunSettings {
                     .dragSpeed = 0.1f,
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
-
+            // === Shotgun Aim Settings ===
             MakeHeaderField("Shotgun Aim Settings"),
             MakeField(
                 "aimFOV",
@@ -105,25 +92,43 @@ namespace PlayerShotgunSettings {
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,
                     .maxValue = 1.0f }),
-
-            // === Shotgun Effect Settings ===
-            MakeHeaderField("Shotgun Effect Settings"),
+            // === Shotgun Charge Settings ===
+            MakeHeaderField("Shotgun Charge Settings"),
             MakeField(
-                "muzzleFlashDuration",
-                "Muzzle Flash Duration",
-                &Data::muzzleFlashDuration,
+                "chargeFOV",
+                "Charge FOV",
+                &Data::chargeFOV,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
+                    .minValue = 1.0f,
+                    .maxValue = 180.0f }),
+            MakeField(
+                "chargeStartDelay",
+                "Charge Start Delay",
+                &Data::chargeStartDelay,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
             MakeField(
-                "chargeLightIntensity",
-                "Charge Light Intensity",
-                &Data::chargeLightIntensity,
+                "chargeStartTransitionTime",
+                "Charge Start Transition Time",
+                &Data::chargeStartTransitionTime,
                 DragFieldOptions{
-                    .dragSpeed = 0.1f,
+                    .dragSpeed = 0.01f,
                     .minValue = 0.0f,
-                    .maxValue = 100.0f }),
+                    .maxValue = 10.0f }),
+            MakeField(
+                "chargeResetTransitionTime",
+                "Charge Reset Transition Time",
+                &Data::chargeResetTransitionTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 10.0f }),
+
+            // === Shotgun Effect Settings ===
+            MakeHeaderField("Shotgun Effect Settings"),
         };
         return schema;
     }

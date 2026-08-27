@@ -1,6 +1,6 @@
 {
     "data": {
-        "aimCameraDistance": 5.0,
+        "aimCameraDistance": 6.0,
         "aimCameraLocalOffset": [
             2.0,
             3.0,
@@ -8,11 +8,13 @@
         ],
         "aimFOV": 60.0,
         "aimSpeedMultiplier": 0.6000000238418579,
-        "aimTransitionTime": 0.10000000149011612,
-        "chargeLightIntensity": 5.0,
+        "aimTransitionTime": 0.20000000298023224,
+        "chargeFOV": 50.0,
+        "chargeResetTransitionTime": 0.20000000298023224,
+        "chargeStartDelay": 0.10000000149011612,
+        "chargeStartTransitionTime": 0.6000000238418579,
         "chargeTime": 1.0,
         "fireRate": 0.5,
-        "muzzleFlashDuration": 0.10000000149011612,
         "recoveryTime": 0.30000001192092896,
         "this_is_header_field": null
     },
