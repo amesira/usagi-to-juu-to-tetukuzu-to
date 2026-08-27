@@ -88,6 +88,7 @@ void MaskRenderPass::Process(IScene* pScene, const RenderView& view)
     if (view.maskCullingMask == 0) return;
 
     // === モデルの描画 ===
+    ModelResource::VertexType currentVertexType = ModelResource::VertexType::Static;
     EngineServiceLocator::BindShader(ShaderBase::Unlit);
     if (m_defaultTexture) {
         m_pContext->PSSetShaderResources(0, 1, m_defaultTexture->texture.GetAddressOf());
@@ -95,14 +96,26 @@ void MaskRenderPass::Process(IScene* pScene, const RenderView& view)
 
     ModelRenderUtility::ForEachRenderableModel(
         pScene,
-        [this, &view](ModelComponent& m, TransformComponent& t, ModelResource& model)
+        [this, &view, &currentVertexType](ModelComponent& m, TransformComponent& t, ModelResource& model)
         {
             GameObject* owner = m.GetOwner();
             if (!owner || !owner->GetActive()) return;
             if (!IsLayerVisible(owner->GetRenderLayer(), view.maskCullingMask)) return;
 
+            if (currentVertexType != model.vertexType) {
+                EngineServiceLocator::BindShader(
+                    model.vertexType == ModelResource::VertexType::Skinned
+                    ? ShaderBase::SkinnedUnlit
+                    : ShaderBase::Unlit);
+                currentVertexType = model.vertexType;
+            }
+
             XMMATRIX worldMatrix = ModelRenderUtility::CreateWorldMatrix(t);
             EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
+
+            if (model.vertexType == ModelResource::VertexType::Skinned) {
+                EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+            }
 
             m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             DrawMeshList(model.meshes);

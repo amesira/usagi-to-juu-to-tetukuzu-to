@@ -45,6 +45,12 @@ void ShaderRepository::Initialize()
         unlitShader.pixelShader = GeneratePixelShaderResource("unlit_ps.cso");
         GenerateShaderProgramResource(unlitShader);
 
+        ShaderProgramResource skinnedUnlitShader;
+        skinnedUnlitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::SkinnedUnlit)];
+        skinnedUnlitShader.vertexShader = GenerateVertexShaderResource("skinned_unlit_vs.cso", VertexType::SkinnedModel);
+        skinnedUnlitShader.pixelShader = unlitShader.pixelShader;
+        GenerateShaderProgramResource(skinnedUnlitShader);
+
         ShaderProgramResource uiShader;
         uiShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::Ui)];
         uiShader.vertexShader = GenerateVertexShaderResource("ui_vs.cso", VertexType::Ui);

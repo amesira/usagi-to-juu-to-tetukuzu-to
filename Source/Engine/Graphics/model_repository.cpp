@@ -38,6 +38,7 @@ void ModelRepository::Initialize()
 
     // スキニングCBをスキンメッシュ用シェーダーに登録
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_skinningCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedUnlit)], m_skinningCB);
 
 }
 

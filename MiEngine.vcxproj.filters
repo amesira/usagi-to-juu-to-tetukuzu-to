@@ -28,6 +28,9 @@
     <FxCompile Include="Shader\skinned_lit_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\skinned_unlit_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
