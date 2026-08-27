@@ -69,8 +69,24 @@ void AnimationProcessor::Process(IScene* pScene)
         SkeletonPose pose = modelComp->GetSkeletonPose();
 
         // アニメーションタイマーを更新
-        animState.timer += deltaTime * animState.speed;
-        float animTime = fmod(animState.timer, clip->duration);
+        const float duration = clip->duration;
+        if (duration <= 0.0f) continue;
+
+        if (!animState.finished) {
+            animState.timer += deltaTime * animState.speed;
+        }
+
+        float animTime = 0.0f;
+        if (animState.loop) {
+            animTime = fmod(animState.timer, duration);
+        }
+        else {
+            animTime = (std::min)(animState.timer, duration);
+            if (animState.timer >= duration) {
+                animState.timer = duration;
+                animState.finished = true;
+            }
+        }
 
         for (auto& channel : clip->channels) {
 

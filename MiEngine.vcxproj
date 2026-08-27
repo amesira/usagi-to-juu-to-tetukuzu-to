@@ -242,6 +242,7 @@
     <ClCompile Include="Source\Engine\Device\mouse.cpp" />
     <ClCompile Include="Source\Engine\Processor\physics_processor.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\player_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\player_animation_controller.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.cpp" />
@@ -487,6 +488,7 @@
     <ClInclude Include="Source\Engine\Core\pass.h" />
     <ClInclude Include="Source\Engine\Processor\physics_processor.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_animation_controller.h" />
     <ClInclude Include="Source\Engine\Component\rect_transform_component.h" />
     <ClInclude Include="Source\Engine\Device\audio.h" />
     <ClInclude Include="Source\Engine\Core\component.h" />

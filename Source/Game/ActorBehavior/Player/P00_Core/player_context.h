@@ -19,6 +19,7 @@ public:
     class PlayerConditionMachine* conditionMachine = nullptr;
     class PlayerActionMachine* actionMachine = nullptr;
     class PlayerWeaponController* weaponController = nullptr;
+    class PlayerAnimationController* animationController = nullptr;
 
     class PlayerMoveBehavior* moveBehavior = nullptr;
 

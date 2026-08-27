@@ -14,10 +14,12 @@
 
 // アニメーションの状態を表す構造体
 struct AnimationState {
-    std::string clipName;
+    std::string clipName = "None";
     int         clipIndex = -1;
     float   timer = 0.0f;
     float   speed = 1.0f; // 再生速度の倍率
+    bool    loop = true;
+    bool    finished = false;
 };
 
 // アニメーションのトランジションを表す構造体
@@ -37,15 +39,23 @@ private:
 public:
     static constexpr char CLIP_NONE[] = "None";
 
-    // アニメーション状態の設定・取得
-    void SetAnimationState(int clipIndex, float speed) {
-        if (m_currentState.clipIndex == clipIndex) return; // すでに同じクリップが再生中なら何もしない
+    /// @brief アニメーションを再生する
+    void PlayAnimation(int clipIndex, float speed = 1.0f, bool loop = true, bool restart = false) {
+        if (!restart && m_currentState.clipIndex == clipIndex && !m_currentState.finished) return;
         m_currentState.clipName = "CLIP";
         m_currentState.clipIndex = clipIndex;
         m_currentState.timer = 0.0f;
         m_currentState.speed = speed;
+        m_currentState.loop = loop;
+        m_currentState.finished = false;
+    }
+
+    void SetAnimationState(int clipIndex, float speed) {
+        PlayAnimation(clipIndex, speed, true, false);
     }
     AnimationState& GetAnimationState() { return m_currentState; }
+    const AnimationState& GetAnimationState() const { return m_currentState; }
+    bool IsFinished() const { return m_currentState.finished; }
 
 };
 

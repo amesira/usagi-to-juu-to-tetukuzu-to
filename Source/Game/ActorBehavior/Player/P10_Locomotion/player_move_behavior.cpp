@@ -18,7 +18,6 @@
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/collider_component.h"
 #include "Engine/Component/camera_component.h"
-#include "Engine/Component/animation_component.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
 
@@ -68,8 +67,6 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
     m_context.references = references;
     m_context.settingsAsset = settings;
 
-    // 仮
-    m_animationComponent = player->GetComponent<AnimationComponent>();
 }
 
 void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
@@ -124,14 +121,12 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     // === エフェクト処理 ===
     m_context.moveEffects.UpdateEffects(m_context, deltaTime);
 
-    // === 仮：アニメーション更新 ===
-    if (m_animationComponent) {
-        if (MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f) {
-            m_animationComponent->SetAnimationState(1, 2.0f); // Moveアニメーションを再生
-        }
-        else {
-            m_animationComponent->SetAnimationState(0, 1.0f); // Idleアニメーションを再生
-        }
+    // === アニメーション要求 ===
+    if (context.animationController) {
+        context.animationController->PlayAnimation(
+            MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
+            ? PlayerAnimationController::Animation::Running
+            : PlayerAnimationController::Animation::Idle);
     }
 }
 

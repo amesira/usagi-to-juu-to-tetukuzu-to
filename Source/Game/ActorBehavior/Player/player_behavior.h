@@ -22,6 +22,7 @@
 #include "Game/ActorBehavior/Player/P30_Action/Attack/DualPistols/player_dual_pistols_action.h"
 #include "Game/ActorBehavior/Player/P30_Action/Attack/Shotgun/player_shotgun_action.h"
 #include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 class TransformComponent;
 class CameraComponent;
@@ -37,6 +38,7 @@ private:
     PlayerConditionMachine m_conditionMachine;
     PlayerActionMachine m_actionMachine;
     PlayerWeaponController m_weaponController;
+    PlayerAnimationController m_animationController;
 
     PlayerMoveReferences m_moveReferences;
     PlayerMoveSettingsAsset* m_moveSettings;
