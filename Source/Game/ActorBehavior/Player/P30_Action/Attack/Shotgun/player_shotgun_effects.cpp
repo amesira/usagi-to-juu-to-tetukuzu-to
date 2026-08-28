@@ -105,7 +105,6 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     }
     case EffectsType::ResetCharge: {
         m_chargeEffect.Stop();
-        m_chargeCompleteEffect.Stop();
         Game::GameFeedback()->ResetFOV(context.settings().chargeResetTransitionTime);
         Game::CustomPostEffect()->PlayEffect(
             CustomPostEffectType::MonoMask, 0.0f, context.settings().chargeResetTransitionTime, 0.0f
@@ -118,7 +117,6 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     }
     case EffectsType::Fire: {
         m_chargeEffect.Stop();
-        m_chargeCompleteEffect.Stop();
         m_muzzleFlashEffect.Play();
         break;
     }
