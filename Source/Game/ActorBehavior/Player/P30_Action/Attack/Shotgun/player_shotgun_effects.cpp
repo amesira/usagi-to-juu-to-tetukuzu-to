@@ -29,9 +29,6 @@ namespace {
     const std::filesystem::path MUZZLE_FLASH_EFFECT_ASSET =
         "asset/Particle/player_shotgun_fire.particle.json";
 
-    constexpr DirectX::XMFLOAT3 CHARGE_EFFECT_OFFSET = { 1.0f, 1.3f, 0.0f };
-    constexpr DirectX::XMFLOAT3 CHARGE_COMPLETE_EFFECT_OFFSET = { 1.0f, 1.3f, 0.0f };
-    constexpr DirectX::XMFLOAT3 MUZZLE_FLASH_EFFECT_OFFSET = { 1.0f, 1.0f, 0.0f };
 }
 
 void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
@@ -44,20 +41,22 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
         context.scene,
         context.references.muzzleTransform,
         CHARGE_EFFECT_ASSET,
-        CHARGE_EFFECT_OFFSET);
+        context.settings().chargeEffectOffset);
 
     m_chargeCompleteEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
         context.references.muzzleTransform,
         CHARGE_COMPLETE_EFFECT_ASSET,
-        CHARGE_COMPLETE_EFFECT_OFFSET);
-    m_chargeCompleteEffect.GetTransform()->SetScaling({ 2.5f, 2.5f, 2.5f });
+        context.settings().chargeCompleteEffectOffset);
+    const float completeEffectScale = context.settings().chargeCompleteEffectScale;
+    m_chargeCompleteEffect.GetTransform()->SetScaling(
+        { completeEffectScale, completeEffectScale, completeEffectScale });
 
     m_muzzleFlashEffect = RenderEffectFactory::CreateAttachedParticleEffect(
         context.scene,
         context.references.muzzleTransform,
         MUZZLE_FLASH_EFFECT_ASSET,
-        MUZZLE_FLASH_EFFECT_OFFSET);
+        context.settings().muzzleFlashEffectOffset);
 
     m_initialized = true;
 }
@@ -76,13 +75,19 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     // === エイムモード関連のエフェクト ===
     case EffectsType::AimEnter: {
         Game::CustomPostEffect()->PlayEffect(
-            CustomPostEffectType::RadialBlur, 0.5f, context.settings().aimTransitionTime, 0.01f
+            CustomPostEffectType::RadialBlur,
+            context.settings().aimEnterRadialBlurStrength,
+            context.settings().aimTransitionTime,
+            context.settings().aimRadialBlurHoldTime
         );
         break;
     }
     case EffectsType::AimExit: {
         Game::CustomPostEffect()->PlayEffect(
-            CustomPostEffectType::RadialBlur, 0.3f, context.settings().aimTransitionTime, 0.01f
+            CustomPostEffectType::RadialBlur,
+            context.settings().aimExitRadialBlurStrength,
+            context.settings().aimTransitionTime,
+            context.settings().aimRadialBlurHoldTime
         );
         break;
     }
@@ -91,7 +96,10 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         m_chargeEffect.Play();
         Game::GameFeedback()->ChangeFOV(context.settings().chargeFOV, context.settings().chargeStartTransitionTime);
         Game::CustomPostEffect()->PlayEffect(
-            CustomPostEffectType::MonoMask, 0.6f, context.settings().chargeStartTransitionTime, 0.0f
+            CustomPostEffectType::MonoMask,
+            context.settings().chargeMonoMaskStrength,
+            context.settings().chargeStartTransitionTime,
+            0.0f
         );
         break;
     }

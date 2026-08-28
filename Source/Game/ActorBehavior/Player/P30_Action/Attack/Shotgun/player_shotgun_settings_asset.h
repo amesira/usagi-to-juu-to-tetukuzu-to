@@ -26,6 +26,27 @@ namespace PlayerShotgunSettings {
         float   chargeStartDelay = 0.1f;     // チャージ開始時の遅延（秒）
         float   chargeStartTransitionTime = 0.2f; // チャージ開始時の遷移時間（秒）
         float   chargeResetTransitionTime = 0.2f; // チャージリセット時の遷移時間（秒）
+
+        // === 弾丸設定 ===
+        float   minBulletSpeed = 25.0f;
+        float   maxBulletSpeed = 45.0f;
+        float   minBulletRadius = 0.25f;
+        float   maxBulletRadius = 0.75f;
+        float   bulletLifetime = 3.0f;
+        float   bulletSpawnForwardOffset = 0.5f;
+        float   aimMaxDistance = 1000.0f;
+
+        // === エフェクト配置設定 ===
+        DirectX::XMFLOAT3 chargeEffectOffset = { 1.0f, 1.3f, 0.0f };
+        DirectX::XMFLOAT3 chargeCompleteEffectOffset = { 1.0f, 1.3f, 0.0f };
+        DirectX::XMFLOAT3 muzzleFlashEffectOffset = { 1.0f, 1.0f, 0.0f };
+        float   chargeCompleteEffectScale = 2.5f;
+
+        // === ポストエフェクト設定 ===
+        float   aimEnterRadialBlurStrength = 0.5f;
+        float   aimExitRadialBlurStrength = 0.3f;
+        float   aimRadialBlurHoldTime = 0.01f;
+        float   chargeMonoMaskStrength = 0.6f;
     };
 
     using json = nlohmann::json;
@@ -127,8 +148,44 @@ namespace PlayerShotgunSettings {
                     .minValue = 0.0f,
                     .maxValue = 10.0f }),
 
-            // === Shotgun Effect Settings ===
+            // === Shotgun Projectile Settings ===
+            MakeHeaderField("Shotgun Projectile Settings"),
+            MakeField("minBulletSpeed", "Min Bullet Speed", &Data::minBulletSpeed,
+                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 500.0f }),
+            MakeField("maxBulletSpeed", "Max Bullet Speed", &Data::maxBulletSpeed,
+                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 500.0f }),
+            MakeField("minBulletRadius", "Min Bullet Radius", &Data::minBulletRadius,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("maxBulletRadius", "Max Bullet Radius", &Data::maxBulletRadius,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("bulletLifetime", "Bullet Lifetime", &Data::bulletLifetime,
+                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 30.0f }),
+            MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("aimMaxDistance", "Aim Max Distance", &Data::aimMaxDistance,
+                DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 10000.0f }),
+
+            // === Shotgun Effect Transform Settings ===
+            MakeHeaderField("Shotgun Effect Transform Settings"),
+            MakeField("chargeEffectOffset", "Charge Effect Offset", &Data::chargeEffectOffset,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -10.0f, .maxValue = 10.0f }),
+            MakeField("chargeCompleteEffectOffset", "Charge Complete Effect Offset", &Data::chargeCompleteEffectOffset,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -10.0f, .maxValue = 10.0f }),
+            MakeField("muzzleFlashEffectOffset", "Muzzle Flash Effect Offset", &Data::muzzleFlashEffectOffset,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -10.0f, .maxValue = 10.0f }),
+            MakeField("chargeCompleteEffectScale", "Charge Complete Effect Scale", &Data::chargeCompleteEffectScale,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 20.0f }),
+
+            // === Shotgun Post Effect Settings ===
             MakeHeaderField("Shotgun Effect Settings"),
+            MakeField("aimEnterRadialBlurStrength", "Aim Enter Radial Blur Strength", &Data::aimEnterRadialBlurStrength,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("aimExitRadialBlurStrength", "Aim Exit Radial Blur Strength", &Data::aimExitRadialBlurStrength,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("aimRadialBlurHoldTime", "Aim Radial Blur Hold Time", &Data::aimRadialBlurHoldTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("chargeMonoMaskStrength", "Charge Mono Mask Strength", &Data::chargeMonoMaskStrength,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
         };
         return schema;
     }

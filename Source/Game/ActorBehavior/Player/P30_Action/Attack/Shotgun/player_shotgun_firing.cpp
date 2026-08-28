@@ -13,12 +13,6 @@
 
 namespace
 {
-    constexpr float MIN_BULLET_SPEED = 25.0f;
-    constexpr float MAX_BULLET_SPEED = 45.0f;
-    constexpr float MIN_BULLET_RADIUS = 0.25f;
-    constexpr float MAX_BULLET_RADIUS = 0.75f;
-    constexpr float BULLET_LIFETIME = 3.0f;
-
     constexpr CollisionLayerMask SHOTGUN_HIT_LAYER_MASK =
         COLLISION_LAYER_MASK_ALL &
         ~CollisionLayerToMask(CollisionLayer::Player) &
@@ -30,15 +24,18 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
     if (!context.scene) return;
 
     const float chargeRate = MiMath::Clamp(request.chargeRate, 0.0f, 1.0f);
-    const float bulletSpeed = MiMath::Lerp(MIN_BULLET_SPEED, MAX_BULLET_SPEED, chargeRate);
+    const auto& settings = context.settings();
+    const float bulletSpeed = MiMath::Lerp(settings.minBulletSpeed, settings.maxBulletSpeed, chargeRate);
 
     ProjectileFactory::BulletCreateDesc bulletDesc;
-    bulletDesc.position = MiMath::Add(request.muzzlePosition, MiMath::Multiply(request.fireDirection, 0.5f)); // 少し前方に出す
+    bulletDesc.position = MiMath::Add(
+        request.muzzlePosition,
+        MiMath::Multiply(request.fireDirection, settings.bulletSpawnForwardOffset));
     bulletDesc.velocity = MiMath::Multiply(
         MiMath::Normalize(request.fireDirection),
         bulletSpeed);
-    bulletDesc.radius = MiMath::Lerp(MIN_BULLET_RADIUS, MAX_BULLET_RADIUS, chargeRate);
-    bulletDesc.lifeTime = BULLET_LIFETIME;
+    bulletDesc.radius = MiMath::Lerp(settings.minBulletRadius, settings.maxBulletRadius, chargeRate);
+    bulletDesc.lifeTime = settings.bulletLifetime;
     bulletDesc.layerMask = SHOTGUN_HIT_LAYER_MASK;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);

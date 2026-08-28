@@ -26,7 +26,6 @@
 namespace {
     using CameraEffectTarget = CameraEffect::EffectTaskTarget;
 
-    constexpr float AIM_MAX_DISTANCE = 1000.0f;
     constexpr CollisionLayerMask AIM_LAYER_MASK =
         COLLISION_LAYER_MASK_ALL &
         ~CollisionLayerToMask(CollisionLayer::Player) &
@@ -99,7 +98,7 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
         hit,
         m_aimResult.cameraRayOrigin,
         m_aimResult.cameraRayDirection,
-        AIM_MAX_DISTANCE,
+        context.settings().aimMaxDistance,
         AIM_LAYER_MASK);
 
     if (m_aimResult.hasTargetHit) {
@@ -108,7 +107,7 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
     else {
         m_aimResult.targetPosition = MiMath::Add(
             m_aimResult.cameraRayOrigin,
-            MiMath::Multiply(m_aimResult.cameraRayDirection, AIM_MAX_DISTANCE));
+            MiMath::Multiply(m_aimResult.cameraRayDirection, context.settings().aimMaxDistance));
     }
 
     m_aimResult.fireDirection = MiMath::Normalize(
