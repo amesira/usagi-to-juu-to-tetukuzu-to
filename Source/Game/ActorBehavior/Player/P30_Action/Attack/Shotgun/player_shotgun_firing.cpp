@@ -34,7 +34,6 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
 
     ProjectileFactory::BulletCreateDesc bulletDesc;
     bulletDesc.position = MiMath::Add(request.muzzlePosition, MiMath::Multiply(request.fireDirection, 0.5f)); // 少し前方に出す
-    bulletDesc.position.y += 1.0f;
     bulletDesc.velocity = MiMath::Multiply(
         MiMath::Normalize(request.fireDirection),
         bulletSpeed);

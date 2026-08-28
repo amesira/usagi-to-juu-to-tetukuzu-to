@@ -12,6 +12,7 @@
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/camera_component.h"
+#include "Engine/Graphics/model_animation_utility.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
@@ -62,7 +63,7 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
 {
     // 照準UIの更新とか
 
-    if (!context.cameraTransform || !context.references.muzzleTransform) {
+    if (!context.cameraTransform || !context.cameraComponent) {
         m_aimResult = {};
         return;
     }
@@ -70,7 +71,27 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
     // カメラ中央からRaycastし、命中点をマズルから狙う。
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
     m_aimResult.cameraRayDirection = MiMath::Normalize(context.cameraComponent->GetForward());
-    m_aimResult.muzzlePosition = context.references.muzzleTransform->GetPosition();
+
+    ModelAnimationUtility::BoneTransform gunTransform;
+    const bool foundGunBone =
+        context.playerModel &&
+        context.playerTransform &&
+        ModelAnimationUtility::GetBoneWorldTransform(
+            *context.playerModel,
+            *context.playerTransform,
+            context.gunLBoneIndex,
+            gunTransform);
+
+    if (foundGunBone) {
+        m_aimResult.muzzlePosition = gunTransform.position;
+    }
+    else if (context.references.muzzleTransform) {
+        m_aimResult.muzzlePosition = context.references.muzzleTransform->GetPosition();
+    }
+    else {
+        m_aimResult = {};
+        return;
+    }
 
     RaycastHit hit;
     m_aimResult.hasTargetHit = CollisionQuery::Raycast(

@@ -26,15 +26,6 @@ struct PlayerShotgunRuntimeState
 struct PlayerShotgunReferences 
 {
     class TransformComponent* muzzleTransform = nullptr;
-
-    /*class ParticleSystemComponent* chargeParticle = nullptr;
-    class LightComponent* chargeLight = nullptr;
-
-    class ParticleSystemComponent* chargeCompleteParticle = nullptr;
-    class MeshEffectComponent* chargeCompleteMeshEffect = nullptr;
-
-    class ParticleSystemComponent* muzzleFlashParticle = nullptr;
-    class MeshEffectComponent* muzzleFlashMeshEffect = nullptr;*/
 };
 
 struct PlayerShotgunContext 
@@ -50,6 +41,8 @@ struct PlayerShotgunContext
     }
 
     class TransformComponent* playerTransform = nullptr;
+    class ModelComponent* playerModel = nullptr;
+    unsigned int gunLBoneIndex = static_cast<unsigned int>(-1);
 
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;

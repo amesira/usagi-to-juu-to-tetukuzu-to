@@ -10,8 +10,12 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+#include "Game/ActorBehavior/Player/player_behavior.h"
 
 #include "Engine/engine_service_locator.h"
+#include "Engine/Core/game_object.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Graphics/model_animation_utility.h"
 
 namespace {
     using Phase = PlayerShotgunRuntimeState::Phase;
@@ -22,6 +26,14 @@ void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgun
     m_context.owner = this;
     m_context.scene = context.scene;
     m_context.playerTransform = context.transform;
+    GameObject* player = context.owner ? context.owner->GetOwner() : nullptr;
+    m_context.playerModel = player ? player->GetComponent<ModelComponent>() : nullptr;
+    if (m_context.playerModel) {
+        ModelAnimationUtility::FindBoneIndex(
+            *m_context.playerModel,
+            "Gun.L",
+            m_context.gunLBoneIndex);
+    }
     m_context.cameraTransform = context.mainCameraTransform;
     m_context.cameraComponent = context.mainCamera;
     m_context.cameraControlBehavior = context.cameraControlBehavior;
