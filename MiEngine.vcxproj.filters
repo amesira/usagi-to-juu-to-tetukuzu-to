@@ -244,6 +244,9 @@
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\Graphics\model_animation_utility.cpp">
+      <Filter>Sources\Engine\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\ActorBehavior\Player\player_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClCompile>
@@ -579,6 +582,9 @@
       <Filter>Sources\Engine</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_repository.h">
+      <Filter>Sources\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Graphics\model_animation_utility.h">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_behavior.h">

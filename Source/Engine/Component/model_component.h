@@ -49,6 +49,7 @@ public:
     // スケルトンポーズの設定・取得
     void SetSkeletonPose(const SkeletonPose& pose) { m_skeletonPose = pose; }
     SkeletonPose& GetSkeletonPose() { return m_skeletonPose; }
+    const SkeletonPose& GetSkeletonPose() const { return m_skeletonPose; }
 
 };
 
