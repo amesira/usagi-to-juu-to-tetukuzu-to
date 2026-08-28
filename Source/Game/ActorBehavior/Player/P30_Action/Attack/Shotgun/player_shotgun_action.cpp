@@ -54,6 +54,13 @@ bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInp
 
 void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    m_enteredAnimationSubMachine = context.animationController.EnterSubMachine(
+        PlayerAnimationController::SubMachine::Shotgun);
+    if (!m_enteredAnimationSubMachine) {
+        SetState(ActionState::WaitingToFinish);
+        return;
+    }
+
     context.animationController.PlayAnimation(PlayerAnimationController::Animation::AimIdle);
 
     m_context.runtimeState.phase = PlayerShotgunRuntimeState::Phase::Entering;
@@ -153,6 +160,10 @@ void PlayerShotgunAction::Finish(PlayerContext& context, const PlayerInput& inpu
     m_context.effects.PlayEffects(m_context, PlayerShotgunEffects::EffectsType::ResetCharge);
     m_context.runtimeState = {};
     m_enteredPhase = false;
+    if (m_enteredAnimationSubMachine) {
+        context.animationController.RequestExitSubMachine();
+        m_enteredAnimationSubMachine = false;
+    }
 }
 
 void PlayerShotgunAction::ChangePhase(PlayerShotgunRuntimeState::Phase newPhase)

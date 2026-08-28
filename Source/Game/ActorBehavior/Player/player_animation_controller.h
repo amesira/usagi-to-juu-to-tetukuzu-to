@@ -25,6 +25,16 @@ public:
         Airborne = 30,
     };
 
+    /// @brief アニメーションの再生範囲を制限するサブマシーン
+    enum class SubMachine {
+        Any,
+        Default,
+        Shotgun,
+        DualPistols,
+
+        MAX,
+    };
+
     struct PlayOptions {
         int priority = 0;
 
@@ -41,6 +51,7 @@ private:
     /// @brief アニメーションに対応するアニメーションクリップのインデックスと再生設定を保持する構造体
     struct ClipDefinition {
         int clipIndex = -1;
+        SubMachine subMachine = SubMachine::Default;
         PlayOptions defaults;
     };
 
@@ -54,7 +65,10 @@ private:
     AnimationComponent* m_animationComponent = nullptr;
 
     std::array<ClipDefinition, static_cast<size_t>(Animation::MAX)> m_clipDefinitions = {};
+    std::array<Animation, static_cast<size_t>(SubMachine::MAX)> m_subMachineDefaults = {};
     std::vector<Request> m_frameRequests;
+
+    SubMachine m_currentSubMachine = SubMachine::Default;
 
     // === 現在のアニメーション再生状態 ===
     Request m_currentRequest;
@@ -70,13 +84,25 @@ public:
     void PlayAnimation(Animation animation);
     void PlayAnimation(Animation animation, const PlayOptions& options);
 
-    void RegisterClip(Animation animation, int clipIndex, const PlayOptions& defaults);
+    void RegisterClip(
+        Animation animation,
+        int clipIndex,
+        SubMachine subMachine,
+        const PlayOptions& defaults);
+    void RegisterSubMachineDefault(SubMachine subMachine, Animation animation);
+
+    bool EnterSubMachine(SubMachine subMachine);
+    void RequestExitSubMachine();
+    void ForceSetSubMachine(SubMachine subMachine);
 
     Animation GetCurrentAnimation() const { return m_currentRequest.animation; }
     bool IsWaitingForCompletion() const { return m_waitingForCompletion; }
+    SubMachine GetCurrentSubMachine() const { return m_currentSubMachine; }
 
 private:
     const Request* FindHighestPriorityRequest() const;
+    bool IsAvailableInCurrentSubMachine(Animation animation) const;
+    void PlayDefaultAnimationIfNeeded();
 
     /// @brief 指定されたアニメーションリクエストを受け入れ可能かどうかを判定する
     bool CanAccept(const Request& request) const;

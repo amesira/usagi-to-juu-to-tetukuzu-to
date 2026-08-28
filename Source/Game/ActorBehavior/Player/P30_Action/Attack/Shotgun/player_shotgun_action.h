@@ -14,6 +14,7 @@ private:
     PlayerShotgunContext m_context;
 
     bool m_enteredPhase = false;
+    bool m_enteredAnimationSubMachine = false;
 
 public:
     PlayerShotgunAction() : PlayerActionBase("Shotgun", ActionCategory::Attack, 10, true) {}
