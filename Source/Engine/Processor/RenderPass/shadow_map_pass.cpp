@@ -45,7 +45,7 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_shadowLightCB);
 
     // シャドウマップ用の深度バッファと対応するビューを生成
-    Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf());
+    Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf(), 1920, 1080);
 
     // スプライトをシャドウマップへ書き込むための頂点バッファを生成
     D3D11_BUFFER_DESC bd = {};
@@ -67,11 +67,12 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
     SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
 
     // シャドウマップ用のライトビュー行列と射影行列を計算して、ライト定数バッファに転送
     {
-        float width = 50.0f;
-        float height = 50.0f;
+        float width = 30.0f;
+        float height = 30.0f;
 
         XMFLOAT3 dir = MiMath::Normalize(m_lightDirection);
         XMFLOAT3 eye = MiMath::Subtract(view.eyePosition, MiMath::Multiply(dir, 30.0f));
@@ -174,6 +175,8 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
             m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
             m_pContext->Draw(4, 0);
         });
+
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 }
 
 // ----------------------------------- Bind

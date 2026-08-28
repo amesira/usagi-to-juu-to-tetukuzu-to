@@ -23,6 +23,10 @@
         },
         "gradient": {
             "enabled": true,
+            "gradientDirection": [
+                0.0,
+                1.0
+            ],
             "gradientEndColor": [
                 1.0,
                 1.0,
@@ -126,15 +130,15 @@
                 "keys": [
                     {
                         "time": 0.0,
-                        "valueX": 1.0,
-                        "valueY": 1.0,
-                        "valueZ": 1.0
+                        "valueX": 0.699999988079071,
+                        "valueY": 0.699999988079071,
+                        "valueZ": 0.699999988079071
                     },
                     {
                         "time": 1.0,
-                        "valueX": 1.399999976158142,
-                        "valueY": 1.399999976158142,
-                        "valueZ": 1.399999976158142
+                        "valueX": 2.5,
+                        "valueY": 2.5,
+                        "valueZ": 2.5
                     }
                 ]
             }

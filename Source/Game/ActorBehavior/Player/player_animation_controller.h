@@ -65,7 +65,6 @@ private:
     AnimationComponent* m_animationComponent = nullptr;
 
     std::array<ClipDefinition, static_cast<size_t>(Animation::MAX)> m_clipDefinitions = {};
-    std::array<Animation, static_cast<size_t>(SubMachine::MAX)> m_subMachineDefaults = {};
     std::vector<Request> m_frameRequests;
 
     SubMachine m_currentSubMachine = SubMachine::Default;
@@ -84,13 +83,14 @@ public:
     void PlayAnimation(Animation animation);
     void PlayAnimation(Animation animation, const PlayOptions& options);
 
+    /// @brief 指定されたアニメーションに対応するアニメーションクリップのインデックスと再生設定を登録する
     void RegisterClip(
         Animation animation,
         int clipIndex,
         SubMachine subMachine,
         const PlayOptions& defaults);
-    void RegisterSubMachineDefault(SubMachine subMachine, Animation animation);
 
+    // === サブマシーンの管理 ===
     bool EnterSubMachine(SubMachine subMachine);
     void RequestExitSubMachine();
     void ForceSetSubMachine(SubMachine subMachine);
@@ -102,7 +102,6 @@ public:
 private:
     const Request* FindHighestPriorityRequest() const;
     bool IsAvailableInCurrentSubMachine(Animation animation) const;
-    void PlayDefaultAnimationIfNeeded();
 
     /// @brief 指定されたアニメーションリクエストを受け入れ可能かどうかを判定する
     bool CanAccept(const Request& request) const;
