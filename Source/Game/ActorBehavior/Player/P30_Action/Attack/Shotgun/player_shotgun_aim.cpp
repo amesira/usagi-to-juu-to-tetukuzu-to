@@ -107,6 +107,8 @@ void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)
         context.locomotionController->RemoveLocomotionRequestByIndex(m_locomotionRequestID);
         m_locomotionRequestID = -1;
     }
+
+    context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::AimExit);
 }
 
 /// @brief エイムモードのためのカメラエフェクトを設定する

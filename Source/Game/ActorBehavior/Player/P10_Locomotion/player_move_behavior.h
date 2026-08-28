@@ -34,7 +34,7 @@ public:
 
     /// @brief PlayerMoveBehaviorの更新処理を行う（PlayerBehaviorのUpdate()から呼び出す）
     void UpdateMove(
-        const class PlayerContext& context, 
+        class PlayerContext& context,
         const class PlayerInput& input, 
         const PlayerMoveIntent& moveIntent, 
         float deltaTime);

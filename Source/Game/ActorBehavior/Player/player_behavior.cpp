@@ -42,7 +42,6 @@ void PlayerBehavior::Start()
     m_context.conditionMachine = &m_conditionMachine;
     m_context.actionMachine = &m_actionMachine;
     m_context.weaponController = &m_weaponController;
-    m_context.animationController = &m_animationController;
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -60,7 +59,7 @@ void PlayerBehavior::Start()
     m_locomotionController.Initialize();
     m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
     m_context.actionMachine->Initialize(m_context, m_input);
-    m_animationController.Initialize(m_context);
+    m_context.animationController.Initialize(m_context);
 
     // Shotgun用の参照が未設定の場合は、暫定的にPlayerのTransformを銃口として扱う
     if (!m_shotgunReferences.muzzleTransform) {
@@ -84,7 +83,7 @@ void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
     m_input = UpdateInput();
-    m_animationController.BeginFrame();
+    m_context.animationController.BeginFrame();
 
     m_context.conditionMachine->Update(m_context, m_input);
     m_weaponController.Update(m_context, m_input);
@@ -93,7 +92,7 @@ void PlayerBehavior::Update()
     // プレイヤーの移動挙動を更新する
     PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);
     m_context.moveBehavior->UpdateMove(m_context, m_input, intent, deltaTime);
-    m_animationController.Update();
+    m_context.animationController.Update();
 }
 
 void PlayerBehavior::DrawComponentInspector()

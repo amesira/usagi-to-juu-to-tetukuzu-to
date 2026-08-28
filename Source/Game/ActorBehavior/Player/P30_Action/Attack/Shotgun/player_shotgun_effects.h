@@ -15,6 +15,7 @@ class PlayerShotgunEffects {
 public:
     enum class EffectsType {
         AimEnter,     // エイムモードに入る
+        AimExit,      // エイムモードから出る
         StartCharge,  // チャージ開始
         ResetCharge,  // チャージリセット
         ChargeComplete, // チャージ完了

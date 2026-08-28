@@ -9,6 +9,7 @@
 
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -41,6 +42,8 @@ bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInp
 
 void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    context.animationController.PlayAnimation(PlayerAnimationController::Animation::AimIdle);
+
     m_context.runtimeState.phase = PlayerShotgunRuntimeState::Phase::Entering;
     m_context.runtimeState.phaseTimer = 0.0f;
 
@@ -49,6 +52,8 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
+    context.animationController.PlayAnimation(PlayerAnimationController::Animation::AimIdle);
+
     // 終了チェック（仮）
     if (!input.holdAimCommand) {
         ChangePhase(Phase::Exiting);

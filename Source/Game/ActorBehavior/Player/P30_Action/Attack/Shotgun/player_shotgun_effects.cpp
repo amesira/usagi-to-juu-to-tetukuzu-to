@@ -80,7 +80,12 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         );
         break;
     }
-
+    case EffectsType::AimExit: {
+        Game::CustomPostEffect()->PlayEffect(
+            CustomPostEffectType::RadialBlur, 0.3f, context.settings().aimTransitionTime, 0.01f
+        );
+        break;
+    }
     // === チャージ関連のエフェクト ===
     case EffectsType::StartCharge: {
         m_chargeEffect.Play();

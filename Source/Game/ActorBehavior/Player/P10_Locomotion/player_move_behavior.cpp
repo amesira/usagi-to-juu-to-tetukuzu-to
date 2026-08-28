@@ -69,7 +69,7 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
 
 }
 
-void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
+void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
 {
     m_context.runtimeState.m_isGrounded = CheckGrounded();
 
@@ -78,6 +78,7 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
         // ジャンプ処理の要求をここで行う
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce; // ジャンプ力を設定
         m_context.runtimeState.m_isGrounded = false; // ジャンプ中は地面に接地していない状態にする
+        context.animationController.PlayAnimation(PlayerAnimationController::Animation::Jump);
     }
 
     // 現在位置の取得
@@ -122,11 +123,14 @@ void PlayerMoveBehavior::UpdateMove(const PlayerContext& context, const PlayerIn
     m_context.moveEffects.UpdateEffects(m_context, deltaTime);
 
     // === アニメーション要求 ===
-    if (context.animationController) {
-        context.animationController->PlayAnimation(
+    if (!m_context.runtimeState.m_isGrounded) {
+        context.animationController.PlayAnimation(PlayerAnimationController::Animation::Falling);
+    }
+    else {
+        context.animationController.PlayAnimation(
             MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
-            ? PlayerAnimationController::Animation::Running
-            : PlayerAnimationController::Animation::Idle);
+                ? PlayerAnimationController::Animation::Running
+                : PlayerAnimationController::Animation::Idle);
     }
 }
 
