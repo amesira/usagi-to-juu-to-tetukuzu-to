@@ -7,6 +7,25 @@
 //===================================================
 #include "player_dual_pistols_action.h"
 
+#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
+
+void PlayerDualPistolsAction::Initialize(
+    const PlayerContext& context,
+    PlayerDualPistolsReferences references,
+    PlayerDualPistolsSettingsAsset* settingsAsset)
+{
+    m_context.owner = this;
+    m_context.scene = context.scene;
+    m_context.references = references;
+    m_context.settingsAsset = settingsAsset;
+
+    m_context.aim.Initialize(m_context);
+    m_context.firing.Initialize(m_context);
+    m_context.effects.Initialize(m_context);
+    m_context.rapidFire.Initialize(m_context);
+    m_context.slashBurst.Initialize(m_context);
+}
+
 bool PlayerDualPistolsAction::CanStart(const PlayerContext& context, const PlayerInput& input)
 {
     return false;

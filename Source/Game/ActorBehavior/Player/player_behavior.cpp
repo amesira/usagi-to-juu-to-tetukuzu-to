@@ -74,6 +74,17 @@ void PlayerBehavior::Start()
 
     m_shotgunAction.Initialize(m_context, m_shotgunReferences, m_shotgunSettings);
 
+    // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
+    static PlayerDualPistolsSettingsAsset defaultDualPistolsSettings;
+    if (!m_dualPistolsSettings) {
+        m_dualPistolsSettings = &defaultDualPistolsSettings;
+    }
+
+    m_dualPistolsAction.Initialize(
+        m_context,
+        m_dualPistolsReferences,
+        m_dualPistolsSettings);
+
     m_context.actionMachine->RegisterAction(m_dualPistolsAction);
     m_context.actionMachine->RegisterAction(m_shotgunAction);
 

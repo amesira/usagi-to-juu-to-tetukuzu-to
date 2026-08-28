@@ -45,6 +45,9 @@ private:
     PlayerDualPistolsAction m_dualPistolsAction;
     PlayerShotgunAction m_shotgunAction;
 
+    PlayerDualPistolsReferences m_dualPistolsReferences;
+    PlayerDualPistolsSettingsAsset* m_dualPistolsSettings = nullptr;
+
     PlayerShotgunReferences m_shotgunReferences;
     PlayerShotgunSettingsAsset* m_shotgunSettings = nullptr;
 
@@ -63,6 +66,13 @@ public:
     void SetupPlayerShotgun(PlayerShotgunReferences references, PlayerShotgunSettingsAsset* settings) {
         m_shotgunReferences = references;
         m_shotgunSettings = settings;
+    }
+
+    void SetupPlayerDualPistols(
+        PlayerDualPistolsReferences references,
+        PlayerDualPistolsSettingsAsset* settings) {
+        m_dualPistolsReferences = references;
+        m_dualPistolsSettings = settings;
     }
 
 private:

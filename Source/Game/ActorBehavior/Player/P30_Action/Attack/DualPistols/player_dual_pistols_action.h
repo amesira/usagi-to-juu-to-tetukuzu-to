@@ -8,10 +8,17 @@
 #pragma once
 
 #include "Game/ActorBehavior/Player/P30_Action/player_action_base.h"
+#include "player_dual_pistols_context.h"
 
 class PlayerDualPistolsAction : public PlayerActionBase {
+private:
+    PlayerDualPistolsContext m_context;
+
 public:
     PlayerDualPistolsAction() : PlayerActionBase("DualPistols", ActionCategory::Attack, 10, true) {}
+    void Initialize(const PlayerContext& context, PlayerDualPistolsReferences references,
+        PlayerDualPistolsSettingsAsset* settingsAsset);
+
     bool CanStart(const PlayerContext& context, const PlayerInput& input) override;
 
     void Start(PlayerContext& context, const PlayerInput& input) override;
