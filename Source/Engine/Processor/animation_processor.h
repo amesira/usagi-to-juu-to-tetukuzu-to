@@ -30,6 +30,12 @@ private:
         ModelResource& modelResource,
         float deltaTime);
 
+    void ProcessTransition(
+        class AnimationComponent& animationComponent,
+        class ModelComponent& modelComponent,
+        ModelResource& modelResource,
+        float deltaTime);
+
     void ProcessBlendTree1D(
         class AnimationComponent& animationComponent,
         class ModelComponent& modelComponent,
@@ -40,6 +46,14 @@ private:
         const AnimationClip& clip,
         const SkeletonPose& basePose,
         float animationTime);
+
+    const AnimationClip* ResolveAnimationClip(
+        struct AnimationState& state,
+        ModelResource& modelResource);
+    float AdvanceAnimationState(
+        struct AnimationState& state,
+        const AnimationClip& clip,
+        float deltaTime);
 
     LocalPose BlendLocalPoses(const LocalPose& lhs, const LocalPose& rhs, float weight);
     void ApplyLocalPose(SkeletonPose& pose, const LocalPose& localPose);

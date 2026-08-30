@@ -25,12 +25,10 @@ struct AnimationState {
 
 // アニメーションのトランジションを表す構造体
 struct AnimationTransition {
-    AnimationState* fromState = nullptr;
-    AnimationState* toState = nullptr;
-
-    float duration = 0.5f; // トランジションの長さ（秒）
-    float timer = 0.0f;    // トランジションの経過時間
-    bool isTransitioning = false; // トランジション中かどうか
+    AnimationState sourceState;
+    float duration = 0.0f;
+    float timer = 0.0f;
+    bool active = false;
 };
 
 /// @brief 1D BlendTreeを構成するアニメーションクリップ
@@ -58,6 +56,7 @@ public:
 
 private:
     AnimationState m_currentState; // 現在のアニメーション状態
+    AnimationTransition m_transition;
     AnimationBlendTree1DState m_blendTree1DState;
     PlaybackType m_playbackType = PlaybackType::SingleClip;
 
@@ -65,19 +64,44 @@ public:
     static constexpr char CLIP_NONE[] = "None";
 
     /// @brief アニメーションを再生する
-    void PlayAnimation(int clipIndex, float speed = 1.0f, bool loop = true, bool restart = false) {
+    void PlayAnimation(
+        int clipIndex,
+        float speed = 1.0f,
+        bool loop = true,
+        bool restart = false,
+        float transitionTime = 0.0f)
+    {
         if (!restart &&
             m_playbackType == PlaybackType::SingleClip &&
             m_currentState.clipIndex == clipIndex &&
             !m_currentState.finished) return;
 
+        AnimationState nextState;
+        nextState.clipName = "CLIP";
+        nextState.clipIndex = clipIndex;
+        nextState.timer = 0.0f;
+        nextState.speed = speed;
+        nextState.loop = loop;
+        nextState.finished = false;
+
+        const bool canTransition =
+            transitionTime > 0.0f &&
+            m_playbackType == PlaybackType::SingleClip &&
+            m_currentState.clipIndex >= 0;
+
+        if (canTransition) {
+            // 遷移中の再要求では、現在の遷移先を次の遷移元として扱う
+            m_transition.sourceState = m_currentState;
+            m_transition.duration = transitionTime;
+            m_transition.timer = 0.0f;
+            m_transition.active = true;
+        }
+        else {
+            m_transition = {};
+        }
+
         m_playbackType = PlaybackType::SingleClip;
-        m_currentState.clipName = "CLIP";
-        m_currentState.clipIndex = clipIndex;
-        m_currentState.timer = 0.0f;
-        m_currentState.speed = speed;
-        m_currentState.loop = loop;
-        m_currentState.finished = false;
+        m_currentState = nextState;
     }
 
     /// @brief 1D BlendTreeを再生する。再生中の同じTreeへはparameterだけを反映する
@@ -108,6 +132,7 @@ public:
         }
 
         m_playbackType = PlaybackType::BlendTree1D;
+        m_transition = {};
         m_blendTree1DState.nodes = std::move(sortedNodes);
         m_blendTree1DState.parameter = parameter;
         m_blendTree1DState.normalizedTime = 0.0f;
@@ -121,16 +146,25 @@ public:
         m_blendTree1DState.parameter = parameter;
     }
 
-    void SetAnimationState(int clipIndex, float speed) {
-        PlayAnimation(clipIndex, speed, true, false);
+    void SetAnimationState(
+        int clipIndex,
+        float speed,
+        float transitionTime = 0.0f)
+    {
+        PlayAnimation(clipIndex, speed, true, false, transitionTime);
     }
     AnimationState& GetAnimationState() { return m_currentState; }
     const AnimationState& GetAnimationState() const { return m_currentState; }
     AnimationBlendTree1DState& GetBlendTree1DState() { return m_blendTree1DState; }
     const AnimationBlendTree1DState& GetBlendTree1DState() const { return m_blendTree1DState; }
     PlaybackType GetPlaybackType() const { return m_playbackType; }
+    AnimationTransition& GetTransitionState() { return m_transition; }
+    const AnimationTransition& GetTransitionState() const { return m_transition; }
+    bool IsTransitioning() const { return m_transition.active; }
+    void CompleteTransition() { m_transition = {}; }
 
     bool IsFinished() const {
+        if (m_transition.active) return false;
         return m_playbackType == PlaybackType::BlendTree1D
             ? m_blendTree1DState.finished
             : m_currentState.finished;

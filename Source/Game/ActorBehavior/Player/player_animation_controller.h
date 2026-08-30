@@ -40,6 +40,7 @@ public:
 
         float speed = 1.0f;
         bool loop = true;
+        float transitionTime = 0.15f;
 
         bool waitForCompletion = false; // アニメーションが完了するまで待つ
         bool interruptible = true;      // 割り込み可能かどうか

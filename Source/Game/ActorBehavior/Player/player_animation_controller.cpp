@@ -42,11 +42,13 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         PlayOptions idle;
         idle.priority = static_cast<int>(Priority::Locomotion);
         idle.restart = false;
+        idle.transitionTime = 0.15f;
         RegisterClip(Animation::Idle, FindClipIndex(modelComponent, "player_idle.anim.fbx"), SubMachine::Default, idle);
 
         PlayOptions running = idle;
         running.speed = 2.0f;
         running.restart = false;
+        running.transitionTime = 0.15f;
         RegisterClip(Animation::Running, FindClipIndex(modelComponent, "player_running.anim.fbx"), SubMachine::Default, running);
 
         PlayOptions jump;
@@ -62,6 +64,7 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
 
         PlayOptions shotgunIdle;
         shotgunIdle.priority = static_cast<int>(Priority::Weapon);
+        shotgunIdle.transitionTime = 0.15f;
         RegisterClip(Animation::AimIdle, FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"), SubMachine::Shotgun, shotgunIdle);
     }
 }
@@ -209,7 +212,8 @@ void PlayerAnimationController::Apply(const Request& request)
         clipIndex,
         request.options.speed,
         request.options.loop,
-        request.options.restart);
+        request.options.restart,
+        request.options.transitionTime);
 
     m_currentRequest = request;
     m_hasCurrentRequest = true;

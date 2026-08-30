@@ -38,6 +38,9 @@ void AnimationProcessor::Process(IScene* pScene)
         if (animationComponent.GetPlaybackType() == AnimationComponent::PlaybackType::BlendTree1D) {
             ProcessBlendTree1D(animationComponent, *modelComponent, *modelResource, deltaTime);
         }
+        else if (animationComponent.IsTransitioning()) {
+            ProcessTransition(animationComponent, *modelComponent, *modelResource, deltaTime);
+        }
         else {
             ProcessSingleClip(animationComponent, *modelComponent, *modelResource, deltaTime);
         }
@@ -54,41 +57,69 @@ void AnimationProcessor::ProcessSingleClip(
     AnimationState& state = animationComponent.GetAnimationState();
     if (state.clipName == AnimationComponent::CLIP_NONE) return;
 
-    int clipIndex = state.clipIndex;
-    if (clipIndex < 0 || clipIndex >= static_cast<int>(modelResource.animationClips.size())) {
-        const auto it = std::find_if(
-            modelResource.animationClips.begin(),
-            modelResource.animationClips.end(),
-            [&state](const AnimationClip& clip) { return clip.name == state.clipName; });
-
-        if (it == modelResource.animationClips.end()) {
-            state.clipName = AnimationComponent::CLIP_NONE;
-            return;
-        }
-        clipIndex = static_cast<int>(std::distance(modelResource.animationClips.begin(), it));
-        state.clipIndex = clipIndex;
-    }
-
-    const AnimationClip& clip = modelResource.animationClips[clipIndex];
-    if (clip.duration <= 0.0f) return;
-    if (!state.finished) state.timer += deltaTime * state.speed;
-
-    float animationTime = 0.0f;
-    if (state.loop) {
-        animationTime = std::fmod(state.timer, clip.duration);
-    }
-    else {
-        animationTime = (std::min)(state.timer, clip.duration);
-        if (state.timer >= clip.duration) {
-            state.timer = clip.duration;
-            state.finished = true;
-        }
-    }
+    const AnimationClip* clip = ResolveAnimationClip(state, modelResource);
+    if (!clip) return;
+    const float animationTime = AdvanceAnimationState(state, *clip, deltaTime);
 
     SkeletonPose pose = modelResource.defaultPose;
-    ApplyLocalPose(pose, SampleLocalPose(clip, pose, animationTime));
+    ApplyLocalPose(pose, SampleLocalPose(*clip, pose, animationTime));
     BuildSkeletonMatrices(pose, modelResource);
     modelComponent.SetSkeletonPose(pose);
+}
+
+/// @brief 遷移元と遷移先のアニメーション姿勢を時間に応じて補間する
+void AnimationProcessor::ProcessTransition(
+    AnimationComponent& animationComponent,
+    ModelComponent& modelComponent,
+    ModelResource& modelResource,
+    float deltaTime)
+{
+    AnimationTransition& transition = animationComponent.GetTransitionState();
+    AnimationState& destinationState = animationComponent.GetAnimationState();
+
+    const AnimationClip* sourceClip = ResolveAnimationClip(
+        transition.sourceState,
+        modelResource);
+    const AnimationClip* destinationClip = ResolveAnimationClip(
+        destinationState,
+        modelResource);
+
+    if (!sourceClip || !destinationClip || transition.duration <= 0.0f) {
+        animationComponent.CompleteTransition();
+        ProcessSingleClip(animationComponent, modelComponent, modelResource, deltaTime);
+        return;
+    }
+
+    const float sourceTime = AdvanceAnimationState(
+        transition.sourceState,
+        *sourceClip,
+        deltaTime);
+    const float destinationTime = AdvanceAnimationState(
+        destinationState,
+        *destinationClip,
+        deltaTime);
+
+    transition.timer += deltaTime;
+    float weight = MiMath::Clamp(
+        transition.timer / transition.duration,
+        0.0f,
+        1.0f);
+    // 遷移の開始・終了付近を滑らかにする
+    weight = weight * weight * (3.0f - 2.0f * weight);
+
+    SkeletonPose pose = modelResource.defaultPose;
+    const LocalPose sourcePose = SampleLocalPose(*sourceClip, pose, sourceTime);
+    const LocalPose destinationPose = SampleLocalPose(
+        *destinationClip,
+        pose,
+        destinationTime);
+    ApplyLocalPose(pose, BlendLocalPoses(sourcePose, destinationPose, weight));
+    BuildSkeletonMatrices(pose, modelResource);
+    modelComponent.SetSkeletonPose(pose);
+
+    if (transition.timer >= transition.duration) {
+        animationComponent.CompleteTransition();
+    }
 }
 
 /// @brief 1D BlendTreeを再生する
@@ -169,6 +200,58 @@ void AnimationProcessor::ProcessBlendTree1D(
     ApplyLocalPose(pose, resultPose);
     BuildSkeletonMatrices(pose, modelResource);
     modelComponent.SetSkeletonPose(pose);
+}
+
+/// @brief AnimationStateが参照するクリップを取得する
+const AnimationClip* AnimationProcessor::ResolveAnimationClip(
+    AnimationState& state,
+    ModelResource& modelResource)
+{
+    if (state.clipName == AnimationComponent::CLIP_NONE) return nullptr;
+
+    if (state.clipIndex >= 0 &&
+        state.clipIndex < static_cast<int>(modelResource.animationClips.size())) {
+        const AnimationClip& clip = modelResource.animationClips[state.clipIndex];
+        return clip.duration > 0.0f ? &clip : nullptr;
+    }
+
+    const auto it = std::find_if(
+        modelResource.animationClips.begin(),
+        modelResource.animationClips.end(),
+        [&state](const AnimationClip& clip) {
+            return clip.name == state.clipName;
+        });
+    if (it == modelResource.animationClips.end() || it->duration <= 0.0f) {
+        state.clipName = AnimationComponent::CLIP_NONE;
+        state.clipIndex = -1;
+        return nullptr;
+    }
+
+    state.clipIndex = static_cast<int>(
+        std::distance(modelResource.animationClips.begin(), it));
+    return &*it;
+}
+
+/// @brief AnimationStateの時間を進め、サンプリングに使用する時間を返す
+float AnimationProcessor::AdvanceAnimationState(
+    AnimationState& state,
+    const AnimationClip& clip,
+    float deltaTime)
+{
+    if (!state.finished) state.timer += deltaTime * state.speed;
+
+    if (state.loop) {
+        float animationTime = std::fmod(state.timer, clip.duration);
+        if (animationTime < 0.0f) animationTime += clip.duration;
+        return animationTime;
+    }
+
+    const float animationTime = MiMath::Clamp(state.timer, 0.0f, clip.duration);
+    if (state.timer >= clip.duration) {
+        state.timer = clip.duration;
+        state.finished = true;
+    }
+    return animationTime;
 }
 
 /// @brief アニメーションクリップから指定された時間のローカルポーズをサンプリングする
