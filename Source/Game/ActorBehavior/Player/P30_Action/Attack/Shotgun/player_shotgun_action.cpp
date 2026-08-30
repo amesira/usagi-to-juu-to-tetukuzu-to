@@ -21,19 +21,14 @@ namespace {
     using Phase = PlayerShotgunRuntimeState::Phase;
 }
 
-void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgunReferences references, PlayerShotgunSettingsAsset* settingsAsset)
+void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgunSettingsAsset* settingsAsset)
 {
     m_context.owner = this;
     m_context.scene = context.scene;
     m_context.playerTransform = context.transform;
     GameObject* player = context.owner ? context.owner->GetOwner() : nullptr;
     m_context.playerModel = player ? player->GetComponent<ModelComponent>() : nullptr;
-    if (m_context.playerModel) {
-        ModelAnimationUtility::FindBoneIndex(
-            *m_context.playerModel,
-            "Gun.L",
-            m_context.gunLBoneIndex);
-    }
+    
     m_context.cameraTransform = context.mainCameraTransform;
     m_context.cameraComponent = context.mainCamera;
     m_context.cameraControlBehavior = context.cameraControlBehavior;
@@ -41,7 +36,13 @@ void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgun
     m_context.weaponController = context.weaponController;
 
     m_context.runtimeState = {};
-    m_context.references = references;
+    m_context.references = {};
+    if (m_context.playerModel) {
+        ModelAnimationUtility::FindBoneIndex(
+            *m_context.playerModel,
+            "Gun.L",
+            m_context.references.gunLBoneIndex);
+    }
     m_context.settingsAsset = settingsAsset;
     m_context.effects.Initialize(m_context);
 }
@@ -54,6 +55,7 @@ bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInp
 
 void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    // アニメーションのサブマシーンを切り替える（切替に失敗した場合は、アクションを終了する）
     m_enteredAnimationSubMachine = context.animationController.EnterSubMachine(
         PlayerAnimationController::SubMachine::Shotgun);
     if (!m_enteredAnimationSubMachine) {

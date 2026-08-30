@@ -78,14 +78,11 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
         ModelAnimationUtility::GetBoneWorldTransform(
             *context.playerModel,
             *context.playerTransform,
-            context.gunLBoneIndex,
+            context.references.gunLBoneIndex,
             gunTransform);
 
     if (foundGunBone) {
         m_aimResult.muzzlePosition = gunTransform.position;
-    }
-    else if (context.references.muzzleTransform) {
-        m_aimResult.muzzlePosition = context.references.muzzleTransform->GetPosition();
     }
     else {
         m_aimResult = {};

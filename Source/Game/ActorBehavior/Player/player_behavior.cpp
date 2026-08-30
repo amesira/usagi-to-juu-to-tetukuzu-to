@@ -61,18 +61,13 @@ void PlayerBehavior::Start()
     m_context.actionMachine->Initialize(m_context, m_input);
     m_context.animationController.Initialize(m_context);
 
-    // Shotgun用の参照が未設定の場合は、暫定的にPlayerのTransformを銃口として扱う
-    if (!m_shotgunReferences.muzzleTransform) {
-        m_shotgunReferences.muzzleTransform = m_context.transform;
-    }
-
     // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
     static PlayerShotgunSettingsAsset defaultShotgunSettings;
     if (!m_shotgunSettings) {
         m_shotgunSettings = &defaultShotgunSettings;
     }
 
-    m_shotgunAction.Initialize(m_context, m_shotgunReferences, m_shotgunSettings);
+    m_shotgunAction.Initialize(m_context, m_shotgunSettings);
 
     // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
     static PlayerDualPistolsSettingsAsset defaultDualPistolsSettings;
@@ -82,7 +77,6 @@ void PlayerBehavior::Start()
 
     m_dualPistolsAction.Initialize(
         m_context,
-        m_dualPistolsReferences,
         m_dualPistolsSettings);
 
     m_context.actionMachine->RegisterAction(m_dualPistolsAction);

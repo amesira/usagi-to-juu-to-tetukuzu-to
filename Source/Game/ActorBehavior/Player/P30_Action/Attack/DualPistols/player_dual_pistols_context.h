@@ -15,9 +15,25 @@
 #include "player_dual_pistols_slash_burst.h"
 
 struct PlayerDualPistolsRuntimeState {
+    enum class Phase {
+        None,
+        Entering,
+        SlashBurst,
+        RapidFire,
+        Exiting,
+    };
+
+    Phase phase = Phase::None;
+    float phaseTimer = 0.0f;
+
+    bool releaseAttackInput = false;
+
+    int comboStep = 0;
 };
 
 struct PlayerDualPistolsReferences {
+    unsigned int gunLBoneIndex = static_cast<unsigned int>(-1);
+    unsigned int gunRBoneIndex = static_cast<unsigned int>(-1);
 };
 
 struct PlayerDualPistolsContext {
@@ -31,6 +47,16 @@ struct PlayerDualPistolsContext {
     const auto& settings() const {
         return settingsAsset->GetData();
     }
+
+    class TransformComponent* playerTransform = nullptr;
+    class ModelComponent* playerModel = nullptr;
+
+    class TransformComponent* cameraTransform = nullptr;
+    class CameraComponent* cameraComponent = nullptr;
+    class CameraControlBehavior* cameraControlBehavior = nullptr;
+
+    class PlayerLocomotionController* locomotionController = nullptr;
+    class PlayerWeaponController* weaponController = nullptr;
 
     PlayerDualPistolsAim aim;
     PlayerDualPistolsFiring firing;

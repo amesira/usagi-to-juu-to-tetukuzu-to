@@ -14,6 +14,13 @@
 
 namespace PlayerDualPistolsSettings {
     struct Data {
+        float startRapidFireDelay = 0.1f;
+
+        // === Slash Burst ===
+        float fireTime = 0.1f;
+        float inputBufferStartTime = 0.1f;
+        float chainTime = 0.1f;
+        float endTime = 0.5f;
     };
 
     inline static const auto& GetSchema()

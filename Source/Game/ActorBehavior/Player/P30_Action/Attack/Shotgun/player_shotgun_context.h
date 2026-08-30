@@ -25,7 +25,7 @@ struct PlayerShotgunRuntimeState
 
 struct PlayerShotgunReferences 
 {
-    class TransformComponent* muzzleTransform = nullptr;
+    unsigned int gunLBoneIndex = static_cast<unsigned int>(-1);
 };
 
 struct PlayerShotgunContext 
@@ -42,7 +42,6 @@ struct PlayerShotgunContext
 
     class TransformComponent* playerTransform = nullptr;
     class ModelComponent* playerModel = nullptr;
-    unsigned int gunLBoneIndex = static_cast<unsigned int>(-1);
 
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;
