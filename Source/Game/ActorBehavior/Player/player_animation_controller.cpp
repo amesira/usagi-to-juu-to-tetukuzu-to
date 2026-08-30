@@ -200,17 +200,17 @@ bool PlayerAnimationController::IsAvailableInCurrentSubMachine(Animation animati
 /// @brief 指定されたアニメーションリクエストを受け入れ可能かどうかを判定する
 bool PlayerAnimationController::CanAccept(const Request& request) const
 {
-    // 現在のアニメーションがない場合は、どのリクエストも受け入れ可能
+    // 1. 現在のアニメーションがない場合は、どのリクエストも受け入れ可能
     if (!m_hasCurrentRequest) return true;
-    // 現在のアニメーションと同じアニメーションの場合は、restartオプションに従う
+    // 2. 同じアニメーションの場合は、restartオプションに従う
     if (request.animation == m_currentRequest.animation) return request.options.restart;
-    // 現在のアニメーションが完了待ちでない場合は、どのリクエストも受け入れ可能
+    // 3. 完了待ちでない場合は
     if (!m_waitingForCompletion) return true;
-    // 現在のアニメーションが完了待ちで、かつ新しいリクエストが強制割り込みの場合は受け入れ可能
+    // 4. 新しいリクエストが強制割り込みの場合
     if (request.options.forceInterrupt) return true;
-    // 現在のアニメーションが割り込み可能かどうかを判定する
+    // 5. 現在のアニメーションが割り込み可能かどうか
     if (!m_currentRequest.options.interruptible) return false;
-    // 現在のアニメーションよりも新しいリクエストの優先度が高い場合は受け入れ可能
+    // 6. 新しいリクエストの優先度が高い場合
     return request.options.priority > m_currentRequest.options.priority;
 }
 
