@@ -56,7 +56,9 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         jump.loop = false;
         jump.waitForCompletion = true;
         jump.interruptible = true;
-        RegisterClip(Animation::Jump, FindClipIndex(modelComponent, "player_jump_1.anim.fbx"), SubMachine::Any, jump);
+        m_jumpClips[0] = FindClipIndex(modelComponent, "player_jump_1.anim.fbx");
+        m_jumpClips[1] = FindClipIndex(modelComponent, "player_jump_2.anim.fbx");
+        RegisterClip(Animation::Jump, m_jumpClips[0], SubMachine::Any, jump);
 
         PlayOptions falling;
         falling.priority = static_cast<int>(Priority::Airborne);
@@ -86,6 +88,7 @@ void PlayerAnimationController::Update()
 
     const Request* next = FindHighestPriorityRequest();
     if (next && CanAccept(*next)) {
+        HandleAnimationEvent(next->animation);
         Apply(*next);
         return;
     }
@@ -121,6 +124,14 @@ void PlayerAnimationController::RegisterClip(
     m_clipDefinitions[index] = { clipIndex, subMachine, defaults };
 }
 
+void PlayerAnimationController::ChangeClip(Animation animation, int clipIndex)
+{
+    const size_t index = static_cast<size_t>(animation);
+    if (index >= m_clipDefinitions.size()) return;
+    m_clipDefinitions[index].clipIndex = clipIndex;
+}
+
+#pragma region サブマシーンの管理
 bool PlayerAnimationController::EnterSubMachine(SubMachine subMachine)
 {
     if (subMachine == SubMachine::Any || subMachine == SubMachine::MAX) return false;
@@ -145,6 +156,7 @@ void PlayerAnimationController::ForceSetSubMachine(SubMachine subMachine)
     m_hasCurrentRequest = false;
     m_waitingForCompletion = false;
 }
+#pragma endregion
 
 /// @brief 現在のフレームで最も優先度の高いアニメーションリクエストを検索する
 const PlayerAnimationController::Request* PlayerAnimationController::FindHighestPriorityRequest() const
@@ -218,4 +230,18 @@ void PlayerAnimationController::Apply(const Request& request)
     m_currentRequest = request;
     m_hasCurrentRequest = true;
     m_waitingForCompletion = request.options.waitForCompletion;
+}
+
+/// @brief 指定されたアニメーションが設定された瞬間に呼び出される
+void PlayerAnimationController::HandleAnimationEvent(Animation animation)
+{
+    switch (animation) {
+    case Animation::Jump: 
+    {
+        m_jumpFlipCount = (m_jumpFlipCount + 1) % 2;
+        ChangeClip(Animation::Jump, m_jumpClips[m_jumpFlipCount]);
+        break;
+    }
+    default: break;
+    }
 }

@@ -40,7 +40,7 @@ public:
 
         float speed = 1.0f;
         bool loop = true;
-        float transitionTime = 0.15f;
+        float transitionTime = 0.15f;   // 遷移時間（秒）
 
         bool waitForCompletion = false; // アニメーションが完了するまで待つ
         bool interruptible = true;      // 割り込み可能かどうか
@@ -76,6 +76,10 @@ private:
     bool m_waitingForCompletion = false;
     unsigned long long m_requestOrder = 0;
 
+    // === アニメーション固有の状態 ===
+    int m_jumpClips[2] = { -1, -1 };
+    int m_jumpFlipCount = 0; // ジャンプ中のフリップ回数
+
 public:
     void Initialize(const PlayerContext& context);
     void BeginFrame();
@@ -90,6 +94,7 @@ public:
         int clipIndex,
         SubMachine subMachine,
         const PlayOptions& defaults);
+    void ChangeClip(Animation animation, int clipIndex);
 
     // === サブマシーンの管理 ===
     bool EnterSubMachine(SubMachine subMachine);
@@ -108,4 +113,7 @@ private:
     bool CanAccept(const Request& request) const;
     /// @brief 指定されたアニメーションリクエストをAnimationComponentへ適用して再生する
     void Apply(const Request& request);
+
+    /// @brief アニメーションが設定された瞬間に呼び出される
+    void HandleAnimationEvent(Animation animation);
 };
