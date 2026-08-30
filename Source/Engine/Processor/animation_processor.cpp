@@ -50,6 +50,12 @@ void AnimationProcessor::Process(IScene* pScene)
         else {
             ProcessSingleClip(animationComponent, *modelComponent, *modelResource, deltaTime);
         }
+
+        ProcessAnimationLayers(
+            animationComponent,
+            *modelComponent,
+            *modelResource,
+            deltaTime);
     }
 }
 
@@ -320,6 +326,46 @@ void AnimationProcessor::ProcessBlendTree2D(
     modelComponent.SetSkeletonPose(pose);
 }
 
+/// @brief 有効なレイヤーをリスト順にOverride合成する
+void AnimationProcessor::ProcessAnimationLayers(
+    AnimationComponent& animationComponent,
+    ModelComponent& modelComponent,
+    ModelResource& modelResource,
+    float deltaTime)
+{
+    std::vector<AnimationLayer>& layers = animationComponent.GetAnimationLayers();
+    if (layers.empty()) return;
+
+    SkeletonPose pose = modelComponent.GetSkeletonPose();
+    LocalPose resultPose = ExtractLocalPose(pose);
+    bool appliedLayer = false;
+
+    for (AnimationLayer& layer : layers) {
+        if (!layer.enabled || layer.weight <= 0.0f) continue;
+
+        const AnimationClip* clip = ResolveAnimationClip(layer.state, modelResource);
+        if (!clip) continue;
+
+        const float animationTime = AdvanceAnimationState(layer.state, *clip, deltaTime);
+        const LocalPose layerPose = SampleLocalPose(
+            *clip,
+            modelResource.defaultPose,
+            animationTime);
+        resultPose = BlendLocalPosesMasked(
+            resultPose,
+            layerPose,
+            layer.mask,
+            layer.weight);
+        appliedLayer = true;
+    }
+
+    if (!appliedLayer) return;
+
+    ApplyLocalPose(pose, resultPose);
+    BuildSkeletonMatrices(pose, modelResource);
+    modelComponent.SetSkeletonPose(pose);
+}
+
 /// @brief AnimationStateが参照するクリップを取得する
 const AnimationClip* AnimationProcessor::ResolveAnimationClip(
     AnimationState& state,
@@ -405,6 +451,69 @@ AnimationProcessor::LocalPose AnimationProcessor::BlendLocalPoses(
             XMLoadFloat4(&rhs.rotations[i]),
             weight);
         XMStoreFloat4(&result.rotations[i], XMQuaternionNormalize(rotation));
+    }
+    return result;
+}
+
+/// @brief ボーンマスクを適用してレイヤー姿勢をOverride合成する
+AnimationProcessor::LocalPose AnimationProcessor::BlendLocalPosesMasked(
+    const LocalPose& basePose,
+    const LocalPose& layerPose,
+    const AnimationBoneMask& mask,
+    float layerWeight)
+{
+    LocalPose result = basePose;
+    const size_t boneCount = (std::min)({
+        basePose.positions.size(),
+        layerPose.positions.size(),
+        mask.boneWeights.size(),
+    });
+    layerWeight = MiMath::Clamp(layerWeight, 0.0f, 1.0f);
+
+    for (size_t i = 0; i < boneCount; ++i) {
+        const float weight = MiMath::Clamp(
+            mask.boneWeights[i] * layerWeight,
+            0.0f,
+            1.0f);
+        if (weight <= 0.0f) continue;
+
+        result.positions[i] = MiMath::Lerp(
+            basePose.positions[i], layerPose.positions[i], weight);
+        result.scales[i] = MiMath::Lerp(
+            basePose.scales[i], layerPose.scales[i], weight);
+
+        const XMVECTOR rotation = XMQuaternionSlerp(
+            XMLoadFloat4(&basePose.rotations[i]),
+            XMLoadFloat4(&layerPose.rotations[i]),
+            weight);
+        XMStoreFloat4(&result.rotations[i], XMQuaternionNormalize(rotation));
+    }
+    return result;
+}
+
+/// @brief SkeletonPoseのローカル行列をブレンド可能なTRSへ戻す
+AnimationProcessor::LocalPose AnimationProcessor::ExtractLocalPose(const SkeletonPose& pose)
+{
+    LocalPose result{
+        pose.defaultPositions,
+        pose.defaultRotations,
+        pose.defaultScales,
+    };
+    const size_t boneCount = (std::min)(pose.localTransforms.size(), result.positions.size());
+    for (size_t i = 0; i < boneCount; ++i) {
+        XMVECTOR scale;
+        XMVECTOR rotation;
+        XMVECTOR translation;
+        if (!XMMatrixDecompose(
+            &scale,
+            &rotation,
+            &translation,
+            pose.localTransforms[i])) {
+            continue;
+        }
+        XMStoreFloat4(&result.scales[i], scale);
+        XMStoreFloat4(&result.rotations[i], XMQuaternionNormalize(rotation));
+        XMStoreFloat4(&result.positions[i], translation);
     }
     return result;
 }

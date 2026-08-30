@@ -72,7 +72,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     
     float bias = 0.001f;
     if (depthInLightSpace > depthInShadowMap + bias){
-       col.rgb *= 0.5f;
+        col.rgb = lerp(col.rgb, float3(0.0, 0.1, 0.3), 0.5f); // シャドウの影響を減算
     }
     
     return col;

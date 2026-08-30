@@ -62,6 +62,19 @@ struct AnimationBlendTree2DState {
     bool finished = false;
 };
 
+/// @brief ボーンごとのレイヤー適用率。0でベース姿勢、1でレイヤー姿勢になる
+struct AnimationBoneMask {
+    std::vector<float> boneWeights;
+};
+
+/// @brief ベースアニメーションへOverride合成するアニメーションレイヤー
+struct AnimationLayer {
+    AnimationState state;
+    AnimationBoneMask mask;
+    float weight = 1.0f;
+    bool enabled = true;
+};
+
 class AnimationComponent : public Component {
 public:
     enum class PlaybackType {
@@ -75,10 +88,101 @@ private:
     AnimationTransition m_transition;
     AnimationBlendTree1DState m_blendTree1DState;
     AnimationBlendTree2DState m_blendTree2DState;
+    std::vector<AnimationLayer> m_animationLayers;
     PlaybackType m_playbackType = PlaybackType::SingleClip;
 
 public:
     static constexpr char CLIP_NONE[] = "None";
+
+    /// @brief 指定ボーンとその全子ボーンを有効にしたマスクを作成する
+    static AnimationBoneMask CreateBoneMask(
+        const ModelResource& modelResource,
+        const std::string& rootBoneName,
+        float weight = 1.0f)
+    {
+        AnimationBoneMask mask;
+        mask.boneWeights.resize(modelResource.bones.size(), 0.0f);
+
+        const auto rootIt = modelResource.boneNameToIndex.find(rootBoneName);
+        if (rootIt == modelResource.boneNameToIndex.end()) return mask;
+
+        weight = std::clamp(weight, 0.0f, 1.0f);
+        std::vector<unsigned int> pendingBones{ rootIt->second };
+        while (!pendingBones.empty()) {
+            const unsigned int boneIndex = pendingBones.back();
+            pendingBones.pop_back();
+            if (boneIndex >= modelResource.bones.size()) continue;
+
+            mask.boneWeights[boneIndex] = weight;
+            const ModelBone& bone = modelResource.bones[boneIndex];
+            pendingBones.insert(
+                pendingBones.end(),
+                bone.childIndices.begin(),
+                bone.childIndices.end());
+        }
+        return mask;
+    }
+
+    /// @brief Overrideレイヤーを追加し、そのインデックスを返す
+    size_t AddAnimationLayer(const AnimationBoneMask& mask, float weight = 1.0f)
+    {
+        AnimationLayer layer;
+        layer.mask = mask;
+        layer.weight = std::clamp(weight, 0.0f, 1.0f);
+        m_animationLayers.emplace_back(std::move(layer));
+        return m_animationLayers.size() - 1;
+    }
+
+    bool PlayLayerAnimation(
+        size_t layerIndex,
+        int clipIndex,
+        float speed = 1.0f,
+        bool loop = true,
+        bool restart = false)
+    {
+        if (layerIndex >= m_animationLayers.size() || clipIndex < 0) return false;
+
+        AnimationLayer& layer = m_animationLayers[layerIndex];
+        if (!restart &&
+            layer.enabled &&
+            layer.state.clipIndex == clipIndex &&
+            !layer.state.finished) {
+            layer.state.speed = speed;
+            layer.state.loop = loop;
+            return true;
+        }
+
+        layer.state.clipIndex = clipIndex;
+        layer.state.timer = 0.0f;
+        layer.state.speed = speed;
+        layer.state.loop = loop;
+        layer.state.finished = false;
+        layer.enabled = true;
+        return true;
+    }
+
+    bool StopAnimationLayer(size_t layerIndex)
+    {
+        if (layerIndex >= m_animationLayers.size()) return false;
+        m_animationLayers[layerIndex].enabled = false;
+        return true;
+    }
+
+    bool SetAnimationLayerWeight(size_t layerIndex, float weight)
+    {
+        if (layerIndex >= m_animationLayers.size()) return false;
+        m_animationLayers[layerIndex].weight = std::clamp(weight, 0.0f, 1.0f);
+        return true;
+    }
+
+    bool IsLayerAnimationFinished(size_t layerIndex) const
+    {
+        return layerIndex < m_animationLayers.size() &&
+            m_animationLayers[layerIndex].state.finished;
+    }
+
+    std::vector<AnimationLayer>& GetAnimationLayers() { return m_animationLayers; }
+    const std::vector<AnimationLayer>& GetAnimationLayers() const { return m_animationLayers; }
 
     /// @brief アニメーションを再生する
     void PlayAnimation(

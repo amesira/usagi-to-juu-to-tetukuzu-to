@@ -48,6 +48,12 @@ private:
         ModelResource& modelResource,
         float deltaTime);
 
+    void ProcessAnimationLayers(
+        class AnimationComponent& animationComponent,
+        class ModelComponent& modelComponent,
+        ModelResource& modelResource,
+        float deltaTime);
+
     LocalPose SampleLocalPose(
         const AnimationClip& clip,
         const SkeletonPose& basePose,
@@ -62,6 +68,12 @@ private:
         float deltaTime);
 
     LocalPose BlendLocalPoses(const LocalPose& lhs, const LocalPose& rhs, float weight);
+    LocalPose BlendLocalPosesMasked(
+        const LocalPose& basePose,
+        const LocalPose& layerPose,
+        const struct AnimationBoneMask& mask,
+        float layerWeight);
+    LocalPose ExtractLocalPose(const SkeletonPose& pose);
     void ApplyLocalPose(SkeletonPose& pose, const LocalPose& localPose);
     void BuildSkeletonMatrices(SkeletonPose& pose, const ModelResource& modelResource);
 
