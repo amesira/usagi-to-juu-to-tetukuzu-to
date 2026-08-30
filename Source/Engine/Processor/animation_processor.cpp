@@ -44,6 +44,7 @@ void AnimationProcessor::Process(IScene* pScene)
     }
 }
 
+/// @brief 単一のアニメーションクリップを再生する
 void AnimationProcessor::ProcessSingleClip(
     AnimationComponent& animationComponent,
     ModelComponent& modelComponent,
@@ -90,6 +91,7 @@ void AnimationProcessor::ProcessSingleClip(
     modelComponent.SetSkeletonPose(pose);
 }
 
+/// @brief 1D BlendTreeを再生する
 void AnimationProcessor::ProcessBlendTree1D(
     AnimationComponent& animationComponent,
     ModelComponent& modelComponent,
@@ -130,6 +132,7 @@ void AnimationProcessor::ProcessBlendTree1D(
         }
     }
 
+    // 2つのクリップの再生時間を補間するために、ブレンドされたクリップの長さを計算する
     const AnimationClip& lowerClip = modelResource.animationClips[validNodes[lowerIndex]->clipIndex];
     const AnimationClip& upperClip = modelResource.animationClips[validNodes[upperIndex]->clipIndex];
     const float blendedDuration = MiMath::Lerp(lowerClip.duration, upperClip.duration, blendWeight);
@@ -168,6 +171,7 @@ void AnimationProcessor::ProcessBlendTree1D(
     modelComponent.SetSkeletonPose(pose);
 }
 
+/// @brief アニメーションクリップから指定された時間のローカルポーズをサンプリングする
 AnimationProcessor::LocalPose AnimationProcessor::SampleLocalPose(
     const AnimationClip& clip,
     const SkeletonPose& basePose,
@@ -196,6 +200,7 @@ AnimationProcessor::LocalPose AnimationProcessor::SampleLocalPose(
     return result;
 }
 
+/// @brief 2つのローカルポーズをブレンドする
 AnimationProcessor::LocalPose AnimationProcessor::BlendLocalPoses(
     const LocalPose& lhs,
     const LocalPose& rhs,
@@ -218,6 +223,7 @@ AnimationProcessor::LocalPose AnimationProcessor::BlendLocalPoses(
     return result;
 }
 
+/// @brief ローカルポーズをSkeletonPoseに適用する
 void AnimationProcessor::ApplyLocalPose(SkeletonPose& pose, const LocalPose& localPose)
 {
     const size_t boneCount = (std::min)(pose.localTransforms.size(), localPose.positions.size());
@@ -232,6 +238,7 @@ void AnimationProcessor::ApplyLocalPose(SkeletonPose& pose, const LocalPose& loc
     }
 }
 
+/// @brief SkeletonPoseのローカル変換からグローバル変換とボーン変換を計算する
 void AnimationProcessor::BuildSkeletonMatrices(
     SkeletonPose& pose,
     const ModelResource& modelResource)
@@ -256,6 +263,7 @@ void AnimationProcessor::BuildSkeletonMatrices(
     }
 }
 
+/// @brief 指定された時間におけるキーフレームの値をサンプリングする
 XMFLOAT4 AnimationProcessor::SamplingKeyframes(
     const std::vector<AnimationClip::Keyframe>& keyframes,
     float time,
