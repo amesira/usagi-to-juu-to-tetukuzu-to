@@ -39,10 +39,7 @@ public:
     void PlayCameraShake(float duration, float magnitude);
 
 private:
-    // 入力の有効・無効を切り替える操作を処理
     void UpdateCameraInputActivation();
-
-    // カメラ回転のターゲット値の入力による更新
     void UpdateTargetYawPitchFromInput(float deltaTime);
 
     // カメラの基底ベクトルの構築
@@ -55,6 +52,9 @@ private:
 
     /// @brief カメラの注視点のオフセットを計算する
     XMFLOAT3 CalculateCompositionOffset();
+
+    /// @brief カメラ距離の評価
+    float EvaluateCameraDistance() const;
 
 };
 

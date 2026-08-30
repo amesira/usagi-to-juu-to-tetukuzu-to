@@ -14,8 +14,7 @@ void PlayerDualPistolsEffects::Finalize()
 {
 }
 
-void PlayerDualPistolsEffects::PlayEffects(
-    PlayerDualPistolsContext& context,
-    EffectsType effectType)
+void PlayerDualPistolsEffects::PlayEffects(PlayerDualPistolsContext& context, EffectsType effectType)
 {
+
 }

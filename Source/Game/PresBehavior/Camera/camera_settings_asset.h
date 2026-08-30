@@ -45,6 +45,12 @@ namespace CameraSettings {
         float maxPitch = XMConvertToRadians(50.0f);
         float minPitch = XMConvertToRadians(-5.0f);
 
+        // 距離の変動倍率
+        float maxPitchTreshold = XMConvertToRadians(10.0f); // 最大ピッチ制限の距離による変動の閾値
+        float minPitchTreshold = XMConvertToRadians(10.0f); // 最小ピッチ制限の距離による変動の閾値
+        float maxPitchDistanceMultiplier = 1.0f; // 最大ピッチ制限の距離による変動倍率
+        float minPitchDistanceMultiplier = 1.0f; // 最小ピッチ制限の距離による変動倍率
+
         // シェイク
         float shakeFrequency = 35.0f;
     };
@@ -184,6 +190,39 @@ namespace CameraSettings {
                 AngleFieldOptions{
                     .minValue = -89.0f,
                     .maxValue = 89.0f }),
+
+            // === 距離の変動倍率 ===
+            MakeHeaderField("Pitch Distance Multiplier"),
+            MakeField(
+            "maxPitchTreshold", 
+                "Maximum Pitch Threshold", 
+                &CameraSettingsData::maxPitchTreshold,
+                AngleFieldOptions{
+                    .minValue = -89.0f,
+                    .maxValue = 89.0f }),
+            MakeField(
+            "minPitchTreshold", 
+                "Minimum Pitch Threshold", 
+                &CameraSettingsData::minPitchTreshold, 
+                AngleFieldOptions{
+                    .minValue = -89.0f,
+                    .maxValue = 89.0f }),
+            MakeField(
+            "maxPitchDistanceMultiplier",
+            "Maximum Pitch Distance Multiplier",
+            &CameraSettingsData::maxPitchDistanceMultiplier,
+                DragFieldOptions{
+                .dragSpeed = 0.01f,
+                .minValue = 0.0f,
+                .maxValue = 10.0f }),
+            MakeField(
+            "minPitchDistanceMultiplier",
+            "Minimum Pitch Distance Multiplier",
+                &CameraSettingsData::minPitchDistanceMultiplier,
+                DragFieldOptions{
+                .dragSpeed = 0.01f,
+                .minValue = 0.0f,
+                .maxValue = 10.0f }),
 
             // === シェイク ===
             MakeField(

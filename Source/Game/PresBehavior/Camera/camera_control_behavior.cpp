@@ -61,13 +61,9 @@ void CameraControlBehavior::Start()
         };
 
     IScene* scene = GetOwner()->GetScene();
-
-    // ターゲットのTransformComponentの参照取得
-    {
-        GameObject* target = scene->GetGameObjectByName("Player");
-        if (target) {
-            m_context.references.targetTransform = target->GetComponent<TransformComponent>();
-        }
+    GameObject* target = scene->GetGameObjectByName("Player");
+    if (target) {
+        m_context.references.targetTransform = target->GetComponent<TransformComponent>();
     }
 
     m_context.cameraEffect.Initialize(m_context);
@@ -126,7 +122,7 @@ void CameraControlBehavior::Update()
     // 4.CameraEyePositionを更新する
     XMFLOAT3 cameraPosition = MiMath::Add(
         lookAtPosition,
-        MiMath::Multiply(state.cameraForward, -state.followDistance)
+        MiMath::Multiply(state.cameraForward, -EvaluateCameraDistance())
     );
 
     // 5.適用
@@ -336,4 +332,26 @@ XMFLOAT3 CameraControlBehavior::CalculateCompositionOffset()
     totalOffset.y += m_context.settings().lookAtHeight;
 
     return totalOffset;
+}
+
+float CameraControlBehavior::EvaluateCameraDistance() const
+{
+    float distance = m_context.runtimeState.followDistance;
+    if (m_context.runtimeState.pitch <= m_context.settings().minPitchTreshold && 
+        m_context.runtimeState.pitch >= m_context.settings().minPitch) 
+    {
+        float t = (m_context.settings().minPitchTreshold - m_context.runtimeState.pitch) /
+            (m_context.settings().minPitchTreshold - m_context.settings().minPitch);
+        t = MiMath::Clamp(t, 0.0f, 1.0f);
+        distance *= MiMath::Lerp(1.0f, m_context.settings().minPitchDistanceMultiplier, t);
+    }
+    if (m_context.runtimeState.pitch >= m_context.settings().maxPitchTreshold && 
+        m_context.runtimeState.pitch <= m_context.settings().maxPitch) 
+    {
+        float t = (m_context.runtimeState.pitch - m_context.settings().maxPitchTreshold) /
+            (m_context.settings().maxPitch - m_context.settings().maxPitchTreshold);
+        t = MiMath::Clamp(t, 0.0f, 1.0f);
+        distance *= MiMath::Lerp(1.0f, m_context.settings().maxPitchDistanceMultiplier, t);
+    }
+    return distance;
 }
