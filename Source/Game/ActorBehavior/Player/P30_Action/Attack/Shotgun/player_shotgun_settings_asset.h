@@ -20,6 +20,7 @@ namespace PlayerShotgunSettings {
         DirectX::XMFLOAT3 aimCameraLocalOffset = { 1.0f, 0.5f, 0.0f }; // エイム時のカメラローカルオフセット（メートル）
         float   aimTransitionTime = 0.2f;    // エイムへの遷移時間（秒）
         float   aimMoveSpeedMultiplier = 0.7f;   // エイム時の移動速度倍率（0.0f～1.0f）
+        float   aimJumpPowerMultiplier = 0.8f;   // エイム時のジャンプ力倍率（0.0f～1.0f）
 
         // === チャージ設定 ===
         float   chargeFOV = 70.0f;           // チャージ時のカメラFOV（度）
@@ -113,6 +114,15 @@ namespace PlayerShotgunSettings {
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,
                     .maxValue = 1.0f }),
+            MakeField(
+                "aimJumpPowerMultiplier",
+                "Aim Jump Power Multiplier",
+                &Data::aimJumpPowerMultiplier,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
+
             // === Shotgun Charge Settings ===
             MakeHeaderField("Shotgun Charge Settings"),
             MakeField(

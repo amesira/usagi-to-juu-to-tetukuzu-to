@@ -110,10 +110,12 @@ PlayerMoveIntent PlayerLocomotionController::BuildIntent(const PlayerContext& co
     intent.rotateDirection = rotateDirection;
 
     intent.speedMultiplier = selectedRequest->speedMultiplier;
+    intent.jumpPowerMultiplier = selectedRequest->jumpPowerMultiplier;
 
     intent.canMove = selectedRequest->canMove;
     intent.canRotate = selectedRequest->canRotate;
     intent.useGravity = selectedRequest->useGravity;
+    intent.canJump = selectedRequest->canJump;
     intent.applyRotateRightNow = selectedRequest->applyRotateRightNow;
 
     return intent;

@@ -47,9 +47,11 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
             .moveDirSourceInfo = { PlayerLocomotionController::DirectionSource::MoveInput },
             .rotateDirSourceInfo = { PlayerLocomotionController::DirectionSource::CameraForward },
             .speedMultiplier = context.settings().aimMoveSpeedMultiplier,
+            .jumpPowerMultiplier = context.settings().aimJumpPowerMultiplier,
             .canMove = true,
             .canRotate = true,
             .useGravity = true,
+            .canJump = true,
             .applyRotateRightNow = true,
         };
         m_locomotionRequestID = context.locomotionController->AddLocomotionRequest(m_locomotionRequest);

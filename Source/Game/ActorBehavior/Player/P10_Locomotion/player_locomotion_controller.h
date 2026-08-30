@@ -43,10 +43,12 @@ public:
         DirectionSourceInfo rotateDirSourceInfo; // 回転方向の参照情報
 
         float speedMultiplier = 1.0f; // 移動速度の倍率
+        float jumpPowerMultiplier = 1.0f; // ジャンプ力の倍率
 
         bool canMove = true;   // 移動可能かどうか
         bool canRotate = true; // 回転可能かどうか
         bool useGravity = true;  // 重力を使用するかどうか
+        bool canJump = true;     // ジャンプ可能かどうか
 
         bool applyRotateRightNow = false; // 即座に回転を適用するかどうか
 

@@ -73,11 +73,10 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
 {
     m_context.runtimeState.m_isGrounded = CheckGrounded();
 
-    // 移動アクション類の更新要求（ジャンプやブリンクなど）
-    if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded) {
-        // ジャンプ処理の要求をここで行う
-        m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce; // ジャンプ力を設定
-        m_context.runtimeState.m_isGrounded = false; // ジャンプ中は地面に接地していない状態にする
+    // ジャンプ要求
+    if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded && moveIntent.canJump) {
+        m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce * moveIntent.jumpPowerMultiplier;
+        m_context.runtimeState.m_isGrounded = false;
         context.animationController.PlayAnimation(PlayerAnimationController::Animation::Jump);
     }
 
