@@ -110,7 +110,16 @@ void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& 
             break;
         }
         case Phase::RapidFire: {
-            //m_context.rapidFire.Update(context, input, deltaTime, enteredPhase);
+            if (enteredPhase) {
+                m_context.rapidFire.Start(m_context);
+            }
+
+            m_context.rapidFire.Update(m_context, deltaTime);
+
+            if (m_context.runtimeState.releaseAttackInput || (input.triggerAimCommand || input.holdAimCommand)) {
+                m_context.rapidFire.Stop(m_context);
+                ChangePhase(Phase::Exiting);
+            }
             break;
         }
         case Phase::Exiting: {
@@ -124,6 +133,7 @@ void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& 
 
 void PlayerDualPistolsAction::Finish(PlayerContext& context, const PlayerInput& input)
 {
+    m_context.rapidFire.Reset(m_context);
     m_context.slashBurst.Cancel(m_context);
 
     m_context.runtimeState = {};

@@ -16,6 +16,14 @@ namespace PlayerDualPistolsSettings {
     struct Data {
         float startRapidFireDelay = 0.1f;
 
+        // === Aim / Rapid Fire ===
+        float aimMaxDistance = 100.0f;
+        float rapidFireInterval = 0.1f;
+        float bulletSpeed = 50.0f;
+        float bulletRadius = 0.1f;
+        float bulletLifetime = 3.0f;
+        float bulletSpawnForwardOffset = 0.2f;
+
         // === Slash Burst ===
         float fireTime = 0.1f;
         float inputBufferStartTime = 0.1f;
@@ -27,6 +35,32 @@ namespace PlayerDualPistolsSettings {
     {
         static const auto& schema = FieldSchema{
             MakeHeaderField("Dual Pistols Settings"),
+            MakeField("startRapidFireDelay", "Start Rapid Fire Delay", &Data::startRapidFireDelay,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 2.0f }),
+
+            MakeHeaderField("Aim / Rapid Fire"),
+            MakeField("aimMaxDistance", "Aim Max Distance", &Data::aimMaxDistance,
+                DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("rapidFireInterval", "Rapid Fire Interval", &Data::rapidFireInterval,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 2.0f }),
+            MakeField("bulletSpeed", "Bullet Speed", &Data::bulletSpeed,
+                DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("bulletRadius", "Bullet Radius", &Data::bulletRadius,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("bulletLifetime", "Bullet Lifetime", &Data::bulletLifetime,
+                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 60.0f }),
+            MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+
+            MakeHeaderField("Slash Burst"),
+            MakeField("fireTime", "Fire Time", &Data::fireTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("inputBufferStartTime", "Input Buffer Start Time", &Data::inputBufferStartTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("chainTime", "Chain Time", &Data::chainTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("endTime", "End Time", &Data::endTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
         };
         return schema;
     }

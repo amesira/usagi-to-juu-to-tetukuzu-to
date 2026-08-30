@@ -12,6 +12,7 @@ struct PlayerDualPistolsContext;
 class PlayerDualPistolsRapidFire {
 private:
     bool m_isActive = false;
+    float m_fireTimer = 0.0f;
 
 public:
     void Initialize(PlayerDualPistolsContext& context);
@@ -22,4 +23,7 @@ public:
     void Reset(PlayerDualPistolsContext& context);
 
     bool IsActive() const { return m_isActive; }
+
+private:
+    void FireVolley(PlayerDualPistolsContext& context);
 };

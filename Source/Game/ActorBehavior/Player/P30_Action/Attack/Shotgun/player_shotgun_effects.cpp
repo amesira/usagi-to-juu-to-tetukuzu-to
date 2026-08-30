@@ -34,18 +34,18 @@ namespace {
 void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
 {
     if (m_initialized) return;
-    if (!context.scene || !context.references.muzzleTransform) return;
+    if (!context.scene || !context.playerTransform) return;
 
     // EffectHandleを作成して、ショットガンのエフェクトを初期化する
     m_chargeEffect = RenderEffectFactory::CreateAttachedParticleEffect(
         context.scene,
-        context.references.muzzleTransform,
+        context.playerTransform,
         CHARGE_EFFECT_ASSET,
         context.settings().chargeEffectOffset);
 
     m_chargeCompleteEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        context.references.muzzleTransform,
+        context.playerTransform,
         CHARGE_COMPLETE_EFFECT_ASSET,
         context.settings().chargeCompleteEffectOffset);
     const float completeEffectScale = context.settings().chargeCompleteEffectScale;
@@ -54,7 +54,7 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
 
     m_muzzleFlashEffect = RenderEffectFactory::CreateAttachedParticleEffect(
         context.scene,
-        context.references.muzzleTransform,
+        context.playerTransform,
         MUZZLE_FLASH_EFFECT_ASSET,
         context.settings().muzzleFlashEffectOffset);
 
