@@ -46,6 +46,8 @@ struct PlayerShotgunContext
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;
     class CameraControlBehavior* cameraControlBehavior = nullptr;
+    const class CameraSettingsAsset* defaultCameraSettingsAsset = nullptr;
+    const class CameraSettingsAsset* shotgunCameraSettingsAsset = nullptr;
 
     class PlayerLocomotionController* locomotionController = nullptr;
     class PlayerWeaponController* weaponController = nullptr;

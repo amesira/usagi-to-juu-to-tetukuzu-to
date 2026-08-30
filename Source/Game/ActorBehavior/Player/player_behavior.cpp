@@ -9,6 +9,7 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
+#include "Engine/engine_service_locator.h"
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Device/mouse.h"
@@ -53,6 +54,14 @@ void PlayerBehavior::Start()
 
         CameraControlBehavior* cameraControl = mainCamera->GetComponent<CameraControlBehavior>();
         m_context.cameraControlBehavior = cameraControl;
+        m_context.defaultCameraSettingsAsset = cameraControl
+            ? cameraControl->GetSettingsAsset()
+            : nullptr;
+        if (!m_context.defaultCameraSettingsAsset) {
+            m_context.defaultCameraSettingsAsset = DATA_LOADER->GetAsset<CameraSettingsAsset>(
+                "asset/Data/camera_settings.data.json",
+                true);
+        }
     }
 
     // 構成要素の初期化
@@ -67,7 +76,10 @@ void PlayerBehavior::Start()
         m_shotgunSettings = &defaultShotgunSettings;
     }
 
-    m_shotgunAction.Initialize(m_context, m_shotgunSettings);
+    m_shotgunAction.Initialize(
+        m_context,
+        m_shotgunSettings,
+        m_shotgunCameraSettings);
 
     // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
     static PlayerDualPistolsSettingsAsset defaultDualPistolsSettings;

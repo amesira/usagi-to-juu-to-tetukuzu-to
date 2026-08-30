@@ -1,19 +1,12 @@
 {
     "data": {
-        "aimCameraDistance": 6.0,
-        "aimCameraLocalOffset": [
-            2.0,
-            3.0,
-            0.0
-        ],
-        "aimEnterRadialBlurStrength": 0.5,
+        "aimEnterRadialBlurStrength": 0.4000000059604645,
         "aimExitRadialBlurStrength": 0.30000001192092896,
-        "aimFOV": 60.0,
         "aimJumpPowerMultiplier": 0.800000011920929,
         "aimMaxDistance": 1000.0,
-        "aimRadialBlurHoldTime": 0.009999999776482582,
+        "aimRadialBlurHoldTime": 0.019999999552965164,
         "aimSpeedMultiplier": 0.6000000238418579,
-        "aimTransitionTime": 0.10000000149011612,
+        "aimTransitionTime": 0.05000000074505806,
         "bulletLifetime": 3.0,
         "bulletSpawnForwardOffset": 1.0,
         "chargeCompleteEffectOffset": [

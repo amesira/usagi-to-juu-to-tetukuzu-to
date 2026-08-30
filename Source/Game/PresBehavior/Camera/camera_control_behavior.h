@@ -32,6 +32,10 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    /// @brief 使用するカメラ設定を切り替える。現在のカメラ角度は維持する。
+    void SetSettingsAsset(const CameraSettingsAsset* settingsAsset);
+    const CameraSettingsAsset* GetSettingsAsset() const { return m_context.settingsAsset; }
+
     // === CameraEffect関連の操作 ===
     /// @brief カメラエフェクトタスクをリクエストする
     void RequestCameraEffectTask(CameraEffect::EffectTaskTarget target, const CameraEffect::RequestEffectTaskInfo& requestInfo);
@@ -39,6 +43,7 @@ public:
     void PlayCameraShake(float duration, float magnitude);
 
 private:
+    void ApplyCurrentSettings();
     void UpdateCameraInputActivation();
     void UpdateTargetYawPitchFromInput(float deltaTime);
 

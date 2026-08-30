@@ -28,6 +28,7 @@ public:
     TransformComponent* mainCameraTransform = nullptr;
 
     class CameraControlBehavior* cameraControlBehavior = nullptr;
+    const class CameraSettingsAsset* defaultCameraSettingsAsset = nullptr;
 
     // FIX: この下にDataAssetで作成したSettingsを入れる予定
 };

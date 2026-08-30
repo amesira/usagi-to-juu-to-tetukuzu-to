@@ -18,7 +18,10 @@ private:
 
 public:
     PlayerShotgunAction() : PlayerActionBase("Shotgun", ActionCategory::Attack, 10, true) {}
-    void Initialize(const PlayerContext& context, PlayerShotgunSettingsAsset* settingsAsset);
+    void Initialize(
+        const PlayerContext& context,
+        PlayerShotgunSettingsAsset* settingsAsset,
+        const class CameraSettingsAsset* cameraSettingsAsset);
 
     bool CanStart(const PlayerContext& context, const PlayerInput& input) override;
 

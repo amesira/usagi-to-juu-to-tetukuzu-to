@@ -134,19 +134,10 @@ void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)
 void PlayerShotgunAim::SetAimingCameraEffect(PlayerShotgunContext& context, bool enable)
 {
     if (!context.cameraControlBehavior) return;
-
-    float duration = context.settings().aimTransitionTime;
     if (enable) {
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, 
-            context.settings().aimFOV, duration);
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, 
-            context.settings().aimCameraDistance, duration);
-        CameraEffectTaskHelper::ChangeCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset,
-            context.settings().aimCameraLocalOffset, duration);
-    } 
+        context.cameraControlBehavior->SetSettingsAsset(context.shotgunCameraSettingsAsset);
+    }
     else {
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::FOV, duration);
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::Distance, duration);
-        CameraEffectTaskHelper::ResetCameraEffect(context.cameraControlBehavior, CameraEffectTarget::CompositionCameraLocalOffset, duration);
+        context.cameraControlBehavior->SetSettingsAsset(context.defaultCameraSettingsAsset);
     }
 }

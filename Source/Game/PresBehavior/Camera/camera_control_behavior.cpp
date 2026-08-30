@@ -43,22 +43,10 @@ void CameraControlBehavior::Start()
     if (m_context.settingsAsset == nullptr) return;
 
     m_context.runtimeState.Initialize(m_context.settings());
-    if (m_context.camera) {
-        m_context.camera->SetFov(m_context.runtimeState.fov);
-    }
+    ApplyCurrentSettings();
 
     // 仮：DataAssetのロード完了時に呼ばれるコールバックを登録
-    m_settingsReloadCallback = [this]() {
-        if (m_context.settingsAsset) {
-            m_context.runtimeState.followDistance = m_context.settings().followDistance;
-            m_context.runtimeState.compositionWorldOffset = m_context.settings().compositionWorldOffset;
-            m_context.runtimeState.compositionCameraLocalOffset = m_context.settings().compositionCameraLocalOffset;
-            m_context.runtimeState.fov = m_context.settings().fov;
-            if (m_context.camera) {
-                m_context.camera->SetFov(m_context.runtimeState.fov);
-            }
-        }
-        };
+    m_settingsReloadCallback = [this]() { ApplyCurrentSettings(); };
 
     IScene* scene = GetOwner()->GetScene();
     GameObject* target = scene->GetGameObjectByName("Player");
@@ -67,6 +55,37 @@ void CameraControlBehavior::Start()
     }
 
     m_context.cameraEffect.Initialize(m_context);
+}
+
+/// @brief カメラの設定を切り替える
+void CameraControlBehavior::SetSettingsAsset(const CameraSettingsAsset* settingsAsset)
+{
+    if (!settingsAsset || m_context.settingsAsset == settingsAsset) return;
+
+    m_context.settingsAsset = settingsAsset;
+    m_lastSettingsRevision = settingsAsset->GetRevision();
+    ApplyCurrentSettings();
+}
+
+/// @brief 現在のカメラ設定を適用する
+void CameraControlBehavior::ApplyCurrentSettings()
+{
+    if (!m_context.settingsAsset) return;
+
+    CameraRuntimeState& state = m_context.runtimeState;
+    const CameraSettings::Data& settings = m_context.settings();
+
+    state.followDistance = settings.followDistance;
+    state.compositionWorldOffset = settings.compositionWorldOffset;
+    state.compositionCameraLocalOffset = settings.compositionCameraLocalOffset;
+    state.fov = settings.fov;
+    state.targetPitch = MiMath::Clamp(state.targetPitch, settings.minPitch, settings.maxPitch);
+    state.pitch = MiMath::Clamp(state.pitch, settings.minPitch, settings.maxPitch);
+    state.ResetSmoothDampVelocity();
+
+    if (m_context.camera) {
+        m_context.camera->SetFov(state.fov);
+    }
 }
 
 void CameraControlBehavior::Update()

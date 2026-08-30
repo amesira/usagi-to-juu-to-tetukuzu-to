@@ -15,9 +15,6 @@ namespace PlayerShotgunSettings {
         float   recoveryTime = 0.3f;        // リカバリーにかかる時間（秒）
 
         // === エイム設定 ===
-        float   aimFOV = 60.0f;              // エイム時のカメラFOV（度）
-        float   aimCameraDistance = 2.0f;    // エイム時のカメラ距離（メートル）
-        DirectX::XMFLOAT3 aimCameraLocalOffset = { 1.0f, 0.5f, 0.0f }; // エイム時のカメラローカルオフセット（メートル）
         float   aimTransitionTime = 0.2f;    // エイムへの遷移時間（秒）
         float   aimMoveSpeedMultiplier = 0.7f;   // エイム時の移動速度倍率（0.0f～1.0f）
         float   aimJumpPowerMultiplier = 0.8f;   // エイム時のジャンプ力倍率（0.0f～1.0f）
@@ -74,30 +71,6 @@ namespace PlayerShotgunSettings {
                     .maxValue = 10.0f }),
             // === Shotgun Aim Settings ===
             MakeHeaderField("Shotgun Aim Settings"),
-            MakeField(
-                "aimFOV",
-                "Aim FOV",
-                &Data::aimFOV,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = 1.0f,
-                    .maxValue = 180.0f }),
-            MakeField(
-                "aimCameraDistance",
-                "Aim Camera Distance",
-                &Data::aimCameraDistance,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = 0.1f,
-                    .maxValue = 10.0f }),
-            MakeField(
-                "aimCameraLocalOffset",
-                "Aim Camera Local Offset",
-                &Data::aimCameraLocalOffset,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = -10.0f,
-                    .maxValue = 10.0f }),
             MakeField(
                 "aimTransitionTime",
                 "Aim Transition Time",

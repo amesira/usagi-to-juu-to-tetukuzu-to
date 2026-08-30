@@ -14,6 +14,7 @@
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
+#include "Game/PresBehavior/Camera/camera_settings_asset.h"
 
 #include "player_prefab_settings_asset.h"
 
@@ -77,6 +78,9 @@ namespace PlayerPrefabFactory
         PlayerShotgunSettingsAsset* shotgunSettingsAsset = DATA_LOADER->GetAsset<PlayerShotgunSettingsAsset>(
             "asset/Data/player_shotgun_settings.data.json",
             true);
+        CameraSettingsAsset* shotgunCameraSettingsAsset = DATA_LOADER->GetAsset<CameraSettingsAsset>(
+            "asset/Data/camera_settings_shotgun.data.json",
+            true);
 
         // 走行時の砂埃パーティクル生成
         EffectHandle runDustEffectHandle = RenderEffectFactory::CreateAttachedParticleEffect(
@@ -94,7 +98,10 @@ namespace PlayerPrefabFactory
         if (playerBehavior)
         {
             playerBehavior->SetupPlayerMove(moveReferences, moveSettingsAsset);
-            playerBehavior->SetupPlayerShotgun(shotgunReferences, shotgunSettingsAsset);
+            playerBehavior->SetupPlayerShotgun(
+                shotgunReferences,
+                shotgunSettingsAsset,
+                shotgunCameraSettingsAsset);
         }
         return prefab;
     }

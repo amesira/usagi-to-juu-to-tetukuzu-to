@@ -21,7 +21,10 @@ namespace {
     using Phase = PlayerShotgunRuntimeState::Phase;
 }
 
-void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgunSettingsAsset* settingsAsset)
+void PlayerShotgunAction::Initialize(
+    const PlayerContext& context,
+    PlayerShotgunSettingsAsset* settingsAsset,
+    const CameraSettingsAsset* cameraSettingsAsset)
 {
     m_context.owner = this;
     m_context.scene = context.scene;
@@ -32,6 +35,8 @@ void PlayerShotgunAction::Initialize(const PlayerContext& context, PlayerShotgun
     m_context.cameraTransform = context.mainCameraTransform;
     m_context.cameraComponent = context.mainCamera;
     m_context.cameraControlBehavior = context.cameraControlBehavior;
+    m_context.defaultCameraSettingsAsset = context.defaultCameraSettingsAsset;
+    m_context.shotgunCameraSettingsAsset = cameraSettingsAsset;
     m_context.locomotionController = context.locomotionController;
     m_context.weaponController = context.weaponController;
 
