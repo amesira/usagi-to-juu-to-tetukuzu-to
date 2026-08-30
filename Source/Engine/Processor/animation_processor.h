@@ -42,6 +42,12 @@ private:
         ModelResource& modelResource,
         float deltaTime);
 
+    void ProcessBlendTree2D(
+        class AnimationComponent& animationComponent,
+        class ModelComponent& modelComponent,
+        ModelResource& modelResource,
+        float deltaTime);
+
     LocalPose SampleLocalPose(
         const AnimationClip& clip,
         const SkeletonPose& basePose,

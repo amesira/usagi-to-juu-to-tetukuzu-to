@@ -15,7 +15,6 @@
 
 // アニメーションの状態を表す構造体
 struct AnimationState {
-    std::string clipName = "None";
     int         clipIndex = -1;
     float   timer = 0.0f;
     float   speed = 1.0f; // 再生速度の倍率
@@ -25,7 +24,7 @@ struct AnimationState {
 
 // アニメーションのトランジションを表す構造体
 struct AnimationTransition {
-    AnimationState sourceState;
+    AnimationState sourceState; // 遷移元のアニメーション状態
     float duration = 0.0f;
     float timer = 0.0f;
     bool active = false;
@@ -47,17 +46,35 @@ struct AnimationBlendTree1DState {
     bool finished = false;
 };
 
+/// @brief 2D BlendTreeを構成するアニメーションクリップ
+struct AnimationBlendTree2DNode {
+    int clipIndex = -1;
+    DirectX::XMFLOAT2 threshold = {};
+};
+
+/// @brief 2D BlendTreeの再生状態
+struct AnimationBlendTree2DState {
+    std::vector<AnimationBlendTree2DNode> nodes;
+    DirectX::XMFLOAT2 parameter = {};
+    float normalizedTime = 0.0f;
+    float speed = 1.0f;
+    bool loop = true;
+    bool finished = false;
+};
+
 class AnimationComponent : public Component {
 public:
     enum class PlaybackType {
         SingleClip,
         BlendTree1D,
+        BlendTree2D,
     };
 
 private:
     AnimationState m_currentState; // 現在のアニメーション状態
     AnimationTransition m_transition;
     AnimationBlendTree1DState m_blendTree1DState;
+    AnimationBlendTree2DState m_blendTree2DState;
     PlaybackType m_playbackType = PlaybackType::SingleClip;
 
 public:
@@ -77,7 +94,6 @@ public:
             !m_currentState.finished) return;
 
         AnimationState nextState;
-        nextState.clipName = "CLIP";
         nextState.clipIndex = clipIndex;
         nextState.timer = 0.0f;
         nextState.speed = speed;
@@ -146,6 +162,42 @@ public:
         m_blendTree1DState.parameter = parameter;
     }
 
+    /// @brief 2D BlendTreeを再生する。同じTreeの再要求ではparameterだけを更新する
+    void PlayBlendTree2D(
+        const std::vector<AnimationBlendTree2DNode>& nodes,
+        const DirectX::XMFLOAT2& parameter,
+        float speed = 1.0f,
+        bool loop = true,
+        bool restart = false)
+    {
+        if (nodes.empty()) return;
+
+        const bool sameTree =
+            m_playbackType == PlaybackType::BlendTree2D &&
+            HasSameBlendTree2DNodes(nodes);
+
+        if (!restart && sameTree && !m_blendTree2DState.finished) {
+            m_blendTree2DState.parameter = parameter;
+            m_blendTree2DState.speed = speed;
+            m_blendTree2DState.loop = loop;
+            return;
+        }
+
+        m_playbackType = PlaybackType::BlendTree2D;
+        m_transition = {};
+        m_blendTree2DState.nodes = nodes;
+        m_blendTree2DState.parameter = parameter;
+        m_blendTree2DState.normalizedTime = 0.0f;
+        m_blendTree2DState.speed = speed;
+        m_blendTree2DState.loop = loop;
+        m_blendTree2DState.finished = false;
+    }
+
+    void SetBlendTree2DParameter(const DirectX::XMFLOAT2& parameter) {
+        if (m_playbackType != PlaybackType::BlendTree2D) return;
+        m_blendTree2DState.parameter = parameter;
+    }
+
     void SetAnimationState(
         int clipIndex,
         float speed,
@@ -157,6 +209,8 @@ public:
     const AnimationState& GetAnimationState() const { return m_currentState; }
     AnimationBlendTree1DState& GetBlendTree1DState() { return m_blendTree1DState; }
     const AnimationBlendTree1DState& GetBlendTree1DState() const { return m_blendTree1DState; }
+    AnimationBlendTree2DState& GetBlendTree2DState() { return m_blendTree2DState; }
+    const AnimationBlendTree2DState& GetBlendTree2DState() const { return m_blendTree2DState; }
     PlaybackType GetPlaybackType() const { return m_playbackType; }
     AnimationTransition& GetTransitionState() { return m_transition; }
     const AnimationTransition& GetTransitionState() const { return m_transition; }
@@ -165,9 +219,13 @@ public:
 
     bool IsFinished() const {
         if (m_transition.active) return false;
-        return m_playbackType == PlaybackType::BlendTree1D
-            ? m_blendTree1DState.finished
-            : m_currentState.finished;
+        if (m_playbackType == PlaybackType::BlendTree1D) {
+            return m_blendTree1DState.finished;
+        }
+        if (m_playbackType == PlaybackType::BlendTree2D) {
+            return m_blendTree2DState.finished;
+        }
+        return m_currentState.finished;
     }
 
 private:
@@ -178,6 +236,21 @@ private:
         for (size_t i = 0; i < nodes.size(); ++i) {
             if (m_blendTree1DState.nodes[i].clipIndex != nodes[i].clipIndex ||
                 m_blendTree1DState.nodes[i].threshold != nodes[i].threshold) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool HasSameBlendTree2DNodes(const std::vector<AnimationBlendTree2DNode>& nodes) const
+    {
+        if (m_blendTree2DState.nodes.size() != nodes.size()) return false;
+
+        for (size_t i = 0; i < nodes.size(); ++i) {
+            const AnimationBlendTree2DNode& current = m_blendTree2DState.nodes[i];
+            if (current.clipIndex != nodes[i].clipIndex ||
+                current.threshold.x != nodes[i].threshold.x ||
+                current.threshold.y != nodes[i].threshold.y) {
                 return false;
             }
         }

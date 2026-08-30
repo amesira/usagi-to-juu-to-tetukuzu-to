@@ -1,6 +1,8 @@
 //===================================================
 // animation_processor.cpp
+// 
 // Author：Miu Kitamura
+// Date  ：2026/04/06
 //===================================================
 #include "animation_processor.h"
 
@@ -35,8 +37,12 @@ void AnimationProcessor::Process(IScene* pScene)
         ModelResource* modelResource = modelComponent->GetModelResource();
         if (!modelResource || modelResource->animationClips.empty()) continue;
 
+        // === 再生方法の分岐 ===
         if (animationComponent.GetPlaybackType() == AnimationComponent::PlaybackType::BlendTree1D) {
             ProcessBlendTree1D(animationComponent, *modelComponent, *modelResource, deltaTime);
+        }
+        else if (animationComponent.GetPlaybackType() == AnimationComponent::PlaybackType::BlendTree2D) {
+            ProcessBlendTree2D(animationComponent, *modelComponent, *modelResource, deltaTime);
         }
         else if (animationComponent.IsTransitioning()) {
             ProcessTransition(animationComponent, *modelComponent, *modelResource, deltaTime);
@@ -55,7 +61,6 @@ void AnimationProcessor::ProcessSingleClip(
     float deltaTime)
 {
     AnimationState& state = animationComponent.GetAnimationState();
-    if (state.clipName == AnimationComponent::CLIP_NONE) return;
 
     const AnimationClip* clip = ResolveAnimationClip(state, modelResource);
     if (!clip) return;
@@ -77,6 +82,7 @@ void AnimationProcessor::ProcessTransition(
     AnimationTransition& transition = animationComponent.GetTransitionState();
     AnimationState& destinationState = animationComponent.GetAnimationState();
 
+    // 遷移元と遷移先のアニメーションクリップを取得
     const AnimationClip* sourceClip = ResolveAnimationClip(
         transition.sourceState,
         modelResource);
@@ -99,14 +105,15 @@ void AnimationProcessor::ProcessTransition(
         *destinationClip,
         deltaTime);
 
+    // 遷移の進行度を計算する（なめらかに補間する）
     transition.timer += deltaTime;
     float weight = MiMath::Clamp(
         transition.timer / transition.duration,
         0.0f,
         1.0f);
-    // 遷移の開始・終了付近を滑らかにする
     weight = weight * weight * (3.0f - 2.0f * weight);
 
+    // ポーズをサンプリングして補間する
     SkeletonPose pose = modelResource.defaultPose;
     const LocalPose sourcePose = SampleLocalPose(*sourceClip, pose, sourceTime);
     const LocalPose destinationPose = SampleLocalPose(
@@ -117,6 +124,7 @@ void AnimationProcessor::ProcessTransition(
     BuildSkeletonMatrices(pose, modelResource);
     modelComponent.SetSkeletonPose(pose);
 
+    // 遷移が完了したら、遷移状態をクリアする
     if (transition.timer >= transition.duration) {
         animationComponent.CompleteTransition();
     }
@@ -131,9 +139,11 @@ void AnimationProcessor::ProcessBlendTree1D(
 {
     AnimationBlendTree1DState& state = animationComponent.GetBlendTree1DState();
 
+    // 有効なノードを収集する
     std::vector<const AnimationBlendTree1DNode*> validNodes;
     validNodes.reserve(state.nodes.size());
-    for (const AnimationBlendTree1DNode& node : state.nodes) {
+    for (const AnimationBlendTree1DNode& node : state.nodes) 
+    {
         if (node.clipIndex < 0 || node.clipIndex >= static_cast<int>(modelResource.animationClips.size())) continue;
         if (modelResource.animationClips[node.clipIndex].duration <= 0.0f) continue;
         validNodes.push_back(&node);
@@ -143,6 +153,7 @@ void AnimationProcessor::ProcessBlendTree1D(
     size_t lowerIndex = 0;
     size_t upperIndex = 0;
     float blendWeight = 0.0f;
+    // 閾値を超えれば単一のノードを使用する
     if (state.parameter <= validNodes.front()->threshold) {
         lowerIndex = upperIndex = 0;
     }
@@ -202,34 +213,126 @@ void AnimationProcessor::ProcessBlendTree1D(
     modelComponent.SetSkeletonPose(pose);
 }
 
+/// @brief 2Dパラメータに近い最大3ノードを距離加重してBlendTreeを再生する
+void AnimationProcessor::ProcessBlendTree2D(
+    AnimationComponent& animationComponent,
+    ModelComponent& modelComponent,
+    ModelResource& modelResource,
+    float deltaTime)
+{
+    AnimationBlendTree2DState& state = animationComponent.GetBlendTree2DState();
+
+    struct WeightedNode {
+        const AnimationBlendTree2DNode* node = nullptr;
+        float distanceSquared = 0.0f;
+        float weight = 0.0f;
+    };
+
+    std::vector<WeightedNode> candidates;
+    candidates.reserve(state.nodes.size());
+    for (const AnimationBlendTree2DNode& node : state.nodes) {
+        if (node.clipIndex < 0 ||
+            node.clipIndex >= static_cast<int>(modelResource.animationClips.size())) {
+            continue;
+        }
+        if (modelResource.animationClips[node.clipIndex].duration <= 0.0f) continue;
+
+        const float deltaX = state.parameter.x - node.threshold.x;
+        const float deltaY = state.parameter.y - node.threshold.y;
+        candidates.push_back({ &node, deltaX * deltaX + deltaY * deltaY, 0.0f });
+    }
+    if (candidates.empty()) return;
+
+    std::sort(candidates.begin(), candidates.end(),
+        [](const WeightedNode& lhs, const WeightedNode& rhs) {
+            return lhs.distanceSquared < rhs.distanceSquared;
+        });
+    if (candidates.size() > 3) candidates.resize(3);
+
+    constexpr float EXACT_NODE_EPSILON = 0.000001f;
+    if (candidates.front().distanceSquared <= EXACT_NODE_EPSILON) {
+        candidates.front().weight = 1.0f;
+        candidates.resize(1);
+    }
+    else {
+        float totalWeight = 0.0f;
+        for (WeightedNode& candidate : candidates) {
+            candidate.weight = 1.0f / candidate.distanceSquared;
+            totalWeight += candidate.weight;
+        }
+        if (totalWeight <= 0.0f) return;
+        for (WeightedNode& candidate : candidates) {
+            candidate.weight /= totalWeight;
+        }
+    }
+
+    float blendedDuration = 0.0f;
+    for (const WeightedNode& candidate : candidates) {
+        blendedDuration +=
+            modelResource.animationClips[candidate.node->clipIndex].duration *
+            candidate.weight;
+    }
+    if (!state.finished && blendedDuration > 0.0f) {
+        state.normalizedTime += deltaTime * state.speed / blendedDuration;
+    }
+
+    float normalizedTime = state.normalizedTime;
+    if (state.loop) {
+        normalizedTime = std::fmod(normalizedTime, 1.0f);
+        if (normalizedTime < 0.0f) normalizedTime += 1.0f;
+        state.normalizedTime = normalizedTime;
+    }
+    else {
+        normalizedTime = MiMath::Clamp(normalizedTime, 0.0f, 1.0f);
+        if (state.normalizedTime >= 1.0f) {
+            state.normalizedTime = 1.0f;
+            state.finished = true;
+        }
+    }
+
+    SkeletonPose pose = modelResource.defaultPose;
+    float accumulatedWeight = candidates.front().weight;
+    const AnimationClip& firstClip =
+        modelResource.animationClips[candidates.front().node->clipIndex];
+    LocalPose resultPose = SampleLocalPose(
+        firstClip,
+        pose,
+        normalizedTime * firstClip.duration);
+
+    for (size_t i = 1; i < candidates.size(); ++i) {
+        const AnimationClip& clip =
+            modelResource.animationClips[candidates[i].node->clipIndex];
+        const LocalPose nodePose = SampleLocalPose(
+            clip,
+            pose,
+            normalizedTime * clip.duration);
+
+        const float nextAccumulatedWeight = accumulatedWeight + candidates[i].weight;
+        const float blendWeight = nextAccumulatedWeight > 0.0f
+            ? candidates[i].weight / nextAccumulatedWeight
+            : 0.0f;
+        resultPose = BlendLocalPoses(resultPose, nodePose, blendWeight);
+        accumulatedWeight = nextAccumulatedWeight;
+    }
+
+    ApplyLocalPose(pose, resultPose);
+    BuildSkeletonMatrices(pose, modelResource);
+    modelComponent.SetSkeletonPose(pose);
+}
+
 /// @brief AnimationStateが参照するクリップを取得する
 const AnimationClip* AnimationProcessor::ResolveAnimationClip(
     AnimationState& state,
     ModelResource& modelResource)
 {
-    if (state.clipName == AnimationComponent::CLIP_NONE) return nullptr;
-
     if (state.clipIndex >= 0 &&
-        state.clipIndex < static_cast<int>(modelResource.animationClips.size())) {
+        state.clipIndex < static_cast<int>(modelResource.animationClips.size())) 
+    {
         const AnimationClip& clip = modelResource.animationClips[state.clipIndex];
         return clip.duration > 0.0f ? &clip : nullptr;
     }
 
-    const auto it = std::find_if(
-        modelResource.animationClips.begin(),
-        modelResource.animationClips.end(),
-        [&state](const AnimationClip& clip) {
-            return clip.name == state.clipName;
-        });
-    if (it == modelResource.animationClips.end() || it->duration <= 0.0f) {
-        state.clipName = AnimationComponent::CLIP_NONE;
-        state.clipIndex = -1;
-        return nullptr;
-    }
-
-    state.clipIndex = static_cast<int>(
-        std::distance(modelResource.animationClips.begin(), it));
-    return &*it;
+    return nullptr;
 }
 
 /// @brief AnimationStateの時間を進め、サンプリングに使用する時間を返す
