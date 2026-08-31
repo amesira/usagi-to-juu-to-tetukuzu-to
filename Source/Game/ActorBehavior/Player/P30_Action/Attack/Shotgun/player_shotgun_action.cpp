@@ -37,6 +37,8 @@ void PlayerShotgunAction::Initialize(
     m_context.cameraControlBehavior = context.cameraControlBehavior;
     m_context.defaultCameraSettingsAsset = context.defaultCameraSettingsAsset;
     m_context.shotgunCameraSettingsAsset = cameraSettingsAsset;
+
+    m_context.animationController = context.animationController;
     m_context.locomotionController = context.locomotionController;
     m_context.weaponController = context.weaponController;
 
@@ -61,14 +63,12 @@ bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInp
 void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input)
 {
     // アニメーションのサブマシーンを切り替える（切替に失敗した場合は、アクションを終了する）
-    m_enteredAnimationSubMachine = context.animationController.EnterSubMachine(
+    m_enteredAnimationSubMachine = m_context.animationController->EnterSubMachine(
         PlayerAnimationController::SubMachine::Shotgun);
     if (!m_enteredAnimationSubMachine) {
         SetState(ActionState::WaitingToFinish);
         return;
     }
-
-    context.animationController.PlayAnimation(PlayerAnimationController::Animation::AimIdle);
 
     m_context.runtimeState.phase = PlayerShotgunRuntimeState::Phase::Entering;
     m_context.runtimeState.phaseTimer = 0.0f;
@@ -78,8 +78,6 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
-    context.animationController.PlayAnimation(PlayerAnimationController::Animation::AimIdle);
-
     // 終了チェック（仮）
     if (!input.holdAimCommand) {
         ChangePhase(Phase::Exiting);
@@ -90,6 +88,7 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
     m_enteredPhase = false;
 
     m_context.runtimeState.phaseTimer += deltaTime;
+    m_context.aim.UpdateAimingAnimation(m_context);
 
     switch (currentPhase) {
         case Phase::Entering: {
@@ -168,7 +167,7 @@ void PlayerShotgunAction::Finish(PlayerContext& context, const PlayerInput& inpu
     m_context.runtimeState = {};
     m_enteredPhase = false;
     if (m_enteredAnimationSubMachine) {
-        context.animationController.RequestExitSubMachine();
+        m_context.animationController->RequestExitSubMachine();
         m_enteredAnimationSubMachine = false;
     }
 }

@@ -7,7 +7,6 @@
 //---------------------------------------------------
 #pragma once
 #include <DirectXMath.h>
-#include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 /// @brief プレイヤーの状態や設定を管理するコンテキストクラス
 class PlayerContext {
@@ -20,7 +19,7 @@ public:
     class PlayerConditionMachine* conditionMachine = nullptr;
     class PlayerActionMachine* actionMachine = nullptr;
     class PlayerWeaponController* weaponController = nullptr;
-    PlayerAnimationController animationController;
+    class PlayerAnimationController* animationController = nullptr;
 
     class PlayerMoveBehavior* moveBehavior = nullptr;
 

@@ -77,7 +77,7 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
     if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded && moveIntent.canJump) {
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce * moveIntent.jumpPowerMultiplier;
         m_context.runtimeState.m_isGrounded = false;
-        context.animationController.PlayAnimation(PlayerAnimationController::Animation::Jump);
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
     }
 
     // 現在位置の取得
@@ -123,10 +123,10 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
 
     // === アニメーション要求 ===
     if (!m_context.runtimeState.m_isGrounded) {
-        context.animationController.PlayAnimation(PlayerAnimationController::Animation::Falling);
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Falling);
     }
     else {
-        context.animationController.PlayAnimation(
+        context.animationController->PlayAnimation(
             MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
                 ? PlayerAnimationController::Animation::Running
                 : PlayerAnimationController::Animation::Idle);

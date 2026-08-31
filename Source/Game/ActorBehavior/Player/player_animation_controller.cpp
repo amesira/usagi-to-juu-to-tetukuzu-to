@@ -32,6 +32,9 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
     ModelComponent* modelComponent = player->GetComponent<ModelComponent>();
 
     m_frameRequests.clear();
+    m_definitionTypes.fill(DefinitionType::None);
+    m_clipDefinitions = {};
+    m_blendTree1DDefinitions = {};
     m_hasCurrentRequest = false;
     m_waitingForCompletion = false;
     m_requestOrder = 0;
@@ -67,7 +70,11 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         PlayOptions shotgunIdle;
         shotgunIdle.priority = static_cast<int>(Priority::Weapon);
         shotgunIdle.transitionTime = 0.15f;
-        RegisterClip(Animation::AimIdle, FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"), SubMachine::Shotgun, shotgunIdle);
+        RegisterBlendTree1D(Animation::AimIdle, {
+            { FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"), 0.0f },
+            { FindClipIndex(modelComponent, "player_shotgun_idle_lower.anim.fbx"), -1.0f },
+            { FindClipIndex(modelComponent, "player_shotgun_idle_upper.anim.fbx"), 1.0f },
+            }, SubMachine::Shotgun, shotgunIdle);
     }
 }
 
@@ -88,7 +95,14 @@ void PlayerAnimationController::Update()
 
     const Request* next = FindHighestPriorityRequest();
     if (next && CanAccept(*next)) {
-        HandleAnimationEvent(next->animation);
+        const bool onlyUpdatingBlendTreeParameter = 
+            m_hasCurrentRequest &&
+            next->animation == m_currentRequest.animation &&
+            GetDefinitionType(next->animation) == DefinitionType::BlendTree1D &&
+            !next->options.restart;
+        if (!onlyUpdatingBlendTreeParameter) {
+            HandleAnimationEvent(next->animation);
+        }
         Apply(*next);
         return;
     }
@@ -99,6 +113,7 @@ void PlayerAnimationController::PlayAnimation(Animation animation)
 {
     const size_t index = static_cast<size_t>(animation);
     if (index >= m_clipDefinitions.size()) return;
+    if (m_definitionTypes[index] != DefinitionType::Clip) return;
     PlayAnimation(animation, m_clipDefinitions[index].defaults);
 }
 
@@ -106,9 +121,31 @@ void PlayerAnimationController::PlayAnimation(Animation animation, const PlayOpt
 {
     const size_t index = static_cast<size_t>(animation);
     if (index >= m_clipDefinitions.size()) return;
+    if (m_definitionTypes[index] != DefinitionType::Clip) return;
     if (m_clipDefinitions[index].clipIndex < 0) return;
 
-    m_frameRequests.push_back({ animation, options, m_requestOrder++ });
+    m_frameRequests.push_back({ animation, options, 0.0f, m_requestOrder++ });
+}
+
+void PlayerAnimationController::PlayBlendTree1D(Animation animation, float parameter)
+{
+    const size_t index = static_cast<size_t>(animation);
+    if (index >= m_blendTree1DDefinitions.size()) return;
+    if (m_definitionTypes[index] != DefinitionType::BlendTree1D) return;
+    PlayBlendTree1D(animation, parameter, m_blendTree1DDefinitions[index].defaults);
+}
+
+void PlayerAnimationController::PlayBlendTree1D(
+    Animation animation,
+    float parameter,
+    const PlayOptions& options)
+{
+    const size_t index = static_cast<size_t>(animation);
+    if (index >= m_blendTree1DDefinitions.size()) return;
+    if (m_definitionTypes[index] != DefinitionType::BlendTree1D) return;
+    if (m_blendTree1DDefinitions[index].nodes.empty()) return;
+
+    m_frameRequests.push_back({ animation, options, parameter, m_requestOrder++ });
 }
 #pragma endregion
 
@@ -122,12 +159,34 @@ void PlayerAnimationController::RegisterClip(
     const size_t index = static_cast<size_t>(animation);
     if (index >= m_clipDefinitions.size()) return;
     m_clipDefinitions[index] = { clipIndex, subMachine, defaults };
+    m_blendTree1DDefinitions[index] = {};
+    m_definitionTypes[index] = DefinitionType::Clip;
+}
+
+void PlayerAnimationController::RegisterBlendTree1D(
+    Animation animation,
+    std::vector<AnimationBlendTree1DNode> nodes,
+    SubMachine subMachine,
+    const PlayOptions& defaults)
+{
+    const size_t index = static_cast<size_t>(animation);
+    if (index >= m_blendTree1DDefinitions.size()) return;
+
+    std::sort(nodes.begin(), nodes.end(),
+        [](const AnimationBlendTree1DNode& lhs, const AnimationBlendTree1DNode& rhs) {
+            return lhs.threshold < rhs.threshold;
+        });
+
+    m_clipDefinitions[index] = {};
+    m_blendTree1DDefinitions[index] = { std::move(nodes), subMachine, defaults };
+    m_definitionTypes[index] = DefinitionType::BlendTree1D;
 }
 
 void PlayerAnimationController::ChangeClip(Animation animation, int clipIndex)
 {
     const size_t index = static_cast<size_t>(animation);
     if (index >= m_clipDefinitions.size()) return;
+    if (m_definitionTypes[index] != DefinitionType::Clip) return;
     m_clipDefinitions[index].clipIndex = clipIndex;
 }
 
@@ -191,10 +250,28 @@ const PlayerAnimationController::Request* PlayerAnimationController::FindHighest
 bool PlayerAnimationController::IsAvailableInCurrentSubMachine(Animation animation) const
 {
     const size_t index = static_cast<size_t>(animation);
-    if (index >= m_clipDefinitions.size()) return false;
+    if (index >= m_definitionTypes.size()) return false;
 
-    const SubMachine owner = m_clipDefinitions[index].subMachine;
+    SubMachine owner = SubMachine::Default;
+    switch (m_definitionTypes[index]) {
+    case DefinitionType::Clip:
+        owner = m_clipDefinitions[index].subMachine;
+        break;
+    case DefinitionType::BlendTree1D:
+        owner = m_blendTree1DDefinitions[index].subMachine;
+        break;
+    default:
+        return false;
+    }
     return owner == SubMachine::Any || owner == m_currentSubMachine;
+}
+
+PlayerAnimationController::DefinitionType PlayerAnimationController::GetDefinitionType(
+    Animation animation) const
+{
+    const size_t index = static_cast<size_t>(animation);
+    if (index >= m_definitionTypes.size()) return DefinitionType::None;
+    return m_definitionTypes[index];
 }
 
 /// @brief 指定されたアニメーションリクエストを受け入れ可能かどうかを判定する
@@ -202,8 +279,11 @@ bool PlayerAnimationController::CanAccept(const Request& request) const
 {
     // 1. 現在のアニメーションがない場合は、どのリクエストも受け入れ可能
     if (!m_hasCurrentRequest) return true;
-    // 2. 同じアニメーションの場合は、restartオプションに従う
-    if (request.animation == m_currentRequest.animation) return request.options.restart;
+    // 2. 同じ1D BlendTreeの場合、再スタートせずParameterを更新するため受け付ける
+    if (request.animation == m_currentRequest.animation) {
+        if (GetDefinitionType(request.animation) == DefinitionType::BlendTree1D) return true;
+        return request.options.restart;
+    }
     // 3. 完了待ちでない場合は
     if (!m_waitingForCompletion) return true;
     // 4. 新しいリクエストが強制割り込みの場合
@@ -218,14 +298,28 @@ bool PlayerAnimationController::CanAccept(const Request& request) const
 void PlayerAnimationController::Apply(const Request& request)
 {
     const size_t index = static_cast<size_t>(request.animation);
-    const int clipIndex = m_clipDefinitions[index].clipIndex;
-
-    m_animationComponent->PlayAnimation(
-        clipIndex,
-        request.options.speed,
-        request.options.loop,
-        request.options.restart,
-        request.options.transitionTime);
+    switch (m_definitionTypes[index]) {
+    case DefinitionType::Clip: {
+        m_animationComponent->PlayAnimation(
+            m_clipDefinitions[index].clipIndex,
+            request.options.speed,
+            request.options.loop,
+            request.options.restart,
+            request.options.transitionTime);
+        break;
+    }
+    case DefinitionType::BlendTree1D: {
+        m_animationComponent->PlayBlendTree1D(
+            m_blendTree1DDefinitions[index].nodes,
+            request.blendTree1DParameter,
+            request.options.speed,
+            request.options.loop,
+            request.options.restart);
+        break;
+    }
+    default:
+        return;
+    }
 
     m_currentRequest = request;
     m_hasCurrentRequest = true;

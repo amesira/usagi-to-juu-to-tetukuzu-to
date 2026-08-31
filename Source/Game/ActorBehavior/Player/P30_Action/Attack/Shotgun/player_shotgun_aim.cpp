@@ -8,6 +8,7 @@
 #include "player_shotgun_aim.h"
 #include "player_shotgun_context.h"
 
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 #include "Engine/Component/transform_component.h"
@@ -37,8 +38,8 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
     if (m_isAiming) return;
     m_isAiming = true;
 
-    // エイムモードのためのカメラエフェクトを設定する
-    SetAimingCameraEffect(context, true);
+    // エイムモードのためのカメラを設定する
+    SetAimingCameraSetting(context, true);
 
     // 移動リクエストを作成する
     if (context.locomotionController) {
@@ -62,7 +63,7 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
 
 void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
 {
-    // 照準UIの更新とか
+    // TODO: 照準UIの更新とか
 
     if (!context.cameraTransform || !context.cameraComponent) {
         m_aimResult = {};
@@ -118,8 +119,8 @@ void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)
     if (!m_isAiming) return;
     m_isAiming = false;
 
-    // エイムモードのカメラエフェクトをリセットする
-    SetAimingCameraEffect(context, false);
+    // エイムモードのカメラ設定をリセットする
+    SetAimingCameraSetting(context, false);
 
     // 移動リクエストをリセットする
     if (context.locomotionController && m_locomotionRequestID != -1) {
@@ -130,8 +131,8 @@ void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)
     context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::AimExit);
 }
 
-/// @brief エイムモードのためのカメラエフェクトを設定する
-void PlayerShotgunAim::SetAimingCameraEffect(PlayerShotgunContext& context, bool enable)
+/// @brief エイムモードのためのカメラを設定する
+void PlayerShotgunAim::SetAimingCameraSetting(PlayerShotgunContext& context, bool enable)
 {
     if (!context.cameraControlBehavior) return;
     if (enable) {
@@ -140,4 +141,32 @@ void PlayerShotgunAim::SetAimingCameraEffect(PlayerShotgunContext& context, bool
     else {
         context.cameraControlBehavior->SetSettingsAsset(context.defaultCameraSettingsAsset);
     }
+}
+
+/// @brief エイム中のアニメーションを更新する
+void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context)
+{
+    float minPitchRate = -0.2f;
+    float thresholdPitchRate = 0.1f;
+    float maxPitchRate = 0.5f;
+
+    float aimBlendParameter = 0.0f;
+    if (m_aimResult.fireDirection.y > thresholdPitchRate) {
+        aimBlendParameter = MiMath::Clamp(
+            (m_aimResult.fireDirection.y - thresholdPitchRate) / (maxPitchRate - thresholdPitchRate),
+            0.0f, 1.0f);
+    }
+    else if (m_aimResult.fireDirection.y < minPitchRate) {
+        aimBlendParameter = MiMath::Clamp(
+            (m_aimResult.fireDirection.y - minPitchRate) / (thresholdPitchRate - minPitchRate),
+            -1.0f, 0.0f);
+    }
+    else {
+        aimBlendParameter = 0.0f;
+    }
+
+    // 1.0fが上向き、-1.0fが下向きのパラメータでAimIdleアニメーションを再生する
+    context.animationController->PlayBlendTree1D(
+        PlayerAnimationController::Animation::AimIdle,
+        aimBlendParameter);
 }

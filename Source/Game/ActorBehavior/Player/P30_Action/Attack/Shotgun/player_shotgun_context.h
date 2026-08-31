@@ -49,6 +49,7 @@ struct PlayerShotgunContext
     const class CameraSettingsAsset* defaultCameraSettingsAsset = nullptr;
     const class CameraSettingsAsset* shotgunCameraSettingsAsset = nullptr;
 
+    class PlayerAnimationController* animationController = nullptr;
     class PlayerLocomotionController* locomotionController = nullptr;
     class PlayerWeaponController* weaponController = nullptr;
 

@@ -48,7 +48,7 @@ void PlayerShotgunCharging::Reset(PlayerShotgunContext& context)
         context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::ResetCharge);
 
         // FOVがデフォルト値になるのを防ぐため、エイムモードのカメラエフェクトを再度有効化する
-        context.aim.SetAimingCameraEffect(context, true);
+        context.aim.SetAimingCameraSetting(context, true);
     }
 }
 

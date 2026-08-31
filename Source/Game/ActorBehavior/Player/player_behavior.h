@@ -9,6 +9,7 @@
 #define PLAYER_BEHAVIOR_H
 
 #include "Engine/Component/behavior_component.h"
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
@@ -37,6 +38,8 @@ private:
     PlayerConditionMachine m_conditionMachine;
     PlayerActionMachine m_actionMachine;
     PlayerWeaponController m_weaponController;
+
+    PlayerAnimationController m_animationController;
 
     PlayerMoveReferences m_moveReferences;
     PlayerMoveSettingsAsset* m_moveSettings;

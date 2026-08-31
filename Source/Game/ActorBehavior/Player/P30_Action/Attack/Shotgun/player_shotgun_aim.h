@@ -37,7 +37,10 @@ public:
 
     const AimResult& GetAimResult() const { return m_aimResult; }
 
-    /// @brief エイムモードのためのカメラエフェクトを設定する
-    void SetAimingCameraEffect(PlayerShotgunContext& context, bool enable);
+    /// @brief エイムモードのためのカメラを設定する
+    void SetAimingCameraSetting(PlayerShotgunContext& context, bool enable);
+
+    /// @brief エイム中のアニメーションを更新する
+    void UpdateAimingAnimation(PlayerShotgunContext& context);
 
 };

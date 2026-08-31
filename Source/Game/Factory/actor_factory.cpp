@@ -70,6 +70,8 @@ GameObject* ActorFactory::CreatePlayer(
     MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_jump_1.anim.fbx");
     MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_jump_2.anim.fbx");
     MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle.anim.fbx");
+    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_lower.anim.fbx");
+    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_upper.anim.fbx");
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();

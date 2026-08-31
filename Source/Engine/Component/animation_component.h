@@ -15,7 +15,7 @@
 
 // アニメーションの状態を表す構造体
 struct AnimationState {
-    int         clipIndex = -1;
+    int     clipIndex = -1;
     float   timer = 0.0f;
     float   speed = 1.0f; // 再生速度の倍率
     bool    loop = true;

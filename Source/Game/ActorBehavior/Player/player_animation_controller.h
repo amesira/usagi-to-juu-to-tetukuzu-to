@@ -2,7 +2,8 @@
 #include <array>
 #include <vector>
 
-class AnimationComponent;
+#include "Engine/Component/animation_component.h"
+
 class PlayerContext;
 
 class PlayerAnimationController {
@@ -49,9 +50,22 @@ public:
     };
 
 private:
+    enum class DefinitionType {
+        None,
+        Clip,
+        BlendTree1D,
+    };
+
     /// @brief アニメーションに対応するアニメーションクリップのインデックスと再生設定を保持する構造体
     struct ClipDefinition {
         int clipIndex = -1;
+        SubMachine subMachine = SubMachine::Default;
+        PlayOptions defaults;
+    };
+
+    /// @brief アニメーションに対応する1D BlendTreeのノードと再生設定を保持する構造体
+    struct BlendTree1DDefinition {
+        std::vector<AnimationBlendTree1DNode> nodes;
         SubMachine subMachine = SubMachine::Default;
         PlayOptions defaults;
     };
@@ -60,12 +74,15 @@ private:
     struct Request {
         Animation animation = Animation::Idle;
         PlayOptions options;
+        float blendTree1DParameter = 0.0f;
         unsigned long long order = 0;
     };
 
     AnimationComponent* m_animationComponent = nullptr;
 
+    std::array<DefinitionType, static_cast<size_t>(Animation::MAX)> m_definitionTypes = {};
     std::array<ClipDefinition, static_cast<size_t>(Animation::MAX)> m_clipDefinitions = {};
+    std::array<BlendTree1DDefinition, static_cast<size_t>(Animation::MAX)> m_blendTree1DDefinitions = {};
     std::vector<Request> m_frameRequests;
 
     SubMachine m_currentSubMachine = SubMachine::Default;
@@ -88,10 +105,18 @@ public:
     void PlayAnimation(Animation animation);
     void PlayAnimation(Animation animation, const PlayOptions& options);
 
+    void PlayBlendTree1D(Animation animation, float parameter);
+    void PlayBlendTree1D(Animation animation, float parameter, const PlayOptions& options);
+
     /// @brief 指定されたアニメーションに対応するアニメーションクリップのインデックスと再生設定を登録する
     void RegisterClip(
         Animation animation,
         int clipIndex,
+        SubMachine subMachine,
+        const PlayOptions& defaults);
+    void RegisterBlendTree1D(
+        Animation animation,
+        std::vector<AnimationBlendTree1DNode> nodes,
         SubMachine subMachine,
         const PlayOptions& defaults);
     void ChangeClip(Animation animation, int clipIndex);
@@ -107,6 +132,7 @@ public:
 
 private:
     const Request* FindHighestPriorityRequest() const;
+    DefinitionType GetDefinitionType(Animation animation) const;
     bool IsAvailableInCurrentSubMachine(Animation animation) const;
 
     /// @brief 指定されたアニメーションリクエストを受け入れ可能かどうかを判定する

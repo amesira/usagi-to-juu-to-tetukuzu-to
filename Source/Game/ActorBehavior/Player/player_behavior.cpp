@@ -44,6 +44,8 @@ void PlayerBehavior::Start()
     m_context.actionMachine = &m_actionMachine;
     m_context.weaponController = &m_weaponController;
 
+    m_context.animationController = &m_animationController;
+
     IScene* scene = owner->GetScene();
     if (!scene) return;
     m_context.scene = scene;
@@ -68,7 +70,7 @@ void PlayerBehavior::Start()
     m_locomotionController.Initialize();
     m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
     m_context.actionMachine->Initialize(m_context, m_input);
-    m_context.animationController.Initialize(m_context);
+    m_context.animationController->Initialize(m_context);
 
     // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
     static PlayerShotgunSettingsAsset defaultShotgunSettings;
@@ -100,7 +102,7 @@ void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
     m_input = UpdateInput();
-    m_context.animationController.BeginFrame();
+    m_context.animationController->BeginFrame();
 
     m_context.conditionMachine->Update(m_context, m_input);
     m_weaponController.Update(m_context, m_input);
@@ -109,7 +111,7 @@ void PlayerBehavior::Update()
     // プレイヤーの移動挙動を更新する
     PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);
     m_context.moveBehavior->UpdateMove(m_context, m_input, intent, deltaTime);
-    m_context.animationController.Update();
+    m_context.animationController->Update();
 }
 
 void PlayerBehavior::DrawComponentInspector()
