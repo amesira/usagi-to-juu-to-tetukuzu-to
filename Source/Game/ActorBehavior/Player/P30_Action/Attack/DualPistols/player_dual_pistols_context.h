@@ -50,6 +50,7 @@ struct PlayerDualPistolsContext {
 
     class TransformComponent* playerTransform = nullptr;
     class ModelComponent* playerModel = nullptr;
+    const struct PlayerRuntimeState* playerRuntimeState = nullptr;
 
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;

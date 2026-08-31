@@ -14,8 +14,8 @@ public:
         Jump,
         Falling,
 
-        Aiming,
-        Firing,
+        ShotgunAiming,
+        DualPistolsRapidFire,
 
         MAX,
     };
@@ -23,6 +23,7 @@ public:
     /// @brief ベースアニメーションへ重ねるアニメーションレイヤー
     enum class AnimationLayer {
         ShotgunAimVertical,
+        DualPistolsRapidFireVertical,
 
         MAX,
     };

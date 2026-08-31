@@ -31,6 +31,7 @@ void PlayerDualPistolsAction::Initialize(
     m_context.settingsAsset = settingsAsset;
 
     m_context.playerTransform = context.transform;
+    m_context.playerRuntimeState = &context.runtimeState;
     GameObject* player = context.owner ? context.owner->GetOwner() : nullptr;
     m_context.playerModel = player ? player->GetComponent<ModelComponent>() : nullptr;
     if (m_context.playerModel) {

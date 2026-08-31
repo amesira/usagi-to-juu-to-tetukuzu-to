@@ -7,6 +7,9 @@
 #include "player_dual_pistols_context.h"
 
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
+
+#include "Utility/mi_math.h"
 
 void PlayerDualPistolsRapidFire::Initialize(PlayerDualPistolsContext& context)
 {
@@ -17,6 +20,10 @@ void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
 {
     m_isActive = true;
     m_fireTimer = 0.0f;
+    m_moveBlendParameter = {};
+    m_moveBlendParameterVelocity = {};
+    m_aimBlendParameter = 0.0f;
+    m_aimBlendParameterVelocity = 0.0f;
 
     // 移動リクエストを作成する
     if (context.locomotionController) {
@@ -74,6 +81,10 @@ void PlayerDualPistolsRapidFire::Reset(PlayerDualPistolsContext& context)
 {
     m_isActive = false;
     m_fireTimer = 0.0f;
+    m_moveBlendParameter = {};
+    m_moveBlendParameterVelocity = {};
+    m_aimBlendParameter = 0.0f;
+    m_aimBlendParameterVelocity = 0.0f;
 }
 
 void PlayerDualPistolsRapidFire::FireVolley(PlayerDualPistolsContext& context)
@@ -99,5 +110,65 @@ void PlayerDualPistolsRapidFire::FireVolley(PlayerDualPistolsContext& context)
 
 void PlayerDualPistolsRapidFire::UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime)
 {
-    context.animationController->PlayAnimation(PlayerAnimationController::Animation::Firing);
+    if (!context.animationController || !context.playerRuntimeState) return;
+    if (!context.playerRuntimeState->m_isGrounded) return;
+
+    const auto& settings = context.settings();
+
+    // プレイヤー基準の移動方向をRapidFire用2D BlendTreeへ滑らかに反映する。
+    const DirectX::XMFLOAT2& targetMoveParameter =
+        context.playerRuntimeState->localMoveParameter;
+    m_moveBlendParameter.x = MiMath::SmoothDamp(
+        m_moveBlendParameter.x,
+        targetMoveParameter.x,
+        m_moveBlendParameterVelocity.x,
+        settings.rapidFireMoveBlendSmoothTime,
+        deltaTime);
+    m_moveBlendParameter.y = MiMath::SmoothDamp(
+        m_moveBlendParameter.y,
+        targetMoveParameter.y,
+        m_moveBlendParameterVelocity.y,
+        settings.rapidFireMoveBlendSmoothTime,
+        deltaTime);
+
+    // 左右のマズル位置には依存させず、キャラクター共通のカメラ照準方向から上下姿勢を決める。
+    const float directionY = context.aim.GetAimResult().cameraRayDirection.y;
+    float targetAimBlendParameter = 0.0f;
+
+    if (directionY < settings.rapidFireAimBlendDownStartDirectionY) {
+        const float downRange =
+            settings.rapidFireAimBlendDownStartDirectionY -
+            settings.rapidFireAimBlendDownFullDirectionY;
+        if (downRange > 0.0f) {
+            targetAimBlendParameter = -MiMath::Clamp(
+                (settings.rapidFireAimBlendDownStartDirectionY - directionY) / downRange,
+                0.0f,
+                1.0f);
+        }
+    }
+    else if (directionY > settings.rapidFireAimBlendUpStartDirectionY) {
+        const float upRange =
+            settings.rapidFireAimBlendUpFullDirectionY -
+            settings.rapidFireAimBlendUpStartDirectionY;
+        if (upRange > 0.0f) {
+            targetAimBlendParameter = MiMath::Clamp(
+                (directionY - settings.rapidFireAimBlendUpStartDirectionY) / upRange,
+                0.0f,
+                1.0f);
+        }
+    }
+
+    m_aimBlendParameter = MiMath::SmoothDamp(
+        m_aimBlendParameter,
+        targetAimBlendParameter,
+        m_aimBlendParameterVelocity,
+        settings.rapidFireAimBlendSmoothTime,
+        deltaTime);
+
+    context.animationController->PlayBlendTree2D(
+        PlayerAnimationController::Animation::DualPistolsRapidFire,
+        m_moveBlendParameter);
+    context.animationController->PlayLayerBlendTree1D(
+        PlayerAnimationController::AnimationLayer::DualPistolsRapidFireVertical,
+        m_aimBlendParameter);
 }

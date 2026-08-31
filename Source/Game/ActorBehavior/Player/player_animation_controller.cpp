@@ -75,6 +75,12 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_back.anim.fbx");
 
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_lower.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_upper.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_forward.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_back.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_right.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_left.anim.fbx");
     }
 
     // 再生設定を定義して、アニメーションクリップを登録
@@ -109,7 +115,7 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         shotgunIdle.transitionTime = 0.15f;
         shotgunIdle.speed = 2.0f;
         RegisterBlendTree2D(
-            Animation::Aiming,
+            Animation::ShotgunAiming,
             {
                 { FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"), { 0.0f, 0.0f } },
                 { FindClipIndex(modelComponent, "player_shotgun_walk_forward.anim.fbx"), { 0.0f, 1.0f } },
@@ -137,10 +143,32 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         dualPistolsRapidFire.priority = static_cast<int>(Priority::Weapon);
         dualPistolsRapidFire.loop = true;
         dualPistolsRapidFire.transitionTime = 0.15f;
-        dualPistolsRapidFire.speed = 5.0f;
-        RegisterClip(Animation::Firing, FindClipIndex(modelComponent, 
-            "player_dual_pistols_rapid_fire.anim.fbx"), 
-            SubMachine::DualPistols, dualPistolsRapidFire);
+        dualPistolsRapidFire.speed = 2.0f;
+        RegisterBlendTree2D(
+            Animation::DualPistolsRapidFire,
+            {
+                { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire.anim.fbx"), { 0.0f, 0.0f } },
+                { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_walk_forward.anim.fbx"), { 0.0f, 1.0f } },
+                { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_walk_back.anim.fbx"), { 0.0f, -1.0f } },
+                { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_walk_right.anim.fbx"), { 1.0f, 0.0f } },
+                { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_walk_left.anim.fbx"), { -1.0f, 0.0f } },
+            },
+            SubMachine::DualPistols,
+            dualPistolsRapidFire);
+
+        if (modelResource) {
+            dualPistolsRapidFire.speed = 3.0f;
+            RegisterLayerBlendTree1D(
+                AnimationLayer::DualPistolsRapidFireVertical,
+                {
+                    { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_lower.anim.fbx"), -1.0f },
+                    { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire.anim.fbx"), 0.0f },
+                    { FindClipIndex(modelComponent, "player_dual_pistols_rapid_fire_upper.anim.fbx"), 1.0f },
+                },
+                CreateUpperBodyMask(*modelResource),
+                SubMachine::DualPistols,
+                dualPistolsRapidFire);
+        }
     }
 }
 

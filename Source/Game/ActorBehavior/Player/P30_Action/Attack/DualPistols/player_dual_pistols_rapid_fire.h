@@ -6,6 +6,7 @@
 // ・二丁拳銃の連射攻撃を制御するクラス
 //---------------------------------------------------
 #pragma once
+#include <DirectXMath.h>
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 struct PlayerDualPistolsContext;
@@ -17,6 +18,11 @@ private:
 
     int m_locomotionRequestID = -1;
     PlayerLocomotionController::LocomotionRequest m_locomotionRequest;
+
+    DirectX::XMFLOAT2 m_moveBlendParameter = {};
+    DirectX::XMFLOAT2 m_moveBlendParameterVelocity = {};
+    float m_aimBlendParameter = 0.0f;
+    float m_aimBlendParameterVelocity = 0.0f;
 
 public:
     void Initialize(PlayerDualPistolsContext& context);

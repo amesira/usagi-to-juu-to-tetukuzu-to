@@ -24,6 +24,14 @@ namespace PlayerDualPistolsSettings {
         float bulletLifetime = 3.0f;
         float bulletSpawnForwardOffset = 0.2f;
 
+        // === Rapid Fire Animation ===
+        float rapidFireAimBlendDownFullDirectionY = -0.5f;
+        float rapidFireAimBlendDownStartDirectionY = -0.2f;
+        float rapidFireAimBlendUpStartDirectionY = 0.1f;
+        float rapidFireAimBlendUpFullDirectionY = 0.5f;
+        float rapidFireMoveBlendSmoothTime = 0.1f;
+        float rapidFireAimBlendSmoothTime = 0.1f;
+
         // === Slash Burst ===
         float fireTime = 0.1f;
         float inputBufferStartTime = 0.1f;
@@ -51,6 +59,26 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 60.0f }),
             MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+
+            MakeHeaderField("Rapid Fire Animation"),
+            MakeField("rapidFireAimBlendDownFullDirectionY", "Aim Blend Down Full Direction Y",
+                &Data::rapidFireAimBlendDownFullDirectionY,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
+            MakeField("rapidFireAimBlendDownStartDirectionY", "Aim Blend Down Start Direction Y",
+                &Data::rapidFireAimBlendDownStartDirectionY,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
+            MakeField("rapidFireAimBlendUpStartDirectionY", "Aim Blend Up Start Direction Y",
+                &Data::rapidFireAimBlendUpStartDirectionY,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
+            MakeField("rapidFireAimBlendUpFullDirectionY", "Aim Blend Up Full Direction Y",
+                &Data::rapidFireAimBlendUpFullDirectionY,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
+            MakeField("rapidFireMoveBlendSmoothTime", "Move Blend Smooth Time",
+                &Data::rapidFireMoveBlendSmoothTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("rapidFireAimBlendSmoothTime", "Aim Blend Smooth Time",
+                &Data::rapidFireAimBlendSmoothTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
 
             MakeHeaderField("Slash Burst"),
             MakeField("fireTime", "Fire Time", &Data::fireTime,

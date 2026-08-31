@@ -207,7 +207,7 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context, floa
 
     // 移動方向の基礎姿勢へ、上半身の上下エイム姿勢を重ねる。
     context.animationController->PlayBlendTree2D(
-        PlayerAnimationController::Animation::Aiming,
+        PlayerAnimationController::Animation::ShotgunAiming,
         m_moveBlendParameter);
     context.animationController->PlayLayerBlendTree1D(
         PlayerAnimationController::AnimationLayer::ShotgunAimVertical,
