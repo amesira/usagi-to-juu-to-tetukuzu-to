@@ -24,39 +24,44 @@ public:
     void Process(IScene* pScene) override;
 
 private:
-    void ProcessSingleClip(
-        class AnimationComponent& animationComponent,
-        class ModelComponent& modelComponent,
+    bool EvaluatePlaybackState(
+        LocalPose& outPose,
+        struct AnimationPlaybackState& playbackState,
         ModelResource& modelResource,
+        const LocalPose& fallbackPose,
         float deltaTime);
 
-    void ProcessTransition(
-        class AnimationComponent& animationComponent,
-        class ModelComponent& modelComponent,
+    bool EvaluateSingleClip(
+        LocalPose& outPose,
+        struct AnimationState& state,
         ModelResource& modelResource,
+        const LocalPose& fallbackPose,
         float deltaTime);
 
-    void ProcessBlendTree1D(
-        class AnimationComponent& animationComponent,
-        class ModelComponent& modelComponent,
+    bool EvaluateTransition(
+        LocalPose& outPose,
+        struct AnimationPlaybackState& playbackState,
         ModelResource& modelResource,
+        const LocalPose& fallbackPose,
         float deltaTime);
 
-    void ProcessBlendTree2D(
-        class AnimationComponent& animationComponent,
-        class ModelComponent& modelComponent,
+    bool EvaluateBlendTree1D(
+        LocalPose& outPose,
+        struct AnimationBlendTree1DState& state,
         ModelResource& modelResource,
+        const LocalPose& fallbackPose,
         float deltaTime);
 
-    void ProcessAnimationLayers(
-        class AnimationComponent& animationComponent,
-        class ModelComponent& modelComponent,
+    bool EvaluateBlendTree2D(
+        LocalPose& outPose,
+        struct AnimationBlendTree2DState& state,
         ModelResource& modelResource,
+        const LocalPose& fallbackPose,
         float deltaTime);
 
     LocalPose SampleLocalPose(
         const AnimationClip& clip,
-        const SkeletonPose& basePose,
+        const LocalPose& fallbackPose,
         float animationTime);
 
     const AnimationClip* ResolveAnimationClip(
@@ -73,7 +78,7 @@ private:
         const LocalPose& layerPose,
         const struct AnimationBoneMask& mask,
         float layerWeight);
-    LocalPose ExtractLocalPose(const SkeletonPose& pose);
+    LocalPose MakeDefaultLocalPose(const SkeletonPose& pose);
     void ApplyLocalPose(SkeletonPose& pose, const LocalPose& localPose);
     void BuildSkeletonMatrices(SkeletonPose& pose, const ModelResource& modelResource);
 

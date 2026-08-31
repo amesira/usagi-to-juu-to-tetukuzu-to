@@ -62,6 +62,21 @@ struct AnimationBlendTree2DState {
     bool finished = false;
 };
 
+enum class AnimationPlaybackType {
+    SingleClip,
+    BlendTree1D,
+    BlendTree2D,
+};
+
+/// @brief 単一Clip・BlendTreeで共通利用する再生状態
+struct AnimationPlaybackState {
+    AnimationPlaybackType playbackType = AnimationPlaybackType::SingleClip;
+    AnimationState singleClipState;
+    AnimationTransition transition;
+    AnimationBlendTree1DState blendTree1DState;
+    AnimationBlendTree2DState blendTree2DState;
+};
+
 /// @brief ボーンごとのレイヤー適用率。0でベース姿勢、1でレイヤー姿勢になる
 struct AnimationBoneMask {
     std::vector<float> boneWeights;
@@ -69,7 +84,7 @@ struct AnimationBoneMask {
 
 /// @brief ベースアニメーションへOverride合成するアニメーションレイヤー
 struct AnimationLayer {
-    AnimationState state;
+    AnimationPlaybackState playbackState;
     AnimationBoneMask mask;
     float weight = 1.0f;
     bool enabled = true;
@@ -77,19 +92,11 @@ struct AnimationLayer {
 
 class AnimationComponent : public Component {
 public:
-    enum class PlaybackType {
-        SingleClip,
-        BlendTree1D,
-        BlendTree2D,
-    };
+    using PlaybackType = AnimationPlaybackType;
 
 private:
-    AnimationState m_currentState; // 現在のアニメーション状態
-    AnimationTransition m_transition;
-    AnimationBlendTree1DState m_blendTree1DState;
-    AnimationBlendTree2DState m_blendTree2DState;
+    AnimationPlaybackState m_playbackState;
     std::vector<AnimationLayer> m_animationLayers;
-    PlaybackType m_playbackType = PlaybackType::SingleClip;
 
 public:
     static constexpr char CLIP_NONE[] = "None";
@@ -143,20 +150,96 @@ public:
         if (layerIndex >= m_animationLayers.size() || clipIndex < 0) return false;
 
         AnimationLayer& layer = m_animationLayers[layerIndex];
+        AnimationPlaybackState& playback = layer.playbackState;
+        AnimationState& state = playback.singleClipState;
         if (!restart &&
             layer.enabled &&
-            layer.state.clipIndex == clipIndex &&
-            !layer.state.finished) {
-            layer.state.speed = speed;
-            layer.state.loop = loop;
+            playback.playbackType == PlaybackType::SingleClip &&
+            state.clipIndex == clipIndex &&
+            !state.finished) {
+            state.speed = speed;
+            state.loop = loop;
             return true;
         }
 
-        layer.state.clipIndex = clipIndex;
-        layer.state.timer = 0.0f;
-        layer.state.speed = speed;
-        layer.state.loop = loop;
-        layer.state.finished = false;
+        playback = {};
+        playback.playbackType = PlaybackType::SingleClip;
+        state = { clipIndex, 0.0f, speed, loop, false };
+        layer.enabled = true;
+        return true;
+    }
+
+    bool PlayLayerBlendTree1D(
+        size_t layerIndex,
+        const std::vector<AnimationBlendTree1DNode>& nodes,
+        float parameter,
+        float speed = 1.0f,
+        bool loop = true,
+        bool restart = false)
+    {
+        if (layerIndex >= m_animationLayers.size() || nodes.empty()) return false;
+
+        std::vector<AnimationBlendTree1DNode> sortedNodes = nodes;
+        SortBlendTree1DNodes(sortedNodes);
+
+        AnimationLayer& layer = m_animationLayers[layerIndex];
+        AnimationPlaybackState& playback = layer.playbackState;
+        AnimationBlendTree1DState& state = playback.blendTree1DState;
+        const bool sameTree =
+            playback.playbackType == PlaybackType::BlendTree1D &&
+            HasSameBlendTreeNodes(state.nodes, sortedNodes);
+
+        if (!restart && sameTree && !state.finished) {
+            state.parameter = parameter;
+            state.speed = speed;
+            state.loop = loop;
+            layer.enabled = true;
+            return true;
+        }
+
+        playback = {};
+        playback.playbackType = PlaybackType::BlendTree1D;
+        state.nodes = std::move(sortedNodes);
+        state.parameter = parameter;
+        state.speed = speed;
+        state.loop = loop;
+        state.finished = false;
+        layer.enabled = true;
+        return true;
+    }
+
+    bool PlayLayerBlendTree2D(
+        size_t layerIndex,
+        const std::vector<AnimationBlendTree2DNode>& nodes,
+        const DirectX::XMFLOAT2& parameter,
+        float speed = 1.0f,
+        bool loop = true,
+        bool restart = false)
+    {
+        if (layerIndex >= m_animationLayers.size() || nodes.empty()) return false;
+
+        AnimationLayer& layer = m_animationLayers[layerIndex];
+        AnimationPlaybackState& playback = layer.playbackState;
+        AnimationBlendTree2DState& state = playback.blendTree2DState;
+        const bool sameTree =
+            playback.playbackType == PlaybackType::BlendTree2D &&
+            HasSameBlendTree2DNodes(state.nodes, nodes);
+
+        if (!restart && sameTree && !state.finished) {
+            state.parameter = parameter;
+            state.speed = speed;
+            state.loop = loop;
+            layer.enabled = true;
+            return true;
+        }
+
+        playback = {};
+        playback.playbackType = PlaybackType::BlendTree2D;
+        state.nodes = nodes;
+        state.parameter = parameter;
+        state.speed = speed;
+        state.loop = loop;
+        state.finished = false;
         layer.enabled = true;
         return true;
     }
@@ -178,7 +261,7 @@ public:
     bool IsLayerAnimationFinished(size_t layerIndex) const
     {
         return layerIndex < m_animationLayers.size() &&
-            m_animationLayers[layerIndex].state.finished;
+            IsPlaybackFinished(m_animationLayers[layerIndex].playbackState);
     }
 
     std::vector<AnimationLayer>& GetAnimationLayers() { return m_animationLayers; }
@@ -192,10 +275,11 @@ public:
         bool restart = false,
         float transitionTime = 0.0f)
     {
+        AnimationState& currentState = m_playbackState.singleClipState;
         if (!restart &&
-            m_playbackType == PlaybackType::SingleClip &&
-            m_currentState.clipIndex == clipIndex &&
-            !m_currentState.finished) return;
+            m_playbackState.playbackType == PlaybackType::SingleClip &&
+            currentState.clipIndex == clipIndex &&
+            !currentState.finished) return;
 
         AnimationState nextState;
         nextState.clipIndex = clipIndex;
@@ -206,22 +290,22 @@ public:
 
         const bool canTransition =
             transitionTime > 0.0f &&
-            m_playbackType == PlaybackType::SingleClip &&
-            m_currentState.clipIndex >= 0;
+            m_playbackState.playbackType == PlaybackType::SingleClip &&
+            currentState.clipIndex >= 0;
 
         if (canTransition) {
             // 遷移中の再要求では、現在の遷移先を次の遷移元として扱う
-            m_transition.sourceState = m_currentState;
-            m_transition.duration = transitionTime;
-            m_transition.timer = 0.0f;
-            m_transition.active = true;
+            m_playbackState.transition.sourceState = currentState;
+            m_playbackState.transition.duration = transitionTime;
+            m_playbackState.transition.timer = 0.0f;
+            m_playbackState.transition.active = true;
         }
         else {
-            m_transition = {};
+            m_playbackState.transition = {};
         }
 
-        m_playbackType = PlaybackType::SingleClip;
-        m_currentState = nextState;
+        m_playbackState.playbackType = PlaybackType::SingleClip;
+        currentState = nextState;
     }
 
     /// @brief 1D BlendTreeを再生する。再生中の同じTreeへはparameterだけを反映する
@@ -235,35 +319,33 @@ public:
         if (nodes.empty()) return;
 
         std::vector<AnimationBlendTree1DNode> sortedNodes = nodes;
-        std::sort(sortedNodes.begin(), sortedNodes.end(),
-            [](const AnimationBlendTree1DNode& lhs, const AnimationBlendTree1DNode& rhs) {
-                return lhs.threshold < rhs.threshold;
-            });
+        SortBlendTree1DNodes(sortedNodes);
 
         const bool sameTree =
-            m_playbackType == PlaybackType::BlendTree1D &&
-            HasSameBlendTreeNodes(sortedNodes);
+            m_playbackState.playbackType == PlaybackType::BlendTree1D &&
+            HasSameBlendTreeNodes(m_playbackState.blendTree1DState.nodes, sortedNodes);
 
-        if (!restart && sameTree && !m_blendTree1DState.finished) {
-            m_blendTree1DState.parameter = parameter;
-            m_blendTree1DState.speed = speed;
-            m_blendTree1DState.loop = loop;
+        AnimationBlendTree1DState& state = m_playbackState.blendTree1DState;
+        if (!restart && sameTree && !state.finished) {
+            state.parameter = parameter;
+            state.speed = speed;
+            state.loop = loop;
             return;
         }
 
-        m_playbackType = PlaybackType::BlendTree1D;
-        m_transition = {};
-        m_blendTree1DState.nodes = std::move(sortedNodes);
-        m_blendTree1DState.parameter = parameter;
-        m_blendTree1DState.normalizedTime = 0.0f;
-        m_blendTree1DState.speed = speed;
-        m_blendTree1DState.loop = loop;
-        m_blendTree1DState.finished = false;
+        m_playbackState.playbackType = PlaybackType::BlendTree1D;
+        m_playbackState.transition = {};
+        state.nodes = std::move(sortedNodes);
+        state.parameter = parameter;
+        state.normalizedTime = 0.0f;
+        state.speed = speed;
+        state.loop = loop;
+        state.finished = false;
     }
 
     void SetBlendTree1DParameter(float parameter) {
-        if (m_playbackType != PlaybackType::BlendTree1D) return;
-        m_blendTree1DState.parameter = parameter;
+        if (m_playbackState.playbackType != PlaybackType::BlendTree1D) return;
+        m_playbackState.blendTree1DState.parameter = parameter;
     }
 
     /// @brief 2D BlendTreeを再生する。同じTreeの再要求ではparameterだけを更新する
@@ -277,29 +359,30 @@ public:
         if (nodes.empty()) return;
 
         const bool sameTree =
-            m_playbackType == PlaybackType::BlendTree2D &&
-            HasSameBlendTree2DNodes(nodes);
+            m_playbackState.playbackType == PlaybackType::BlendTree2D &&
+            HasSameBlendTree2DNodes(m_playbackState.blendTree2DState.nodes, nodes);
 
-        if (!restart && sameTree && !m_blendTree2DState.finished) {
-            m_blendTree2DState.parameter = parameter;
-            m_blendTree2DState.speed = speed;
-            m_blendTree2DState.loop = loop;
+        AnimationBlendTree2DState& state = m_playbackState.blendTree2DState;
+        if (!restart && sameTree && !state.finished) {
+            state.parameter = parameter;
+            state.speed = speed;
+            state.loop = loop;
             return;
         }
 
-        m_playbackType = PlaybackType::BlendTree2D;
-        m_transition = {};
-        m_blendTree2DState.nodes = nodes;
-        m_blendTree2DState.parameter = parameter;
-        m_blendTree2DState.normalizedTime = 0.0f;
-        m_blendTree2DState.speed = speed;
-        m_blendTree2DState.loop = loop;
-        m_blendTree2DState.finished = false;
+        m_playbackState.playbackType = PlaybackType::BlendTree2D;
+        m_playbackState.transition = {};
+        state.nodes = nodes;
+        state.parameter = parameter;
+        state.normalizedTime = 0.0f;
+        state.speed = speed;
+        state.loop = loop;
+        state.finished = false;
     }
 
     void SetBlendTree2DParameter(const DirectX::XMFLOAT2& parameter) {
-        if (m_playbackType != PlaybackType::BlendTree2D) return;
-        m_blendTree2DState.parameter = parameter;
+        if (m_playbackState.playbackType != PlaybackType::BlendTree2D) return;
+        m_playbackState.blendTree2DState.parameter = parameter;
     }
 
     void SetAnimationState(
@@ -309,49 +392,56 @@ public:
     {
         PlayAnimation(clipIndex, speed, true, false, transitionTime);
     }
-    AnimationState& GetAnimationState() { return m_currentState; }
-    const AnimationState& GetAnimationState() const { return m_currentState; }
-    AnimationBlendTree1DState& GetBlendTree1DState() { return m_blendTree1DState; }
-    const AnimationBlendTree1DState& GetBlendTree1DState() const { return m_blendTree1DState; }
-    AnimationBlendTree2DState& GetBlendTree2DState() { return m_blendTree2DState; }
-    const AnimationBlendTree2DState& GetBlendTree2DState() const { return m_blendTree2DState; }
-    PlaybackType GetPlaybackType() const { return m_playbackType; }
-    AnimationTransition& GetTransitionState() { return m_transition; }
-    const AnimationTransition& GetTransitionState() const { return m_transition; }
-    bool IsTransitioning() const { return m_transition.active; }
-    void CompleteTransition() { m_transition = {}; }
+    AnimationPlaybackState& GetPlaybackState() { return m_playbackState; }
+    const AnimationPlaybackState& GetPlaybackState() const { return m_playbackState; }
+    AnimationState& GetAnimationState() { return m_playbackState.singleClipState; }
+    const AnimationState& GetAnimationState() const { return m_playbackState.singleClipState; }
+    AnimationBlendTree1DState& GetBlendTree1DState() { return m_playbackState.blendTree1DState; }
+    const AnimationBlendTree1DState& GetBlendTree1DState() const { return m_playbackState.blendTree1DState; }
+    AnimationBlendTree2DState& GetBlendTree2DState() { return m_playbackState.blendTree2DState; }
+    const AnimationBlendTree2DState& GetBlendTree2DState() const { return m_playbackState.blendTree2DState; }
+    PlaybackType GetPlaybackType() const { return m_playbackState.playbackType; }
+    AnimationTransition& GetTransitionState() { return m_playbackState.transition; }
+    const AnimationTransition& GetTransitionState() const { return m_playbackState.transition; }
+    bool IsTransitioning() const { return m_playbackState.transition.active; }
+    void CompleteTransition() { m_playbackState.transition = {}; }
 
     bool IsFinished() const {
-        if (m_transition.active) return false;
-        if (m_playbackType == PlaybackType::BlendTree1D) {
-            return m_blendTree1DState.finished;
-        }
-        if (m_playbackType == PlaybackType::BlendTree2D) {
-            return m_blendTree2DState.finished;
-        }
-        return m_currentState.finished;
+        return IsPlaybackFinished(m_playbackState);
     }
 
 private:
-    bool HasSameBlendTreeNodes(const std::vector<AnimationBlendTree1DNode>& nodes) const
+    static void SortBlendTree1DNodes(std::vector<AnimationBlendTree1DNode>& nodes)
     {
-        if (m_blendTree1DState.nodes.size() != nodes.size()) return false;
+        std::sort(nodes.begin(), nodes.end(),
+            [](const AnimationBlendTree1DNode& lhs, const AnimationBlendTree1DNode& rhs) {
+                return lhs.threshold < rhs.threshold;
+            });
+    }
+
+    static bool HasSameBlendTreeNodes(
+        const std::vector<AnimationBlendTree1DNode>& currentNodes,
+        const std::vector<AnimationBlendTree1DNode>& nodes)
+    {
+        if (currentNodes.size() != nodes.size()) return false;
 
         for (size_t i = 0; i < nodes.size(); ++i) {
-            if (m_blendTree1DState.nodes[i].clipIndex != nodes[i].clipIndex ||
-                m_blendTree1DState.nodes[i].threshold != nodes[i].threshold) {
+            if (currentNodes[i].clipIndex != nodes[i].clipIndex ||
+                currentNodes[i].threshold != nodes[i].threshold) {
                 return false;
             }
         }
         return true;
     }
 
-    bool HasSameBlendTree2DNodes(const std::vector<AnimationBlendTree2DNode>& nodes) const
+    static bool HasSameBlendTree2DNodes(
+        const std::vector<AnimationBlendTree2DNode>& currentNodes,
+        const std::vector<AnimationBlendTree2DNode>& nodes)
     {
-        if (m_blendTree2DState.nodes.size() != nodes.size()) return false;
+        if (currentNodes.size() != nodes.size()) return false;
 
         for (size_t i = 0; i < nodes.size(); ++i) {
-            const AnimationBlendTree2DNode& current = m_blendTree2DState.nodes[i];
+            const AnimationBlendTree2DNode& current = currentNodes[i];
             if (current.clipIndex != nodes[i].clipIndex ||
                 current.threshold.x != nodes[i].threshold.x ||
                 current.threshold.y != nodes[i].threshold.y) {
@@ -359,6 +449,18 @@ private:
             }
         }
         return true;
+    }
+
+    static bool IsPlaybackFinished(const AnimationPlaybackState& playback)
+    {
+        if (playback.transition.active) return false;
+        if (playback.playbackType == PlaybackType::BlendTree1D) {
+            return playback.blendTree1DState.finished;
+        }
+        if (playback.playbackType == PlaybackType::BlendTree2D) {
+            return playback.blendTree2DState.finished;
+        }
+        return playback.singleClipState.finished;
     }
 
 };

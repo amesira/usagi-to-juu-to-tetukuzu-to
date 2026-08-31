@@ -37,113 +37,154 @@ void AnimationProcessor::Process(IScene* pScene)
         ModelResource* modelResource = modelComponent->GetModelResource();
         if (!modelResource || modelResource->animationClips.empty()) continue;
 
-        // === 再生方法の分岐 ===
-        if (animationComponent.GetPlaybackType() == AnimationComponent::PlaybackType::BlendTree1D) {
-            ProcessBlendTree1D(animationComponent, *modelComponent, *modelResource, deltaTime);
-        }
-        else if (animationComponent.GetPlaybackType() == AnimationComponent::PlaybackType::BlendTree2D) {
-            ProcessBlendTree2D(animationComponent, *modelComponent, *modelResource, deltaTime);
-        }
-        else if (animationComponent.IsTransitioning()) {
-            ProcessTransition(animationComponent, *modelComponent, *modelResource, deltaTime);
-        }
-        else {
-            ProcessSingleClip(animationComponent, *modelComponent, *modelResource, deltaTime);
+        // PlaybackStateを評価して、LocalPoseを計算する
+        LocalPose resultPose = MakeDefaultLocalPose(modelResource->defaultPose);
+        LocalPose evaluatedPose;
+        if (EvaluatePlaybackState(
+            evaluatedPose,
+            animationComponent.GetPlaybackState(),
+            *modelResource,
+            resultPose,
+            deltaTime)) {
+            resultPose = std::move(evaluatedPose);
         }
 
-        ProcessAnimationLayers(
-            animationComponent,
-            *modelComponent,
-            *modelResource,
-            deltaTime);
+        // AnimationLayerを評価して、LocalPoseをブレンドする
+        for (AnimationLayer& layer : animationComponent.GetAnimationLayers()) {
+            if (!layer.enabled || layer.weight <= 0.0f) continue;
+
+            LocalPose layerPose;
+            if (!EvaluatePlaybackState(
+                layerPose,
+                layer.playbackState,
+                *modelResource,
+                resultPose,
+                deltaTime)) {
+                continue;
+            }
+
+            resultPose = BlendLocalPosesMasked(
+                resultPose,
+                layerPose,
+                layer.mask,
+                layer.weight);
+        }
+
+        // LocalPoseをSkeletonPoseに適用して、ボーン行列を計算する
+        SkeletonPose pose = modelResource->defaultPose;
+        ApplyLocalPose(pose, resultPose);
+        BuildSkeletonMatrices(pose, *modelResource);
+        modelComponent->SetSkeletonPose(pose);
     }
 }
 
-/// @brief 単一のアニメーションクリップを再生する
-void AnimationProcessor::ProcessSingleClip(
-    AnimationComponent& animationComponent,
-    ModelComponent& modelComponent,
+#pragma region Animation Evaluation
+bool AnimationProcessor::EvaluatePlaybackState(
+    LocalPose& outPose,
+    AnimationPlaybackState& playbackState,
     ModelResource& modelResource,
+    const LocalPose& fallbackPose,
     float deltaTime)
 {
-    AnimationState& state = animationComponent.GetAnimationState();
+    if (playbackState.transition.active &&
+        playbackState.playbackType == AnimationPlaybackType::SingleClip) {
+        return EvaluateTransition(
+            outPose,
+            playbackState,
+            modelResource,
+            fallbackPose,
+            deltaTime);
+    }
 
-    const AnimationClip* clip = ResolveAnimationClip(state, modelResource);
-    if (!clip) return;
-    const float animationTime = AdvanceAnimationState(state, *clip, deltaTime);
-
-    SkeletonPose pose = modelResource.defaultPose;
-    ApplyLocalPose(pose, SampleLocalPose(*clip, pose, animationTime));
-    BuildSkeletonMatrices(pose, modelResource);
-    modelComponent.SetSkeletonPose(pose);
+    switch (playbackState.playbackType) {
+    case AnimationPlaybackType::SingleClip:
+        return EvaluateSingleClip(
+            outPose,
+            playbackState.singleClipState,
+            modelResource,
+            fallbackPose,
+            deltaTime);
+    case AnimationPlaybackType::BlendTree1D:
+        return EvaluateBlendTree1D(
+            outPose,
+            playbackState.blendTree1DState,
+            modelResource,
+            fallbackPose,
+            deltaTime);
+    case AnimationPlaybackType::BlendTree2D:
+        return EvaluateBlendTree2D(
+            outPose,
+            playbackState.blendTree2DState,
+            modelResource,
+            fallbackPose,
+            deltaTime);
+    default:
+        return false;
+    }
 }
 
-/// @brief 遷移元と遷移先のアニメーション姿勢を時間に応じて補間する
-void AnimationProcessor::ProcessTransition(
-    AnimationComponent& animationComponent,
-    ModelComponent& modelComponent,
+bool AnimationProcessor::EvaluateSingleClip(
+    LocalPose& outPose,
+    AnimationState& state,
     ModelResource& modelResource,
+    const LocalPose& fallbackPose,
     float deltaTime)
 {
-    AnimationTransition& transition = animationComponent.GetTransitionState();
-    AnimationState& destinationState = animationComponent.GetAnimationState();
+    const AnimationClip* clip = ResolveAnimationClip(state, modelResource);
+    if (!clip) return false;
 
-    // 遷移元と遷移先のアニメーションクリップを取得
-    const AnimationClip* sourceClip = ResolveAnimationClip(
-        transition.sourceState,
-        modelResource);
-    const AnimationClip* destinationClip = ResolveAnimationClip(
-        destinationState,
-        modelResource);
+    const float animationTime = AdvanceAnimationState(state, *clip, deltaTime);
+    outPose = SampleLocalPose(*clip, fallbackPose, animationTime);
+    return true;
+}
+
+bool AnimationProcessor::EvaluateTransition(
+    LocalPose& outPose,
+    AnimationPlaybackState& playbackState,
+    ModelResource& modelResource,
+    const LocalPose& fallbackPose,
+    float deltaTime)
+{
+    AnimationTransition& transition = playbackState.transition;
+    AnimationState& destinationState = playbackState.singleClipState;
+    const AnimationClip* sourceClip = ResolveAnimationClip(transition.sourceState, modelResource);
+    const AnimationClip* destinationClip = ResolveAnimationClip(destinationState, modelResource);
 
     if (!sourceClip || !destinationClip || transition.duration <= 0.0f) {
-        animationComponent.CompleteTransition();
-        ProcessSingleClip(animationComponent, modelComponent, modelResource, deltaTime);
-        return;
+        transition = {};
+        return EvaluateSingleClip(
+            outPose,
+            destinationState,
+            modelResource,
+            fallbackPose,
+            deltaTime);
     }
 
     const float sourceTime = AdvanceAnimationState(
-        transition.sourceState,
-        *sourceClip,
-        deltaTime);
+        transition.sourceState, *sourceClip, deltaTime);
     const float destinationTime = AdvanceAnimationState(
-        destinationState,
-        *destinationClip,
-        deltaTime);
+        destinationState, *destinationClip, deltaTime);
 
-    // 遷移の進行度を計算する（なめらかに補間する）
     transition.timer += deltaTime;
-    float weight = MiMath::Clamp(
-        transition.timer / transition.duration,
-        0.0f,
-        1.0f);
+    float weight = MiMath::Clamp(transition.timer / transition.duration, 0.0f, 1.0f);
     weight = weight * weight * (3.0f - 2.0f * weight);
 
-    // ポーズをサンプリングして補間する
-    SkeletonPose pose = modelResource.defaultPose;
-    const LocalPose sourcePose = SampleLocalPose(*sourceClip, pose, sourceTime);
+    const LocalPose sourcePose = SampleLocalPose(*sourceClip, fallbackPose, sourceTime);
     const LocalPose destinationPose = SampleLocalPose(
-        *destinationClip,
-        pose,
-        destinationTime);
-    ApplyLocalPose(pose, BlendLocalPoses(sourcePose, destinationPose, weight));
-    BuildSkeletonMatrices(pose, modelResource);
-    modelComponent.SetSkeletonPose(pose);
+        *destinationClip, fallbackPose, destinationTime);
+    outPose = BlendLocalPoses(sourcePose, destinationPose, weight);
 
-    // 遷移が完了したら、遷移状態をクリアする
-    if (transition.timer >= transition.duration) {
-        animationComponent.CompleteTransition();
-    }
+    if (transition.timer >= transition.duration) transition = {};
+    return true;
 }
 
-/// @brief 1D BlendTreeを再生する
-void AnimationProcessor::ProcessBlendTree1D(
-    AnimationComponent& animationComponent,
-    ModelComponent& modelComponent,
+bool AnimationProcessor::EvaluateBlendTree1D(
+    LocalPose& outPose,
+    AnimationBlendTree1DState& state,
     ModelResource& modelResource,
+    const LocalPose& fallbackPose,
     float deltaTime)
 {
-    AnimationBlendTree1DState& state = animationComponent.GetBlendTree1DState();
 
     // 有効なノードを収集する
     std::vector<const AnimationBlendTree1DNode*> validNodes;
@@ -154,7 +195,7 @@ void AnimationProcessor::ProcessBlendTree1D(
         if (modelResource.animationClips[node.clipIndex].duration <= 0.0f) continue;
         validNodes.push_back(&node);
     }
-    if (validNodes.empty()) return;
+    if (validNodes.empty()) return false;
 
     size_t lowerIndex = 0;
     size_t upperIndex = 0;
@@ -203,31 +244,28 @@ void AnimationProcessor::ProcessBlendTree1D(
         }
     }
 
-    SkeletonPose pose = modelResource.defaultPose;
     const LocalPose lowerPose = SampleLocalPose(
-        lowerClip, pose, normalizedTime * lowerClip.duration);
+        lowerClip, fallbackPose, normalizedTime * lowerClip.duration);
 
     LocalPose resultPose = lowerPose;
     if (lowerIndex != upperIndex) {
         const LocalPose upperPose = SampleLocalPose(
-            upperClip, pose, normalizedTime * upperClip.duration);
+            upperClip, fallbackPose, normalizedTime * upperClip.duration);
         resultPose = BlendLocalPoses(lowerPose, upperPose, blendWeight);
     }
 
-    ApplyLocalPose(pose, resultPose);
-    BuildSkeletonMatrices(pose, modelResource);
-    modelComponent.SetSkeletonPose(pose);
+    outPose = std::move(resultPose);
+    return true;
 }
 
 /// @brief 2Dパラメータに近い最大3ノードを距離加重してBlendTreeを再生する
-void AnimationProcessor::ProcessBlendTree2D(
-    AnimationComponent& animationComponent,
-    ModelComponent& modelComponent,
+bool AnimationProcessor::EvaluateBlendTree2D(
+    LocalPose& outPose,
+    AnimationBlendTree2DState& state,
     ModelResource& modelResource,
+    const LocalPose& fallbackPose,
     float deltaTime)
 {
-    AnimationBlendTree2DState& state = animationComponent.GetBlendTree2DState();
-
     struct WeightedNode {
         const AnimationBlendTree2DNode* node = nullptr;
         float distanceSquared = 0.0f;
@@ -247,7 +285,7 @@ void AnimationProcessor::ProcessBlendTree2D(
         const float deltaY = state.parameter.y - node.threshold.y;
         candidates.push_back({ &node, deltaX * deltaX + deltaY * deltaY, 0.0f });
     }
-    if (candidates.empty()) return;
+    if (candidates.empty()) return false;
 
     std::sort(candidates.begin(), candidates.end(),
         [](const WeightedNode& lhs, const WeightedNode& rhs) {
@@ -266,7 +304,7 @@ void AnimationProcessor::ProcessBlendTree2D(
             candidate.weight = 1.0f / candidate.distanceSquared;
             totalWeight += candidate.weight;
         }
-        if (totalWeight <= 0.0f) return;
+        if (totalWeight <= 0.0f) return false;
         for (WeightedNode& candidate : candidates) {
             candidate.weight /= totalWeight;
         }
@@ -296,13 +334,12 @@ void AnimationProcessor::ProcessBlendTree2D(
         }
     }
 
-    SkeletonPose pose = modelResource.defaultPose;
     float accumulatedWeight = candidates.front().weight;
     const AnimationClip& firstClip =
         modelResource.animationClips[candidates.front().node->clipIndex];
     LocalPose resultPose = SampleLocalPose(
         firstClip,
-        pose,
+        fallbackPose,
         normalizedTime * firstClip.duration);
 
     for (size_t i = 1; i < candidates.size(); ++i) {
@@ -310,7 +347,7 @@ void AnimationProcessor::ProcessBlendTree2D(
             modelResource.animationClips[candidates[i].node->clipIndex];
         const LocalPose nodePose = SampleLocalPose(
             clip,
-            pose,
+            fallbackPose,
             normalizedTime * clip.duration);
 
         const float nextAccumulatedWeight = accumulatedWeight + candidates[i].weight;
@@ -321,50 +358,10 @@ void AnimationProcessor::ProcessBlendTree2D(
         accumulatedWeight = nextAccumulatedWeight;
     }
 
-    ApplyLocalPose(pose, resultPose);
-    BuildSkeletonMatrices(pose, modelResource);
-    modelComponent.SetSkeletonPose(pose);
+    outPose = std::move(resultPose);
+    return true;
 }
-
-/// @brief 有効なレイヤーをリスト順にOverride合成する
-void AnimationProcessor::ProcessAnimationLayers(
-    AnimationComponent& animationComponent,
-    ModelComponent& modelComponent,
-    ModelResource& modelResource,
-    float deltaTime)
-{
-    std::vector<AnimationLayer>& layers = animationComponent.GetAnimationLayers();
-    if (layers.empty()) return;
-
-    SkeletonPose pose = modelComponent.GetSkeletonPose();
-    LocalPose resultPose = ExtractLocalPose(pose);
-    bool appliedLayer = false;
-
-    for (AnimationLayer& layer : layers) {
-        if (!layer.enabled || layer.weight <= 0.0f) continue;
-
-        const AnimationClip* clip = ResolveAnimationClip(layer.state, modelResource);
-        if (!clip) continue;
-
-        const float animationTime = AdvanceAnimationState(layer.state, *clip, deltaTime);
-        const LocalPose layerPose = SampleLocalPose(
-            *clip,
-            modelResource.defaultPose,
-            animationTime);
-        resultPose = BlendLocalPosesMasked(
-            resultPose,
-            layerPose,
-            layer.mask,
-            layer.weight);
-        appliedLayer = true;
-    }
-
-    if (!appliedLayer) return;
-
-    ApplyLocalPose(pose, resultPose);
-    BuildSkeletonMatrices(pose, modelResource);
-    modelComponent.SetSkeletonPose(pose);
-}
+#pragma endregion
 
 /// @brief AnimationStateが参照するクリップを取得する
 const AnimationClip* AnimationProcessor::ResolveAnimationClip(
@@ -406,14 +403,10 @@ float AnimationProcessor::AdvanceAnimationState(
 /// @brief アニメーションクリップから指定された時間のローカルポーズをサンプリングする
 AnimationProcessor::LocalPose AnimationProcessor::SampleLocalPose(
     const AnimationClip& clip,
-    const SkeletonPose& basePose,
+    const LocalPose& fallbackPose,
     float animationTime)
 {
-    LocalPose result{
-        basePose.defaultPositions,
-        basePose.defaultRotations,
-        basePose.defaultScales,
-    };
+    LocalPose result = fallbackPose;
 
     for (const AnimationClip::AnimationChannel& channel : clip.channels) {
         const unsigned int boneIndex = channel.boneIndex;
@@ -491,31 +484,14 @@ AnimationProcessor::LocalPose AnimationProcessor::BlendLocalPosesMasked(
     return result;
 }
 
-/// @brief SkeletonPoseのローカル行列をブレンド可能なTRSへ戻す
-AnimationProcessor::LocalPose AnimationProcessor::ExtractLocalPose(const SkeletonPose& pose)
+/// @brief SkeletonPoseのデフォルトTRSからローカルポーズを作成する
+AnimationProcessor::LocalPose AnimationProcessor::MakeDefaultLocalPose(const SkeletonPose& pose)
 {
-    LocalPose result{
+    return {
         pose.defaultPositions,
         pose.defaultRotations,
         pose.defaultScales,
     };
-    const size_t boneCount = (std::min)(pose.localTransforms.size(), result.positions.size());
-    for (size_t i = 0; i < boneCount; ++i) {
-        XMVECTOR scale;
-        XMVECTOR rotation;
-        XMVECTOR translation;
-        if (!XMMatrixDecompose(
-            &scale,
-            &rotation,
-            &translation,
-            pose.localTransforms[i])) {
-            continue;
-        }
-        XMStoreFloat4(&result.scales[i], scale);
-        XMStoreFloat4(&result.rotations[i], XMQuaternionNormalize(rotation));
-        XMStoreFloat4(&result.positions[i], translation);
-    }
-    return result;
 }
 
 /// @brief ローカルポーズをSkeletonPoseに適用する
