@@ -30,6 +30,9 @@ private:
     int m_locomotionRequestID = -1;
     PlayerLocomotionController::LocomotionRequest m_locomotionRequest;
 
+    DirectX::XMFLOAT2 m_moveBlendParameter = {};
+    DirectX::XMFLOAT2 m_moveBlendParameterVelocity = {};
+
 public:
     void EnterAim(PlayerShotgunContext& context);
     void UpdateAim(PlayerShotgunContext& context, float deltaTime);
@@ -41,6 +44,6 @@ public:
     void SetAimingCameraSetting(PlayerShotgunContext& context, bool enable);
 
     /// @brief エイム中のアニメーションを更新する
-    void UpdateAimingAnimation(PlayerShotgunContext& context);
+    void UpdateAimingAnimation(PlayerShotgunContext& context, float deltaTime);
 
 };

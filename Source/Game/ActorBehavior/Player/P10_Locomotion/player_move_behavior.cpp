@@ -128,40 +128,29 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
     else {
         context.animationController->PlayAnimation(
             MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
-                ? PlayerAnimationController::Animation::Running
-                : PlayerAnimationController::Animation::Idle);
-
-        // エイム中のアニメーションを更新する
-        {
-            XMFLOAT3 playerForward = m_context.transform->GetForward();
-            playerForward.y = 0.0f;
-            playerForward = MiMath::Normalize(playerForward);
-
-            XMFLOAT3 playerRight = m_context.transform->GetRight();
-            playerRight.y = 0.0f;
-            playerRight = MiMath::Normalize(playerRight);
-
-            const float localX = MiMath::Dot(moveIntent.moveDirection, playerRight) * moveIntent.moveInputMagnitude;
-            const float localZ = MiMath::Dot(moveIntent.moveDirection, playerForward) * moveIntent.moveInputMagnitude;
-
-            m_aimBlendParameterX = MiMath::SmoothDamp(
-                m_aimBlendParameterX,
-                localX,
-                m_aimBlendParameterXVelocity,
-                0.1f,
-                deltaTime);
-            m_aimBlendParameterY = MiMath::SmoothDamp(
-                m_aimBlendParameterY,
-                localZ,
-                m_aimBlendParameterYVelocity,
-                0.1f,
-                deltaTime);
-
-            context.animationController->PlayBlendTree2D(
-                PlayerAnimationController::Animation::Aiming,
-                { m_aimBlendParameterX, m_aimBlendParameterY });
-        }
+            ? PlayerAnimationController::Animation::Running
+            : PlayerAnimationController::Animation::Idle);
     }
+
+    // 他のプレイヤー機能から参照する汎用ランタイム状態を更新する。
+    context.runtimeState.m_controlVelocity = m_context.runtimeState.m_controlVelocity;
+    context.runtimeState.m_physicsVelocity = m_context.runtimeState.m_physicsVelocity;
+    context.runtimeState.m_desiredPosition = m_context.runtimeState.m_desiredPosition;
+    context.runtimeState.m_isGrounded = m_context.runtimeState.m_isGrounded;
+
+    XMFLOAT3 playerForward = m_context.transform->GetForward();
+    playerForward.y = 0.0f;
+    playerForward = MiMath::Normalize(playerForward);
+
+    XMFLOAT3 playerRight = m_context.transform->GetRight();
+    playerRight.y = 0.0f;
+    playerRight = MiMath::Normalize(playerRight);
+
+    context.runtimeState.localMoveParameter = {
+        MiMath::Dot(moveIntent.moveDirection, playerRight) * moveIntent.moveInputMagnitude,
+        MiMath::Dot(moveIntent.moveDirection, playerForward) * moveIntent.moveInputMagnitude,
+    };
+
 }
 
 /// @brief 下向きのSphereCastで接地状態を判定する

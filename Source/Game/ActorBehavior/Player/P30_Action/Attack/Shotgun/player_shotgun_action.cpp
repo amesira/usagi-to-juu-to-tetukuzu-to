@@ -29,6 +29,7 @@ void PlayerShotgunAction::Initialize(
     m_context.owner = this;
     m_context.scene = context.scene;
     m_context.playerTransform = context.transform;
+    m_context.playerRuntimeState = &context.runtimeState;
     GameObject* player = context.owner ? context.owner->GetOwner() : nullptr;
     m_context.playerModel = player ? player->GetComponent<ModelComponent>() : nullptr;
     
@@ -88,7 +89,7 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
     m_enteredPhase = false;
 
     m_context.runtimeState.phaseTimer += deltaTime;
-    m_context.aim.UpdateAimingAnimation(m_context);
+    m_context.aim.UpdateAimingAnimation(m_context, deltaTime);
 
     switch (currentPhase) {
         case Phase::Entering: {

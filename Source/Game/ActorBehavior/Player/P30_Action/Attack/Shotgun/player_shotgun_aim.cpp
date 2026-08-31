@@ -9,6 +9,7 @@
 #include "player_shotgun_context.h"
 
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+#include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 #include "Engine/Component/transform_component.h"
@@ -144,8 +145,11 @@ void PlayerShotgunAim::SetAimingCameraSetting(PlayerShotgunContext& context, boo
 }
 
 /// @brief エイム中のアニメーションを更新する
-void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context)
+void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context, float deltaTime)
 {
+    if (!context.animationController || !context.playerRuntimeState) return;
+    if (!context.playerRuntimeState->m_isGrounded) return;
+
     const auto& settings = context.settings();
     const float directionY = m_aimResult.fireDirection.y;
 
@@ -178,10 +182,25 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context)
         }
     }
 
-    if (!context.animationController) return;
+    const DirectX::XMFLOAT2& targetMoveParameter =
+        context.playerRuntimeState->localMoveParameter;
+    m_moveBlendParameter.x = MiMath::SmoothDamp(
+        m_moveBlendParameter.x,
+        targetMoveParameter.x,
+        m_moveBlendParameterVelocity.x,
+        0.1f,
+        deltaTime);
+    m_moveBlendParameter.y = MiMath::SmoothDamp(
+        m_moveBlendParameter.y,
+        targetMoveParameter.y,
+        m_moveBlendParameterVelocity.y,
+        0.1f,
+        deltaTime);
 
-    // 銃を構える基礎姿勢へ、上半身の上下エイム姿勢を重ねる。
-    
+    // 移動方向の基礎姿勢へ、上半身の上下エイム姿勢を重ねる。
+    context.animationController->PlayBlendTree2D(
+        PlayerAnimationController::Animation::Aiming,
+        m_moveBlendParameter);
     context.animationController->PlayLayerBlendTree1D(
         PlayerAnimationController::AnimationLayer::ShotgunAimVertical,
         aimBlendParameter);

@@ -97,11 +97,11 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         jump.interruptible = true;
         m_jumpClips[0] = FindClipIndex(modelComponent, "player_jump_1.anim.fbx");
         m_jumpClips[1] = FindClipIndex(modelComponent, "player_jump_2.anim.fbx");
-        RegisterClip(Animation::Jump, m_jumpClips[0], SubMachine::Any, jump);
+        RegisterClip(Animation::Jump, m_jumpClips[0], SubMachine::Default, jump);
 
         PlayOptions falling;
         falling.priority = static_cast<int>(Priority::Airborne);
-        RegisterClip(Animation::Falling, FindClipIndex(modelComponent, "player_jump_2.anim.fbx"), SubMachine::Any, falling);
+        RegisterClip(Animation::Falling, FindClipIndex(modelComponent, "player_jump_2.anim.fbx"), SubMachine::Default, falling);
 
         PlayOptions shotgunIdle;
         shotgunIdle.priority = static_cast<int>(Priority::Weapon);

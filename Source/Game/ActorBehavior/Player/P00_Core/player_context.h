@@ -13,6 +13,9 @@ struct PlayerRuntimeState {
     DirectX::XMFLOAT3 m_physicsVelocity{ 0.0f, 0.0f, 0.0f };
     DirectX::XMFLOAT3 m_desiredPosition{ 0.0f, 0.0f, 0.0f };
     bool m_isGrounded = false;
+
+    /// @brief プレイヤーの右方向をX、前方向をYとした移動入力
+    DirectX::XMFLOAT2 localMoveParameter{ 0.0f, 0.0f };
 };
 
 /// @brief プレイヤーの状態や設定を管理するコンテキストクラス

@@ -1,5 +1,9 @@
 {
     "data": {
+        "aimBlendDownFullDirectionY": -0.30000001192092896,
+        "aimBlendDownStartDirectionY": -0.10000000149011612,
+        "aimBlendUpFullDirectionY": 0.5,
+        "aimBlendUpStartDirectionY": 0.10000000149011612,
         "aimEnterRadialBlurStrength": 0.4000000059604645,
         "aimExitRadialBlurStrength": 0.30000001192092896,
         "aimJumpPowerMultiplier": 0.800000011920929,
