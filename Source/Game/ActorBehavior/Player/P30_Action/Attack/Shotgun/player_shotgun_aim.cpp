@@ -178,7 +178,12 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context)
         }
     }
 
-    context.animationController->PlayBlendTree1D(
-        PlayerAnimationController::Animation::AimIdle,
+    if (!context.animationController) return;
+
+    // 銃を構える基礎姿勢へ、上半身の上下エイム姿勢を重ねる。
+    context.animationController->PlayAnimation(
+        PlayerAnimationController::Animation::AimIdle);
+    context.animationController->PlayLayerBlendTree1D(
+        PlayerAnimationController::AnimationLayer::ShotgunAimVertical,
         aimBlendParameter);
 }
