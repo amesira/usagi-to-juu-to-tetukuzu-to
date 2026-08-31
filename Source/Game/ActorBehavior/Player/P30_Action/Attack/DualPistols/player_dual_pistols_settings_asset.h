@@ -19,6 +19,8 @@ namespace PlayerDualPistolsSettings {
         // === Aim / Rapid Fire ===
         float aimMaxDistance = 100.0f;
         float rapidFireInterval = 0.1f;
+        float rapidFireMoveSpeedMultiplier = 1.0f;
+        float rapidFireJumpPowerMultiplier = 1.0f;
         float bulletSpeed = 50.0f;
         float bulletRadius = 0.1f;
         float bulletLifetime = 3.0f;
@@ -51,6 +53,12 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
             MakeField("rapidFireInterval", "Rapid Fire Interval", &Data::rapidFireInterval,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 2.0f }),
+            MakeField("rapidFireMoveSpeedMultiplier", "Rapid Fire Move Speed Multiplier",
+                &Data::rapidFireMoveSpeedMultiplier,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 2.0f }),
+            MakeField("rapidFireJumpPowerMultiplier", "Rapid Fire Jump Power Multiplier",
+                &Data::rapidFireJumpPowerMultiplier,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 2.0f }),
             MakeField("bulletSpeed", "Bullet Speed", &Data::bulletSpeed,
                 DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
             MakeField("bulletRadius", "Bullet Radius", &Data::bulletRadius,

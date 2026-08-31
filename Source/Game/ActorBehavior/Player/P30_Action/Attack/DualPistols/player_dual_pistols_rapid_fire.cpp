@@ -31,6 +31,8 @@ void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
             .priority = 10,
             .moveDirSourceInfo = { PlayerLocomotionController::DirectionSource::MoveInput },
             .rotateDirSourceInfo = { PlayerLocomotionController::DirectionSource::CameraForward },
+            .speedMultiplier = context.settings().rapidFireMoveSpeedMultiplier,
+            .jumpPowerMultiplier = context.settings().rapidFireJumpPowerMultiplier,
             .canMove = true,
             .canRotate = true,
             .useGravity = true,
