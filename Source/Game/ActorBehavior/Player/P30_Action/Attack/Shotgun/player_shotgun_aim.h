@@ -30,6 +30,9 @@ private:
     int m_locomotionRequestID = -1;
     PlayerLocomotionController::LocomotionRequest m_locomotionRequest;
 
+    float m_aimBlendParameter = 0.0f;
+    float m_aimBlendParameterVelocity = 0.0f;
+
     DirectX::XMFLOAT2 m_moveBlendParameter = {};
     DirectX::XMFLOAT2 m_moveBlendParameterVelocity = {};
 

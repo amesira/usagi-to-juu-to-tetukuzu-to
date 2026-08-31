@@ -12,6 +12,8 @@
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_types.h"
 
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
+
 #include "Utility/mi_math.h"
 
 namespace {
@@ -31,7 +33,6 @@ void PlayerDualPistolsAim::EnterAim(PlayerDualPistolsContext& context)
 
 void PlayerDualPistolsAim::UpdateAim(PlayerDualPistolsContext& context, float deltaTime)
 {
-    (void)deltaTime;
     m_aimResult = {};
     if (!context.scene || !context.cameraTransform || !context.cameraComponent ||
         !context.playerModel || !context.playerTransform) {
@@ -87,4 +88,5 @@ void PlayerDualPistolsAim::UpdateAim(PlayerDualPistolsContext& context, float de
 
 void PlayerDualPistolsAim::ExitAim(PlayerDualPistolsContext& context)
 {
+
 }

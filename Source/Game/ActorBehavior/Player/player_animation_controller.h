@@ -11,9 +11,11 @@ public:
     enum class Animation {
         Idle,
         Running,
-        Aiming,
         Jump,
         Falling,
+
+        Aiming,
+        Firing,
 
         MAX,
     };
@@ -151,9 +153,9 @@ public:
     void BeginFrame();
     void Update();
 
+    // === アニメーション再生 ===
     void PlayAnimation(Animation animation);
     void PlayAnimation(Animation animation, const PlayOptions& options);
-
     void PlayBlendTree1D(Animation animation, float parameter);
     void PlayBlendTree1D(Animation animation, float parameter, const PlayOptions& options);
     void PlayBlendTree2D(Animation animation, const DirectX::XMFLOAT2& parameter);
@@ -162,6 +164,7 @@ public:
         const DirectX::XMFLOAT2& parameter,
         const PlayOptions& options);
 
+    // === アニメーションレイヤー再生 ===
     void PlayLayerAnimation(AnimationLayer layer, float weight = 1.0f);
     void PlayLayerAnimation(AnimationLayer layer, float weight, const PlayOptions& options);
     void PlayLayerBlendTree1D(AnimationLayer layer, float parameter, float weight = 1.0f);
@@ -227,6 +230,9 @@ public:
     Animation GetCurrentAnimation() const { return m_currentRequest.animation; }
     bool IsWaitingForCompletion() const { return m_waitingForCompletion; }
     SubMachine GetCurrentSubMachine() const { return m_currentSubMachine; }
+
+    PlayOptions GetDefaultPlayOptions(Animation animation) const;
+    PlayOptions GetDefaultPlayOptions(AnimationLayer layer) const;
 
 private:
     const Request* FindHighestPriorityRequest() const;

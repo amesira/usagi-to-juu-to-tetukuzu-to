@@ -48,6 +48,7 @@ void PlayerDualPistolsAction::Initialize(
     m_context.cameraComponent = context.mainCamera;
     m_context.cameraControlBehavior = context.cameraControlBehavior;
 
+    m_context.animationController = context.animationController;
     m_context.locomotionController = context.locomotionController;
     m_context.weaponController = context.weaponController;
 
@@ -71,6 +72,14 @@ bool PlayerDualPistolsAction::IsReleaseAttackInput(const PlayerInput& input) con
 
 void PlayerDualPistolsAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    // アニメーションのサブマシーンを切り替える（切替に失敗した場合は、アクションを終了する）
+    m_enteredAnimationSubMachine = m_context.animationController->EnterSubMachine(
+        PlayerAnimationController::SubMachine::DualPistols);
+    if (!m_enteredAnimationSubMachine) {
+        SetState(ActionState::WaitingToFinish);
+        return;
+    }
+
     m_context.runtimeState.phase = PlayerDualPistolsRuntimeState::Phase::Entering;
     m_context.runtimeState.phaseTimer = 0.0f;
 
@@ -135,9 +144,14 @@ void PlayerDualPistolsAction::Finish(PlayerContext& context, const PlayerInput& 
 {
     m_context.rapidFire.Reset(m_context);
     m_context.slashBurst.Cancel(m_context);
+    m_context.rapidFire.Stop(m_context);
 
     m_context.runtimeState = {};
     m_enteredPhase = false;
+    if (m_enteredAnimationSubMachine) {
+        m_context.animationController->RequestExitSubMachine();
+        m_enteredAnimationSubMachine = false;
+    }
 }
 
 void PlayerDualPistolsAction::ChangePhase(PlayerDualPistolsRuntimeState::Phase newPhase)

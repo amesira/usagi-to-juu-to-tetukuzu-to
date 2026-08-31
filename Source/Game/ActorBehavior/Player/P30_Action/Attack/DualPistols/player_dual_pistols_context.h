@@ -55,6 +55,7 @@ struct PlayerDualPistolsContext {
     class CameraComponent* cameraComponent = nullptr;
     class CameraControlBehavior* cameraControlBehavior = nullptr;
 
+    class PlayerAnimationController* animationController = nullptr;
     class PlayerLocomotionController* locomotionController = nullptr;
     class PlayerWeaponController* weaponController = nullptr;
 

@@ -73,7 +73,8 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_forward.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_right.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_back.anim.fbx");
-        
+
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire.anim.fbx");
     }
 
     // 再生設定を定義して、アニメーションクリップを登録
@@ -131,6 +132,15 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
                 SubMachine::Shotgun,
                 shotgunIdle);
         }
+
+        PlayOptions dualPistolsRapidFire;
+        dualPistolsRapidFire.priority = static_cast<int>(Priority::Weapon);
+        dualPistolsRapidFire.loop = true;
+        dualPistolsRapidFire.transitionTime = 0.15f;
+        dualPistolsRapidFire.speed = 5.0f;
+        RegisterClip(Animation::Firing, FindClipIndex(modelComponent, 
+            "player_dual_pistols_rapid_fire.anim.fbx"), 
+            SubMachine::DualPistols, dualPistolsRapidFire);
     }
 }
 
@@ -470,6 +480,28 @@ void PlayerAnimationController::ForceSetSubMachine(SubMachine subMachine)
     m_waitingForCompletion = false;
 }
 #pragma endregion
+
+/// @brief 指定されたアニメーションのデフォルト再生設定を取得する
+PlayerAnimationController::PlayOptions PlayerAnimationController::GetDefaultPlayOptions(Animation animation) const
+{
+    DefinitionType type = GetDefinitionType(animation);
+
+    switch (type) {
+        case DefinitionType::Clip:
+            return m_clipDefinitions[static_cast<size_t>(animation)].defaults;
+        case DefinitionType::BlendTree1D:
+            return m_blendTree1DDefinitions[static_cast<size_t>(animation)].defaults;
+        case DefinitionType::BlendTree2D:
+            return m_blendTree2DDefinitions[static_cast<size_t>(animation)].defaults;
+        default: 
+            return PlayerAnimationController::PlayOptions{};
+    }
+}
+
+PlayerAnimationController::PlayOptions PlayerAnimationController::GetDefaultPlayOptions(AnimationLayer layer) const
+{
+    return m_layerDefinitions[static_cast<size_t>(layer)].defaults;
+}
 
 /// @brief 現在のフレームで最も優先度の高いアニメーションリクエストを検索する
 const PlayerAnimationController::Request* PlayerAnimationController::FindHighestPriorityRequest() const

@@ -37,4 +37,5 @@ public:
     void ExitAim(PlayerDualPistolsContext& context);
 
     const AimResult& GetAimResult() const { return m_aimResult; }
+
 };

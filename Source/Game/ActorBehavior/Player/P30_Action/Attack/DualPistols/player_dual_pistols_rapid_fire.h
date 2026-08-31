@@ -6,6 +6,7 @@
 // ・二丁拳銃の連射攻撃を制御するクラス
 //---------------------------------------------------
 #pragma once
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 struct PlayerDualPistolsContext;
 
@@ -13,6 +14,9 @@ class PlayerDualPistolsRapidFire {
 private:
     bool m_isActive = false;
     float m_fireTimer = 0.0f;
+
+    int m_locomotionRequestID = -1;
+    PlayerLocomotionController::LocomotionRequest m_locomotionRequest;
 
 public:
     void Initialize(PlayerDualPistolsContext& context);
@@ -26,4 +30,6 @@ public:
 
 private:
     void FireVolley(PlayerDualPistolsContext& context);
+    void UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime);
+
 };

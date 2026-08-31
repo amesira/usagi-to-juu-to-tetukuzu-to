@@ -153,35 +153,7 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context, floa
     const auto& settings = context.settings();
     const float directionY = m_aimResult.fireDirection.y;
 
-    float aimBlendParameter = 0.0f;
-
-    if (directionY < settings.aimBlendDownStartDirectionY) {
-        const float downRange =
-            settings.aimBlendDownStartDirectionY -
-            settings.aimBlendDownFullDirectionY;
-
-        if (downRange > 0.0f) {
-            aimBlendParameter = -MiMath::Clamp(
-                (settings.aimBlendDownStartDirectionY - directionY) /
-                downRange,
-                0.0f,
-                1.0f);
-        }
-    }
-    else if (directionY > settings.aimBlendUpStartDirectionY) {
-        const float upRange =
-            settings.aimBlendUpFullDirectionY -
-            settings.aimBlendUpStartDirectionY;
-
-        if (upRange > 0.0f) {
-            aimBlendParameter = MiMath::Clamp(
-                (directionY - settings.aimBlendUpStartDirectionY) /
-                upRange,
-                0.0f,
-                1.0f);
-        }
-    }
-
+    // エイムモード中の移動方向のBlendTreeパラメータを滑らかに更新する
     const DirectX::XMFLOAT2& targetMoveParameter =
         context.playerRuntimeState->localMoveParameter;
     m_moveBlendParameter.x = MiMath::SmoothDamp(
@@ -197,11 +169,47 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context, floa
         0.1f,
         deltaTime);
 
+    // 上下方向のエイム姿勢をBlendTreeで制御するためのパラメータを計算する
+    float targetAimBlendParameter = 0.0f;
+
+    if (directionY < settings.aimBlendDownStartDirectionY) {
+        const float downRange =
+            settings.aimBlendDownStartDirectionY -
+            settings.aimBlendDownFullDirectionY;
+
+        if (downRange > 0.0f) {
+            targetAimBlendParameter = -MiMath::Clamp(
+                (settings.aimBlendDownStartDirectionY - directionY) /
+                downRange,
+                0.0f,
+                1.0f);
+        }
+    }
+    else if (directionY > settings.aimBlendUpStartDirectionY) {
+        const float upRange =
+            settings.aimBlendUpFullDirectionY -
+            settings.aimBlendUpStartDirectionY;
+
+        if (upRange > 0.0f) {
+            targetAimBlendParameter = MiMath::Clamp(
+                (directionY - settings.aimBlendUpStartDirectionY) /
+                upRange,
+                0.0f,
+                1.0f);
+        }
+    }
+    m_aimBlendParameter = MiMath::SmoothDamp(
+        m_aimBlendParameter,
+        targetAimBlendParameter,
+        m_aimBlendParameterVelocity,
+        0.1f,
+        deltaTime);
+
     // 移動方向の基礎姿勢へ、上半身の上下エイム姿勢を重ねる。
     context.animationController->PlayBlendTree2D(
         PlayerAnimationController::Animation::Aiming,
         m_moveBlendParameter);
     context.animationController->PlayLayerBlendTree1D(
         PlayerAnimationController::AnimationLayer::ShotgunAimVertical,
-        aimBlendParameter);
+        m_aimBlendParameter);
 }

@@ -14,7 +14,7 @@ private:
     PlayerDualPistolsContext m_context;
 
     bool m_enteredPhase = false;
-    bool m_enteredSlashBurstAnimationSubMachine = false;
+    bool m_enteredAnimationSubMachine = false;
 
 public:
     PlayerDualPistolsAction() : PlayerActionBase("DualPistols", ActionCategory::Attack, 10, true) {}
