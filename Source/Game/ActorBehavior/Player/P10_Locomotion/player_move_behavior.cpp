@@ -130,6 +130,37 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
             MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
                 ? PlayerAnimationController::Animation::Running
                 : PlayerAnimationController::Animation::Idle);
+
+        // エイム中のアニメーションを更新する
+        {
+            XMFLOAT3 playerForward = m_context.transform->GetForward();
+            playerForward.y = 0.0f;
+            playerForward = MiMath::Normalize(playerForward);
+
+            XMFLOAT3 playerRight = m_context.transform->GetRight();
+            playerRight.y = 0.0f;
+            playerRight = MiMath::Normalize(playerRight);
+
+            const float localX = MiMath::Dot(moveIntent.moveDirection, playerRight) * moveIntent.moveInputMagnitude;
+            const float localZ = MiMath::Dot(moveIntent.moveDirection, playerForward) * moveIntent.moveInputMagnitude;
+
+            m_aimBlendParameterX = MiMath::SmoothDamp(
+                m_aimBlendParameterX,
+                localX,
+                m_aimBlendParameterXVelocity,
+                0.1f,
+                deltaTime);
+            m_aimBlendParameterY = MiMath::SmoothDamp(
+                m_aimBlendParameterY,
+                localZ,
+                m_aimBlendParameterYVelocity,
+                0.1f,
+                deltaTime);
+
+            context.animationController->PlayBlendTree2D(
+                PlayerAnimationController::Animation::Aiming,
+                { m_aimBlendParameterX, m_aimBlendParameterY });
+        }
     }
 }
 

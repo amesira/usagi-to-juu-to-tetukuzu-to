@@ -10,6 +10,9 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
 
+#include "Engine/engine_service_locator.h"
+#include "Engine/Graphics/model_repository.h"
+
 namespace {
     /// @brief 指定されたModelComponentのアニメーションクリップの中から、指定されたファイル名に一致するクリップのインデックスを検索する
     int FindClipIndex(const ModelComponent* modelComponent, const std::filesystem::path& fileName)
@@ -23,30 +26,16 @@ namespace {
         return it == clips.end() ? -1 : static_cast<int>(std::distance(clips.begin(), it));
     }
 
+    /// @brief 上半身のボーンのみを有効にしたアニメーションマスクを作成する
     AnimationBoneMask CreateUpperBodyMask(const ModelResource& modelResource)
     {
-        constexpr const char* ROOT_BONE_CANDIDATES[] = {
-            "Spine", "spine", "Spine1", "spine.001", "mixamorig:Spine"
+        const std::array<std::string, 3> upperBodyBones = {
+            "Head",
+            "Hand.L",
+            "Hand.R",
         };
-        for (const char* boneName : ROOT_BONE_CANDIDATES) {
-            if (modelResource.boneNameToIndex.contains(boneName)) {
-                return AnimationComponent::CreateBoneMask(modelResource, boneName);
-            }
-        }
 
-        // リグ固有の接頭辞や番号が付いている場合にも、最も基部に近いSpineを採用する。
-        const ModelBone* spineRoot = nullptr;
-        for (const ModelBone& bone : modelResource.bones) {
-            std::string lowerName = bone.name;
-            std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
-                [](unsigned char character) { return static_cast<char>(std::tolower(character)); });
-            if (lowerName.find("spine") == std::string::npos) continue;
-            if (!spineRoot || bone.name.size() < spineRoot->name.size()) spineRoot = &bone;
-        }
-        if (spineRoot) {
-            return AnimationComponent::CreateBoneMask(modelResource, spineRoot->name);
-        }
-        return {};
+        return AnimationComponent::CreateBoneMask(modelResource, std::vector<std::string>(upperBodyBones.begin(), upperBodyBones.end()));
     }
 }
 
@@ -69,6 +58,23 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
     m_waitingForCompletion = false;
     m_requestOrder = 0;
     m_currentSubMachine = SubMachine::Default;
+
+    ModelResource* modelResource = modelComponent ? modelComponent->GetModelResource() : nullptr;
+    if (modelResource) {
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_idle.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_running.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_jump_1.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_jump_2.anim.fbx");
+
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_lower.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_upper.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_left.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_forward.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_right.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_back.anim.fbx");
+        
+    }
 
     // 再生設定を定義して、アニメーションクリップを登録
     {
@@ -100,9 +106,16 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         PlayOptions shotgunIdle;
         shotgunIdle.priority = static_cast<int>(Priority::Weapon);
         shotgunIdle.transitionTime = 0.15f;
-        RegisterClip(
-            Animation::AimIdle,
-            FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"),
+        shotgunIdle.speed = 2.0f;
+        RegisterBlendTree2D(
+            Animation::Aiming,
+            {
+                { FindClipIndex(modelComponent, "player_shotgun_idle.anim.fbx"), { 0.0f, 0.0f } },
+                { FindClipIndex(modelComponent, "player_shotgun_walk_forward.anim.fbx"), { 0.0f, 1.0f } },
+                { FindClipIndex(modelComponent, "player_shotgun_walk_back.anim.fbx"), { 0.0f, -1.0f } },
+                { FindClipIndex(modelComponent, "player_shotgun_walk_right.anim.fbx"), { 1.0f, 0.0f } },
+                { FindClipIndex(modelComponent, "player_shotgun_walk_left.anim.fbx"), { -1.0f, 0.0f } },
+            },
             SubMachine::Shotgun,
             shotgunIdle);
 
@@ -235,7 +248,9 @@ void PlayerAnimationController::PlayBlendTree2D(
     request.order = m_requestOrder++;
     m_frameRequests.push_back(request);
 }
+#pragma endregion
 
+#pragma region アニメーションレイヤー再生
 void PlayerAnimationController::PlayLayerAnimation(AnimationLayer layer, float weight)
 {
     const size_t index = static_cast<size_t>(layer);
@@ -250,7 +265,7 @@ void PlayerAnimationController::PlayLayerAnimation(
 {
     const size_t index = static_cast<size_t>(layer);
     if (index >= m_layerDefinitions.size()) return;
-    if (m_layerDefinitions[index].type != LayerDefinitionType::Clip) return;
+    if (m_layerDefinitions[index].type != DefinitionType::Clip) return;
     if (m_layerDefinitions[index].clipIndex < 0) return;
     m_frameLayerRequests.push_back({ layer, options, 0.0f, {}, weight, m_requestOrder++ });
 }
@@ -273,7 +288,7 @@ void PlayerAnimationController::PlayLayerBlendTree1D(
 {
     const size_t index = static_cast<size_t>(layer);
     if (index >= m_layerDefinitions.size()) return;
-    if (m_layerDefinitions[index].type != LayerDefinitionType::BlendTree1D) return;
+    if (m_layerDefinitions[index].type != DefinitionType::BlendTree1D) return;
     if (m_layerDefinitions[index].blendTree1DNodes.empty()) return;
     m_frameLayerRequests.push_back({ layer, options, parameter, {}, weight, m_requestOrder++ });
 }
@@ -296,7 +311,7 @@ void PlayerAnimationController::PlayLayerBlendTree2D(
 {
     const size_t index = static_cast<size_t>(layer);
     if (index >= m_layerDefinitions.size()) return;
-    if (m_layerDefinitions[index].type != LayerDefinitionType::BlendTree2D) return;
+    if (m_layerDefinitions[index].type != DefinitionType::BlendTree2D) return;
     if (m_layerDefinitions[index].blendTree2DNodes.empty()) return;
     m_frameLayerRequests.push_back({ layer, options, 0.0f, parameter, weight, m_requestOrder++ });
 }
@@ -365,7 +380,7 @@ void PlayerAnimationController::RegisterLayerClip(
     const size_t componentLayerIndex = m_animationComponent->AddAnimationLayer(mask, defaultWeight);
     m_animationComponent->StopAnimationLayer(componentLayerIndex);
     LayerDefinition& definition = m_layerDefinitions[index];
-    definition.type = LayerDefinitionType::Clip;
+    definition.type = DefinitionType::Clip;
     definition.componentLayerIndex = componentLayerIndex;
     definition.clipIndex = clipIndex;
     definition.subMachine = subMachine;
@@ -391,7 +406,7 @@ void PlayerAnimationController::RegisterLayerBlendTree1D(
     const size_t componentLayerIndex = m_animationComponent->AddAnimationLayer(mask, defaultWeight);
     m_animationComponent->StopAnimationLayer(componentLayerIndex);
     LayerDefinition& definition = m_layerDefinitions[index];
-    definition.type = LayerDefinitionType::BlendTree1D;
+    definition.type = DefinitionType::BlendTree1D;
     definition.componentLayerIndex = componentLayerIndex;
     definition.blendTree1DNodes = std::move(nodes);
     definition.subMachine = subMachine;
@@ -413,7 +428,7 @@ void PlayerAnimationController::RegisterLayerBlendTree2D(
     const size_t componentLayerIndex = m_animationComponent->AddAnimationLayer(mask, defaultWeight);
     m_animationComponent->StopAnimationLayer(componentLayerIndex);
     LayerDefinition& definition = m_layerDefinitions[index];
-    definition.type = LayerDefinitionType::BlendTree2D;
+    definition.type = DefinitionType::BlendTree2D;
     definition.componentLayerIndex = componentLayerIndex;
     definition.blendTree2DNodes = std::move(nodes);
     definition.subMachine = subMachine;
@@ -597,7 +612,7 @@ void PlayerAnimationController::UpdateAnimationLayers()
 {
     for (size_t i = 0; i < m_layerDefinitions.size(); ++i) {
         const LayerDefinition& definition = m_layerDefinitions[i];
-        if (definition.type == LayerDefinitionType::None) continue;
+        if (definition.type == DefinitionType::None) continue;
 
         const AnimationLayer layer = static_cast<AnimationLayer>(i);
         const LayerRequest* request = FindHighestPriorityLayerRequest(layer);
@@ -620,18 +635,18 @@ void PlayerAnimationController::ApplyLayer(const LayerRequest& request)
     m_animationComponent->SetAnimationLayerWeight(definition.componentLayerIndex, request.weight);
 
     switch (definition.type) {
-    case LayerDefinitionType::Clip:
+    case DefinitionType::Clip:
         m_animationComponent->PlayLayerAnimation(
             definition.componentLayerIndex, definition.clipIndex,
             request.options.speed, request.options.loop, request.options.restart);
         break;
-    case LayerDefinitionType::BlendTree1D:
+    case DefinitionType::BlendTree1D:
         m_animationComponent->PlayLayerBlendTree1D(
             definition.componentLayerIndex, definition.blendTree1DNodes,
             request.blendTree1DParameter,
             request.options.speed, request.options.loop, request.options.restart);
         break;
-    case LayerDefinitionType::BlendTree2D:
+    case DefinitionType::BlendTree2D:
         m_animationComponent->PlayLayerBlendTree2D(
             definition.componentLayerIndex, definition.blendTree2DNodes,
             request.blendTree2DParameter,

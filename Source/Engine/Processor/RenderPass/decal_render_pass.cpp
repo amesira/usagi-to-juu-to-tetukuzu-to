@@ -25,7 +25,7 @@ void DecalRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     m_pContext = pContext;
 
     // デカール描画用のモデルリソース取得
-    m_decalCubeResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    m_decalCubeResource = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\cube.fbx");
 
     // デカール描画用のシェーダープログラムリソース取得
     ShaderProgramResource decalShader;

@@ -15,6 +15,11 @@ class PlayerMoveBehavior : public BehaviorComponent {
 private:
     PlayerMoveContext m_context;
 
+    float m_aimBlendParameterX = 0.0f; // エイム時のBlendTree2DのパラメータX
+    float m_aimBlendParameterY = 0.0f; // エイム時のBlendTree2DのパラメータY
+    float m_aimBlendParameterXVelocity = 0.0f; // エイム時のBlendTree2DのパラメータXの平滑化速度
+    float m_aimBlendParameterYVelocity = 0.0f; // エイム時のBlendTree2DのパラメータYの平滑化速度
+
 public:
     PlayerMoveBehavior() = default;
     ~PlayerMoveBehavior() = default;

@@ -70,7 +70,7 @@ void OpaqueRenderPass::Process(IScene* pScene, const RenderView& view)
 
             // スキニングメッシュの場合はスキニングCBもバインド
             if (model.vertexType == ModelResource::VertexType::Skinned) {
-                EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+                EngineServiceLocator::ModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
             }
 
             // ジオメトリの描画

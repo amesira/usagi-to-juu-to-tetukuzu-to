@@ -8,12 +8,21 @@
 #pragma once
 #include <DirectXMath.h>
 
+struct PlayerRuntimeState {
+    DirectX::XMFLOAT3 m_controlVelocity{ 0.0f, 0.0f, 0.0f };
+    DirectX::XMFLOAT3 m_physicsVelocity{ 0.0f, 0.0f, 0.0f };
+    DirectX::XMFLOAT3 m_desiredPosition{ 0.0f, 0.0f, 0.0f };
+    bool m_isGrounded = false;
+};
+
 /// @brief プレイヤーの状態や設定を管理するコンテキストクラス
 class PlayerContext {
 public:
     class PlayerBehavior* owner = nullptr;
     class IScene* scene = nullptr;
     class TransformComponent* transform = nullptr;
+
+    PlayerRuntimeState runtimeState;
 
     class PlayerLocomotionController* locomotionController = nullptr;
     class PlayerConditionMachine* conditionMachine = nullptr;

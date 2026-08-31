@@ -277,7 +277,7 @@ void MeshEffectProcessor::Process(IScene* pScene)
         }
 
         TextureRepository* textureRepository = Engine::GetTextureRepository();
-        ModelRepository* modelRepository = Engine::GetModelRepository();
+        ModelRepository* modelRepository = Engine::ModelRepository();
         if (meshEffect.GetTextureResource() == nullptr && textureRepository) {
             std::string texturePath = meshEffect.Renderer().texturePath;
             if (!texturePath.empty()) {

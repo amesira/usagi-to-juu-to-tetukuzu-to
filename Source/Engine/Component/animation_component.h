@@ -130,6 +130,36 @@ public:
         return mask;
     }
 
+    static AnimationBoneMask CreateBoneMask(
+        const ModelResource& modelResource,
+        const std::vector<std::string>& boneNames,
+        float weight = 1.0f)
+    {
+        AnimationBoneMask mask;
+        mask.boneWeights.resize(modelResource.bones.size(), 0.0f);
+
+        weight = std::clamp(weight, 0.0f, 1.0f);
+
+        for (const std::string& boneName : boneNames) {
+            const auto rootIt = modelResource.boneNameToIndex.find(boneName);
+            if (rootIt == modelResource.boneNameToIndex.end()) continue;
+
+            std::vector<unsigned int> pendingBones{ rootIt->second };
+            while (!pendingBones.empty()) {
+                const unsigned int boneIndex = pendingBones.back();
+                pendingBones.pop_back();
+                if (boneIndex >= modelResource.bones.size()) continue;
+                mask.boneWeights[boneIndex] = weight;
+                const ModelBone& bone = modelResource.bones[boneIndex];
+                pendingBones.insert(
+                    pendingBones.end(),
+                    bone.childIndices.begin(),
+                    bone.childIndices.end());
+            }
+        }
+        return mask;
+    }
+
     /// @brief Overrideレイヤーを追加し、そのインデックスを返す
     size_t AddAnimationLayer(const AnimationBoneMask& mask, float weight = 1.0f)
     {

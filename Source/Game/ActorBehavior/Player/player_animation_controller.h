@@ -11,8 +11,7 @@ public:
     enum class Animation {
         Idle,
         Running,
-        AimIdle,
-        AimRunning,
+        Aiming,
         Jump,
         Falling,
 

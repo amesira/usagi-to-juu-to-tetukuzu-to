@@ -26,7 +26,7 @@ public:
     static ResourceManager* GetResourceManager() {
         return s_engineInstance ? &s_engineInstance->GetResourceManager() : nullptr;
     }
-    static ModelRepository* GetModelRepository() {
+    static ModelRepository* ModelRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetModelRepository() : nullptr;
     }
     static TextureRepository* GetTextureRepository() {
@@ -86,7 +86,7 @@ public:
 
 using Engine = EngineServiceLocator;
 
-#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+#define MODEL_REPOSITORY EngineServiceLocator::ModelRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()

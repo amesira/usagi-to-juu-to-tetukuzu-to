@@ -65,16 +65,7 @@ GameObject* ActorFactory::CreatePlayer(
     ModelResource* modelResource = MODEL_REPOSITORY->GetModel("asset/Model/player_model.fbx");
     model->SetModelResource(modelResource);
 
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_idle.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_running.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_jump_1.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_jump_2.anim.fbx");
-
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_lower.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_upper.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_left.anim.fbx");
-    MODEL_REPOSITORY->LoadAnimation(modelResource, "asset/Model/player_shotgun_walk_forward.anim.fbx");
+    // アニメーションの読み込みはPlayerAnimationControllerで行うため、ここではアニメーションの設定は行わない。
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();

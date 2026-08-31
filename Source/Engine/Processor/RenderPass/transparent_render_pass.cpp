@@ -31,7 +31,7 @@ void TransparentRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContex
     m_pContext = pContext;
 
     m_defaultTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\white.bmp");
-    m_defaultModel = Engine::GetModelRepository()->GetModel("asset/Model/cube.fbx");
+    m_defaultModel = Engine::ModelRepository()->GetModel("asset/Model/cube.fbx");
 
     {
         D3D11_BUFFER_DESC bd = {};

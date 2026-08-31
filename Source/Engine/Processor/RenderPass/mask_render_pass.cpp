@@ -114,7 +114,7 @@ void MaskRenderPass::Process(IScene* pScene, const RenderView& view)
             EngineServiceLocator::UpdateTransformCB({ worldMatrix, XMMatrixIdentity() });
 
             if (model.vertexType == ModelResource::VertexType::Skinned) {
-                EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+                EngineServiceLocator::ModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
             }
 
             m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

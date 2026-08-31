@@ -118,7 +118,7 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
 
             // スキニング行列を転送
             if (model.vertexType == ModelResource::VertexType::Skinned) {
-                EngineServiceLocator::GetModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
+                EngineServiceLocator::ModelRepository()->BindSkinningCB(m.GetSkeletonPose().boneTransforms);
             }
 
             // ジオメトリの描画

@@ -14,7 +14,7 @@ void SkyboxPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext
     m_pContext = pContext;
 
     // SkyBox用のモデルリソースをロード
-    m_pSkyboxModel = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\skybox.fbx");
+    m_pSkyboxModel = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\skybox.fbx");
 }
 
 void SkyboxPass::Finalize()

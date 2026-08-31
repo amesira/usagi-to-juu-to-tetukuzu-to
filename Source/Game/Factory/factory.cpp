@@ -23,7 +23,7 @@
 
 #include "Engine/engine_service_locator.h"
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
-#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+#define MODEL_REPOSITORY EngineServiceLocator::ModelRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
@@ -46,7 +46,7 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
         scaling.z * 2.0f
         });
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
 
     auto& materialSlots = modelComp->GetMaterialSlots();
@@ -67,7 +67,7 @@ void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 posit
     // component設定
     transform->SetPosition(position);
     transform->SetScaling(scaling);
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
 }
 
@@ -82,7 +82,7 @@ void Factory::CreateAnimationModel(GameObject* obj, const char* modelPath, XMFLO
     transform->SetPosition(position);
     transform->SetScaling(scaling);
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
 
     const char* clipPath = animationPath != nullptr ? animationPath : modelPath;
@@ -179,7 +179,7 @@ void Factory::CreateField(GameObject* field, DirectX::XMFLOAT3 position, DirectX
         });
 
     // モデルはキューブを使用する
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
 
     // テクスチャ設定
