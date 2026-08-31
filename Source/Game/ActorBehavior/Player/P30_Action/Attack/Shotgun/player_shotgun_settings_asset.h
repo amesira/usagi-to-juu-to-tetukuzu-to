@@ -19,6 +19,12 @@ namespace PlayerShotgunSettings {
         float   aimMoveSpeedMultiplier = 0.7f;   // エイム時の移動速度倍率（0.0f～1.0f）
         float   aimJumpPowerMultiplier = 0.8f;   // エイム時のジャンプ力倍率（0.0f～1.0f）
 
+        // === Shotgun Aim Animation ===
+        float aimBlendDownFullDirectionY = -0.5f;
+        float aimBlendDownStartDirectionY = -0.2f;
+        float aimBlendUpStartDirectionY = 0.1f;
+        float aimBlendUpFullDirectionY = 0.5f;
+
         // === チャージ設定 ===
         float   chargeFOV = 70.0f;           // チャージ時のカメラFOV（度）
         float   chargeStartDelay = 0.1f;     // チャージ開始時の遅延（秒）
@@ -94,6 +100,41 @@ namespace PlayerShotgunSettings {
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.0f,
+                    .maxValue = 1.0f }),
+
+            // === Shotgun Aim Animation Settings ===
+            MakeHeaderField("Shotgun Aim Animation Settings"),
+            MakeField(
+                "aimBlendDownFullDirectionY",
+                "Aim Blend Down Full Direction Y",
+                &Data::aimBlendDownFullDirectionY,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -1.0f,
+                    .maxValue = 1.0f }),
+            MakeField(
+                "aimBlendDownStartDirectionY",
+                "Aim Blend Down Start Direction Y",
+                &Data::aimBlendDownStartDirectionY,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -1.0f,
+                    .maxValue = 1.0f }),
+            MakeField(
+                "aimBlendUpStartDirectionY",
+                "Aim Blend Up Start Direction Y",
+                &Data::aimBlendUpStartDirectionY,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -1.0f,
+                    .maxValue = 1.0f }),
+            MakeField(
+                "aimBlendUpFullDirectionY",
+                "Aim Blend Up Full Direction Y",
+                &Data::aimBlendUpFullDirectionY,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -1.0f,
                     .maxValue = 1.0f }),
 
             // === Shotgun Charge Settings ===

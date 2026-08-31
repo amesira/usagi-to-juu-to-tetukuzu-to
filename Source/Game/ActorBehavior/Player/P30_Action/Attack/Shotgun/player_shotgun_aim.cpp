@@ -146,26 +146,38 @@ void PlayerShotgunAim::SetAimingCameraSetting(PlayerShotgunContext& context, boo
 /// @brief エイム中のアニメーションを更新する
 void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context)
 {
-    float minPitchRate = -0.2f;
-    float thresholdPitchRate = 0.1f;
-    float maxPitchRate = 0.5f;
+    const auto& settings = context.settings();
+    const float directionY = m_aimResult.fireDirection.y;
 
     float aimBlendParameter = 0.0f;
-    if (m_aimResult.fireDirection.y > thresholdPitchRate) {
-        aimBlendParameter = MiMath::Clamp(
-            (m_aimResult.fireDirection.y - thresholdPitchRate) / (maxPitchRate - thresholdPitchRate),
-            0.0f, 1.0f);
+
+    if (directionY < settings.aimBlendDownStartDirectionY) {
+        const float downRange =
+            settings.aimBlendDownStartDirectionY -
+            settings.aimBlendDownFullDirectionY;
+
+        if (downRange > 0.0f) {
+            aimBlendParameter = -MiMath::Clamp(
+                (settings.aimBlendDownStartDirectionY - directionY) /
+                downRange,
+                0.0f,
+                1.0f);
+        }
     }
-    else if (m_aimResult.fireDirection.y < minPitchRate) {
-        aimBlendParameter = MiMath::Clamp(
-            (m_aimResult.fireDirection.y - minPitchRate) / (thresholdPitchRate - minPitchRate),
-            -1.0f, 0.0f);
-    }
-    else {
-        aimBlendParameter = 0.0f;
+    else if (directionY > settings.aimBlendUpStartDirectionY) {
+        const float upRange =
+            settings.aimBlendUpFullDirectionY -
+            settings.aimBlendUpStartDirectionY;
+
+        if (upRange > 0.0f) {
+            aimBlendParameter = MiMath::Clamp(
+                (directionY - settings.aimBlendUpStartDirectionY) /
+                upRange,
+                0.0f,
+                1.0f);
+        }
     }
 
-    // 1.0fが上向き、-1.0fが下向きのパラメータでAimIdleアニメーションを再生する
     context.animationController->PlayBlendTree1D(
         PlayerAnimationController::Animation::AimIdle,
         aimBlendParameter);
