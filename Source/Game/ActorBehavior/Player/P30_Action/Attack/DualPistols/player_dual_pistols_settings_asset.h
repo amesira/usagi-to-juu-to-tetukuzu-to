@@ -6,11 +6,12 @@
 // ・二丁拳銃アクションの設定Asset
 //---------------------------------------------------
 #pragma once
-
+#include <DirectXMath.h>
 #include "Engine/Asset/Schema/field_master.h"
 #include "Engine/Asset/DataAsset/data_asset.h"
 #include "Engine/Asset/DataAsset/data_asset_type_id.h"
 #include "Engine/Editor/Schema/field_editor.h"
+#include "Utility/mi_curve.h"
 
 namespace PlayerDualPistolsSettings {
     struct Data {

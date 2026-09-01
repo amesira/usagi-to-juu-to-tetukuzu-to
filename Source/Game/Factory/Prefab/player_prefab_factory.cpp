@@ -69,14 +69,16 @@ namespace PlayerPrefabFactory
         TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
         PlayerMoveBehavior* playerMoveBehavior = prefab.player->GetComponent<PlayerMoveBehavior>();
 
-        PlayerMoveReferences moveReferences;
+        PlayerMoveReferences moveReferences = {};
         PlayerMoveSettingsAsset* moveSettingsAsset = DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>(
             "asset/Data/player_move_settings.data.json",
             true);
 
-        PlayerShotgunReferences shotgunReferences;
         PlayerShotgunSettingsAsset* shotgunSettingsAsset = DATA_LOADER->GetAsset<PlayerShotgunSettingsAsset>(
             "asset/Data/player_shotgun_settings.data.json",
+            true);
+        PlayerDualPistolsSettingsAsset* dualPistolsSettingsAsset = DATA_LOADER->GetAsset<PlayerDualPistolsSettingsAsset>(
+            "asset/Data/player_dual_pistols_settings.data.json",
             true);
         CameraSettingsAsset* shotgunCameraSettingsAsset = DATA_LOADER->GetAsset<CameraSettingsAsset>(
             "asset/Data/camera_settings_shotgun.data.json",
@@ -99,9 +101,10 @@ namespace PlayerPrefabFactory
         {
             playerBehavior->SetupPlayerMove(moveReferences, moveSettingsAsset);
             playerBehavior->SetupPlayerShotgun(
-                shotgunReferences,
                 shotgunSettingsAsset,
                 shotgunCameraSettingsAsset);
+            playerBehavior->SetupPlayerDualPistols(
+                dualPistolsSettingsAsset);
         }
         return prefab;
     }

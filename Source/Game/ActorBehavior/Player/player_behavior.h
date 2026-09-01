@@ -48,11 +48,9 @@ private:
     PlayerDualPistolsAction m_dualPistolsAction;
     PlayerShotgunAction m_shotgunAction;
 
-    PlayerDualPistolsReferences m_dualPistolsReferences;
     PlayerDualPistolsSettingsAsset* m_dualPistolsSettings = nullptr;
-
-    PlayerShotgunReferences m_shotgunReferences;
     PlayerShotgunSettingsAsset* m_shotgunSettings = nullptr;
+
     const class CameraSettingsAsset* m_shotgunCameraSettings = nullptr;
 
 public:
@@ -68,18 +66,14 @@ public:
     }
 
     void SetupPlayerShotgun(
-        PlayerShotgunReferences references,
         PlayerShotgunSettingsAsset* settings,
         const CameraSettingsAsset* cameraSettings) {
-        m_shotgunReferences = references;
         m_shotgunSettings = settings;
         m_shotgunCameraSettings = cameraSettings;
     }
 
     void SetupPlayerDualPistols(
-        PlayerDualPistolsReferences references,
         PlayerDualPistolsSettingsAsset* settings) {
-        m_dualPistolsReferences = references;
         m_dualPistolsSettings = settings;
     }
 

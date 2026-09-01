@@ -1,0 +1,27 @@
+{
+    "data": {
+        "aimMaxDistance": 100.0,
+        "bulletLifetime": 3.0,
+        "bulletRadius": 0.10000000149011612,
+        "bulletSpawnForwardOffset": 0.20000000298023224,
+        "bulletSpeed": 50.0,
+        "chainTime": 0.10000000149011612,
+        "endTime": 0.5,
+        "fireTime": 0.10000000149011612,
+        "inputBufferStartTime": 0.10000000149011612,
+        "rapidFireAimBlendDownFullDirectionY": -0.5,
+        "rapidFireAimBlendDownStartDirectionY": -0.20000000298023224,
+        "rapidFireAimBlendSmoothTime": 0.10000000149011612,
+        "rapidFireAimBlendUpFullDirectionY": 0.5,
+        "rapidFireAimBlendUpStartDirectionY": 0.10000000149011612,
+        "rapidFireInterval": 0.10000000149011612,
+        "rapidFireJumpPowerMultiplier": 1.0,
+        "rapidFireMoveBlendSmoothTime": 0.10000000149011612,
+        "rapidFireMoveSpeedMultiplier": 1.0,
+        "startRapidFireDelay": 0.10000000149011612,
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "",
+    "type": "PlayerDualPistolsSettingsAsset"
+}
