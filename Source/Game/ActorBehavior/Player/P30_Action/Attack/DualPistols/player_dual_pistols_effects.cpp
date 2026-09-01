@@ -23,7 +23,20 @@ namespace {
     const std::filesystem::path MUZZLE_FLASH_EFFECT_ASSET =
         "asset/MeshEffect/player_muzzle_flash_effect.mesh_effect.json";
     const std::filesystem::path SLASH_BURST_EFFECT_ASSETS = 
-        "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json";
+        "asset/MeshEffect/player_slash_burst_test_effect.mesh_effect.json";
+
+    DirectX::XMFLOAT4 EulerToQuaternion(const DirectX::XMFLOAT3& rotation)
+    {
+        DirectX::XMFLOAT4 quaternion;
+        DirectX::XMStoreFloat4(
+            &quaternion,
+            DirectX::XMQuaternionNormalize(
+                DirectX::XMQuaternionRotationRollPitchYaw(
+                    rotation.x,
+                    rotation.y,
+                    rotation.z)));
+        return quaternion;
+    }
 }
 
 void PlayerDualPistolsEffects::Initialize(PlayerDualPistolsContext& context)
@@ -36,53 +49,66 @@ void PlayerDualPistolsEffects::Initialize(PlayerDualPistolsContext& context)
         SLASH_BURST_EFFECT_ASSETS,
         EffectAttachmentDesc{
             .target = context.playerTransform,
-            .localTransform = {
-                .position = { 0.0f, 0.0f, 0.0f },
-                .scaling = { 1.0f, 1.0f, 1.0f },
-            },
         });
     m_slashBurstEffect2 = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
         SLASH_BURST_EFFECT_ASSETS,
         EffectAttachmentDesc{
             .target = context.playerTransform,
-            .localTransform = {
-                .position = { 0.0f, 0.0f, 0.0f },
-                .scaling = { 1.0f, 1.0f, 1.0f },
-            },
         });
     m_slashBurstEffect3[0] = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
         SLASH_BURST_EFFECT_ASSETS,
         EffectAttachmentDesc{
             .target = context.playerTransform,
-            .localTransform = {
-                .position = { 0.0f, 0.0f, 0.0f },
-                .scaling = { 1.0f, 1.0f, 1.0f },
-            },
         });
     m_slashBurstEffect3[1] = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
         SLASH_BURST_EFFECT_ASSETS,
         EffectAttachmentDesc{
             .target = context.playerTransform,
-            .localTransform = {
-                .position = { 0.0f, 0.0f, 0.0f },
-                .scaling = { 1.0f, 1.0f, 1.0f },
-            },
         });
+
+    ApplySlashBurstEffectTransforms(context);
 }
 
 void PlayerDualPistolsEffects::Update(PlayerDualPistolsContext& context)
 {
     if (!m_initialized) return;
 
-    // === デバッグ用：Revision Counterが変化した場合、エフェクトの位置を更新する ===
-    if (m_settingsRevisionCounter != context.settingsAsset->GetRevision()) {
-        m_settingsRevisionCounter = context.settingsAsset->GetRevision();
+    // エディター上で変更されたSettingsAssetの値も再生中に反映する。
+    ApplySlashBurstEffectTransforms(context);
+}
 
-        
-    }
+void PlayerDualPistolsEffects::ApplySlashBurstEffectTransforms(PlayerDualPistolsContext& context)
+{
+    const auto& settings = context.settings();
+    const DirectX::XMFLOAT3 commonScaling{
+        settings.slashBurstEffectScale,
+        settings.slashBurstEffectScale,
+        settings.slashBurstEffectScale,
+    };
+
+    m_slashBurstEffect1.SetLocalTransform({
+        .position = settings.slashBurst1EffectPosition,
+        .rotation = EulerToQuaternion(settings.slashBurst1EffectRotation),
+        .scaling = commonScaling,
+    });
+    m_slashBurstEffect2.SetLocalTransform({
+        .position = settings.slashBurst2EffectPosition,
+        .rotation = EulerToQuaternion(settings.slashBurst2EffectRotation),
+        .scaling = commonScaling,
+    });
+    m_slashBurstEffect3[0].SetLocalTransform({
+        .position = settings.slashBurst3LeftEffectPosition,
+        .rotation = EulerToQuaternion(settings.slashBurst3LeftEffectRotation),
+        .scaling = commonScaling,
+    });
+    m_slashBurstEffect3[1].SetLocalTransform({
+        .position = settings.slashBurst3RightEffectPosition,
+        .rotation = EulerToQuaternion(settings.slashBurst3RightEffectRotation),
+        .scaling = commonScaling,
+    });
 }
 
 void PlayerDualPistolsEffects::Finalize()

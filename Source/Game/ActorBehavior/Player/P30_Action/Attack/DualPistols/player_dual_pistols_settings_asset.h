@@ -37,6 +37,17 @@ namespace PlayerDualPistolsSettings {
         float chainTime = 0.1f;
         float endTime = 0.5f;
 
+        // === Slash Burst Effects ===
+        DirectX::XMFLOAT3 slashBurst1EffectPosition{};
+        DirectX::XMFLOAT3 slashBurst1EffectRotation{};
+        DirectX::XMFLOAT3 slashBurst2EffectPosition{};
+        DirectX::XMFLOAT3 slashBurst2EffectRotation{};
+        DirectX::XMFLOAT3 slashBurst3LeftEffectPosition{};
+        DirectX::XMFLOAT3 slashBurst3LeftEffectRotation{};
+        DirectX::XMFLOAT3 slashBurst3RightEffectPosition{};
+        DirectX::XMFLOAT3 slashBurst3RightEffectRotation{};
+        float slashBurstEffectScale = 1.0f;
+
         // === Slash Burst Movement ===
         float stepMoveDuration = 0.2f;
         float stepMoveDistance = 1.0f;
@@ -100,7 +111,28 @@ namespace PlayerDualPistolsSettings {
             MakeField("endTime", "End Time", &Data::endTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
 
-                // === Slash Burst Movement ===
+            // === Slash Burst Effects ===
+            MakeHeaderField("Slash Burst Effects"),
+            MakeField("slashBurst1EffectPosition", "Slash Burst 1 Position", &Data::slashBurst1EffectPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
+            MakeField("slashBurst1EffectRotation", "Slash Burst 1 Rotation", &Data::slashBurst1EffectRotation,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -6.283185f, .maxValue = 6.283185f }),
+            MakeField("slashBurst2EffectPosition", "Slash Burst 2 Position", &Data::slashBurst2EffectPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
+            MakeField("slashBurst2EffectRotation", "Slash Burst 2 Rotation", &Data::slashBurst2EffectRotation,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -6.283185f, .maxValue = 6.283185f }),
+            MakeField("slashBurst3LeftEffectPosition", "Slash Burst 3 Left Position", &Data::slashBurst3LeftEffectPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
+            MakeField("slashBurst3LeftEffectRotation", "Slash Burst 3 Left Rotation", &Data::slashBurst3LeftEffectRotation,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -6.283185f, .maxValue = 6.283185f }),
+            MakeField("slashBurst3RightEffectPosition", "Slash Burst 3 Right Position", &Data::slashBurst3RightEffectPosition,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
+            MakeField("slashBurst3RightEffectRotation", "Slash Burst 3 Right Rotation", &Data::slashBurst3RightEffectRotation,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -6.283185f, .maxValue = 6.283185f }),
+            MakeField("slashBurstEffectScale", "Slash Burst Effect Scale", &Data::slashBurstEffectScale,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 20.0f }),
+
+            // === Slash Burst Movement ===
             MakeHeaderField("Slash Burst Movement"),
             MakeField("stepMoveDuration", "Step Move Duration", &Data::stepMoveDuration,
                  DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),

@@ -23,8 +23,6 @@ public:
     };
 
 private:
-    int m_settingsRevisionCounter = -1;
-
     std::vector<EffectHandle> m_muzzleFlashEffects;
     AttachedEffectHandle m_slashBurstEffect1;
     AttachedEffectHandle m_slashBurstEffect2;
@@ -39,6 +37,7 @@ public:
     void PlayEffects(PlayerDualPistolsContext& context, EffectsType effectType);
 
 private:
+    void ApplySlashBurstEffectTransforms(PlayerDualPistolsContext& context);
     void PlayMuzzleFlashEffect(PlayerDualPistolsContext& context, int pistolIndex);
 
 };

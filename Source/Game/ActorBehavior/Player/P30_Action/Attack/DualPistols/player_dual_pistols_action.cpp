@@ -90,6 +90,7 @@ void PlayerDualPistolsAction::Start(PlayerContext& context, const PlayerInput& i
 void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
     UpdateMuzzleStates();
+    m_context.effects.Update(m_context);
 
     Phase currentPhase = m_context.runtimeState.phase;
     bool enteredPhase = m_enteredPhase;
