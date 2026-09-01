@@ -150,8 +150,11 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     GameObject* bullet = scene->CreateGameObject();
     bullet->SetName("Bullet");
     bullet->SetRenderLayer(RenderLayer::Bullet);
+    if (!bullet) return nullptr;
 
     TransformComponent* transform = bullet->AddComponent<TransformComponent>();
+    if (!transform) return nullptr;
+
     ModelComponent* modelComponent = bullet->AddComponent<ModelComponent>();
     ParticleSystemComponent* particleSystem = bullet->AddComponent<ParticleSystemComponent>();
 

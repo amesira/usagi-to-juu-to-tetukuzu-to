@@ -75,14 +75,14 @@
         },
         "renderer": {
             "billboardMode": "None",
-            "blendMode": "Additive",
+            "blendMode": "AlphaBlend",
             "color": [
                 0.0,
                 0.9268293380737305,
                 1.0,
                 1.0
             ],
-            "intensity": 3.0,
+            "intensity": 1.0,
             "modelPath": "asset/Model/EffectModel/slash.fbx",
             "samplerMode": "Clamp",
             "textureMappingMode": "MeshUV",

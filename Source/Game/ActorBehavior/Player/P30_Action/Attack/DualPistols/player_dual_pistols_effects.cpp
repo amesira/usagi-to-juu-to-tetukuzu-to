@@ -23,7 +23,7 @@ namespace {
     const std::filesystem::path MUZZLE_FLASH_EFFECT_ASSET =
         "asset/MeshEffect/player_muzzle_flash_effect.mesh_effect.json";
     const std::filesystem::path SLASH_BURST_EFFECT_ASSETS = 
-        "asset/MeshEffect/player_slash_burst_test_effect.mesh_effect.json";
+        "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json";
 
     DirectX::XMFLOAT4 EulerToQuaternion(const DirectX::XMFLOAT3& rotation)
     {
@@ -32,9 +32,9 @@ namespace {
             &quaternion,
             DirectX::XMQuaternionNormalize(
                 DirectX::XMQuaternionRotationRollPitchYaw(
-                    rotation.x,
-                    rotation.y,
-                    rotation.z)));
+                    DirectX::XMConvertToRadians(rotation.x),
+                    DirectX::XMConvertToRadians(rotation.y),
+                    DirectX::XMConvertToRadians(rotation.z))));
         return quaternion;
     }
 }

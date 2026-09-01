@@ -7,8 +7,8 @@
         "bulletSpeed": 60.0,
         "chainTime": 0.20000000298023224,
         "endTime": 0.5,
-        "finalStepMoveDistance": 0.0,
-        "finalStepMoveDuration": 0.4000000059604645,
+        "finalStepMoveDistance": 6.0,
+        "finalStepMoveDuration": 0.30000001192092896,
         "fireTime": 0.10000000149011612,
         "inputBufferStartTime": 0.15000000596046448,
         "rapidFireAimBlendDownFullDirectionY": -0.5,
@@ -21,48 +21,48 @@
         "slashBurst1EffectPosition": [
             0.0,
             1.0,
-            0.0
+            0.5
         ],
         "slashBurst1EffectRotation": [
-            90.0,
             0.0,
-            45.0
+            135.0,
+            135.0
         ],
         "slashBurst2EffectPosition": [
             0.0,
-            0.0,
-            0.0
+            1.0,
+            0.5
         ],
         "slashBurst2EffectRotation": [
             0.0,
-            0.0,
-            0.0
+            225.0,
+            45.0
         ],
         "slashBurst3LeftEffectPosition": [
             0.0,
-            0.0,
+            1.0,
             0.0
         ],
         "slashBurst3LeftEffectRotation": [
-            0.0,
-            0.0,
-            0.0
+            15.0,
+            45.0,
+            180.0
         ],
         "slashBurst3RightEffectPosition": [
             0.0,
-            0.0,
+            1.0,
             0.0
         ],
         "slashBurst3RightEffectRotation": [
-            0.0,
-            0.0,
-            0.0
+            -15.0,
+            -135.0,
+            180.0
         ],
-        "slashBurstEffectScale": 1.0,
+        "slashBurstEffectScale": 2.5,
         "slashBurstFireDuration": 0.25,
         "slashBurstFireInterval": 0.05000000074505806,
         "startRapidFireDelay": 0.10000000149011612,
-        "stepMoveDistance": 0.0,
+        "stepMoveDistance": 3.0,
         "stepMoveDuration": 0.20000000298023224,
         "this_is_header_field": null
     },
