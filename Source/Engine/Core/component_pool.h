@@ -49,6 +49,16 @@ public:
         if (gameObjectID >= m_gameObjectIDsToComponents.size()) {
             return nullptr;
         }
+
+        // 1つのGameObjectに同じ型のComponentを複数追加することは禁止する。
+        // 重複を許すとIDからComponentへのマッピングが後から追加した要素で
+        // 上書きされ、削除時に片方だけがPoolへ残る原因になる。
+        const unsigned int existingIndex = m_gameObjectIDsToComponents[gameObjectID];
+        if (existingIndex != UINT_FAST16_MAX) {
+            assert(false && "A component of the same type already exists on this GameObject.");
+            return nullptr;
+        }
+
         assert(m_components.size() < COMPONENTS_MAX && "ComponentPool has reached its maximum capacity.");
         
         // 空きスロットがあればそこを利用
@@ -72,6 +82,10 @@ public:
     // ComponentPoolからComponentを削除
     // ・gameObjectID: 削除するComponentを所有するGameObjectのID
     void    Remove(unsigned int gameObjectID) override {
+        if (gameObjectID >= m_gameObjectIDsToComponents.size()) {
+            return;
+        }
+
         for (int i = 0; i < m_components.size(); i++) {
             unsigned int id = m_gameObjectIDs[i];
             // 指定されたGameObjectIDと一致したら削除
