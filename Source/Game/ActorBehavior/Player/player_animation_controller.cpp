@@ -81,6 +81,10 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_back.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_right.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_rapid_fire_walk_left.anim.fbx");
+
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_slash_burst_1.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_slash_burst_2.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dual_pistols_slash_burst_3.anim.fbx");
     }
 
     // 再生設定を定義して、アニメーションクリップを登録
@@ -169,6 +173,22 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
                 SubMachine::DualPistols,
                 dualPistolsRapidFire);
         }
+
+        PlayOptions dualPistolsSlashBurst;
+        dualPistolsSlashBurst.priority = static_cast<int>(Priority::Weapon);
+        dualPistolsSlashBurst.loop = false;
+        dualPistolsSlashBurst.transitionTime = 0.05f;
+        dualPistolsSlashBurst.speed = 2.5f;
+        RegisterClip(Animation::DualPistolsSlashBurst1, 
+            FindClipIndex(modelComponent, "player_dual_pistols_slash_burst_1.anim.fbx"), 
+            SubMachine::DualPistols, dualPistolsSlashBurst);
+        RegisterClip(Animation::DualPistolsSlashBurst2, 
+            FindClipIndex(modelComponent, "player_dual_pistols_slash_burst_2.anim.fbx"), 
+            SubMachine::DualPistols, dualPistolsSlashBurst);
+        dualPistolsSlashBurst.speed = 1.5f;
+        RegisterClip(Animation::DualPistolsSlashBurst3, 
+            FindClipIndex(modelComponent, "player_dual_pistols_slash_burst_3.anim.fbx"), 
+            SubMachine::DualPistols, dualPistolsSlashBurst);
     }
 }
 

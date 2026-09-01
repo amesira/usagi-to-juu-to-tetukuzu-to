@@ -16,6 +16,8 @@ private:
     bool m_isActive = false;
     float m_fireTimer = 0.0f;
 
+    int m_fireFlipFlop = 0; // 0: 左ピストル, 1: 右ピストル
+
     int m_locomotionRequestID = -1;
     PlayerLocomotionController::LocomotionRequest m_locomotionRequest;
 
@@ -36,6 +38,9 @@ public:
 
 private:
     void FireVolley(PlayerDualPistolsContext& context);
+    void FireLeftPistol(PlayerDualPistolsContext& context);
+    void FireRightPistol(PlayerDualPistolsContext& context);
+
     void UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime);
 
 };

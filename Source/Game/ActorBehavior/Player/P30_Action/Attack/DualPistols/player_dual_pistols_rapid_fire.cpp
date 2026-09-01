@@ -24,6 +24,7 @@ void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
     m_moveBlendParameterVelocity = {};
     m_aimBlendParameter = 0.0f;
     m_aimBlendParameterVelocity = 0.0f;
+    m_fireFlipFlop = 0;
 
     // 移動リクエストを作成する
     if (context.locomotionController) {
@@ -44,7 +45,7 @@ void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
 
     // 最初の発射時にエイムを更新して、正しい方向で発射する
     context.aim.UpdateAim(context, 0.0f);
-    FireVolley(context);
+    FireLeftPistol(context);
 }
 
 void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float deltaTime)
@@ -60,7 +61,13 @@ void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float
     m_fireTimer += deltaTime;
     while (m_fireTimer >= fireInterval) {
         m_fireTimer -= fireInterval;
-        FireVolley(context);
+        m_fireFlipFlop = 1 - m_fireFlipFlop;
+        if (m_fireFlipFlop == 0) {
+            FireLeftPistol(context);
+        }
+        else {
+            FireRightPistol(context);
+        }
     }
 
     // アニメーション更新
@@ -91,23 +98,30 @@ void PlayerDualPistolsRapidFire::Reset(PlayerDualPistolsContext& context)
 
 void PlayerDualPistolsRapidFire::FireVolley(PlayerDualPistolsContext& context)
 {
+    FireLeftPistol(context);
+    FireRightPistol(context);
+}
+
+void PlayerDualPistolsRapidFire::FireLeftPistol(PlayerDualPistolsContext& context)
+{
     const auto& aimResult = context.aim.GetAimResult();
+    if (!aimResult.hasLeftMuzzle) return;
+    PlayerDualPistolsFiring::FireRequest request;
+    request.muzzlePosition = aimResult.leftMuzzlePosition;
+    request.fireDirection = aimResult.leftFireDirection;
+    request.pistolSide = PlayerDualPistolsFiring::PistolSide::Left;
+    context.firing.Fire(context, request);
+}
 
-    if (aimResult.hasLeftMuzzle) {
-        PlayerDualPistolsFiring::FireRequest request;
-        request.muzzlePosition = aimResult.leftMuzzlePosition;
-        request.fireDirection = aimResult.leftFireDirection;
-        request.pistolSide = PlayerDualPistolsFiring::PistolSide::Left;
-        context.firing.Fire(context, request);
-    }
-
-    if (aimResult.hasRightMuzzle) {
-        PlayerDualPistolsFiring::FireRequest request;
-        request.muzzlePosition = aimResult.rightMuzzlePosition;
-        request.fireDirection = aimResult.rightFireDirection;
-        request.pistolSide = PlayerDualPistolsFiring::PistolSide::Right;
-        context.firing.Fire(context, request);
-    }
+void PlayerDualPistolsRapidFire::FireRightPistol(PlayerDualPistolsContext& context)
+{
+    const auto& aimResult = context.aim.GetAimResult();
+    if (!aimResult.hasRightMuzzle) return;
+    PlayerDualPistolsFiring::FireRequest request;
+    request.muzzlePosition = aimResult.rightMuzzlePosition;
+    request.fireDirection = aimResult.rightFireDirection;
+    request.pistolSide = PlayerDualPistolsFiring::PistolSide::Right;
+    context.firing.Fire(context, request);
 }
 
 void PlayerDualPistolsRapidFire::UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime)

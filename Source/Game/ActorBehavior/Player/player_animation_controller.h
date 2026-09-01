@@ -16,6 +16,9 @@ public:
 
         ShotgunAiming,
         DualPistolsRapidFire,
+        DualPistolsSlashBurst1,
+        DualPistolsSlashBurst2,
+        DualPistolsSlashBurst3,
 
         MAX,
     };

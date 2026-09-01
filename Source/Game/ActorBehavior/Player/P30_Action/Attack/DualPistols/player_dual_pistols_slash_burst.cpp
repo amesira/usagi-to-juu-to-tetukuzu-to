@@ -7,6 +7,8 @@
 #include "player_dual_pistols_context.h"
 #include "player_dual_pistols_action.h"
 
+#include "Game/ActorBehavior/Player/player_animation_controller.h"
+
 #include "Utility/mi_math.h"
 
 void PlayerDualPistolsSlashBurst::Initialize(PlayerDualPistolsContext& context)
@@ -41,6 +43,22 @@ void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
     // 移動リクエストの更新（attackStepが変動した時だけでいいはず）
 
     // アニメーションの再生
+    switch (context.runtimeState.comboStep) {
+    case 1:{
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst1);
+        break;
+        }
+    case 2:{
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst2);
+        break;
+        }
+    case 3:{
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst3);
+        break;
+        }
+    default:
+        break;
+    }
 }
 
 void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, float deltaTime)
