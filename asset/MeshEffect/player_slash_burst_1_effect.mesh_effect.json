@@ -162,6 +162,6 @@
         }
     },
     "formatVersion": 1,
-    "name": "new_mesh_effect.mesh_effect",
+    "name": "player_slash_burst_1_effect.mesh_effect",
     "type": "MeshEffect"
 }

@@ -28,6 +28,11 @@ namespace MeshEffectData
         Additive,
     };
 
+    enum class SamplerMode {
+        Wrap,
+        Clamp,
+    };
+
     enum class TextureMappingMode {
         MeshUV,
         WorldProjection
@@ -128,6 +133,7 @@ namespace MeshEffectData
 
         BillboardMode billboardMode = BillboardMode::None;
         BlendMode blendMode = BlendMode::AlphaBlend;
+        SamplerMode samplerMode = SamplerMode::Wrap;
     };
 }
 

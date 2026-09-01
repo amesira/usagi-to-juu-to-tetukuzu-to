@@ -133,6 +133,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
             if (!meshEffect.GetEnable()) continue;
+            if (!meshEffect.ShouldRender()) continue;
             if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::AlphaBlend) continue;
             TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
             if (!transform) continue;
@@ -146,6 +147,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
     SetBlendState(BLENDSTATE_ADD);
 
     if (particlePool) {
+        SetSamplerState(SAMPLERSTATE_POINT_WRAP);
         EngineServiceLocator::BindShader(ShaderBase::Particle);
 
         auto& particleSystems = particlePool->GetList();
@@ -166,6 +168,7 @@ void TransparentRenderPass::Process(IScene* pScene, const RenderView& view)
         for (MeshEffectComponent& meshEffect : meshEffects) {
             if (!meshEffect.GetOwner()->GetActive()) continue;
             if (!meshEffect.GetEnable()) continue;
+            if (!meshEffect.ShouldRender()) continue;
             if (meshEffect.EvaluatedState().blendMode != MeshEffectData::BlendMode::Additive) continue;
             TransformComponent* transform = transformPool->GetByGameObjectID(meshEffect.GetOwner()->GetID());
             if (!transform) continue;
@@ -245,6 +248,11 @@ void TransparentRenderPass::DrawLineRenderer(LineRendererComponent& lineRenderer
 
 void TransparentRenderPass::DrawMeshEffect(MeshEffectComponent& meshEffect, const RenderView& view, const TransformComponent& transform)
 {
+    SetSamplerState(
+        meshEffect.Renderer().samplerMode == MeshEffectData::SamplerMode::Clamp
+        ? SAMPLERSTATE_POINT_CLAMP
+        : SAMPLERSTATE_POINT_WRAP);
+
     // ビルボード行列の計算
     XMMATRIX billboardRotation = XMMatrixIdentity();
     if (meshEffect.Renderer().billboardMode == MeshEffectData::BillboardMode::None) {

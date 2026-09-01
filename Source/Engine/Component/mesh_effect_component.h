@@ -77,6 +77,13 @@ namespace MeshEffectRenderData{
 }
 
 class MeshEffectComponent : public Component {
+public:
+    enum class PlayMode {
+        Stopped,
+        Playing,
+        Paused,
+    };
+
 private:
     // アセットの参照と実データ
     class MeshEffectAsset* m_asset = nullptr;
@@ -86,7 +93,7 @@ private:
     ModelResource* m_modelResource = nullptr;
     TextureResource* m_textureResource = nullptr;
 
-    bool m_isPlaying = false;
+    PlayMode m_playMode = PlayMode::Stopped;
     bool m_hasPlayed = false;
     float m_time = 0.0f;        // 経過時間（リセットは基本行なわない）
     float m_loopTime = 0.0f;    // ループ時間（durationを超えた場合にリセットされる）
@@ -113,11 +120,17 @@ public:
     TextureResource* GetTextureResource() const { return m_textureResource; }
 
     // === 再生制御 ===
-    void Play() { m_isPlaying = true; m_hasPlayed = true; m_time = 0.0f; m_loopTime = 0.0f; }
-    void Stop() { m_isPlaying = false; m_time = 0.0f; m_loopTime = 0.0f; }
-    void Pause() { m_isPlaying = false; }
+    void Play() { m_playMode = PlayMode::Playing; m_hasPlayed = true; m_time = 0.0f; m_loopTime = 0.0f; }
+    void Stop() { m_playMode = PlayMode::Stopped; m_time = 0.0f; m_loopTime = 0.0f; }
+    void Pause() {
+        if (m_playMode == PlayMode::Playing) {
+            m_playMode = PlayMode::Paused;
+        }
+    }
 
-    bool IsPlaying() const { return m_isPlaying; }
+    PlayMode GetPlayMode() const { return m_playMode; }
+    bool IsPlaying() const { return m_playMode == PlayMode::Playing; }
+    bool ShouldRender() const { return m_playMode != PlayMode::Stopped; }
     bool HasPlayed() const { return m_hasPlayed; }
     void SetTime(float time) { m_time = time; }
     float GetTime() const { return m_time; }

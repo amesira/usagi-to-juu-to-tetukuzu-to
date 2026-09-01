@@ -48,6 +48,17 @@ namespace MeshEffectSchema
         return options;
     }
 
+    inline const EnumFieldOptions<MeshEffectData::SamplerMode>& GetSamplerModeOptions()
+    {
+        static const EnumFieldOptions<MeshEffectData::SamplerMode> options{
+            {
+                { MeshEffectData::SamplerMode::Wrap, "Wrap", "Wrap" },
+                { MeshEffectData::SamplerMode::Clamp, "Clamp", "Clamp" }
+            }
+        };
+        return options;
+    }
+
     inline const EnumFieldOptions<MeshEffectData::TextureMappingMode>& GetTextureMappingModeOptions()
     {
         static const EnumFieldOptions<MeshEffectData::TextureMappingMode> options{
@@ -202,7 +213,8 @@ namespace MeshEffectSchema
             MakeField("uvRect", "UV Rect", &Module::uvRect,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
             MakeField("billboardMode", "Billboard Mode", &Module::billboardMode, GetBillboardModeOptions()),
-            MakeField("blendMode", "Blend Mode", &Module::blendMode, GetBlendModeOptions())
+            MakeField("blendMode", "Blend Mode", &Module::blendMode, GetBlendModeOptions()),
+            MakeField("samplerMode", "Sampler Mode", &Module::samplerMode, GetSamplerModeOptions())
         };
         return schema;
     }
