@@ -647,7 +647,8 @@ void PlayerAnimationController::Apply(const Request& request)
             request.blendTree1DParameter,
             request.options.speed,
             request.options.loop,
-            request.options.restart);
+            request.options.restart,
+            request.options.transitionTime);
         break;
     }
     case DefinitionType::BlendTree2D: {
@@ -656,7 +657,8 @@ void PlayerAnimationController::Apply(const Request& request)
             request.blendTree2DParameter,
             request.options.speed,
             request.options.loop,
-            request.options.restart);
+            request.options.restart,
+            request.options.transitionTime);
         break;
     }
     default:
@@ -698,19 +700,22 @@ void PlayerAnimationController::ApplyLayer(const LayerRequest& request)
     case DefinitionType::Clip:
         m_animationComponent->PlayLayerAnimation(
             definition.componentLayerIndex, definition.clipIndex,
-            request.options.speed, request.options.loop, request.options.restart);
+            request.options.speed, request.options.loop, request.options.restart,
+            request.options.transitionTime);
         break;
     case DefinitionType::BlendTree1D:
         m_animationComponent->PlayLayerBlendTree1D(
             definition.componentLayerIndex, definition.blendTree1DNodes,
             request.blendTree1DParameter,
-            request.options.speed, request.options.loop, request.options.restart);
+            request.options.speed, request.options.loop, request.options.restart,
+            request.options.transitionTime);
         break;
     case DefinitionType::BlendTree2D:
         m_animationComponent->PlayLayerBlendTree2D(
             definition.componentLayerIndex, definition.blendTree2DNodes,
             request.blendTree2DParameter,
-            request.options.speed, request.options.loop, request.options.restart);
+            request.options.speed, request.options.loop, request.options.restart,
+            request.options.transitionTime);
         break;
     default:
         break;

@@ -86,8 +86,7 @@ bool AnimationProcessor::EvaluatePlaybackState(
     const LocalPose& fallbackPose,
     float deltaTime)
 {
-    if (playbackState.transition.active &&
-        playbackState.playbackType == AnimationPlaybackType::SingleClip) {
+    if (playbackState.transition.active) {
         return EvaluateTransition(
             outPose,
             playbackState,
@@ -96,25 +95,40 @@ bool AnimationProcessor::EvaluatePlaybackState(
             deltaTime);
     }
 
-    switch (playbackState.playbackType) {
+    return EvaluatePlaybackContent(
+        outPose,
+        playbackState,
+        modelResource,
+        fallbackPose,
+        deltaTime);
+}
+
+bool AnimationProcessor::EvaluatePlaybackContent(
+    LocalPose& outPose,
+    AnimationPlaybackContent& playbackContent,
+    ModelResource& modelResource,
+    const LocalPose& fallbackPose,
+    float deltaTime)
+{
+    switch (playbackContent.playbackType) {
     case AnimationPlaybackType::SingleClip:
         return EvaluateSingleClip(
             outPose,
-            playbackState.singleClipState,
+            playbackContent.singleClipState,
             modelResource,
             fallbackPose,
             deltaTime);
     case AnimationPlaybackType::BlendTree1D:
         return EvaluateBlendTree1D(
             outPose,
-            playbackState.blendTree1DState,
+            playbackContent.blendTree1DState,
             modelResource,
             fallbackPose,
             deltaTime);
     case AnimationPlaybackType::BlendTree2D:
         return EvaluateBlendTree2D(
             outPose,
-            playbackState.blendTree2DState,
+            playbackContent.blendTree2DState,
             modelResource,
             fallbackPose,
             deltaTime);
@@ -146,32 +160,42 @@ bool AnimationProcessor::EvaluateTransition(
     float deltaTime)
 {
     AnimationTransition& transition = playbackState.transition;
-    AnimationState& destinationState = playbackState.singleClipState;
-    const AnimationClip* sourceClip = ResolveAnimationClip(transition.sourceState, modelResource);
-    const AnimationClip* destinationClip = ResolveAnimationClip(destinationState, modelResource);
-
-    if (!sourceClip || !destinationClip || transition.duration <= 0.0f) {
+    if (transition.duration <= 0.0f) {
         transition = {};
-        return EvaluateSingleClip(
+        return EvaluatePlaybackContent(
             outPose,
-            destinationState,
+            playbackState,
             modelResource,
             fallbackPose,
             deltaTime);
     }
 
-    const float sourceTime = AdvanceAnimationState(
-        transition.sourceState, *sourceClip, deltaTime);
-    const float destinationTime = AdvanceAnimationState(
-        destinationState, *destinationClip, deltaTime);
+    LocalPose sourcePose;
+    const bool hasSourcePose = EvaluatePlaybackContent(
+        sourcePose,
+        transition.source,
+        modelResource,
+        fallbackPose,
+        deltaTime);
+    LocalPose destinationPose;
+    const bool hasDestinationPose = EvaluatePlaybackContent(
+        destinationPose,
+        playbackState,
+        modelResource,
+        fallbackPose,
+        deltaTime);
+
+    if (!hasDestinationPose) return false;
+    if (!hasSourcePose) {
+        transition = {};
+        outPose = std::move(destinationPose);
+        return true;
+    }
 
     transition.timer += deltaTime;
     float weight = MiMath::Clamp(transition.timer / transition.duration, 0.0f, 1.0f);
     weight = weight * weight * (3.0f - 2.0f * weight);
 
-    const LocalPose sourcePose = SampleLocalPose(*sourceClip, fallbackPose, sourceTime);
-    const LocalPose destinationPose = SampleLocalPose(
-        *destinationClip, fallbackPose, destinationTime);
     outPose = BlendLocalPoses(sourcePose, destinationPose, weight);
 
     if (transition.timer >= transition.duration) transition = {};

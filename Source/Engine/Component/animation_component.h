@@ -22,14 +22,6 @@ struct AnimationState {
     bool    finished = false;
 };
 
-// アニメーションのトランジションを表す構造体
-struct AnimationTransition {
-    AnimationState sourceState; // 遷移元のアニメーション状態
-    float duration = 0.0f;
-    float timer = 0.0f;
-    bool active = false;
-};
-
 /// @brief 1D BlendTreeを構成するアニメーションクリップ
 struct AnimationBlendTree1DNode {
     int clipIndex = -1;
@@ -68,13 +60,25 @@ enum class AnimationPlaybackType {
     BlendTree2D,
 };
 
-/// @brief 単一Clip・BlendTreeで共通利用する再生状態
-struct AnimationPlaybackState {
+/// @brief Transitionを含まない、単一Clip・BlendTree共通の再生内容
+struct AnimationPlaybackContent {
     AnimationPlaybackType playbackType = AnimationPlaybackType::SingleClip;
     AnimationState singleClipState;
-    AnimationTransition transition;
     AnimationBlendTree1DState blendTree1DState;
     AnimationBlendTree2DState blendTree2DState;
+};
+
+/// @brief 任意の再生内容から別の再生内容へのトランジション
+struct AnimationTransition {
+    AnimationPlaybackContent source;
+    float duration = 0.0f;
+    float timer = 0.0f;
+    bool active = false;
+};
+
+/// @brief 単一Clip・BlendTreeで共通利用する再生状態
+struct AnimationPlaybackState : AnimationPlaybackContent {
+    AnimationTransition transition;
 };
 
 /// @brief ボーンごとのレイヤー適用率。0でベース姿勢、1でレイヤー姿勢になる
@@ -175,7 +179,8 @@ public:
         int clipIndex,
         float speed = 1.0f,
         bool loop = true,
-        bool restart = false)
+        bool restart = false,
+        float transitionTime = 0.0f)
     {
         if (layerIndex >= m_animationLayers.size() || clipIndex < 0) return false;
 
@@ -192,7 +197,7 @@ public:
             return true;
         }
 
-        playback = {};
+        BeginTransition(playback, transitionTime);
         playback.playbackType = PlaybackType::SingleClip;
         state = { clipIndex, 0.0f, speed, loop, false };
         layer.enabled = true;
@@ -205,7 +210,8 @@ public:
         float parameter,
         float speed = 1.0f,
         bool loop = true,
-        bool restart = false)
+        bool restart = false,
+        float transitionTime = 0.0f)
     {
         if (layerIndex >= m_animationLayers.size() || nodes.empty()) return false;
 
@@ -227,7 +233,7 @@ public:
             return true;
         }
 
-        playback = {};
+        BeginTransition(playback, transitionTime);
         playback.playbackType = PlaybackType::BlendTree1D;
         state.nodes = std::move(sortedNodes);
         state.parameter = parameter;
@@ -244,7 +250,8 @@ public:
         const DirectX::XMFLOAT2& parameter,
         float speed = 1.0f,
         bool loop = true,
-        bool restart = false)
+        bool restart = false,
+        float transitionTime = 0.0f)
     {
         if (layerIndex >= m_animationLayers.size() || nodes.empty()) return false;
 
@@ -263,7 +270,7 @@ public:
             return true;
         }
 
-        playback = {};
+        BeginTransition(playback, transitionTime);
         playback.playbackType = PlaybackType::BlendTree2D;
         state.nodes = nodes;
         state.parameter = parameter;
@@ -318,21 +325,7 @@ public:
         nextState.loop = loop;
         nextState.finished = false;
 
-        const bool canTransition =
-            transitionTime > 0.0f &&
-            m_playbackState.playbackType == PlaybackType::SingleClip &&
-            currentState.clipIndex >= 0;
-
-        if (canTransition) {
-            // 遷移中の再要求では、現在の遷移先を次の遷移元として扱う
-            m_playbackState.transition.sourceState = currentState;
-            m_playbackState.transition.duration = transitionTime;
-            m_playbackState.transition.timer = 0.0f;
-            m_playbackState.transition.active = true;
-        }
-        else {
-            m_playbackState.transition = {};
-        }
+        BeginTransition(m_playbackState, transitionTime);
 
         m_playbackState.playbackType = PlaybackType::SingleClip;
         currentState = nextState;
@@ -344,7 +337,8 @@ public:
         float parameter,
         float speed = 1.0f,
         bool loop = true,
-        bool restart = false)
+        bool restart = false,
+        float transitionTime = 0.0f)
     {
         if (nodes.empty()) return;
 
@@ -363,8 +357,8 @@ public:
             return;
         }
 
+        BeginTransition(m_playbackState, transitionTime);
         m_playbackState.playbackType = PlaybackType::BlendTree1D;
-        m_playbackState.transition = {};
         state.nodes = std::move(sortedNodes);
         state.parameter = parameter;
         state.normalizedTime = 0.0f;
@@ -384,7 +378,8 @@ public:
         const DirectX::XMFLOAT2& parameter,
         float speed = 1.0f,
         bool loop = true,
-        bool restart = false)
+        bool restart = false,
+        float transitionTime = 0.0f)
     {
         if (nodes.empty()) return;
 
@@ -400,8 +395,8 @@ public:
             return;
         }
 
+        BeginTransition(m_playbackState, transitionTime);
         m_playbackState.playbackType = PlaybackType::BlendTree2D;
-        m_playbackState.transition = {};
         state.nodes = nodes;
         state.parameter = parameter;
         state.normalizedTime = 0.0f;
@@ -441,6 +436,34 @@ public:
     }
 
 private:
+    static void BeginTransition(AnimationPlaybackState& playback, float transitionTime)
+    {
+        if (transitionTime <= 0.0f || !HasValidPlayback(playback)) {
+            playback.transition = {};
+            return;
+        }
+
+        // 遷移中の再要求では、現在の遷移先を新しい遷移元として扱う。
+        playback.transition.source = static_cast<const AnimationPlaybackContent&>(playback);
+        playback.transition.duration = transitionTime;
+        playback.transition.timer = 0.0f;
+        playback.transition.active = true;
+    }
+
+    static bool HasValidPlayback(const AnimationPlaybackContent& playback)
+    {
+        switch (playback.playbackType) {
+        case PlaybackType::SingleClip:
+            return playback.singleClipState.clipIndex >= 0;
+        case PlaybackType::BlendTree1D:
+            return !playback.blendTree1DState.nodes.empty();
+        case PlaybackType::BlendTree2D:
+            return !playback.blendTree2DState.nodes.empty();
+        default:
+            return false;
+        }
+    }
+
     static void SortBlendTree1DNodes(std::vector<AnimationBlendTree1DNode>& nodes)
     {
         std::sort(nodes.begin(), nodes.end(),

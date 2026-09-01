@@ -31,6 +31,13 @@ private:
         const LocalPose& fallbackPose,
         float deltaTime);
 
+    bool EvaluatePlaybackContent(
+        LocalPose& outPose,
+        struct AnimationPlaybackContent& playbackContent,
+        ModelResource& modelResource,
+        const LocalPose& fallbackPose,
+        float deltaTime);
+
     bool EvaluateSingleClip(
         LocalPose& outPose,
         struct AnimationState& state,
