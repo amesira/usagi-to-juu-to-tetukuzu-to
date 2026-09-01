@@ -354,7 +354,7 @@ ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
         }
         else { 
             // ルートボーンの場合
-            // memo: mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
+            // mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
             model->rootBoneIndex = i;
            
             const XMMATRIX rootLocal = model->defaultPose.localTransforms[i];

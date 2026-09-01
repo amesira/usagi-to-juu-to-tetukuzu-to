@@ -72,27 +72,17 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
 void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
 {
     m_context.runtimeState.m_isGrounded = CheckGrounded();
+    m_context.runtimeState.m_desiredPosition = m_context.transform->GetPosition();
+    if (moveIntent.forceMoveIntent.isActive) {
+        m_context.runtimeState.m_desiredPosition = moveIntent.forceMoveIntent.targetPosition;
+    }
 
-    // ジャンプ要求
+    // === ジャンプ要求 ===
     if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded && moveIntent.canJump) {
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce * moveIntent.jumpPowerMultiplier;
         m_context.runtimeState.m_isGrounded = false;
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
     }
-
-    // 現在位置の取得
-    m_context.runtimeState.m_desiredPosition = m_context.transform->GetPosition();
-
-    // ブリンク要求（仮）
-    if (input.triggerDashCommand) {
-        // ブリンク処理の要求をここで行う
-        XMFLOAT3 blinkDirection = moveIntent.moveDirection;
-        float blinkDistance = 5.0f; // ブリンク距離（仮）
-        XMFLOAT3 blinkOffset = MiMath::Multiply(blinkDirection, blinkDistance);
-        m_context.runtimeState.m_desiredPosition = MiMath::Add(m_context.runtimeState.m_desiredPosition, blinkOffset);
-    }
-
-    // Blinkや攻撃による進みなどMoveWithCollision的な移動はここ（位置の上書き的な挙動に近い移動処理）
 
     // === 移動処理 ===
     m_context.moveMotor.UpdateMotor(m_context, moveIntent, deltaTime);
@@ -114,9 +104,7 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
     }
 
     // === 回転処理 ===
-    if (moveIntent.canRotate && MiMath::Length(moveIntent.rotateDirection) > 0.01f) {
-        m_context.moveRotate.UpdateRotate(m_context, moveIntent, deltaTime);
-    }
+    m_context.moveRotate.UpdateRotate(m_context, moveIntent, deltaTime);
 
     // === エフェクト処理 ===
     m_context.moveEffects.UpdateEffects(m_context, deltaTime);

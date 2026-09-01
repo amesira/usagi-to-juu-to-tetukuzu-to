@@ -151,7 +151,7 @@ void PlayerShotgunAim::UpdateAimingAnimation(PlayerShotgunContext& context, floa
     if (!context.playerRuntimeState->m_isGrounded) return;
 
     const auto& settings = context.settings();
-    const float directionY = m_aimResult.fireDirection.y;
+    const float directionY = m_aimResult.cameraRayDirection.y;
 
     // エイムモード中の移動方向のBlendTreeパラメータを滑らかに更新する
     const DirectX::XMFLOAT2& targetMoveParameter =

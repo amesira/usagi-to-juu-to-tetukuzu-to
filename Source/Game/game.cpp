@@ -90,6 +90,7 @@ void GameScene::Finalize()
     for (GameObject& obj : gameObjects) {
         obj.Destroy();
     }
+    this->CollectDestroyedGameObjects();
 }
 
 // ゲームシーン更新処理

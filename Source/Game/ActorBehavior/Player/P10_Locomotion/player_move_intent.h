@@ -8,6 +8,18 @@
 #pragma once
 #include "Utility/utility_master.h"
 
+struct ForceMoveIntent
+{
+    bool isActive = false; // 強制移動が有効かどうか
+    XMFLOAT3 targetPosition = { 0.0f, 0.0f, 0.0f }; // 強制移動の目標位置
+};
+
+struct ForceRotateIntent
+{
+    bool isActive = false; // 強制回転が有効かどうか
+    XMFLOAT3 targetDirection = { 0.0f, 0.0f, 1.0f }; // 強制回転の目標方向（正規化済み）
+};
+
 /// @brief プレイヤーの移動意図を表す構造体
 struct PlayerMoveIntent 
 {
@@ -24,4 +36,7 @@ struct PlayerMoveIntent
     bool canJump = true;     // ジャンプ可能かどうか
 
     bool applyRotateRightNow = false; // 即座に回転を適用するかどうか
+
+    ForceMoveIntent forceMoveIntent; // 強制移動の意図
+    ForceRotateIntent forceRotateIntent; // 強制回転の意図
 };

@@ -22,24 +22,32 @@ namespace PlayerDualPistolsSettings {
         float rapidFireInterval = 0.1f;
         float rapidFireMoveSpeedMultiplier = 1.0f;
         float rapidFireJumpPowerMultiplier = 1.0f;
-        float bulletSpeed = 50.0f;
-        float bulletRadius = 0.1f;
-        float bulletLifetime = 3.0f;
-        float bulletSpawnForwardOffset = 0.2f;
-
+        
         // === Rapid Fire Animation ===
         float rapidFireAimBlendDownFullDirectionY = -0.5f;
         float rapidFireAimBlendDownStartDirectionY = -0.2f;
         float rapidFireAimBlendUpStartDirectionY = 0.1f;
         float rapidFireAimBlendUpFullDirectionY = 0.5f;
-        float rapidFireMoveBlendSmoothTime = 0.1f;
-        float rapidFireAimBlendSmoothTime = 0.1f;
 
         // === Slash Burst ===
-        float fireTime = 0.1f;
+        float slashBurstFireInterval = 0.1f;
+        float slashBurstFireDuration = 0.2f;
+        float burstTime = 0.1f;
         float inputBufferStartTime = 0.1f;
         float chainTime = 0.1f;
         float endTime = 0.5f;
+
+        // === Slash Burst Movement ===
+        float stepMoveDuration = 0.2f;
+        float stepMoveDistance = 1.0f;
+        float finalStepMoveDuration = 0.3f;
+        float finalStepMoveDistance = 1.5f;
+
+        // === Bullet Spread ===
+        float bulletSpeed = 50.0f;
+        float bulletRadius = 0.1f;
+        float bulletLifetime = 3.0f;
+        float bulletSpawnForwardOffset = 0.2f;
     };
 
     inline static const auto& GetSchema()
@@ -49,6 +57,7 @@ namespace PlayerDualPistolsSettings {
             MakeField("startRapidFireDelay", "Start Rapid Fire Delay", &Data::startRapidFireDelay,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 2.0f }),
 
+            // === Aim / Rapid Fire ===
             MakeHeaderField("Aim / Rapid Fire"),
             MakeField("aimMaxDistance", "Aim Max Distance", &Data::aimMaxDistance,
                 DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
@@ -60,15 +69,8 @@ namespace PlayerDualPistolsSettings {
             MakeField("rapidFireJumpPowerMultiplier", "Rapid Fire Jump Power Multiplier",
                 &Data::rapidFireJumpPowerMultiplier,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 2.0f }),
-            MakeField("bulletSpeed", "Bullet Speed", &Data::bulletSpeed,
-                DragFieldOptions{ .dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
-            MakeField("bulletRadius", "Bullet Radius", &Data::bulletRadius,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
-            MakeField("bulletLifetime", "Bullet Lifetime", &Data::bulletLifetime,
-                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 60.0f }),
-            MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
-
+            
+            // === Rapid Fire Animation ===
             MakeHeaderField("Rapid Fire Animation"),
             MakeField("rapidFireAimBlendDownFullDirectionY", "Aim Blend Down Full Direction Y",
                 &Data::rapidFireAimBlendDownFullDirectionY,
@@ -82,15 +84,14 @@ namespace PlayerDualPistolsSettings {
             MakeField("rapidFireAimBlendUpFullDirectionY", "Aim Blend Up Full Direction Y",
                 &Data::rapidFireAimBlendUpFullDirectionY,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
-            MakeField("rapidFireMoveBlendSmoothTime", "Move Blend Smooth Time",
-                &Data::rapidFireMoveBlendSmoothTime,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
-            MakeField("rapidFireAimBlendSmoothTime", "Aim Blend Smooth Time",
-                &Data::rapidFireAimBlendSmoothTime,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
 
+            // === Slash Burst ===
             MakeHeaderField("Slash Burst"),
-            MakeField("fireTime", "Fire Time", &Data::fireTime,
+            MakeField("slashBurstFireInterval", "Slash Burst Fire Interval", &Data::slashBurstFireInterval,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 2.0f }),
+            MakeField("slashBurstFireDuration", "Slash Burst Fire Duration", &Data::slashBurstFireDuration,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 2.0f }),
+            MakeField("fireTime", "Burst Time", &Data::burstTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("inputBufferStartTime", "Input Buffer Start Time", &Data::inputBufferStartTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
@@ -98,6 +99,29 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("endTime", "End Time", &Data::endTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+
+                // === Slash Burst Movement ===
+            MakeHeaderField("Slash Burst Movement"),
+            MakeField("stepMoveDuration", "Step Move Duration", &Data::stepMoveDuration,
+                 DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+            MakeField("stepMoveDistance", "Step Move Distance", &Data::stepMoveDistance,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+            MakeField("finalStepMoveDuration", "Final Step Move Duration", &Data::finalStepMoveDuration,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+            MakeField("finalStepMoveDistance", "Final Step Move Distance", &Data::finalStepMoveDistance,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+
+                // === Bullet Spread ===
+            MakeHeaderField("Bullet Spread"),
+            MakeField("bulletSpeed", "Bullet Speed", &Data::bulletSpeed,
+                DragFieldOptions{.dragSpeed = 1.0f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("bulletRadius", "Bullet Radius", &Data::bulletRadius,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("bulletLifetime", "Bullet Lifetime", &Data::bulletLifetime,
+                DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 60.0f }),
+            MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+
         };
         return schema;
     }

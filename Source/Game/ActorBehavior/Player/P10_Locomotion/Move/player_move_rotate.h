@@ -8,8 +8,6 @@
 #pragma once
 
 class PlayerMoveRotate {
-private:
-
 public:
     /// @brief PlayerMoveの回転処理を更新する
     void UpdateRotate(struct PlayerMoveContext& context, const struct PlayerMoveIntent& intent, float deltaTime);

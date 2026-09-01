@@ -138,16 +138,16 @@ void PlayerDualPistolsRapidFire::UpdateRapidFireAnimation(PlayerDualPistolsConte
         m_moveBlendParameter.x,
         targetMoveParameter.x,
         m_moveBlendParameterVelocity.x,
-        settings.rapidFireMoveBlendSmoothTime,
+        0.1f,
         deltaTime);
     m_moveBlendParameter.y = MiMath::SmoothDamp(
         m_moveBlendParameter.y,
         targetMoveParameter.y,
         m_moveBlendParameterVelocity.y,
-        settings.rapidFireMoveBlendSmoothTime,
+        0.1f,
         deltaTime);
 
-    // 左右のマズル位置には依存させず、キャラクター共通のカメラ照準方向から上下姿勢を決める。
+    // キャラクター共通のカメラ照準方向から上下姿勢を決める。
     const float directionY = context.aim.GetAimResult().cameraRayDirection.y;
     float targetAimBlendParameter = 0.0f;
 
@@ -178,7 +178,7 @@ void PlayerDualPistolsRapidFire::UpdateRapidFireAnimation(PlayerDualPistolsConte
         m_aimBlendParameter,
         targetAimBlendParameter,
         m_aimBlendParameterVelocity,
-        settings.rapidFireAimBlendSmoothTime,
+        0.1f,
         deltaTime);
 
     context.animationController->PlayBlendTree2D(

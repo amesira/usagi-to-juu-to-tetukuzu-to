@@ -46,6 +46,9 @@ public:
     // Componentを生成してComponentPoolに追加
     // ・pGameObject: Componentを所有するGameObjectへのポインタ
     T*      Create(unsigned int gameObjectID) {
+        if (gameObjectID >= m_gameObjectIDsToComponents.size()) {
+            return nullptr;
+        }
         assert(m_components.size() < COMPONENTS_MAX && "ComponentPool has reached its maximum capacity.");
         
         // 空きスロットがあればそこを利用
@@ -79,7 +82,6 @@ public:
                 m_components[i].SetEnable(false); // 無効化しておく
                 m_gameObjectIDs[i] = UINT_FAST16_MAX; // 無効なIDにしておく
                 m_gameObjectIDsToComponents[gameObjectID] = UINT_FAST16_MAX; // 無効なインデックスにしておく
-
                 return;
             }
         }

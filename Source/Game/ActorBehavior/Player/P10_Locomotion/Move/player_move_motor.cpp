@@ -54,6 +54,13 @@ void PlayerMoveMotor::UpdateMotor(PlayerMoveContext& context, const PlayerMoveIn
         context.runtimeState.m_controlVelocity.x = m_desiredVelocity.x;
         context.runtimeState.m_controlVelocity.z = m_desiredVelocity.z;
     }
+    else {
+        // 移動不可の場合は速度をゼロにする
+        m_inputVelocity = { 0.0f, 0.0f, 0.0f };
+        m_desiredVelocity = { 0.0f, 0.0f, 0.0f };
+        context.runtimeState.m_controlVelocity.x = 0.0f;
+        context.runtimeState.m_controlVelocity.z = 0.0f;
+    }
 }
 
 /// @brief 現在の状況に応じた平滑化時間を計算する

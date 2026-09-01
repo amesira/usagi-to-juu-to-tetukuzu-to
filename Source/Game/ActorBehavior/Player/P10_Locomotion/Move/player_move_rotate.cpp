@@ -19,12 +19,27 @@ using namespace DirectX;
 /// @brief PlayerMoveの回転処理を更新する
 void PlayerMoveRotate::UpdateRotate(PlayerMoveContext& context, const PlayerMoveIntent& intent, float deltaTime)
 {
-    XMFLOAT4 targetRot = MiMath::LookRotation(intent.rotateDirection, { 0.0f, 1.0f, 0.0f });
-    if (intent.applyRotateRightNow) {
-        context.transform->SetRotation(targetRot);
+    XMFLOAT4 targetRot = {};
+
+    // 強制回転
+    if (intent.forceRotateIntent.isActive) {
+        targetRot = MiMath::LookRotation(
+            intent.forceRotateIntent.targetDirection, { 0.0f, 1.0f, 0.0f });
+    }
+    // 通常回転
+    else if (intent.canRotate && MiMath::Length(intent.rotateDirection) > 0.01f) {
+        targetRot = MiMath::LookRotation(
+            intent.rotateDirection, { 0.0f, 1.0f, 0.0f });
+
+        if (!intent.applyRotateRightNow) {
+            targetRot = MiMath::Slerp(
+                context.transform->GetRotation(), targetRot,
+                context.settings().rotationSpeed * deltaTime);
+        }
+    }
+    else {
         return;
     }
 
-    XMFLOAT4 newRot = MiMath::Slerp(context.transform->GetRotation(), targetRot, context.settings().rotationSpeed * deltaTime);
-    context.transform->SetRotation(newRot);
+    context.transform->SetRotation(targetRot);
 }

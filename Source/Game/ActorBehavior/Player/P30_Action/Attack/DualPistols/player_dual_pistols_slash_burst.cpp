@@ -7,6 +7,9 @@
 #include "player_dual_pistols_context.h"
 #include "player_dual_pistols_action.h"
 
+#include "Engine/Graphics/model_animation_utility.h"
+
+#include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 #include "Utility/mi_math.h"
@@ -23,41 +26,62 @@ void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
     m_isFinished = false;
     context.runtimeState.comboStep = 0;
 
+    // 攻撃中の移動リクエストを登録
+    if (context.locomotionController) {
+        m_locomotionRequest = PlayerLocomotionController::LocomotionRequest{
+            .priority = 10,
+            .canMove = false,
+            .canRotate = false,
+            .useGravity = false,
+            .canJump = false,
+        };
+        m_locomotionRequestID = context.locomotionController->AddLocomotionRequest(m_locomotionRequest);
+    }
+
     StartNextStep(context);
 }
 
 void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& context)
 {
     m_attackTimer = 0.0f;
+    m_fireTimer = context.settings().slashBurstFireInterval; // 最初の発射を即座に行うためにタイマーを初期化
 
     m_wasReleaseAttackInput = true;
     m_requestNextAttack = false;
-    m_hasFired = false;
+    m_hasBursted = false;
 
-    // 攻撃中の移動リクエストを登録
+    m_isStepMoving = true;
+    m_stepMoveTimer = 0.0f;
 
     // 攻撃のカウントを更新
     context.runtimeState.comboStep++;
     context.runtimeState.comboStep = MiMath::Clamp(context.runtimeState.comboStep, 1, MAX_ATTACK_COUNT);
 
-    // 移動リクエストの更新（attackStepが変動した時だけでいいはず）
+    // ステップの開始時のみ、移動方向へ身体の向きを変える
+    if (context.locomotionController) {
+        context.locomotionController->AddForceRotateRequest({
+            .priority = 20,
+            .directionSourceInfo = {
+                .source = PlayerLocomotionController::DirectionSource::MoveInput,
+            },
+        });
+
+        // 最終攻撃時のみ、重力を有効にする
+        m_locomotionRequest.useGravity = (context.runtimeState.comboStep == MAX_ATTACK_COUNT);
+    }
 
     // アニメーションの再生
     switch (context.runtimeState.comboStep) {
-    case 1:{
+    case 1:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst1);
         break;
-        }
-    case 2:{
+    case 2:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst2);
         break;
-        }
-    case 3:{
+    case 3:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst3);
         break;
-        }
-    default:
-        break;
+    default: break;
     }
 }
 
@@ -73,9 +97,34 @@ void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, floa
     m_wasReleaseAttackInput = releaseAttackInput;
 
     // 攻撃時の移動ステップ更新
+    if (m_isStepMoving) {
+        UpdateStepMovement(context, deltaTime);
+    }
+
+    // 攻撃の発射処理
+    if (m_attackTimer < context.settings().slashBurstFireDuration) {
+        m_fireTimer += deltaTime;
+        if (m_fireTimer >= context.settings().slashBurstFireInterval) {
+            while (m_fireTimer >= context.settings().slashBurstFireInterval) {
+                m_fireTimer -= context.settings().slashBurstFireInterval;
+                switch (context.runtimeState.comboStep) {
+                case 1:
+                    FireLeftPistol(context);
+                    break;
+                case 2:
+                    FireRightPistol(context);
+                    break;
+                case 3:
+                    FireVolley(context);
+                    break;
+                default: break;
+                }
+            }
+        }
+    }
 
     // 攻撃のヒット判定処理
-    if (!m_hasFired && IsFireFrame(context)) {
+    if (!m_hasBursted && IsBurstFrame(context)) {
         HandleSlashBurstAttack(context, context.runtimeState.comboStep);
     }
 
@@ -96,6 +145,11 @@ void PlayerDualPistolsSlashBurst::Finish(PlayerDualPistolsContext& context)
 {
     m_isActive = false;
     m_isFinished = true;
+
+    if (context.locomotionController && m_locomotionRequestID != -1) {
+        context.locomotionController->RemoveLocomotionRequestByIndex(m_locomotionRequestID);
+        m_locomotionRequestID = -1;
+    }
 }
 
 void PlayerDualPistolsSlashBurst::Cancel(PlayerDualPistolsContext& context)
@@ -104,7 +158,38 @@ void PlayerDualPistolsSlashBurst::Cancel(PlayerDualPistolsContext& context)
     m_isFinished = false;
 
     m_requestNextAttack = false;
-    m_hasFired = false;
+    m_hasBursted = false;
+
+    if (context.locomotionController && m_locomotionRequestID != -1) {
+        context.locomotionController->RemoveLocomotionRequestByIndex(m_locomotionRequestID);
+        m_locomotionRequestID = -1;
+    }
+}
+
+void PlayerDualPistolsSlashBurst::UpdateStepMovement(PlayerDualPistolsContext& context, float deltaTime)
+{
+    const float stepMoveDuration = (context.runtimeState.comboStep < MAX_ATTACK_COUNT) ? 
+        context.settings().stepMoveDuration : context.settings().finalStepMoveDuration;
+    const float stepMoveDistance = (context.runtimeState.comboStep < MAX_ATTACK_COUNT) ? 
+        context.settings().stepMoveDistance : context.settings().finalStepMoveDistance;
+
+    m_stepMoveTimer += deltaTime;
+    if (m_stepMoveTimer >= stepMoveDuration) {
+        m_isStepMoving = false;
+        return;
+    }
+
+    // 移動方向の更新
+    if (context.playerTransform && context.locomotionController) {
+        XMFLOAT3 moveDirection = context.playerTransform->GetForward();
+        moveDirection.y = 0.0f;
+        moveDirection = MiMath::Normalize(moveDirection);
+        float moveDistancePerFrame = stepMoveDistance / stepMoveDuration * deltaTime;
+        context.locomotionController->AddForceMoveRequest({
+            .priority = 15,
+            .targetPosition = MiMath::Add(context.playerTransform->GetPosition(), MiMath::Multiply(moveDirection, moveDistancePerFrame)),
+            });
+    }
 }
 
 /// @brief 次の連鎖攻撃が入力可能かどうか
@@ -120,7 +205,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 {
     if (step < 1 || step > MAX_ATTACK_COUNT) return false;
 
-    m_hasFired = true;
+    m_hasBursted = true;
 
     // 攻撃ターゲットの検出
 
@@ -137,9 +222,9 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 }
 
 #pragma region 攻撃モーションのフレーム判定
-bool PlayerDualPistolsSlashBurst::IsFireFrame(PlayerDualPistolsContext& context) const
+bool PlayerDualPistolsSlashBurst::IsBurstFrame(PlayerDualPistolsContext& context) const
 {
-    return m_attackTimer >= context.settings().fireTime;
+    return m_attackTimer >= context.settings().burstTime;
 }
 bool PlayerDualPistolsSlashBurst::IsInputBufferFrame(PlayerDualPistolsContext& context) const
 {
@@ -155,3 +240,47 @@ bool PlayerDualPistolsSlashBurst::IsEndMotionFrame(PlayerDualPistolsContext& con
     return m_attackTimer >= context.settings().endTime;
 }
 #pragma endregion
+
+#pragma region 攻撃の発射処理
+void PlayerDualPistolsSlashBurst::FireVolley(PlayerDualPistolsContext& context)
+{
+    FireLeftPistol(context);
+    FireRightPistol(context);
+}
+
+void PlayerDualPistolsSlashBurst::FireLeftPistol(PlayerDualPistolsContext& context)
+{
+    PlayerDualPistolsFiring::FireRequest request;
+    request.pistolSide = PlayerDualPistolsFiring::PistolSide::Left;
+
+    // SlashBurstでは、発射方向は銃口のボーンの向きに基づいて決定する
+    ModelAnimationUtility::BoneTransform gunTransform;
+    bool hasLeftMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
+        *context.playerModel,
+        *context.playerTransform,
+        context.references.gunLBoneIndex,
+        gunTransform);
+    if (hasLeftMuzzle) {
+        request.muzzlePosition = gunTransform.position;
+        request.fireDirection = MiMath::RotateVector(gunTransform.rotation, { 0.0f, 1.0f, 0.0f });
+        context.firing.Fire(context, request);
+    }
+}
+
+void PlayerDualPistolsSlashBurst::FireRightPistol(PlayerDualPistolsContext& context)
+{
+    PlayerDualPistolsFiring::FireRequest request;
+    request.pistolSide = PlayerDualPistolsFiring::PistolSide::Right;
+    
+    ModelAnimationUtility::BoneTransform gunTransform;
+    bool hasRightMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
+        *context.playerModel,
+        *context.playerTransform,
+        context.references.gunRBoneIndex,
+        gunTransform);
+    if (hasRightMuzzle) {
+        request.muzzlePosition = gunTransform.position;
+        request.fireDirection = MiMath::RotateVector(gunTransform.rotation, { 0.0f, 1.0f, 0.0f });
+        context.firing.Fire(context, request);
+    }
+}

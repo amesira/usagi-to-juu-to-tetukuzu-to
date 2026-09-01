@@ -118,5 +118,17 @@ PlayerMoveIntent PlayerLocomotionController::BuildIntent(const PlayerContext& co
     intent.canJump = selectedRequest->canJump;
     intent.applyRotateRightNow = selectedRequest->applyRotateRightNow;
 
+    // === ForceIntentの設定 ===
+    intent.forceMoveIntent.isActive = (m_forceMoveRequest.priority > 0);
+    intent.forceMoveIntent.targetPosition = m_forceMoveRequest.targetPosition;
+    intent.forceRotateIntent.isActive = (m_forceRotateRequest.priority > 0);
+    intent.forceRotateIntent.targetDirection = CalculateDirection(m_forceRotateRequest.directionSourceInfo, context, input);
+    if (MiMath::Length(intent.forceRotateIntent.targetDirection) < 0.001f) {
+        intent.forceRotateIntent.isActive = false; // 方向が無効な場合は強制回転を無効化
+    }
+
+    m_forceMoveRequest.priority = -1;
+    m_forceRotateRequest.priority = -1;
+
     return intent;
 }

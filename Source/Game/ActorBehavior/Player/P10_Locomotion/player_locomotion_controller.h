@@ -67,8 +67,25 @@ public:
         }
     };
 
+    struct ForceMoveRequest 
+    {
+        int priority = 0;
+        XMFLOAT3 targetPosition = { 0.0f, 0.0f, 0.0f };
+    };
+
+    struct ForceRotateRequest 
+    {
+        int priority = 0;
+        DirectionSourceInfo directionSourceInfo;
+        XMFLOAT3 lookAtTargetPosition = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 targetFixedDirection = { 0.0f, 0.0f, 1.0f };
+    };
+
 private:
     const LocomotionRequest* m_locomotionRequests[8];
+
+    ForceMoveRequest m_forceMoveRequest;
+    ForceRotateRequest m_forceRotateRequest;
 
 public:
     PlayerLocomotionController() = default;
@@ -77,6 +94,7 @@ public:
     void Initialize();
     void Finalize();
 
+    // === LocomotionRequestの管理 ===
     int AddLocomotionRequest(const LocomotionRequest& request) {
         for (int i = 0; i < 8; i++) {
             if (m_locomotionRequests[i] == nullptr) {
@@ -86,7 +104,6 @@ public:
         }
         return -1; // 追加できなかった場合は-1を返す
     }
-
     void RemoveLocomotionRequest(const LocomotionRequest& request) {
         for (int i = 0; i < 8; i++) {
             if (m_locomotionRequests[i] == &request) {
@@ -98,6 +115,18 @@ public:
     void RemoveLocomotionRequestByIndex(int index) {
         if (index < 0 || index >= 8) return;
         m_locomotionRequests[index] = nullptr;
+    }
+
+    // === ForceRequestの管理 ===
+    void AddForceMoveRequest(const ForceMoveRequest& request) {
+        if (m_forceMoveRequest.priority < request.priority) {
+            m_forceMoveRequest = request;
+        }
+    }
+    void AddForceRotateRequest(const ForceRotateRequest& request) {
+        if (m_forceRotateRequest.priority < request.priority) {
+            m_forceRotateRequest = request;
+        }
     }
 
     /// @brief プレイヤーの移動・回転意図を構築する
