@@ -7,8 +7,6 @@
 #include "player_dual_pistols_context.h"
 #include "player_dual_pistols_action.h"
 
-#include "Engine/Graphics/model_animation_utility.h"
-
 #include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
 
@@ -254,15 +252,10 @@ void PlayerDualPistolsSlashBurst::FireLeftPistol(PlayerDualPistolsContext& conte
     request.pistolSide = PlayerDualPistolsFiring::PistolSide::Left;
 
     // SlashBurstでは、発射方向は銃口のボーンの向きに基づいて決定する
-    ModelAnimationUtility::BoneTransform gunTransform;
-    bool hasLeftMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
-        *context.playerModel,
-        *context.playerTransform,
-        context.references.gunLBoneIndex,
-        gunTransform);
-    if (hasLeftMuzzle) {
-        request.muzzlePosition = gunTransform.position;
-        request.fireDirection = MiMath::RotateVector(gunTransform.rotation, { 0.0f, 1.0f, 0.0f });
+    const PlayerMuzzleState& muzzle = context.runtimeState.leftMuzzle;
+    if (muzzle.isValid) {
+        request.muzzlePosition = muzzle.position;
+        request.fireDirection = MiMath::RotateVector(muzzle.rotation, { 0.0f, 1.0f, 0.0f });
         context.firing.Fire(context, request);
     }
 }
@@ -272,15 +265,10 @@ void PlayerDualPistolsSlashBurst::FireRightPistol(PlayerDualPistolsContext& cont
     PlayerDualPistolsFiring::FireRequest request;
     request.pistolSide = PlayerDualPistolsFiring::PistolSide::Right;
     
-    ModelAnimationUtility::BoneTransform gunTransform;
-    bool hasRightMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
-        *context.playerModel,
-        *context.playerTransform,
-        context.references.gunRBoneIndex,
-        gunTransform);
-    if (hasRightMuzzle) {
-        request.muzzlePosition = gunTransform.position;
-        request.fireDirection = MiMath::RotateVector(gunTransform.rotation, { 0.0f, 1.0f, 0.0f });
+    const PlayerMuzzleState& muzzle = context.runtimeState.rightMuzzle;
+    if (muzzle.isValid) {
+        request.muzzlePosition = muzzle.position;
+        request.fireDirection = MiMath::RotateVector(muzzle.rotation, { 0.0f, 1.0f, 0.0f });
         context.firing.Fire(context, request);
     }
 }

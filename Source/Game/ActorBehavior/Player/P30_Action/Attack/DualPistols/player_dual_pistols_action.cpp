@@ -89,6 +89,8 @@ void PlayerDualPistolsAction::Start(PlayerContext& context, const PlayerInput& i
 
 void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
+    UpdateMuzzleStates();
+
     Phase currentPhase = m_context.runtimeState.phase;
     bool enteredPhase = m_enteredPhase;
     m_enteredPhase = false;
@@ -139,6 +141,33 @@ void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& 
         default: break;
     }
 
+}
+
+void PlayerDualPistolsAction::UpdateMuzzleStates()
+{
+    auto updateMuzzleState = [this](unsigned int boneIndex, PlayerMuzzleState& muzzle) {
+        muzzle = {};
+
+        if (!m_context.playerModel || !m_context.playerTransform) return;
+
+        ModelAnimationUtility::BoneTransform gunTransform;
+        muzzle.isValid = ModelAnimationUtility::GetBoneWorldTransform(
+            *m_context.playerModel,
+            *m_context.playerTransform,
+            boneIndex,
+            gunTransform);
+        if (!muzzle.isValid) return;
+
+        muzzle.position = gunTransform.position;
+        muzzle.rotation = gunTransform.rotation;
+    };
+
+    updateMuzzleState(
+        m_context.references.gunLBoneIndex,
+        m_context.runtimeState.leftMuzzle);
+    updateMuzzleState(
+        m_context.references.gunRBoneIndex,
+        m_context.runtimeState.rightMuzzle);
 }
 
 void PlayerDualPistolsAction::Finish(PlayerContext& context, const PlayerInput& input)

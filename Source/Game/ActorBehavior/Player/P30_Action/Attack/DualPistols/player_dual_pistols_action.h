@@ -28,5 +28,6 @@ public:
     void Finish(PlayerContext& context, const PlayerInput& input) override;
 
 private:
+    void UpdateMuzzleStates();
     void ChangePhase(PlayerDualPistolsRuntimeState::Phase newPhase);
 };

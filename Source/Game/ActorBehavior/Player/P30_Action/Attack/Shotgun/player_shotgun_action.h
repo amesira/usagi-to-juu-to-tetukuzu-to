@@ -30,6 +30,7 @@ public:
     void Finish(PlayerContext& context, const PlayerInput& input) override;
 
 private:
+    void UpdateMuzzleState();
     void ChangePhase(PlayerShotgunRuntimeState::Phase newPhase);
 
 };

@@ -20,11 +20,14 @@ namespace RenderEffectFactory {
     // デカールエフェクト生成
     GameObject* CreateDecalEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
     
-    // パーティクルエフェクト生成
-    GameObject* CreateRunDustParticle(
+    EffectHandle CreateParticleEffect(
+        IScene* scene, 
+        const XMFLOAT3& position, 
+        const std::filesystem::path& assetPath);
+    EffectHandle CreateMeshEffect(
         IScene* scene,
-        GameObject* target,
-        const std::filesystem::path& particleAssetPath);
+        const XMFLOAT3& position,
+        const std::filesystem::path& assetPath);
 
     /// @brief Transformへ追従するParticleEffectを生成する
     EffectHandle CreateAttachedParticleEffect(

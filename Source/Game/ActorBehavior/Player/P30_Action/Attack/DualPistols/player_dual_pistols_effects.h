@@ -13,8 +13,8 @@ struct PlayerDualPistolsContext;
 class PlayerDualPistolsEffects {
 public:
     enum class EffectsType {
-        LeftPistolFire,
-        RightPistolFire,
+        FireLeft,
+        FireRight,
         SlashBurst1,
         SlashBurst2,
         SlashBurst3,

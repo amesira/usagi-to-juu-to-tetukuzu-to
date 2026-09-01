@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 
+#include "Game/ActorBehavior/Player/P30_Action/player_muzzle_state.h"
 #include "player_dual_pistols_settings_asset.h"
 #include "player_dual_pistols_aim.h"
 #include "player_dual_pistols_firing.h"
@@ -29,6 +30,9 @@ struct PlayerDualPistolsRuntimeState {
     bool releaseAttackInput = false;
 
     int comboStep = 0;
+
+    PlayerMuzzleState leftMuzzle;
+    PlayerMuzzleState rightMuzzle;
 };
 
 struct PlayerDualPistolsReferences {

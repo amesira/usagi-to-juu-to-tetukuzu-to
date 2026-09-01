@@ -42,5 +42,10 @@ void PlayerDualPistolsFiring::Fire(
     bulletDesc.layerMask = DUAL_PISTOLS_HIT_LAYER_MASK;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
-    context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::Fire);
+    if (request.pistolSide == PistolSide::Left) {
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireLeft);
+    }
+    else {
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireRight);
+    }
 }

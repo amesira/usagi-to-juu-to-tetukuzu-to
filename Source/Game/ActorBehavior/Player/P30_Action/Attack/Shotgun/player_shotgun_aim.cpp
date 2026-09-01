@@ -14,7 +14,6 @@
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/camera_component.h"
-#include "Engine/Graphics/model_animation_utility.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
@@ -75,23 +74,12 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
     m_aimResult.cameraRayDirection = MiMath::Normalize(context.cameraComponent->GetForward());
 
-    ModelAnimationUtility::BoneTransform gunTransform;
-    const bool foundGunBone =
-        context.playerModel &&
-        context.playerTransform &&
-        ModelAnimationUtility::GetBoneWorldTransform(
-            *context.playerModel,
-            *context.playerTransform,
-            context.references.gunLBoneIndex,
-            gunTransform);
-
-    if (foundGunBone) {
-        m_aimResult.muzzlePosition = gunTransform.position;
-    }
-    else {
+    const PlayerMuzzleState& muzzle = context.runtimeState.muzzle;
+    if (!muzzle.isValid) {
         m_aimResult = {};
         return;
     }
+    m_aimResult.muzzlePosition = muzzle.position;
 
     RaycastHit hit;
     m_aimResult.hasTargetHit = CollisionQuery::Raycast(

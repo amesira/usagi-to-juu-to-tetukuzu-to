@@ -8,7 +8,6 @@
 
 #include "Engine/Component/camera_component.h"
 #include "Engine/Component/transform_component.h"
-#include "Engine/Graphics/model_animation_utility.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_types.h"
 
@@ -34,8 +33,7 @@ void PlayerDualPistolsAim::EnterAim(PlayerDualPistolsContext& context)
 void PlayerDualPistolsAim::UpdateAim(PlayerDualPistolsContext& context, float deltaTime)
 {
     m_aimResult = {};
-    if (!context.scene || !context.cameraTransform || !context.cameraComponent ||
-        !context.playerModel || !context.playerTransform) {
+    if (!context.scene || !context.cameraTransform || !context.cameraComponent) {
         return;
     }
 
@@ -60,26 +58,19 @@ void PlayerDualPistolsAim::UpdateAim(PlayerDualPistolsContext& context, float de
             MiMath::Multiply(m_aimResult.cameraRayDirection, context.settings().aimMaxDistance));
     }
 
-    ModelAnimationUtility::BoneTransform gunTransform;
-    m_aimResult.hasLeftMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
-        *context.playerModel,
-        *context.playerTransform,
-        context.references.gunLBoneIndex,
-        gunTransform);
+    const PlayerMuzzleState& leftMuzzle = context.runtimeState.leftMuzzle;
+    m_aimResult.hasLeftMuzzle = leftMuzzle.isValid;
     if (m_aimResult.hasLeftMuzzle) {
-        m_aimResult.leftMuzzlePosition = gunTransform.position;
+        m_aimResult.leftMuzzlePosition = leftMuzzle.position;
         m_aimResult.leftFireDirection = MiMath::Normalize(MiMath::Subtract(
             m_aimResult.targetPosition,
             m_aimResult.leftMuzzlePosition));
     }
 
-    m_aimResult.hasRightMuzzle = ModelAnimationUtility::GetBoneWorldTransform(
-        *context.playerModel,
-        *context.playerTransform,
-        context.references.gunRBoneIndex,
-        gunTransform);
+    const PlayerMuzzleState& rightMuzzle = context.runtimeState.rightMuzzle;
+    m_aimResult.hasRightMuzzle = rightMuzzle.isValid;
     if (m_aimResult.hasRightMuzzle) {
-        m_aimResult.rightMuzzlePosition = gunTransform.position;
+        m_aimResult.rightMuzzlePosition = rightMuzzle.position;
         m_aimResult.rightFireDirection = MiMath::Normalize(MiMath::Subtract(
             m_aimResult.targetPosition,
             m_aimResult.rightMuzzlePosition));

@@ -970,6 +970,7 @@
     <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_muzzle_state.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />

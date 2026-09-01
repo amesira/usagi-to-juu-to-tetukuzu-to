@@ -1,6 +1,7 @@
 // player_shotgun_context.h
 #pragma once
 
+#include "Game/ActorBehavior/Player/P30_Action/player_muzzle_state.h"
 #include "player_shotgun_settings_asset.h"
 #include "player_shotgun_aim.h"
 #include "player_shotgun_charging.h"
@@ -21,6 +22,7 @@ struct PlayerShotgunRuntimeState
 
     Phase phase = Phase::None;
     float phaseTimer = 0.0f;
+    PlayerMuzzleState muzzle;
 };
 
 struct PlayerShotgunReferences 

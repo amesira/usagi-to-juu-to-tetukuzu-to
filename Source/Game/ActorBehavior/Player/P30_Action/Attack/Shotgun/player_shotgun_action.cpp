@@ -79,6 +79,8 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
+    UpdateMuzzleState();
+
     // 終了チェック（仮）
     if (!input.holdAimCommand) {
         ChangePhase(Phase::Exiting);
@@ -158,6 +160,25 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
         }
         default: break;
     }
+}
+
+void PlayerShotgunAction::UpdateMuzzleState()
+{
+    auto& muzzle = m_context.runtimeState.muzzle;
+    muzzle = {};
+
+    if (!m_context.playerModel || !m_context.playerTransform) return;
+
+    ModelAnimationUtility::BoneTransform gunTransform;
+    muzzle.isValid = ModelAnimationUtility::GetBoneWorldTransform(
+        *m_context.playerModel,
+        *m_context.playerTransform,
+        m_context.references.gunLBoneIndex,
+        gunTransform);
+    if (!muzzle.isValid) return;
+
+    muzzle.position = gunTransform.position;
+    muzzle.rotation = gunTransform.rotation;
 }
 
 void PlayerShotgunAction::Finish(PlayerContext& context, const PlayerInput& input)

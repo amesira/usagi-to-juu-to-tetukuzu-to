@@ -52,7 +52,7 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
     m_chargeCompleteEffect.GetTransform()->SetScaling(
         { completeEffectScale, completeEffectScale, completeEffectScale });
 
-    m_muzzleFlashEffect = RenderEffectFactory::CreateAttachedParticleEffect(
+    m_muzzleFlashEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
         context.playerTransform,
         MUZZLE_FLASH_EFFECT_ASSET,
@@ -119,7 +119,12 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     case EffectsType::Fire: {
         m_chargeEffect.Stop();
         m_muzzleFlashEffect.Play();
-        Game::GameFeedback()->PlayCameraShake(0.1f, 10.0f);
+        Game::GameFeedback()->ChangeFOVTemporary(
+            0.2f,
+            0.2f,
+            0.01f
+        );
+        Game::GameFeedback()->PlayCameraShake(0.2f, 1.0f);
         break;
     }
     default: break;
