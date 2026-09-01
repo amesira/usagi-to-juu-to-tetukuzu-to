@@ -6,17 +6,27 @@
 // ・二丁拳銃のエフェクト処理
 //---------------------------------------------------
 #pragma once
+#include "Game/PresBehavior/effect_handle.h"
 
 struct PlayerDualPistolsContext;
 
 class PlayerDualPistolsEffects {
 public:
     enum class EffectsType {
-        AimEnter,
-        AimExit,
-        Fire,
+        LeftPistolFire,
+        RightPistolFire,
+        SlashBurst1,
+        SlashBurst2,
+        SlashBurst3,
     };
 
+private:
+    EffectHandle m_muzzleFlashEffect;
+    EffectHandle m_slashBurstEffects[3];
+
+    bool m_initialized = false;
+
+public:
     void Initialize(PlayerDualPistolsContext& context);
     void Finalize();
     void PlayEffects(PlayerDualPistolsContext& context, EffectsType effectType);

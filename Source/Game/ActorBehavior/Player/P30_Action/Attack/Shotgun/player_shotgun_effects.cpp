@@ -115,9 +115,11 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         m_chargeCompleteEffect.Play();
         break;
     }
+    // === 発射関連のエフェクト ===
     case EffectsType::Fire: {
         m_chargeEffect.Stop();
         m_muzzleFlashEffect.Play();
+        Game::GameFeedback()->PlayCameraShake(0.1f, 10.0f);
         break;
     }
     default: break;
