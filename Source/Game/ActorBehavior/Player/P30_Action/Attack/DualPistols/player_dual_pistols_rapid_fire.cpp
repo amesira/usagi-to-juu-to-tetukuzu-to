@@ -45,7 +45,6 @@ void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
 
     // 最初の発射時にエイムを更新して、正しい方向で発射する
     context.aim.UpdateAim(context, 0.0f);
-    FireLeftPistol(context);
 }
 
 void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float deltaTime)
@@ -64,9 +63,11 @@ void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float
         m_fireFlipFlop = 1 - m_fireFlipFlop;
         if (m_fireFlipFlop == 0) {
             FireLeftPistol(context);
+            context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireLeft);
         }
         else {
             FireRightPistol(context);
+            context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireRight);
         }
     }
 

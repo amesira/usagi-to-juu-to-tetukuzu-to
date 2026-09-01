@@ -38,7 +38,7 @@
                 "randomBetweenTwoColors": false
             },
             "startLifetime": {
-                "constant": 1.0,
+                "constant": 0.20000000298023224,
                 "constantMax": 5.0,
                 "constantMin": 5.0,
                 "randomBetweenTwoConstants": false

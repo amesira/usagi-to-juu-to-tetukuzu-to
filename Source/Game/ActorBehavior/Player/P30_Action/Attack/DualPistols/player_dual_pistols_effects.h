@@ -6,7 +6,9 @@
 // ・二丁拳銃のエフェクト処理
 //---------------------------------------------------
 #pragma once
+#include <vector>
 #include "Game/PresBehavior/effect_handle.h"
+#include "Game/PresBehavior/attached_effect_handle.h"
 
 struct PlayerDualPistolsContext;
 
@@ -21,13 +23,22 @@ public:
     };
 
 private:
-    EffectHandle m_muzzleFlashEffect;
-    EffectHandle m_slashBurstEffects[3];
+    int m_settingsRevisionCounter = -1;
+
+    std::vector<EffectHandle> m_muzzleFlashEffects;
+    AttachedEffectHandle m_slashBurstEffect1;
+    AttachedEffectHandle m_slashBurstEffect2;
+    AttachedEffectHandle m_slashBurstEffect3[2]; // 0: 左ピストル, 1: 右ピストル
 
     bool m_initialized = false;
 
 public:
     void Initialize(PlayerDualPistolsContext& context);
+    void Update(PlayerDualPistolsContext& context);
     void Finalize();
     void PlayEffects(PlayerDualPistolsContext& context, EffectsType effectType);
+
+private:
+    void PlayMuzzleFlashEffect(PlayerDualPistolsContext& context, int pistolIndex);
+
 };

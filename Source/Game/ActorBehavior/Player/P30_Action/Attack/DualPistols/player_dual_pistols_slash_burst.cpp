@@ -68,16 +68,19 @@ void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
         m_locomotionRequest.useGravity = (context.runtimeState.comboStep == MAX_ATTACK_COUNT);
     }
 
-    // アニメーションの再生
+    // アニメーション・エフェクトの再生
     switch (context.runtimeState.comboStep) {
     case 1:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst1);
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::SlashBurst1);
         break;
     case 2:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst2);
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::SlashBurst2);
         break;
     case 3:
         context.animationController->PlayAnimation(PlayerAnimationController::Animation::DualPistolsSlashBurst3);
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::SlashBurst3);
         break;
     default: break;
     }
