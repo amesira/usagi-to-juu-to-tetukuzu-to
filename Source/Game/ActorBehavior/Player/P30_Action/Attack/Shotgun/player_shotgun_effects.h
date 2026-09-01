@@ -7,7 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include <DirectXMath.h>
-#include "Game/PresBehavior/effect_handle.h"
+#include "Game/PresBehavior/attached_effect_handle.h"
 
 struct PlayerShotgunContext;
 
@@ -23,14 +23,17 @@ public:
     };
 
 private:
-    EffectHandle m_chargeEffect;
-    EffectHandle m_chargeCompleteEffect;
-    EffectHandle m_muzzleFlashEffect;
+    int m_settingsRevisionCounter = -1;
+
+    AttachedEffectHandle m_chargeEffect;
+    AttachedEffectHandle m_chargeCompleteEffect;
+    AttachedEffectHandle m_muzzleFlashEffect;
 
     bool m_initialized = false;
 
 public:
     void Initialize(PlayerShotgunContext& context);
+    void Update(PlayerShotgunContext& context);
     void Finalize();
     void PlayEffects(PlayerShotgunContext& context, EffectsType effectType);
 

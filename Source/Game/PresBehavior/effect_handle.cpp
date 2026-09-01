@@ -35,7 +35,6 @@ void EffectHandle::Play()
         meshEffect->Play();
     }
 }
-
 void EffectHandle::Stop()
 {
     if (!IsValid()) return;
@@ -46,7 +45,6 @@ void EffectHandle::Stop()
         meshEffect->Stop();
     }
 }
-
 void EffectHandle::Pause()
 {
     if (!IsValid()) return;
@@ -57,6 +55,17 @@ void EffectHandle::Pause()
         meshEffect->Pause();
     }
 }
+bool EffectHandle::IsPlaying() const
+{
+    if (!IsValid()) return false;
+    if (ParticleSystemComponent* particleSystem = GetParticleSystem()) {
+        return particleSystem->IsPlaying();
+    }
+    if (MeshEffectComponent* meshEffect = GetMeshEffect()) {
+        return meshEffect->IsPlaying();
+    }
+    return false;
+}
 #pragma endregion
 
 void EffectHandle::SetActive(bool active)
@@ -66,7 +75,6 @@ void EffectHandle::SetActive(bool active)
         gameObject->SetActive(active);
     }
 }
-
 void EffectHandle::Destroy()
 {
     if (GameObject* gameObject = GetGameObject()) {
@@ -74,7 +82,6 @@ void EffectHandle::Destroy()
     }
     Reset();
 }
-
 void EffectHandle::Reset()
 {
     m_scene = nullptr;

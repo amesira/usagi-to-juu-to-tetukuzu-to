@@ -80,6 +80,7 @@ void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input
 void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& input, float deltaTime)
 {
     UpdateMuzzleState();
+    m_context.effects.Update(m_context);
 
     // 終了チェック（仮）
     if (!input.holdAimCommand) {

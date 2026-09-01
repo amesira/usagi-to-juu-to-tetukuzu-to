@@ -11,37 +11,44 @@ using namespace DirectX;
 #include <string>
 #include <filesystem>
 #include "Game/PresBehavior/effect_handle.h"
+#include "Game/PresBehavior/attached_effect_handle.h"
+#include "Game/PresBehavior/effect_transform.h"
 
 class GameObject;
 class IScene;
 class TransformComponent;
+
+struct EffectAttachmentDesc {
+    TransformComponent* target = nullptr;
+    EffectTransform localTransform{};
+    bool considerTargetRotation = true;
+    bool considerTargetScaling = false;
+};
 
 namespace RenderEffectFactory {
     // デカールエフェクト生成
     GameObject* CreateDecalEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
     
     EffectHandle CreateParticleEffect(
-        IScene* scene, 
-        const XMFLOAT3& position, 
-        const std::filesystem::path& assetPath);
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
     EffectHandle CreateMeshEffect(
         IScene* scene,
-        const XMFLOAT3& position,
-        const std::filesystem::path& assetPath);
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
 
     /// @brief Transformへ追従するParticleEffectを生成する
-    EffectHandle CreateAttachedParticleEffect(
+    AttachedEffectHandle CreateAttachedParticleEffect(
         IScene* scene,
-        TransformComponent* target,
         const std::filesystem::path& assetPath,
-        const XMFLOAT3& offset);
+        const EffectAttachmentDesc& attachment);
 
     /// @brief Transformへ追従するMeshEffectを生成する
-    EffectHandle CreateAttachedMeshEffect(
+    AttachedEffectHandle CreateAttachedMeshEffect(
         IScene* scene,
-        TransformComponent* target,
         const std::filesystem::path& assetPath,
-        const XMFLOAT3& offset);
+        const EffectAttachmentDesc& attachment);
 };
 
 #endif // !RENDER_EFFECT_FACTORY_H

@@ -85,11 +85,15 @@ namespace PlayerPrefabFactory
             true);
 
         // 走行時の砂埃パーティクル生成
-        EffectHandle runDustEffectHandle = RenderEffectFactory::CreateAttachedParticleEffect(
+        AttachedEffectHandle runDustEffectHandle = RenderEffectFactory::CreateAttachedParticleEffect(
             scene,
-            playerTransform,
             "asset/Particle/run_dust.particle.json",
-            settings.runDustEffect.positionOffset);
+            EffectAttachmentDesc{
+                .target = playerTransform,
+                .localTransform = {
+                    .position = settings.runDustEffect.positionOffset,
+                },
+            });
         prefab.runDustParticle = runDustEffectHandle.GetGameObject();
         moveReferences.runDustParticle = runDustEffectHandle.GetParticleSystem();
         {

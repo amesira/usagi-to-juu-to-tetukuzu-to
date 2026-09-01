@@ -59,8 +59,8 @@ namespace
     GameObject* CreateParticleObject(
         IScene* scene,
         const char* objectName,
-        const XMFLOAT3& position,
         const std::filesystem::path& assetPath,
+        const EffectTransform& effectTransform,
         const std::wstring* textureOverride = nullptr)
     {
         if (!scene) return nullptr;
@@ -71,7 +71,9 @@ namespace
 
         TransformComponent* transform = effect->AddComponent<TransformComponent>();
         ParticleSystemComponent* particleSystem = effect->AddComponent<ParticleSystemComponent>();
-        transform->SetPosition(position);
+        transform->SetPosition(effectTransform.position);
+        transform->SetRotation(effectTransform.rotation);
+        transform->SetScaling(effectTransform.scaling);
 
         if (!ApplyParticleAsset(particleSystem, assetPath, textureOverride))
         {
@@ -83,18 +85,51 @@ namespace
 
     TransformConstraintBehavior* AttachToTransform(
         GameObject* effect,
-        TransformComponent* target,
-        const XMFLOAT3& offset)
+        const EffectAttachmentDesc& attachment)
     {
-        if (!effect || !target) return nullptr;
+        if (!effect || !attachment.target) return nullptr;
 
         TransformConstraintBehavior* constraint =
             effect->AddComponent<TransformConstraintBehavior>();
-        constraint->SetTarget(target);
-        constraint->SetOffset(offset);
-        constraint->SetConsiderRotation(true);
-        constraint->SetConsiderScaling(false);
+        constraint->SetTarget(attachment.target);
+        constraint->SetLocalPosition(attachment.localTransform.position);
+        constraint->SetLocalRotation(attachment.localTransform.rotation);
+        constraint->SetLocalScaling(attachment.localTransform.scaling);
+        constraint->SetConsiderRotation(attachment.considerTargetRotation);
+        constraint->SetConsiderScaling(attachment.considerTargetScaling);
         return constraint;
+    }
+
+    GameObject* CreateMeshEffectObject(
+        IScene* scene,
+        const char* objectName,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& effectTransform)
+    {
+        if (!scene) return nullptr;
+
+        MeshEffectAssetLoader* loader = EngineServiceLocator::MeshEffectLoader();
+        if (!loader) return nullptr;
+
+        MeshEffectAsset* asset = loader->Get(assetPath);
+        if (!asset) {
+            EngineServiceLocator::AddLogMessage(
+                "Failed to load mesh effect asset: " + assetPath.generic_string());
+            return nullptr;
+        }
+
+        GameObject* effect = scene->CreateGameObject();
+        effect->SetName(objectName);
+        effect->SetRenderLayer(RenderLayer::Particle);
+
+        TransformComponent* transform = effect->AddComponent<TransformComponent>();
+        transform->SetPosition(effectTransform.position);
+        transform->SetRotation(effectTransform.rotation);
+        transform->SetScaling(effectTransform.scaling);
+
+        MeshEffectComponent* meshEffect = effect->AddComponent<MeshEffectComponent>();
+        meshEffect->SetAsset(asset);
+        return effect;
     }
 }
 
@@ -119,59 +154,75 @@ GameObject* RenderEffectFactory::CreateDecalEffect(
     return decalEffect;
 }
 
-EffectHandle RenderEffectFactory::CreateAttachedParticleEffect(
+EffectHandle RenderEffectFactory::CreateParticleEffect(
     IScene* scene,
-    TransformComponent* target,
     const std::filesystem::path& assetPath,
-    const XMFLOAT3& offset)
+    const EffectTransform& transform)
 {
-    if (!scene || !target) return {};
+    GameObject* effect = CreateParticleObject(
+        scene,
+        "ParticleEffect",
+        assetPath,
+        transform);
+    return EffectHandle(effect);
+}
+
+EffectHandle RenderEffectFactory::CreateMeshEffect(
+    IScene* scene,
+    const std::filesystem::path& assetPath,
+    const EffectTransform& transform)
+{
+    return EffectHandle(CreateMeshEffectObject(
+        scene,
+        "MeshEffect",
+        assetPath,
+        transform));
+}
+
+AttachedEffectHandle RenderEffectFactory::CreateAttachedParticleEffect(
+    IScene* scene,
+    const std::filesystem::path& assetPath,
+    const EffectAttachmentDesc& attachment)
+{
+    if (!scene || !attachment.target) return {};
 
     GameObject* effect = CreateParticleObject(
         scene,
         "AttachedParticleEffect",
-        target->GetPosition(),
-        assetPath);
+        assetPath,
+        {});
     if (!effect) return {};
 
     if (ParticleSystemComponent* particle = effect->GetComponent<ParticleSystemComponent>()) {
         particle->Main().playOnAwake = false;
         particle->Stop();
     }
-    AttachToTransform(effect, target, offset);
-    return EffectHandle(effect);
+    AttachToTransform(effect, attachment);
+    AttachedEffectHandle handle{ EffectHandle(effect) };
+    handle.SetLocalTransform(attachment.localTransform);
+    return handle;
 }
 
-EffectHandle RenderEffectFactory::CreateAttachedMeshEffect(
+AttachedEffectHandle RenderEffectFactory::CreateAttachedMeshEffect(
     IScene* scene,
-    TransformComponent* target,
     const std::filesystem::path& assetPath,
-    const XMFLOAT3& offset)
+    const EffectAttachmentDesc& attachment)
 {
-    if (!scene || !target) return {};
+    if (!scene || !attachment.target) return {};
 
-    MeshEffectAssetLoader* loader = EngineServiceLocator::MeshEffectLoader();
-    if (!loader) return {};
+    GameObject* effect = CreateMeshEffectObject(
+        scene,
+        "AttachedMeshEffect",
+        assetPath,
+        {});
+    if (!effect) return {};
 
-    MeshEffectAsset* asset = loader->Get(assetPath);
-    if (!asset) {
-        EngineServiceLocator::AddLogMessage(
-            "Failed to load mesh effect asset: " + assetPath.generic_string());
-        return {};
-    }
-
-    GameObject* effect = scene->CreateGameObject();
-    effect->SetName("AttachedMeshEffect");
-    effect->SetRenderLayer(RenderLayer::Particle);
-
-    TransformComponent* transform = effect->AddComponent<TransformComponent>();
-    transform->SetPosition(target->GetPosition());
-
-    MeshEffectComponent* meshEffect = effect->AddComponent<MeshEffectComponent>();
-    meshEffect->SetAsset(asset);
+    MeshEffectComponent* meshEffect = effect->GetComponent<MeshEffectComponent>();
     meshEffect->Main().playOnAwake = false;
     meshEffect->Stop();
 
-    AttachToTransform(effect, target, offset);
-    return EffectHandle(effect);
+    AttachToTransform(effect, attachment);
+    AttachedEffectHandle handle{ EffectHandle(effect) };
+    handle.SetLocalTransform(attachment.localTransform);
+    return handle;
 }

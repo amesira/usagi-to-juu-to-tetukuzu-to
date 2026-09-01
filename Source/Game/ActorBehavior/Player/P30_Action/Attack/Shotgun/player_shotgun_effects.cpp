@@ -39,26 +39,57 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
     // EffectHandleを作成して、ショットガンのエフェクトを初期化する
     m_chargeEffect = RenderEffectFactory::CreateAttachedParticleEffect(
         context.scene,
-        context.playerTransform,
         CHARGE_EFFECT_ASSET,
-        context.settings().chargeEffectOffset);
+        EffectAttachmentDesc{
+            .target = context.playerTransform,
+            .localTransform = {
+                .position = context.settings().chargeEffectOffset,
+            },
+        });
 
     m_chargeCompleteEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        context.playerTransform,
         CHARGE_COMPLETE_EFFECT_ASSET,
-        context.settings().chargeCompleteEffectOffset);
+        EffectAttachmentDesc{
+            .target = context.playerTransform,
+            .localTransform = {
+                .position = context.settings().chargeCompleteEffectOffset,
+            },
+        });
     const float completeEffectScale = context.settings().chargeCompleteEffectScale;
-    m_chargeCompleteEffect.GetTransform()->SetScaling(
+    m_chargeCompleteEffect.SetLocalScaling(
         { completeEffectScale, completeEffectScale, completeEffectScale });
 
     m_muzzleFlashEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        context.playerTransform,
         MUZZLE_FLASH_EFFECT_ASSET,
-        context.settings().muzzleFlashEffectOffset);
+        EffectAttachmentDesc{
+            .target = context.playerTransform,
+            .localTransform = {
+                .position = context.settings().muzzleFlashEffectOffset,
+            },
+        });
 
     m_initialized = true;
+}
+
+void PlayerShotgunEffects::Update(PlayerShotgunContext& context)
+{
+    if (!m_initialized) return;
+
+    // === デバッグ用：Revision Counterが変化した場合、エフェクトの位置を更新する ===
+    if (m_settingsRevisionCounter != context.settingsAsset->GetRevision()) {
+        m_settingsRevisionCounter = context.settingsAsset->GetRevision();
+        m_chargeEffect.SetLocalPosition(context.settings().chargeEffectOffset);
+
+        const float completeEffectScale = context.settings().chargeCompleteEffectScale;
+        m_chargeCompleteEffect.SetLocalTransform({
+            .position = context.settings().chargeCompleteEffectOffset,
+            .scaling = { completeEffectScale, completeEffectScale, completeEffectScale },
+        });
+
+        m_muzzleFlashEffect.SetLocalPosition(context.settings().muzzleFlashEffectOffset);
+    }
 }
 
 void PlayerShotgunEffects::Finalize()
@@ -119,12 +150,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     case EffectsType::Fire: {
         m_chargeEffect.Stop();
         m_muzzleFlashEffect.Play();
-        Game::GameFeedback()->ChangeFOVTemporary(
-            0.2f,
-            0.2f,
-            0.01f
-        );
-        Game::GameFeedback()->PlayCameraShake(0.2f, 1.0f);
+        Game::GameFeedback()->PlayCameraShake(0.1f, 0.5f);
         break;
     }
     default: break;

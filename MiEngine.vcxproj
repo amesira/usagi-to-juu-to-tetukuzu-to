@@ -186,6 +186,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\attached_effect_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
@@ -394,6 +395,8 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
     <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\attached_effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_transform.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_muzzle_state.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />

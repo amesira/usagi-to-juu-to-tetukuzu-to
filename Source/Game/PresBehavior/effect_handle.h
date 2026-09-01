@@ -22,6 +22,8 @@ public:
     void Stop();
     void Pause();
 
+    bool IsPlaying() const;
+
     void SetActive(bool active);
     void Destroy();
     void Reset();
