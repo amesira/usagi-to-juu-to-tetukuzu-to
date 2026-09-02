@@ -17,27 +17,28 @@ HitResult DamageReceiver::ReceiveDamage(const HitData& data)
     HitResult result = {};
     float damage = data.damage * m_damageMultiplier;
 
-    if (m_healthBehavior) {
+    // 無敵やガード判定もここで行なう
+    result.acceptance = EvaluateAcceptance(data);
+
+    if (result.WasAccepted() && m_healthBehavior) {
         m_healthBehavior->TakeDamage(damage);
-        result.acceptance = HitAcceptance::Accepted;
         result.appliedDamage = damage;
         result.killed = m_healthBehavior->IsDead();
         return result;
     }
 
-    result.acceptance = HitAcceptance::InvalidTarget;
     return result;
 }
 
-bool DamageReceiver::CanReceiveDamage(const HitData& data) const
+HitAcceptance DamageReceiver::EvaluateAcceptance(const HitData& hitData) const
 {
-    // 無敵状態やガード状態の判定を行う
-
-    // HitAcceptanceはここで操作するべき？
-
-    if (m_healthBehavior) {
-        
+    if (!m_healthBehavior) {
+        return HitAcceptance::InvalidTarget;
     }
 
-    return true;
+    if (m_healthBehavior->IsDead()) {
+        return HitAcceptance::Rejected;
+    }
+
+    return HitAcceptance::Accepted;
 }

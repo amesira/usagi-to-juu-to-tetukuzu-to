@@ -19,10 +19,11 @@ public:
     void Initialize(HealthBehavior* healthBehavior);
 
     HitResult ReceiveDamage(const HitData& hitData);
-    bool CanReceiveDamage(const HitData& hitData) const;
 
     // === ダメージ倍率設定 ===
     void SetDamageMultiplier(float multiplier) { m_damageMultiplier = multiplier; }
     float GetDamageMultiplier() const { return m_damageMultiplier; }
 
+private:
+    HitAcceptance EvaluateAcceptance(const HitData& hitData) const;
 };

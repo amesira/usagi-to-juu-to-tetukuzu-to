@@ -18,7 +18,6 @@ void KnockbackReceiver::Update(float deltaTime)
 {
     if (!m_isActive) return;
     if (!m_transform) return;
-    m_elapsedTime += deltaTime;
 
     DirectX::XMFLOAT3 currentPosition = {};
     if (m_isStartFrame) {
@@ -27,6 +26,8 @@ void KnockbackReceiver::Update(float deltaTime)
         currentPosition = m_startPosition;
     }
     else {
+        m_elapsedTime += deltaTime;
+
         // 位置の更新
         currentPosition = m_transform->GetPosition();
         currentPosition = MiMath::Add(currentPosition, MiMath::Multiply(m_velocity, deltaTime));
@@ -36,18 +37,17 @@ void KnockbackReceiver::Update(float deltaTime)
     // 位置の適用
     switch (m_currentRequest.movementMode) {
         case KnockbackMovementMode::SetTransformPosition: {
-            if (m_transform) {
-               m_transform->SetPosition(currentPosition);
-            }
+            m_transform->SetPosition(currentPosition);
             break;
         }
         case KnockbackMovementMode::SetRigidbodyVelocity: {
-            if (m_rigidbody && m_transform) {
+            if (m_rigidbody && deltaTime > 0.0f) {
                 // 速度を直に適用するのではなく、Transformの位置の変化から速度を計算してRigidbodyに設定する
                 DirectX::XMFLOAT3 velocity = MiMath::Multiply(MiMath::Subtract(
                     currentPosition,
                     m_transform->GetPosition()
                 ), 1.0f / deltaTime);
+                m_rigidbody->SetVelocity(velocity);
             }
             break;
         }
@@ -62,8 +62,9 @@ void KnockbackReceiver::Update(float deltaTime)
 
 bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
 {
-    if (!request.enabled) return false;
     if (!m_transform) return false;
+    if (!request.enabled) return false;
+    if (request.duration <= 0.0f) return false;
     if (request.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && !m_rigidbody) return false;
 
     m_currentRequest = request;

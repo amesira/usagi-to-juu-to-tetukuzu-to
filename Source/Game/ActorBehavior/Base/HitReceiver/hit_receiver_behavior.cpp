@@ -50,12 +50,9 @@ void HitReceiverBehavior::DrawComponentInspector()
 HitResult HitReceiverBehavior::ReceiveHit(const HitData& hitData)
 {
     // ダメージ処理
-    HitResult result = {};
-    if (m_damageReceiver.CanReceiveDamage(hitData)) {
-        result = m_damageReceiver.ReceiveDamage(hitData);
-    }
-    else {
-        result = { HitAcceptance::Rejected, 0.0f, false, false };
+    HitResult result = m_damageReceiver.ReceiveDamage(hitData);
+    if (!result.WasAccepted()) {
+        return result;
     }
 
     // ヒットリアクション、ノックバック開始処理
@@ -64,6 +61,7 @@ HitResult HitReceiverBehavior::ReceiveHit(const HitData& hitData)
         result.startedKnockback = m_knockbackReceiver.StartKnockback(hitData.knockback);
     }
     else {
+        m_knockbackReceiver.CancelKnockback();
         m_hitReaction.OnDeath(hitData);
     }
     return result;

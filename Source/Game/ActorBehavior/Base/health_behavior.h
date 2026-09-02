@@ -29,19 +29,32 @@ public:
 
 public:
     virtual void TakeDamage(float damage);
-    void SetMaxHealth(float maxHealth, bool fillHealth = true);
-    void SetHealth(float health);
-
-    float GetHealth() const { return m_health; }
-    float GetMaxHealth() const { return m_maxHealth; }
-    float GetHealthRate() const;
     bool IsDead() const { return m_health <= 0.0f; }
 
-    // ダメージコールバックの設定
     void SetOnTakeDamageCallback(DamageCallback callback) {
         m_onTakeDamage = callback;
     }
 
+    float GetHealthRate() const {
+        if (m_maxHealth <= 0.0f) return 0.0f;
+        return m_health / m_maxHealth;
+    }
+
+    // === 外部から直接行うHealthの設定 ===
+    void SetMaxHealth(float maxHealth) { 
+        m_maxHealth = maxHealth; 
+        if (m_health > m_maxHealth) {
+            m_health = m_maxHealth;
+        }
+    }
+    float GetMaxHealth() const { return m_maxHealth; }
+    void SetHealth(float health) {
+        m_health = health; 
+        if (m_health > m_maxHealth) {
+            m_health = m_maxHealth;
+        }
+    }
+    float GetHealth() const { return m_health; }
 };
 
 #endif // HEALTH_BEHAVIOR_H
