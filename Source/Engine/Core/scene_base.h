@@ -75,7 +75,8 @@ public:
 
             m_gameObjects[index] = GameObject();
             GameObject* pGameObject = &m_gameObjects[index];
-            pGameObject->SetID(m_gameObjectCount++);
+           // pGameObject->SetID(m_gameObjectCount++);
+            pGameObject->SetID(index); // こっちじゃね　もしIDを本当に固有にしたいなら、これとは別にもつか、世代番号をもたせる必要がある
             pGameObject->SetScene(this);
 
             return pGameObject;

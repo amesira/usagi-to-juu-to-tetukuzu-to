@@ -29,8 +29,8 @@
             ],
             "gradientEndColor": [
                 1.0,
-                1.0,
-                1.0,
+                0.3211382031440735,
+                0.3211382031440735,
                 0.0
             ],
             "gradientEndPosition": 1.0,
@@ -78,15 +78,15 @@
             "blendMode": "Additive",
             "color": [
                 1.0,
-                1.0,
-                1.0,
+                0.707317054271698,
+                0.0,
                 1.0
             ],
             "intensity": 3.0,
             "modelPath": "asset/Model/EffectModel/slash.fbx",
             "samplerMode": "Clamp",
             "textureMappingMode": "MeshUV",
-            "texturePath": "asset/Texture/EffectTexture/image-47.png",
+            "texturePath": "asset/Texture/EffectTexture/slash_A.png",
             "uvRect": [
                 0.0,
                 0.0,

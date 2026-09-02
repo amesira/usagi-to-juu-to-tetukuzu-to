@@ -6,7 +6,7 @@
         "bulletSpawnForwardOffset": 0.20000000298023224,
         "bulletSpeed": 60.0,
         "chainTime": 0.20000000298023224,
-        "endTime": 0.5,
+        "endTime": 0.44999998807907104,
         "finalStepMoveDistance": 6.0,
         "finalStepMoveDuration": 0.30000001192092896,
         "fireTime": 0.10000000149011612,
