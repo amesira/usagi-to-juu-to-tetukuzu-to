@@ -23,13 +23,7 @@
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
-#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
-#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
-#include "Game/ActorBehavior/Enemy/enemy_state_machine_behavior.h"
-#include "Game/ActorBehavior/Enemy/base_enemy_attack_behavior.h"
-
 #include "Game/ActorBehavior/Base/health_behavior.h"
-#include "Game/ActorBehavior/Base/blinker_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -70,7 +64,5 @@ GameObject* ActorFactory::CreatePlayer(
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
     player->AddComponent<PlayerMoveBehavior>();
-
-    player->AddComponent<HitStopBehavior>();
     return player;
 }

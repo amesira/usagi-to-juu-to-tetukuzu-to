@@ -15,8 +15,8 @@
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
-#include "Game/ActorBehavior/Base/hit_stop_behavior.h"
-#include "Game/ActorBehavior/Base/blinker_behavior.h"
+#include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_behavior.h"
+#include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
 #include "External/ImGui/imgui.h"
 

@@ -262,19 +262,10 @@
     <ClCompile Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Base\blinker_behavior.cpp">
+    <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Enemy\base_enemy_attack_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_state_machine_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Base\hit_stop_behavior.cpp">
+    <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
@@ -406,6 +397,7 @@
     <ClCompile Include="Source\Engine\Processor\mesh_effect_processor.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
     <ClCompile Include="Source\Game\Factory\Prefab\player_prefab_factory.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\game_object.h">
@@ -612,22 +604,10 @@
     <ClInclude Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Base\blinker_behavior.h">
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Enemy\base_enemy_attack_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_context.h">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_state_machine_behavior.h">
-      <Filter>Sources\Game\ActorBehavior\Enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Base\hit_stop_behavior.h">
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_resource.h">
@@ -978,5 +958,8 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_factory.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
   </ItemGroup>
 </Project>
