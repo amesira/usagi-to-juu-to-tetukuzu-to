@@ -5,36 +5,119 @@
 //===================================================
 #include "knockback_receiver.h"
 
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/rigidbody_component.h"
+
 void KnockbackReceiver::Initialize(TransformComponent* transform, RigidbodyComponent* rigidbody)
 {
     m_transform = transform;
     m_rigidbody = rigidbody;
 }
 
-void KnockbackReceiver::Update(float)
+void KnockbackReceiver::Update(float deltaTime)
 {
+    if (!m_isActive) return;
+    if (!m_transform) return;
+    m_elapsedTime += deltaTime;
+
+    DirectX::XMFLOAT3 currentPosition = {};
+    if (m_isStartFrame) {
+        // 一番最初のフレームは、開始位置を設定する
+        m_isStartFrame = false;
+        currentPosition = m_startPosition;
+    }
+    else {
+        // 位置の更新
+        currentPosition = m_transform->GetPosition();
+        currentPosition = MiMath::Add(currentPosition, MiMath::Multiply(m_velocity, deltaTime));
+        m_velocity.y += m_currentRequest.gravity * deltaTime;
+    }
+
+    // 位置の適用
+    switch (m_currentRequest.movementMode) {
+        case KnockbackMovementMode::SetTransformPosition: {
+            if (m_transform) {
+               m_transform->SetPosition(currentPosition);
+            }
+            break;
+        }
+        case KnockbackMovementMode::SetRigidbodyVelocity: {
+            if (m_rigidbody && m_transform) {
+                // 速度を直に適用するのではなく、Transformの位置の変化から速度を計算してRigidbodyに設定する
+                DirectX::XMFLOAT3 velocity = MiMath::Multiply(MiMath::Subtract(
+                    currentPosition,
+                    m_transform->GetPosition()
+                ), 1.0f / deltaTime);
+            }
+            break;
+        }
+        default: break;
+    }
+
+    if (m_elapsedTime >= m_currentRequest.duration) {
+        m_isActive = false;
+        return;
+    }
 }
 
-bool KnockbackReceiver::StartKnockback(const KnockbackRequest&)
+bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
 {
-    return false;
+    if (!request.enabled) return false;
+    if (!m_transform) return false;
+    if (request.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && !m_rigidbody) return false;
+
+    m_currentRequest = request;
+    m_isActive = true;
+    m_elapsedTime = 0.0f;
+    m_isStartFrame = true;
+
+    // 開始位置と目標位置の計算
+    m_startPosition = request.overrideStartPosition ? request.startPosition : m_transform->GetPosition();
+    XMFLOAT3 targetPosition = EvaluateTargetPosition(
+        m_startPosition, 
+        request);
+    m_velocity = CalculateInitialVelocity(
+        m_startPosition, 
+        targetPosition, 
+        request.gravity, 
+        request.duration);
+
+    return true;
 }
 
 void KnockbackReceiver::CancelKnockback()
 {
+    m_isActive = false;
 }
 
-float KnockbackReceiver::GetProgress() const
+/// @brief ノックバックの初速度を計算する
+DirectX::XMFLOAT3 KnockbackReceiver::CalculateInitialVelocity(
+    const DirectX::XMFLOAT3& startPosition, 
+    const DirectX::XMFLOAT3& targetPosition, 
+    float gravity, 
+    float duration) const
 {
-    return 0.0f;
+    if (duration <= 0.0f) return { 0.0f, 0.0f, 0.0f };
+
+    DirectX::XMFLOAT3 toTarget = MiMath::Subtract(targetPosition, startPosition);
+    DirectX::XMFLOAT3 initialVelocity = MiMath::Multiply(toTarget, 1.0f / duration);
+    initialVelocity.y -= 0.5f * gravity * duration;
+
+    return initialVelocity;
 }
 
-DirectX::XMFLOAT3 KnockbackReceiver::CalculateTargetPosition() const
+/// @brief ノックバックの目標位置を評価する
+DirectX::XMFLOAT3 KnockbackReceiver::EvaluateTargetPosition(const DirectX::XMFLOAT3& startPosition, const KnockbackRequest& request) const
 {
-    return m_startPosition;
-}
+    switch (request.mode) {
+        case KnockbackMode::RelativeDistance: {
+            return MiMath::Add(startPosition, MiMath::Multiply(request.direction, request.distance));
+        }
+        case KnockbackMode::TargetPosition: {
+            return request.targetPosition;
+        }
+    default: break;
+    }
 
-float KnockbackReceiver::EvaluateEasing(float rate) const
-{
-    return rate;
+    return startPosition;
 }

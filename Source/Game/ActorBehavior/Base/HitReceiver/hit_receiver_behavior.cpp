@@ -30,6 +30,7 @@ void HitReceiverBehavior::Start()
 void HitReceiverBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
+
     m_knockbackReceiver.Update(deltaTime);
     m_hitReaction.Update(deltaTime);
 }
@@ -39,7 +40,6 @@ void HitReceiverBehavior::DrawComponentInspector()
     if (InspectorViewWindow::BeginComponentSection(this, "HitReceiverBehavior"))
     {
         ImGui::Text("HealthBehavior: %s", m_healthBehavior ? "true" : "false");
-        ImGui::Text("DamageReceiver Invincible: %s", m_damageReceiver.IsInvincible() ? "true" : "false");
         ImGui::Text("Knockback Active: %s", IsKnockbackActive() ? "true" : "false");
     }
 
@@ -49,7 +49,23 @@ void HitReceiverBehavior::DrawComponentInspector()
 /// @brief 攻撃を受け取る
 HitResult HitReceiverBehavior::ReceiveHit(const HitData& hitData)
 {
-    HitResult result = m_damageReceiver.ReceiveDamage(hitData);
+    // ダメージ処理
+    HitResult result = {};
+    if (m_damageReceiver.CanReceiveDamage(hitData)) {
+        result = m_damageReceiver.ReceiveDamage(hitData);
+    }
+    else {
+        result = { HitAcceptance::Rejected, 0.0f, false, false };
+    }
+
+    // ヒットリアクション、ノックバック開始処理
+    if (!result.killed) {
+        m_hitReaction.OnHit(hitData, result);
+        result.startedKnockback = m_knockbackReceiver.StartKnockback(hitData.knockback);
+    }
+    else {
+        m_hitReaction.OnDeath(hitData);
+    }
     return result;
 }
 

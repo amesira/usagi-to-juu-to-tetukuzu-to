@@ -13,7 +13,6 @@ class HealthBehavior;
 class DamageReceiver {
 private:
     HealthBehavior* m_healthBehavior = nullptr;
-    bool m_isInvincible = false;
     float m_damageMultiplier = 1.0f;
 
 public:
@@ -22,9 +21,8 @@ public:
     HitResult ReceiveDamage(const HitData& hitData);
     bool CanReceiveDamage(const HitData& hitData) const;
 
-    void SetInvincible(bool isInvincible) { m_isInvincible = isInvincible; }
-    bool IsInvincible() const { return m_isInvincible; }
-
+    // === ダメージ倍率設定 ===
     void SetDamageMultiplier(float multiplier) { m_damageMultiplier = multiplier; }
     float GetDamageMultiplier() const { return m_damageMultiplier; }
+
 };

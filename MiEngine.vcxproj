@@ -390,7 +390,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_types.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_context.h" />

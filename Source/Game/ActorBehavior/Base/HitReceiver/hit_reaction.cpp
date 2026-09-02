@@ -12,16 +12,25 @@ void HitReaction::Initialize(GameObject* owner)
 
 void HitReaction::Update(float)
 {
+
 }
 
 void HitReaction::OnHit(const HitData&, const HitResult&)
 {
+    // 点滅
+
+    // ヒットストップ
+
+    // 通知
 }
 
 void HitReaction::OnDeath(const HitData&)
 {
+    // 通知
+
 }
 
 void HitReaction::Reset()
 {
+
 }

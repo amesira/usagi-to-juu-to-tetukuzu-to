@@ -17,7 +17,11 @@ private:
     RigidbodyComponent* m_rigidbody = nullptr;
 
     KnockbackRequest m_currentRequest;
+
+    bool m_isStartFrame = true;
     DirectX::XMFLOAT3 m_startPosition = { 0.0f, 0.0f, 0.0f };
+
+    DirectX::XMFLOAT3 m_velocity = { 0.0f, 0.0f, 0.0f };
     float m_elapsedTime = 0.0f;
     bool m_isActive = false;
 
@@ -29,10 +33,19 @@ public:
     void CancelKnockback();
 
     bool IsActive() const { return m_isActive; }
-    float GetProgress() const;
     const KnockbackRequest& GetCurrentRequest() const { return m_currentRequest; }
 
 private:
-    DirectX::XMFLOAT3 CalculateTargetPosition() const;
-    float EvaluateEasing(float rate) const;
+    /// @brief ノックバックの初速度を計算する
+    DirectX::XMFLOAT3 CalculateInitialVelocity(
+        const DirectX::XMFLOAT3& startPosition,
+        const DirectX::XMFLOAT3& targetPosition,
+        float gravity,
+        float duration) const;
+
+    /// @brief ノックバックの目標位置を評価する
+    DirectX::XMFLOAT3 EvaluateTargetPosition(
+        const DirectX::XMFLOAT3& startPosition,
+        const KnockbackRequest& request) const;
+
 };

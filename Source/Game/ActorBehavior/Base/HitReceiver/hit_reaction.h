@@ -20,5 +20,6 @@ public:
 
     void OnHit(const HitData& hitData, const HitResult& hitResult);
     void OnDeath(const HitData& hitData);
+
     void Reset();
 };
