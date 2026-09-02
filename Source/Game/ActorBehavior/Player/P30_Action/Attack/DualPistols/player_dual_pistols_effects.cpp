@@ -22,9 +22,6 @@
 namespace {
     const std::filesystem::path MUZZLE_FLASH_EFFECT_ASSET =
         "asset/MeshEffect/player_muzzle_flash_effect.mesh_effect.json";
-    const std::filesystem::path SLASH_BURST_EFFECT_ASSETS = 
-        "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json";
-
     DirectX::XMFLOAT4 EulerToQuaternion(const DirectX::XMFLOAT3& rotation)
     {
         DirectX::XMFLOAT4 quaternion;
@@ -46,25 +43,25 @@ void PlayerDualPistolsEffects::Initialize(PlayerDualPistolsContext& context)
 
     m_slashBurstEffect1 = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        SLASH_BURST_EFFECT_ASSETS,
+        context.settings().slashBurstEffectAssetPath,
         EffectAttachmentDesc{
             .target = context.playerTransform,
         });
     m_slashBurstEffect2 = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        SLASH_BURST_EFFECT_ASSETS,
+        context.settings().slashBurstEffectAssetPath,
         EffectAttachmentDesc{
             .target = context.playerTransform,
         });
     m_slashBurstEffect3[0] = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        SLASH_BURST_EFFECT_ASSETS,
+        context.settings().slashBurstEffectAssetPath,
         EffectAttachmentDesc{
             .target = context.playerTransform,
         });
     m_slashBurstEffect3[1] = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene,
-        SLASH_BURST_EFFECT_ASSETS,
+        context.settings().slashBurstEffectAssetPath,
         EffectAttachmentDesc{
             .target = context.playerTransform,
         });
@@ -90,23 +87,23 @@ void PlayerDualPistolsEffects::ApplySlashBurstEffectTransforms(PlayerDualPistols
     };
 
     m_slashBurstEffect1.SetLocalTransform({
-        .position = settings.slashBurst1EffectPosition,
-        .rotation = EulerToQuaternion(settings.slashBurst1EffectRotation),
+        .position = settings.slashBurst1Effect.position,
+        .rotation = EulerToQuaternion(settings.slashBurst1Effect.rotation),
         .scaling = commonScaling,
     });
     m_slashBurstEffect2.SetLocalTransform({
-        .position = settings.slashBurst2EffectPosition,
-        .rotation = EulerToQuaternion(settings.slashBurst2EffectRotation),
+        .position = settings.slashBurst2Effect.position,
+        .rotation = EulerToQuaternion(settings.slashBurst2Effect.rotation),
         .scaling = commonScaling,
     });
     m_slashBurstEffect3[0].SetLocalTransform({
-        .position = settings.slashBurst3LeftEffectPosition,
-        .rotation = EulerToQuaternion(settings.slashBurst3LeftEffectRotation),
+        .position = settings.slashBurst3LeftEffect.position,
+        .rotation = EulerToQuaternion(settings.slashBurst3LeftEffect.rotation),
         .scaling = commonScaling,
     });
     m_slashBurstEffect3[1].SetLocalTransform({
-        .position = settings.slashBurst3RightEffectPosition,
-        .rotation = EulerToQuaternion(settings.slashBurst3RightEffectRotation),
+        .position = settings.slashBurst3RightEffect.position,
+        .rotation = EulerToQuaternion(settings.slashBurst3RightEffect.rotation),
         .scaling = commonScaling,
     });
 }

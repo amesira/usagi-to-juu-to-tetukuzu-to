@@ -14,6 +14,34 @@
 #include "Utility/mi_curve.h"
 
 namespace PlayerDualPistolsSettings {
+    struct SlashBurstEffectTransformSettings {
+        DirectX::XMFLOAT3 position{};
+        DirectX::XMFLOAT3 rotation{};
+    };
+
+    inline static const auto& GetSlashBurstEffectTransformSettingsSchema()
+    {
+        static const auto& schema = FieldSchema{
+            MakeField(
+                "position",
+                "Position",
+                &SlashBurstEffectTransformSettings::position,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -20.0f,
+                    .maxValue = 20.0f }),
+            MakeField(
+                "rotation",
+                "Rotation",
+                &SlashBurstEffectTransformSettings::rotation,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = -360.0f,
+                    .maxValue = 360.0f }),
+        };
+        return schema;
+    }
+
     struct Data {
         float startRapidFireDelay = 0.1f;
 
@@ -38,14 +66,12 @@ namespace PlayerDualPistolsSettings {
         float endTime = 0.5f;
 
         // === Slash Burst Effects ===
-        DirectX::XMFLOAT3 slashBurst1EffectPosition{};
-        DirectX::XMFLOAT3 slashBurst1EffectRotation{};
-        DirectX::XMFLOAT3 slashBurst2EffectPosition{};
-        DirectX::XMFLOAT3 slashBurst2EffectRotation{};
-        DirectX::XMFLOAT3 slashBurst3LeftEffectPosition{};
-        DirectX::XMFLOAT3 slashBurst3LeftEffectRotation{};
-        DirectX::XMFLOAT3 slashBurst3RightEffectPosition{};
-        DirectX::XMFLOAT3 slashBurst3RightEffectRotation{};
+        std::string slashBurstEffectAssetPath =
+            "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json";
+        SlashBurstEffectTransformSettings slashBurst1Effect;
+        SlashBurstEffectTransformSettings slashBurst2Effect;
+        SlashBurstEffectTransformSettings slashBurst3LeftEffect;
+        SlashBurstEffectTransformSettings slashBurst3RightEffect;
         float slashBurstEffectScale = 1.0f;
 
         // === Slash Burst Movement ===
@@ -113,22 +139,34 @@ namespace PlayerDualPistolsSettings {
 
             // === Slash Burst Effects ===
             MakeHeaderField("Slash Burst Effects"),
-            MakeField("slashBurst1EffectPosition", "Slash Burst 1 Position", &Data::slashBurst1EffectPosition,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
-            MakeField("slashBurst1EffectRotation", "Slash Burst 1 Rotation", &Data::slashBurst1EffectRotation,
-                DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 360.0f }),
-            MakeField("slashBurst2EffectPosition", "Slash Burst 2 Position", &Data::slashBurst2EffectPosition,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
-            MakeField("slashBurst2EffectRotation", "Slash Burst 2 Rotation", &Data::slashBurst2EffectRotation,
-                DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 360.0f }),
-            MakeField("slashBurst3LeftEffectPosition", "Slash Burst 3 Left Position", &Data::slashBurst3LeftEffectPosition,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
-            MakeField("slashBurst3LeftEffectRotation", "Slash Burst 3 Left Rotation", &Data::slashBurst3LeftEffectRotation,
-                DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 360.0f }),
-            MakeField("slashBurst3RightEffectPosition", "Slash Burst 3 Right Position", &Data::slashBurst3RightEffectPosition,
-                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -20.0f, .maxValue = 20.0f }),
-            MakeField("slashBurst3RightEffectRotation", "Slash Burst 3 Right Rotation", &Data::slashBurst3RightEffectRotation,
-                DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 360.0f }),
+            MakeField(
+                "slashBurstEffectAssetPath",
+                "Slash Burst Effect Asset Path",
+                &Data::slashBurstEffectAssetPath),
+            MakeStructField(
+                "slashBurst1Effect",
+                "Slash Burst 1 Effect",
+                &Data::slashBurst1Effect,
+                GetSlashBurstEffectTransformSettingsSchema(),
+                DefaultFieldOptions{}),
+            MakeStructField(
+                "slashBurst2Effect",
+                "Slash Burst 2 Effect",
+                &Data::slashBurst2Effect,
+                GetSlashBurstEffectTransformSettingsSchema(),
+                DefaultFieldOptions{}),
+            MakeStructField(
+                "slashBurst3LeftEffect",
+                "Slash Burst 3 Left Effect",
+                &Data::slashBurst3LeftEffect,
+                GetSlashBurstEffectTransformSettingsSchema(),
+                DefaultFieldOptions{}),
+            MakeStructField(
+                "slashBurst3RightEffect",
+                "Slash Burst 3 Right Effect",
+                &Data::slashBurst3RightEffect,
+                GetSlashBurstEffectTransformSettingsSchema(),
+                DefaultFieldOptions{}),
             MakeField("slashBurstEffectScale", "Slash Burst Effect Scale", &Data::slashBurstEffectScale,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 20.0f }),
 

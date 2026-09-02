@@ -18,46 +18,55 @@
         "rapidFireInterval": 0.10000000149011612,
         "rapidFireJumpPowerMultiplier": 0.800000011920929,
         "rapidFireMoveSpeedMultiplier": 0.699999988079071,
-        "slashBurst1EffectPosition": [
-            0.0,
-            1.0,
-            0.5
-        ],
-        "slashBurst1EffectRotation": [
-            0.0,
-            135.0,
-            135.0
-        ],
-        "slashBurst2EffectPosition": [
-            0.0,
-            1.0,
-            0.5
-        ],
-        "slashBurst2EffectRotation": [
-            0.0,
-            225.0,
-            45.0
-        ],
-        "slashBurst3LeftEffectPosition": [
-            0.0,
-            1.0,
-            0.0
-        ],
-        "slashBurst3LeftEffectRotation": [
-            15.0,
-            45.0,
-            180.0
-        ],
-        "slashBurst3RightEffectPosition": [
-            0.0,
-            1.0,
-            0.0
-        ],
-        "slashBurst3RightEffectRotation": [
-            -15.0,
-            -135.0,
-            180.0
-        ],
+        "slashBurst1Effect": {
+            "position": [
+                0.0,
+                1.0,
+                0.5
+            ],
+            "rotation": [
+                0.0,
+                135.0,
+                135.0
+            ]
+        },
+        "slashBurst2Effect": {
+            "position": [
+                0.0,
+                1.0,
+                0.5
+            ],
+            "rotation": [
+                0.0,
+                225.0,
+                45.0
+            ]
+        },
+        "slashBurst3LeftEffect": {
+            "position": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "rotation": [
+                15.0,
+                45.0,
+                180.0
+            ]
+        },
+        "slashBurst3RightEffect": {
+            "position": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "rotation": [
+                -15.0,
+                -135.0,
+                180.0
+            ]
+        },
+        "slashBurstEffectAssetPath": "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json",
         "slashBurstEffectScale": 2.5,
         "slashBurstFireDuration": 0.25,
         "slashBurstFireInterval": 0.05000000074505806,
