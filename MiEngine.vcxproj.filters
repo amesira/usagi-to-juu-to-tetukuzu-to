@@ -401,6 +401,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\game_object.h">
@@ -966,5 +967,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
   </ItemGroup>
 </Project>

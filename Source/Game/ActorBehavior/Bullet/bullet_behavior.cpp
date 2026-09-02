@@ -55,7 +55,7 @@ void BulletBehavior::Update()
 
     // === 移動と衝突判定 ===
     const XMFLOAT3 previousPosition = m_transform->GetPosition();
-    const XMFLOAT3 nextPosition = MiMath::Add(previousPosition, MiMath::Multiply(m_velocity, deltaTime));
+    const XMFLOAT3 nextPosition = MiMath::Add(previousPosition, MiMath::Multiply(m_currentVelocity, deltaTime));
     const XMFLOAT3 displacement = MiMath::Subtract(nextPosition, previousPosition);
     const float moveDistance = MiMath::Length(displacement);
 
@@ -109,7 +109,7 @@ void BulletBehavior::Update()
 
 void BulletBehavior::DrawComponentInspector()
 {
-    ImGui::DragFloat3("Velocity", &m_velocity.x, 0.1f);
+    ImGui::DragFloat3("Velocity", &m_currentVelocity.x, 0.1f);
     if (ImGui::DragFloat("Radius", &m_radius, 0.01f, 0.0f, 100.0f)) {
         SetRadius(m_radius);
     }
@@ -129,7 +129,7 @@ void BulletBehavior::Initialize(
     float lifeTime,
     CollisionLayerMask layerMask)
 {
-    m_velocity = velocity;
+    m_currentVelocity = velocity;
     SetRadius(radius);
     m_lifeTime = lifeTime;
     m_layerMask = layerMask;

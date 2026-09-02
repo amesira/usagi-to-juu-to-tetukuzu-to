@@ -25,7 +25,7 @@ private:
     TransformComponent* m_transform = nullptr;
 
     // 弾の物理特性
-    DirectX::XMFLOAT3 m_velocity = { 0.0f, 0.0f, 0.0f };
+    DirectX::XMFLOAT3 m_currentVelocity = { 0.0f, 0.0f, 0.0f };
     float m_radius = 0.25f;
     float m_lifeTime = 5.0f;
     float m_lifeTimer = 0.0f;
@@ -56,8 +56,8 @@ public:
         CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
 
     // 弾の速度の設定・取得
-    void SetVelocity(const DirectX::XMFLOAT3& velocity) { m_velocity = velocity; }
-    DirectX::XMFLOAT3 GetVelocity() const { return m_velocity; }
+    void SetVelocity(const DirectX::XMFLOAT3& velocity) { m_currentVelocity = velocity; }
+    DirectX::XMFLOAT3 GetVelocity() const { return m_currentVelocity; }
 
     // 弾の半径の設定・取得
     void SetRadius(float radius);

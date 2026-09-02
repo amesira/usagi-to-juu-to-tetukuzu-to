@@ -38,5 +38,4 @@ public:
 
     // === Health関連 ===
     HealthBehavior* GetHealthBehavior() const { return m_healthBehavior; }
-
 };
