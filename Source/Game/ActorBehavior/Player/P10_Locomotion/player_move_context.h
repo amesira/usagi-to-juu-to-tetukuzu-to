@@ -27,19 +27,12 @@ struct PlayerMoveRuntimeState
     float   m_currentAngleY = 0.0f;
 };
 
-/// @brief PlayerMoveの参照情報を保持する構造体
-struct PlayerMoveReferences
-{
-    class ParticleSystemComponent* runDustParticle = nullptr; // 走行時の砂埃パーティクル
-};
-
 /// @brief PlayerMoveBehaviorのコンテキストを保持する構造体
 struct PlayerMoveContext
 {
     class PlayerMoveBehavior* owner = nullptr;
 
     PlayerMoveRuntimeState runtimeState;
-    PlayerMoveReferences references;
     const PlayerMoveSettingsAsset* settingsAsset = nullptr;
     const auto& settings() {
         return settingsAsset->GetData();

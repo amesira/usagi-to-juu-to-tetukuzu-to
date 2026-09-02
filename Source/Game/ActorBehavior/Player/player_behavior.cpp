@@ -68,7 +68,11 @@ void PlayerBehavior::Start()
 
     // 構成要素の初期化
     m_locomotionController.Initialize();
-    m_context.moveBehavior->Initialize(m_context, m_moveReferences, m_moveSettings);
+    static PlayerMoveSettingsAsset defaultMoveSettings;
+    if (!m_moveSettings) {
+        m_moveSettings = &defaultMoveSettings;
+    }
+    m_context.moveBehavior->Initialize(m_context, m_moveSettings);
     m_context.actionMachine->Initialize(m_context, m_input);
     m_context.animationController->Initialize(m_context);
 

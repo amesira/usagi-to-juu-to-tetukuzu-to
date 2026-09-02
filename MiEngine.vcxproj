@@ -204,7 +204,7 @@
     <ClCompile Include="Source\Engine\Processor\camera_processor.cpp" />
     <ClCompile Include="Source\Engine\Processor\PhysicsPass\collision_pass.cpp" />
     <ClCompile Include="Source\Engine\Processor\PhysicsPass\constraint_pass.cpp" />
-    <ClCompile Include="Source\Game\Factory\Prefab\player_prefab_factory.cpp" />
+    <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
     <ClCompile Include="Utility\debug_ostream.cpp" />
@@ -439,7 +439,6 @@
     <ClInclude Include="Source\Engine\Processor\behavior_processor.h" />
     <ClInclude Include="Source\Engine\Component\camera_component.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\mask_render_pass.h" />
-    <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_factory.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_context.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\transform_constraint_behavior.h" />

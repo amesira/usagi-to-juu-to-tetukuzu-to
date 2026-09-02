@@ -12,12 +12,43 @@
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/particle_system_component.h"
+#include "Engine/Core/game_object.h"
+
+#include "Game/Factory/render_effect_factory.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
 /// @brief 移動エフェクトを再生する
-void PlayerMoveEffects::PlayEffects(PlayerMoveContext context, EffectsType effectType)
+void PlayerMoveEffects::Initialize(PlayerMoveContext& context)
+{
+    if (!context.owner || !context.transform || !context.settingsAsset) return;
+
+    GameObject* player = context.owner->GetOwner();
+    if (!player || !player->GetScene()) return;
+
+    const auto& settings = context.settings().runDustEffect;
+    m_runDustEffect = RenderEffectFactory::CreateAttachedParticleEffect(
+        player->GetScene(),
+        settings.particleAssetPath,
+        EffectAttachmentDesc{
+            .target = context.transform,
+            .localTransform = {
+                .position = settings.positionOffset,
+            },
+        });
+    m_isRunDustParticleActive = false;
+}
+
+void PlayerMoveEffects::Finalize()
+{
+    m_runDustEffect.Destroy();
+    m_runDustEffect.Reset();
+    m_isRunDustParticleActive = false;
+}
+
+void PlayerMoveEffects::PlayEffects(PlayerMoveContext& context, EffectsType effectType)
 {
     switch (effectType) {
     case EffectsType::Jump: {
@@ -41,27 +72,30 @@ void PlayerMoveEffects::PlayEffects(PlayerMoveContext context, EffectsType effec
 }
 
 /// @brief 移動エフェクトの更新処理を行う
-void PlayerMoveEffects::UpdateEffects(PlayerMoveContext context, float deltaTime)
+void PlayerMoveEffects::UpdateEffects(PlayerMoveContext& context, float deltaTime)
 {
     if (context.runtimeState.m_isGrounded) {
-        SetRunDustParticleActive(context, true);
+        SetRunDustParticleActive(true);
     }
     else {
-        SetRunDustParticleActive(context, false);
+        SetRunDustParticleActive(false);
     }
 }
 
 // ------------
 
 /// @brief 走行時の砂埃パーティクルの有効/無効を設定する
-void PlayerMoveEffects::SetRunDustParticleActive(PlayerMoveContext context, bool active)
+void PlayerMoveEffects::SetRunDustParticleActive(bool active)
 {
     if (m_isRunDustParticleActive == active) return;
 
-    if (context.references.runDustParticle) {
-        auto& desc = context.references.runDustParticle->GetDesc().emissionModule;
-        desc.enabled = active;
+    if (!m_runDustEffect.IsValid()) return;
 
-        m_isRunDustParticleActive = active;
+    if (active) {
+        m_runDustEffect.Play();
     }
+    else {
+        m_runDustEffect.Stop();
+    }
+    m_isRunDustParticleActive = active;
 }

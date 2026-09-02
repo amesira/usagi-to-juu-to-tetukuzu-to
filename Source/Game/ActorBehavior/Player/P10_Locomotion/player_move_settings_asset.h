@@ -12,6 +12,31 @@
 #include "Utility/mi_curve.h"
 
 namespace PlayerMoveSettings {
+    struct AttachedEffectSettings
+    {
+        std::string particleAssetPath = "asset/Particle/run_dust.particle.json";
+        XMFLOAT3 positionOffset = { 0.0f, 0.0f, 0.0f };
+    };
+
+    inline static const auto& GetAttachedEffectSettingsSchema()
+    {
+        static const auto& schema = FieldSchema{
+            MakeField(
+                "particleAssetPath",
+                "Particle Asset Path",
+                &AttachedEffectSettings::particleAssetPath),
+            MakeField(
+                "positionOffset",
+                "Position Offset",
+                &AttachedEffectSettings::positionOffset,
+                DragFieldOptions{
+                    .dragSpeed = 0.1f,
+                    .minValue = -10.0f,
+                    .maxValue = 10.0f }),
+        };
+        return schema;
+    }
+
     /// @brief PlayerMoveの設定値を保持する構造体
     struct Data
     {
@@ -40,6 +65,12 @@ namespace PlayerMoveSettings {
                 MiCurve::FloatCurveKey{ 0.0f, 0.3f },    // 頂上付近
                 MiCurve::FloatCurveKey{ -1.0f, 1.5f },   // 下降
             }
+        };
+
+        // === 移動エフェクト設定 ===
+        AttachedEffectSettings runDustEffect{
+            .particleAssetPath = "asset/Particle/run_dust.particle.json",
+            .positionOffset = { 0.0f, -0.3f, 0.0f }
         };
     };
 
@@ -150,6 +181,15 @@ namespace PlayerMoveSettings {
                 &MoveSettings::gravityScale,
                 DefaultFieldOptions{}
             ),
+
+            // === 移動エフェクト設定 ===
+            MakeHeaderField("Effect Settings"),
+            MakeStructField(
+                "runDustEffect",
+                "Run Dust Effect",
+                &MoveSettings::runDustEffect,
+                GetAttachedEffectSettingsSchema(),
+                DefaultFieldOptions{}),
         };
         return schema;
     }

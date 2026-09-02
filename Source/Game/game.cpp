@@ -65,7 +65,7 @@ void GameScene::Initialize()
     }
 
     // プレイヤープレハブ生成
-    PlayerPrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
+    PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
 
     // テスト：JointGroup
     GameObject* jointGroup = this->CreateGameObject();

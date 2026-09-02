@@ -23,13 +23,13 @@ public:
     void DrawComponentInspector() override;
 
     /// @brief PlayerMoveBehaviorの初期化処理
-    void Initialize(const class PlayerContext& playerContext, struct PlayerMoveReferences& references, class PlayerMoveSettingsAsset* settings);
+    void Initialize(const class PlayerContext& playerContext, class PlayerMoveSettingsAsset* settings);
     /// @brief PlayerMoveBehaviorの終了処理
     void Finalize(){
         m_context.owner = nullptr;
         m_context.transform = nullptr;
         m_context.rigidbody = nullptr;
-        m_context.references.runDustParticle = nullptr;
+        m_context.moveEffects.Finalize();
     }
 
     /// @brief PlayerMoveBehaviorの更新処理を行う（PlayerBehaviorのUpdate()から呼び出す）

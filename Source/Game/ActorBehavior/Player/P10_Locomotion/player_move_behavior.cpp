@@ -50,7 +50,7 @@ void PlayerMoveBehavior::DrawComponentInspector()
 // -----------------------------------------------
 
 /// @brief PlayerMoveBehaviorのコンテキストを設定する
-void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMoveReferences& references, PlayerMoveSettingsAsset* settings)
+void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMoveSettingsAsset* settings)
 {
     m_context.owner = this;
 
@@ -64,8 +64,8 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
     m_context.moveEffects = {};
 
     m_context.runtimeState = {};
-    m_context.references = references;
     m_context.settingsAsset = settings;
+    m_context.moveEffects.Initialize(m_context);
 
 }
 

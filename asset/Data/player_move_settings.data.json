@@ -23,6 +23,14 @@
         "jumpForce": 15.0,
         "moveSpeed": 17.0,
         "rotationSpeed": 25.0,
+        "runDustEffect": {
+            "particleAssetPath": "asset/Particle/run_dust.particle.json",
+            "positionOffset": [
+                0.0,
+                0.3499999940395355,
+                0.30000001192092896
+            ]
+        },
         "smoothTime": 0.10000000149011612,
         "stopAirSmoothTime": 0.30000001192092896,
         "stopSmoothTime": 0.019999999552965164,

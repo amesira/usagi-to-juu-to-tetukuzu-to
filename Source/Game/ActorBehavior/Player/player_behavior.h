@@ -41,8 +41,7 @@ private:
 
     PlayerAnimationController m_animationController;
 
-    PlayerMoveReferences m_moveReferences;
-    PlayerMoveSettingsAsset* m_moveSettings;
+    PlayerMoveSettingsAsset* m_moveSettings = nullptr;
 
     // === プレイヤーアクションの実体 ===
     PlayerDualPistolsAction m_dualPistolsAction;
@@ -60,8 +59,7 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
-    void SetupPlayerMove(PlayerMoveReferences& references, PlayerMoveSettingsAsset* settings) {
-        m_moveReferences = references;
+    void SetupPlayerMove(PlayerMoveSettingsAsset* settings) {
         m_moveSettings = settings;
     }
 

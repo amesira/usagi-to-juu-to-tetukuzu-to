@@ -10,32 +10,6 @@
 namespace PlayerPrefabSettings {
     using json = nlohmann::json;
 
-    /// @brief プレイヤーにアタッチするエフェクトの設定を表す構造体
-    struct AttachedEffectSettings
-    {
-        std::string particleAssetPath = "asset/Particle/run_dust.particle.json";
-        XMFLOAT3 positionOffset = { 0.0f, 0.0f, 0.0f };
-    };
-
-    inline static const auto& GetAttachedEffectSettingsSchema()
-    {
-        static const auto& schema = FieldSchema{
-            MakeField(
-                "particleAssetPath",
-                "Particle Asset Path",
-                &AttachedEffectSettings::particleAssetPath),
-            MakeField(
-                "positionOffset",
-                "Position Offset",
-                &AttachedEffectSettings::positionOffset,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = -10.0f,
-                    .maxValue = 10.0f }),
-        };
-        return schema;
-    }
-
     /// @brief プレイヤーのプレハブ設定を表す構造体
     struct Data {
         XMFLOAT3 scaling = { 1.0f, 1.0f, 1.0f };
@@ -43,10 +17,6 @@ namespace PlayerPrefabSettings {
         XMFLOAT3 colliderScale = { 1.0f, 1.0f, 1.0f };
         XMFLOAT3 colliderCenter = { 0.0f, 0.0f, 0.0f };
 
-        AttachedEffectSettings runDustEffect{
-            .particleAssetPath = "asset/Particle/run_dust.particle.json",
-            .positionOffset = { 0.0f, -0.3f, 0.0f }
-        };
     };
 
     /// @brief AttachedEffectSettingsのFieldSchema
@@ -76,14 +46,7 @@ namespace PlayerPrefabSettings {
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = -10.0f,
-                    .maxValue = 10.0f }),
-
-            MakeStructField(
-                "runDustEffect",
-                "Run Dust Effect",
-                &Data::runDustEffect,
-                GetAttachedEffectSettingsSchema(),
-                DefaultFieldOptions{})
+                    .maxValue = 10.0f })
         };
 
         return schema;

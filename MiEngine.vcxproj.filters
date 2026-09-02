@@ -396,7 +396,7 @@
     <ClCompile Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Processor\mesh_effect_processor.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
-    <ClCompile Include="Source\Game\Factory\Prefab\player_prefab_factory.cpp" />
+    <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
@@ -961,7 +961,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
-    <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_factory.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
