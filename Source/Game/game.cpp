@@ -77,6 +77,9 @@ void GameScene::Initialize()
         Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 2.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
     }
 
+    // かかしプレハブ生成
+    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 0.0f, 5.0f });
+
     // UI生成
     GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");
     UiFactory::SetupUiTransform(uiText, { 960.0f, 300.0f }, {1.0f, 1.0f});

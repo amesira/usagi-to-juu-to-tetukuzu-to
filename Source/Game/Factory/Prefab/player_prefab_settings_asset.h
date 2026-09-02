@@ -16,7 +16,6 @@ namespace PlayerPrefabSettings {
 
         XMFLOAT3 colliderScale = { 1.0f, 1.0f, 1.0f };
         XMFLOAT3 colliderCenter = { 0.0f, 0.0f, 0.0f };
-
     };
 
     /// @brief AttachedEffectSettingsのFieldSchema

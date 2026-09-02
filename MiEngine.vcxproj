@@ -429,6 +429,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\player_health_behavior.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
