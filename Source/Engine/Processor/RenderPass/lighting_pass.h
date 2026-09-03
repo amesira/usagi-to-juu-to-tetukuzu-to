@@ -14,7 +14,7 @@ using namespace DirectX;
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
 
-class LightingSettings;
+struct EnvironmentLightingData;
 
 template <class T>
 class ComponentPool;
@@ -141,8 +141,7 @@ public:
 private:
     // Componentからライトの情報を転送
     void  CollectLightComponents(ComponentPool<LightComponent>* lightCompPool, ComponentPool<TransformComponent>* transformCompPool);
-    // LightSettingsからライトの情報を転送
-    void  CollectLightSettings(const LightingSettings& lightingSettings);
+    void CollectEnvironmentLighting(const EnvironmentLightingData& lighting);
 
 };
 

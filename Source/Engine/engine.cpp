@@ -115,7 +115,8 @@ void MiEngine::Render()
     // Editorの描画処理
     IScene* scene = m_gameWorld.GetSceneManager().GetCurrentScene();
     m_editorContext->scene = scene;
-    m_editorContext->sceneSettings = &(scene->GetSceneSettings());
+    m_editorContext->environmentAsset = &(scene->GetEnvironmentAsset());
+    m_editorContext->sceneViewCamera = &m_gameWorld.GetSceneViewCamera();
     m_editorContext->sceneRenderView = &m_gameWorld.GetSceneRenderView();
     m_editorContext->gameRenderView = &m_gameWorld.GetGameRenderView();
     m_editorContext->canvasRenderView = &m_gameWorld.GetCanvasRenderView();

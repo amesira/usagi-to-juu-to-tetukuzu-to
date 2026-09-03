@@ -9,6 +9,7 @@
 #include "Engine/Asset/ParticleAsset/particle_system_asset_loader.h"
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
 #include "Engine/Asset/MeshEffectAsset/mesh_effect_asset_loader.h"
+#include "Engine/Asset/EnvironmentAsset/environment_asset_loader.h"
 
 class AssetManager {
 private:
@@ -18,6 +19,7 @@ private:
     ParticleSystemAssetLoader m_particleAssetLoader;
     // MeshEffectAssetLoaderのインスタンス
     MeshEffectAssetLoader m_meshEffectAssetLoader;
+    EnvironmentAssetLoader m_environmentAssetLoader;
 
 public:
     /// @brief AssetManagerを初期化する
@@ -31,5 +33,6 @@ public:
     ParticleSystemAssetLoader* ParticleAssetLoader() { return &m_particleAssetLoader; }
     /// @brief MeshEffectAssetLoaderを取得
     MeshEffectAssetLoader* MeshEffectAssetLoader() { return &m_meshEffectAssetLoader; }
+    EnvironmentAssetLoader* EnvironmentAssetLoader() { return &m_environmentAssetLoader; }
 
 };

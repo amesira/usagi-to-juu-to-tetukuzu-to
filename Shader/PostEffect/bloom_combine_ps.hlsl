@@ -8,6 +8,12 @@ Texture2D g_BloomTexture2 : register(t3);
 Texture2D g_BloomTexture3 : register(t4);
 SamplerState g_SamplerState : register(s0);
 
+cbuffer BloomEffectBuffer : register(b0)
+{
+    float g_BloomIntensity;
+    float3 g_Padding;
+};
+
 struct PS_INPUT
 {
     float4 posH : SV_Position;
@@ -21,5 +27,5 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     bloom += g_BloomTexture1.Sample(g_SamplerState, ps_in.texcoord).rgb;
     bloom += g_BloomTexture2.Sample(g_SamplerState, ps_in.texcoord).rgb;
     bloom += g_BloomTexture3.Sample(g_SamplerState, ps_in.texcoord).rgb;
-    return float4(sceneColor.rgb + bloom * 0.25f, sceneColor.a);
+    return float4(sceneColor.rgb + bloom * g_BloomIntensity, sceneColor.a);
 }

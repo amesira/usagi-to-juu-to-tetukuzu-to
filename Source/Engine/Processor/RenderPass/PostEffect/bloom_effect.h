@@ -14,6 +14,7 @@ using Microsoft::WRL::ComPtr;
 
 class ConstantBufferResource;
 class ShaderProgramResource;
+struct BloomSettings;
 
 class BloomEffect {
 private:
@@ -33,6 +34,10 @@ private:
                 float blur;
                 float padding[3];
             } gaussianBlur;
+            struct {
+                float intensity;
+                float padding[3];
+            } combine;
         };
     };
 
@@ -68,12 +73,16 @@ public:
     /// @brief ブルームエフェクトを初期化する
     void Initialize(ID3D11Device* device, ID3D11DeviceContext* context);
     /// @brief ブルームエフェクトを破棄する
-    void Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV);
+    void Process(
+        ID3D11ShaderResourceView* inputSRV,
+        ID3D11RenderTargetView* outputRTV,
+        const BloomSettings& settings);
 
 private:
     /// @brief ブルームエフェクトの定数バッファを更新する
     void UpdateBrightnessConstantBuffer(float threshold);
     void UpdateGaussianBlurConstantBuffer(const XMFLOAT2& texelSize, const XMFLOAT2& direction, float blur);
+    void UpdateCombineConstantBuffer(float intensity);
 
     /// @brief シェーダーリソースビューを解除する
     void UnbindShaderResources(UINT startSlot, UINT count);

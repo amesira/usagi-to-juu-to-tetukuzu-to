@@ -19,6 +19,7 @@
 
 #include <vector>
 #include "Engine/render_view.h"
+#include "Engine/Editor/scene_view_camera_state.h"
 
 class GameWorld {
 private:
@@ -36,6 +37,7 @@ private:
     std::vector<RenderView> m_gameRenderViews; // ゲーム用RenderView群
     RenderView m_sceneRenderView; // シーン用RenderView
     RenderView m_canvasRenderView; // UI描画用RenderView
+    SceneViewCameraState m_sceneViewCamera;
 
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
@@ -56,6 +58,7 @@ public:
     RenderView& GetSceneRenderView() { return m_sceneRenderView; }
     RenderView& GetGameRenderView() { return m_gameRenderViews[m_mainGameRenderViewIndex]; }
     RenderView& GetCanvasRenderView() { return m_canvasRenderView; }
+    SceneViewCameraState& GetSceneViewCamera() { return m_sceneViewCamera; }
 
 private:
     // SceneRenderViewの設定

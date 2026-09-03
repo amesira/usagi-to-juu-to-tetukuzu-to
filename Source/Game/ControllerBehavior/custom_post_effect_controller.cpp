@@ -10,8 +10,6 @@
 
 #include "Engine/Editor/BaseEditor/inspector_view_window.h"
 
-#include "Engine/Settings/scene_settings.h"
-
 #include <algorithm>
 
 #include "Engine/Device/mi_fps.h"
@@ -77,8 +75,7 @@ void CustomPostEffectController::Update()
     // カスタムポストエフェクト状態の更新
     IScene* scene = GetOwner()->GetScene();
     if (scene) {
-        SceneSettings& sceneSettings = scene->GetSceneSettings();
-        sceneSettings.GetPostProcessSettings().m_customPostEffectState = m_state;
+        scene->GetPostEffectState() = m_state;
     }
 }
 

@@ -17,7 +17,8 @@
 #include "component_type_id.h"
 
 class GameObject;
-class SceneSettings;
+class EnvironmentAsset;
+struct CustomPostEffectState;
 
 class IScene {
 protected:
@@ -86,8 +87,13 @@ public:
 
     virtual std::vector<GameObject>& GetGameObjects() = 0;
 
-    // シーン全体のレンダリング設定の取得
-    virtual SceneSettings& GetSceneSettings() = 0;
+    // === EnvironmentAsset関連 ===
+    virtual EnvironmentAsset& GetEnvironmentAsset() = 0;
+    virtual const EnvironmentAsset& GetEnvironmentAsset() const = 0;
+    virtual CustomPostEffectState& GetPostEffectState() = 0;
+
+    // === PostEffectState関連 ===
+    virtual const CustomPostEffectState& GetPostEffectState() const = 0;
 
 };
 

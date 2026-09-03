@@ -8,7 +8,6 @@
 #include "Utility/debug_renderer.h"
 #include "Engine/engine_service_locator.h"
 #include "Engine/Core/scene_interface.h"
-#include "Engine/Settings/scene_settings.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -127,18 +126,16 @@ void GameWorld::Render()
 void GameWorld::SetSceneRenderView(IScene* scene)
 {
     // シーンカメラの描画情報をRenderViewに反映
-    SceneSettings& sceneSettings = scene->GetSceneSettings();
-    sceneSettings.UpdateCameraSettings();
-    const SceneCameraSettings& sceneCameraSettings = sceneSettings.GetCameraSettings();
+    const SceneViewCameraState& sceneCamera = m_sceneViewCamera;
 
     {
         RenderView& sceneView = m_sceneRenderView;
         sceneView.enabled = true;
 
-        sceneView.viewMatrix = sceneCameraSettings.GetViewMatrix();
-        sceneView.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-        sceneView.eyePosition = sceneCameraSettings.GetPosition();
-        sceneView.aspectRatio = sceneCameraSettings.GetAspect();
+        sceneView.viewMatrix = sceneCamera.GetViewMatrix();
+        sceneView.projectionMatrix = sceneCamera.GetProjectionMatrix();
+        sceneView.eyePosition = sceneCamera.position;
+        sceneView.aspectRatio = sceneCamera.aspect;
 
         sceneView.enable3D = true;
         sceneView.enableLighting = true;
@@ -155,7 +152,7 @@ void GameWorld::SetSceneRenderView(IScene* scene)
         canvasView.viewMatrix = {};
         canvasView.projectionMatrix = {};
         canvasView.eyePosition = {};
-        canvasView.aspectRatio = sceneCameraSettings.GetAspect();
+        canvasView.aspectRatio = sceneCamera.aspect;
 
         canvasView.enable3D = false;
         canvasView.enableLighting = false;

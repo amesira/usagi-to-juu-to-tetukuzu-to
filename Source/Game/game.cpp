@@ -18,6 +18,7 @@
 #include "Engine/Device/mi_fps.h"
 
 #include "Engine/Manager/scene_manager.h"
+#include "Engine/engine_service_locator.h"
 
 #include "Engine/Component/text_component.h"
 #include "Engine/Component/image_component.h"
@@ -38,6 +39,14 @@ void GameScene::Initialize()
 {
     this->Reset();
 
+    // シーンが使用する環境アセットを読み込む。
+    // 読み込み失敗時はEnvironmentDataのデフォルト値を使用する。
+    if (EnvironmentAssetLoader* loader = EngineServiceLocator::EnvironmentLoader()) {
+        loader->Load(
+            "asset/Environment/default.environment.json",
+            GetEnvironmentAsset());
+    }
+
     // GameEffectControllerの生成
     GameObject* gameControllerObj = this->CreateGameObject();
     gameControllerObj->SetName("GameController");
@@ -51,7 +60,6 @@ void GameScene::Initialize()
     camera->SetName("MainCamera");
 
     // light
-    EnvironmentFactory::CreateDirectionalLight(this, { 0.0f,-1.0f,0.5f,0.0f }, { 1.0f,1.0f,1.0f,1.0f }, { 0.8f,0.8f,0.8f,1.0f });
     EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
     // Field

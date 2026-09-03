@@ -21,9 +21,10 @@ namespace EnvironmentLightingSchema
             MakeField("enabled", "Enabled", &Module::enabled),
             MakeField("intensity", "Intensity", &Module::intensity,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 10.0f }),
-            MakeField("direction", "Direction", &Module::direction),
-            MakeField("color", "Color", &Module::color),
-            MakeField("ambientColor", "Ambient Color", &Module::ambientColor)
+            MakeField("direction", "Direction", &Module::direction,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -1.0f, .maxValue = 1.0f }),
+            MakeField("color", "Color", &Module::color, ColorFieldOptions{}),
+            MakeField("ambientColor", "Ambient Color", &Module::ambientColor, ColorFieldOptions{})
         };
         return schema;
     }
@@ -36,7 +37,7 @@ namespace EnvironmentLightingSchema
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("threshold", "Threshold", &Module::threshold,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
-            MakeField("color", "Color", &Module::color)
+            MakeField("color", "Color", &Module::color, ColorFieldOptions{})
         };
         return schema;
     }
@@ -47,8 +48,8 @@ namespace EnvironmentLightingSchema
             MakeField("enabled", "Enabled", &Module::enabled),
             MakeField("intensity", "Intensity", &Module::intensity,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 10.0f }),
-            MakeField("skyColor", "Sky Color", &Module::skyColor),
-            MakeField("groundColor", "Ground Color", &Module::groundColor)
+            MakeField("skyColor", "Sky Color", &Module::skyColor, ColorFieldOptions{}),
+            MakeField("groundColor", "Ground Color", &Module::groundColor, ColorFieldOptions{})
         };
         return schema;
     }
@@ -59,12 +60,12 @@ namespace EnvironmentLightingSchema
             MakeField("enabled", "Enabled", &Module::enabled),
             MakeField("intensity", "Intensity", &Module::intensity,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 10.0f }),
-            MakeField("upColor", "Up Color", &Module::upColor),
-            MakeField("downColor", "Down Color", &Module::downColor),
-            MakeField("leftColor", "Left Color", &Module::leftColor),
-            MakeField("rightColor", "Right Color", &Module::rightColor),
-            MakeField("frontColor", "Front Color", &Module::frontColor),
-            MakeField("backColor", "Back Color", &Module::backColor)
+            MakeField("upColor", "Up Color", &Module::upColor, ColorFieldOptions{}),
+            MakeField("downColor", "Down Color", &Module::downColor, ColorFieldOptions{}),
+            MakeField("leftColor", "Left Color", &Module::leftColor, ColorFieldOptions{}),
+            MakeField("rightColor", "Right Color", &Module::rightColor, ColorFieldOptions{}),
+            MakeField("frontColor", "Front Color", &Module::frontColor, ColorFieldOptions{}),
+            MakeField("backColor", "Back Color", &Module::backColor, ColorFieldOptions{})
         };
         return schema;
     }

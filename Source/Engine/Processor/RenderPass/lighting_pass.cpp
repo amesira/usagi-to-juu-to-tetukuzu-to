@@ -11,7 +11,7 @@
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/light_component.h"
 
-#include "Engine/Settings/scene_settings.h"
+#include "Engine/Asset/EnvironmentAsset/environment_asset.h"
 
 #include "Utility/debug_ostream.h"
 
@@ -53,9 +53,7 @@ void LightingPass::Process(IScene* pScene, const RenderView& view)
         CollectLightComponents(lightCompPool, transformCompPool);
     }
 
-    // LightSettingsからライトの情報を転送
-    const LightingSettings& lightingSettings = pScene->GetSceneSettings().GetLightingSettings();
-    CollectLightSettings(lightingSettings);
+    CollectEnvironmentLighting(pScene->GetEnvironmentAsset().GetData().lighting);
 
     // 定数バッファにライトの情報を転送
     m_pContext->UpdateSubresource(m_lightCB->buffer.Get(), 0, nullptr, &m_lightBufferData, 0, 0);
@@ -101,21 +99,6 @@ void LightingPass::CollectLightComponents(ComponentPool<LightComponent>* lightCo
 
         // ライトの情報をバッファデータに設定
         switch (light->GetLightType()) {
-        case LightComponent::LightType::Directional:
-        {
-            if (directionalLightCount >= DIRECTIONAL_LIGHT_MAX) continue;
-            GPU_DirectionalLight& data = m_lightBufferData.directionalLights[directionalLightCount];
-            {
-                data.enable = 1;
-                data.direction = light->GetDirection();
-                data.diffuse = light->GetDiffuse();
-                data.ambient = light->GetAmbient();
-
-                data.intensity = light->GetIntensity();
-            }
-            directionalLightCount++;
-            break;
-        }
         case LightComponent::LightType::Point:
         {
             if (pointLightCount >= POINT_LIGHT_MAX) continue;
@@ -161,17 +144,27 @@ void LightingPass::CollectLightComponents(ComponentPool<LightComponent>* lightCo
     }
 }
 
-
-// LightSettingsからライトの情報を転送
-void LightingPass::CollectLightSettings(const LightingSettings& lightingSettings)
+/// @brief 環境光の情報を転送
+void LightingPass::CollectEnvironmentLighting(const EnvironmentLightingData& lighting)
 {
-    const RimLightSettings& rimLightSettings = lightingSettings.GetRimLightSettings();
+    const DirectionalLightSettings& directional = lighting.directionalLight;
+    GPU_DirectionalLight& gpuDirectional = m_lightBufferData.directionalLights[0];
+    gpuDirectional.enable = directional.enabled ? 1 : 0;
+    gpuDirectional.direction = XMFLOAT4(
+        directional.direction.x, directional.direction.y, directional.direction.z, 0.0f);
+    gpuDirectional.diffuse = XMFLOAT4(
+        directional.color.x, directional.color.y, directional.color.z, 1.0f);
+    gpuDirectional.ambient = XMFLOAT4(
+        directional.ambientColor.x, directional.ambientColor.y, directional.ambientColor.z, 1.0f);
+    gpuDirectional.intensity = directional.intensity;
+
+    const RimLightSettings& rimLightSettings = lighting.rimLight;
     m_lightBufferData.rimLight.enable = rimLightSettings.enabled ? 1 : 0;
     m_lightBufferData.rimLight.intensity = rimLightSettings.intensity;
     m_lightBufferData.rimLight.threshold = rimLightSettings.threshold;
     m_lightBufferData.rimLight.color = XMFLOAT4(rimLightSettings.color.x, rimLightSettings.color.y, rimLightSettings.color.z, 1.0f);
 
-    const HemisphereLightSettings& hemisphereLightSettings = lightingSettings.GetHemisphereLightSettings();
+    const HemisphereLightSettings& hemisphereLightSettings = lighting.hemisphereLight;
     m_lightBufferData.hemisphereLight.enable = hemisphereLightSettings.enabled ? 1 : 0;
     m_lightBufferData.hemisphereLight.intensity = hemisphereLightSettings.intensity;
     m_lightBufferData.hemisphereLight.skyColor = XMFLOAT4(hemisphereLightSettings.skyColor.x, hemisphereLightSettings.skyColor.y, hemisphereLightSettings.skyColor.z, 1.0f);

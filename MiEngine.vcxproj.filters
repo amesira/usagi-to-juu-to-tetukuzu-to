@@ -971,5 +971,8 @@
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_schema.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_schema.h" />
+    <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
+    <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
   </ItemGroup>
 </Project>

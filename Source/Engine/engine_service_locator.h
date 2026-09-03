@@ -82,6 +82,9 @@ public:
     static MeshEffectAssetLoader* MeshEffectLoader() {
         return s_engineInstance ? s_engineInstance->GetAssetManager().MeshEffectAssetLoader() : nullptr;
     }
+    static EnvironmentAssetLoader* EnvironmentLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().EnvironmentAssetLoader() : nullptr;
+    }
 };
 
 using Engine = EngineServiceLocator;

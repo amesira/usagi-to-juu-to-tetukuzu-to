@@ -19,8 +19,6 @@ namespace EnvironmentFactory {
     // CameraControlのアタッチ
     bool    AttachCameraControl(GameObject* camera);
 
-    // DirectionalLight生成
-    GameObject* CreateDirectionalLight(SceneBase* scene, const XMFLOAT4& direction, const XMFLOAT4& diffuse, const XMFLOAT4& ambient);
     // PointLight生成
     GameObject* CreatePointLight(IScene* scene, const XMFLOAT4& diffuse, float range);
 

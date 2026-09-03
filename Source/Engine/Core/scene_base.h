@@ -15,8 +15,8 @@
 #include "scene_interface.h"
 #include "game_object.h"
 
-// シーン全体のレンダリングに関する設定を保持するクラス
-#include "Engine/Settings/scene_settings.h"
+#include "Engine/Asset/EnvironmentAsset/environment_asset.h"
+#include "Engine/Core/scene_post_effect_state.h"
 
 class SceneBase : public IScene {
 private:
@@ -33,8 +33,9 @@ private:
     // 空きスロット管理用リスト
     std::vector<size_t>         m_freeGameObjectIndices = {};
 
-    // シーン全体のレンダリング設定
-    SceneSettings         m_sceneSettings;
+    // シーン内の環境設定アセット
+    EnvironmentAsset m_environmentAsset;
+    CustomPostEffectState m_postEffectState;
 
 protected: // ISceneのComponentPools()を実装
     std::vector<std::unique_ptr<IComponentPool>>& ComponentPools() override {
@@ -135,10 +136,10 @@ public:
         return m_componentPools;
     }
 
-    // シーン全体のレンダリング設定の取得
-    SceneSettings& GetSceneSettings() override {
-        return m_sceneSettings;
-    }
+    EnvironmentAsset& GetEnvironmentAsset() override { return m_environmentAsset; }
+    const EnvironmentAsset& GetEnvironmentAsset() const override { return m_environmentAsset; }
+    CustomPostEffectState& GetPostEffectState() override { return m_postEffectState; }
+    const CustomPostEffectState& GetPostEffectState() const override { return m_postEffectState; }
 
 };
 

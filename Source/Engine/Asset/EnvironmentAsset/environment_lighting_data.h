@@ -52,4 +52,4 @@ struct EnvironmentLightingData {
     RimLightSettings rimLight;
     HemisphereLightSettings hemisphereLight;
     CubicColorLightSettings cubicColorLight;
-}
+};

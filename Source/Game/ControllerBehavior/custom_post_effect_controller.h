@@ -9,7 +9,7 @@
 #include "Engine/Component/behavior_component.h"
 #include "Engine/Core/GamePlay/tween_task.h"
 
-#include "Engine/Settings/post_process_settings.h"
+#include "Engine/Core/scene_post_effect_state.h"
 
 // カスタムポストエフェクトの種類
 enum class CustomPostEffectType {

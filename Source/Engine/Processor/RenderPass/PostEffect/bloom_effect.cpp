@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cstring>
 #include "Engine/engine_service_locator.h"
+#include "Engine/Asset/EnvironmentAsset/environment_post_process_data.h"
 
 /// @brief ブルームエフェクトを初期化する
 void BloomEffect::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
@@ -63,11 +64,15 @@ void BloomEffect::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
     combineShaderResource.name = "BloomCombineEffect";
     combineShaderResource.baseShader = fullScreenShader;
     combineShaderResource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("bloom_combine_ps.cso");
+    combineShaderResource.additionalConstantBuffers.push_back(m_constantBuffer);
     m_combineShader = SHADER_REPOSITORY->GenerateShaderProgramResource(combineShaderResource);
 }
 
 /// @brief ブルームエフェクトを破棄する
-void BloomEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV)
+void BloomEffect::Process(
+    ID3D11ShaderResourceView* inputSRV,
+    ID3D11RenderTargetView* outputRTV,
+    const BloomSettings& settings)
 {
     if (!m_context || !inputSRV || !outputRTV || !m_constantBuffer) return;
 
@@ -76,12 +81,22 @@ void BloomEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTarget
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_DISABLE);
 
+    if (!settings.enabled) {
+        Direct3D_ResetViewport();
+        Direct3D_SetSceneTarget(outputRTV, nullptr);
+        EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+        m_context->PSSetShaderResources(0, 1, &inputSRV);
+        m_context->Draw(3, 0);
+        UnbindShaderResources(0, 1);
+        return;
+    }
+
     // 1. HDR入力を1/2へ縮小しながら輝度抽出する。
     Direct3D_SetViewport(m_downsampledWidth[0], m_downsampledHeight[0]);
     Direct3D_SetSceneTarget(m_downsampledRTV[0].Get(), nullptr);
 
     EngineServiceLocator::BindShader(m_brightnessExtractShader);
-    UpdateBrightnessConstantBuffer(2.0f);
+    UpdateBrightnessConstantBuffer(settings.threshold);
 
     m_context->PSSetShaderResources(0, 1, &inputSRV);
     m_context->Draw(3, 0);
@@ -134,6 +149,7 @@ void BloomEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTarget
 
     // HDR入力と全Bloomレベルを最終出力へ合成する。
     EngineServiceLocator::BindShader(m_combineShader);
+    UpdateCombineConstantBuffer(settings.intensity);
     m_context->PSSetShaderResources(0, 1, &inputSRV);
     for (int level = 0; level < DownsampleLevelCount; level++) {
         const int resultIndex = level * 2;
@@ -183,4 +199,17 @@ void BloomEffect::UnbindShaderResources(UINT startSlot, UINT count)
     ID3D11ShaderResourceView* nullSRVs[8] = {};
     const UINT safeCount = (std::min)(count, static_cast<UINT>(8));
     m_context->PSSetShaderResources(startSlot, safeCount, nullSRVs);
+}
+
+void BloomEffect::UpdateCombineConstantBuffer(float intensity)
+{
+    m_constantBufferData = {};
+    m_constantBufferData.combine.intensity = intensity;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(
+        m_constantBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped))) {
+        std::memcpy(mapped.pData, &m_constantBufferData, sizeof(m_constantBufferData));
+        m_context->Unmap(m_constantBuffer->buffer.Get(), 0);
+    }
 }

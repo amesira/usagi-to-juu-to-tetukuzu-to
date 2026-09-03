@@ -359,22 +359,6 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
 
             ImGui::Separator();
 
-            // LightType
-            switch (light->GetLightType()) {
-            case LightComponent::LightType::Directional:
-            {
-                auto direction = light->GetDirection();
-                if (ImGui::DragFloat4("Direction", &direction.x, 0.1f)) {
-                    light->SetDirection(direction);
-                }
-                auto ambient = light->GetAmbient();
-                if (ImGui::ColorEdit4("Ambient", &ambient.x)) {
-                    light->SetAmbient(ambient);
-                }
-                break;
-            }
-            }
-
             auto diffuse = light->GetDiffuse();
             if (ImGui::ColorEdit4("Diffuse", &diffuse.x)) {
                 light->SetDiffuse(diffuse);
@@ -387,12 +371,11 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                 light->SetIntensity(intensity);
             }
             // Rangeは点光源・スポットライトのみ
-            if (light->GetLightType() != LightComponent::LightType::Directional) {
-                float range = light->GetRange();
-                if (ImGui::DragFloat("Range", &range, 0.1f, 0.0f, 100.0f)) {
-                    light->SetRange(range);
-                }
+            float range = light->GetRange();
+            if (ImGui::DragFloat("Range", &range, 0.1f, 0.0f, 100.0f)) {
+                light->SetRange(range);
             }
+
             // スポットライトのみスポット角度を表示
             if (light->GetLightType() == LightComponent::LightType::Spot) {
                 float spotAngle = light->GetSpotAngle();

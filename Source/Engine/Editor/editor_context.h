@@ -12,7 +12,8 @@
 class IScene;
 struct RenderView;
 class GameObject;
-class SceneSettings;
+class EnvironmentAsset;
+struct SceneViewCameraState;
 
 struct EditorContext {
     enum class MainViewMode {
@@ -21,7 +22,8 @@ struct EditorContext {
     } mainViewMode = MainViewMode::Game;
 
     IScene* scene = nullptr;                  // 観測対象のシーン
-    SceneSettings* sceneSettings = nullptr; // シーン全体のレンダリング設定
+    EnvironmentAsset* environmentAsset = nullptr;
+    SceneViewCameraState* sceneViewCamera = nullptr;
 
     RenderView* sceneRenderView = nullptr;   // SceneView表示用
     RenderView* gameRenderView = nullptr;    // GameView表示用

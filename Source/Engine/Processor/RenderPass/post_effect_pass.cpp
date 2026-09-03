@@ -8,7 +8,8 @@
 
 #include "Engine/Core/scene_interface.h"
 #include "Engine/render_view.h"
-#include "Engine/Settings/scene_settings.h"
+#include "Engine/Asset/EnvironmentAsset/environment_asset.h"
+#include "Engine/Core/scene_post_effect_state.h"
 
 // ポストエフェクト初期化
 void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -43,10 +44,13 @@ void PostEffectPass::Finalize()
 // ポストエフェクト処理
 void PostEffectPass::Process(IScene* pScene, const RenderView& view)
 {
-    const CustomPostEffectState& state = pScene->GetSceneSettings().GetPostProcessSettings().m_customPostEffectState;
+    const EnvironmentPostProcessData& environment =
+        pScene->GetEnvironmentAsset().GetData().postProcess;
+    const CustomPostEffectState& state = pScene->GetPostEffectState();
 
     // 1. Bloom
-    m_bloomEffect.Process(view.colorBufferSRV.Get(), m_tempRTV[0].Get());
+    m_bloomEffect.Process(
+        view.colorBufferSRV.Get(), m_tempRTV[0].Get(), environment.bloom);
 
     // 2. MonoMask（既存の処理順を維持）
     ID3D11ShaderResourceView* maskSRV = view.maskColorBufferSRV
