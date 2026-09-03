@@ -20,6 +20,7 @@ private:
 
     DirectX::XMFLOAT3   m_velocity = { 0.0f, 0.0f, 0.0f };
     DirectX::XMFLOAT3   m_friction = { 0.98f, 1.0f, 0.98f };
+    DirectX::XMFLOAT3   m_airFriction = { 1.0f, 1.0f, 1.0f };
 
     bool                m_isGrounded = false;
     DirectX::XMFLOAT3   m_prevVelocity = { 0.0f,0.0f,0.0f };
@@ -37,10 +38,12 @@ public:
 
     // 速度の設定・取得
     void    SetVelocity(XMFLOAT3 velocity) { m_velocity = velocity; }
-    XMFLOAT3   GetVelocity() const { return m_velocity; }
+    const XMFLOAT3& GetVelocity() const { return m_velocity; }
     // 摩擦の設定・取得
     void    SetFriction(XMFLOAT3 friction) { m_friction = friction; }
-    XMFLOAT3   GetFriction() const { return m_friction; }
+    const XMFLOAT3& GetFriction() const { return m_friction; }
+    void    SetAirFriction(XMFLOAT3 airFriction) { m_airFriction = airFriction; }
+    const XMFLOAT3& GetAirFriction() const { return m_airFriction; }
 
     // 地面接地フラグの設定・取得
     void    SetIsGrounded(bool isGrounded) { m_isGrounded = isGrounded; }
@@ -48,7 +51,7 @@ public:
 
     // 前フレームの速度の設定・取得
     void    SetPrevVelocity(XMFLOAT3 prevVelocity) { m_prevVelocity = prevVelocity; }
-    XMFLOAT3   GetPrevVelocity() const { return m_prevVelocity; }
+    const XMFLOAT3& GetPrevVelocity() const { return m_prevVelocity; }
 };
 
 #endif

@@ -100,9 +100,8 @@ void BulletBehavior::Update()
                             .targetPosition = { 0.0f, 0.0f, 0.0f },
                             .direction = knockbackDir,
                             .distance = 5.0f,
-                            .duration = 1.0f,
-                            .mode = KnockbackMode::RelativeDistance,
-                            .movementMode = KnockbackMovementMode::SetRigidbodyVelocity,
+                            .duration = 0.3f,
+                            .overrideMovementSource = false,
                         }
                     };
                     hitReceiver->ReceiveHit(hitData);

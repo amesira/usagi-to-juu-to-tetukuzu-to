@@ -29,6 +29,10 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    DamageReceiver* DamageReceiver() { return &m_damageReceiver; }
+    KnockbackReceiver* KnockbackReceiver() { return &m_knockbackReceiver; }
+    HitReaction* HitReaction() { return &m_hitReaction; }
+
     /// @brief 攻撃を受け取る
     HitResult ReceiveHit(const HitData& hitData);
 

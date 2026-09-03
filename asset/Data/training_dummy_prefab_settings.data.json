@@ -11,13 +11,13 @@
             3.0
         ],
         "friction": [
+            0.8999999761581421,
             1.0,
-            1.0,
-            1.0
+            0.8999999761581421
         ],
         "gravityScale": -9.800000190734863,
-        "mass": 1.0,
-        "maxHealth": 100.0,
+        "mass": 3.0,
+        "maxHealth": 10000000.0,
         "modelAssetPath": "asset/Model/kakashi.fbx",
         "scaling": [
             2.0,

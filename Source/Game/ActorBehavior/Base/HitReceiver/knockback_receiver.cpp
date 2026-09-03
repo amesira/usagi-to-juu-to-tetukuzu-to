@@ -31,11 +31,11 @@ void KnockbackReceiver::Update(float deltaTime)
         // 位置の更新
         currentPosition = m_transform->GetPosition();
         currentPosition = MiMath::Add(currentPosition, MiMath::Multiply(m_velocity, deltaTime));
-        m_velocity.y += m_currentRequest.gravity * deltaTime;
+        m_velocity.y += m_currentRequest.movementSource.gravity * deltaTime;
     }
 
-    // 位置の適用
-    switch (m_currentRequest.movementMode) {
+    // === 位置の適用 ===
+    switch (m_currentRequest.movementSource.mode) {
         case KnockbackMovementMode::SetTransformPosition: {
             m_transform->SetPosition(currentPosition);
             break;
@@ -54,12 +54,13 @@ void KnockbackReceiver::Update(float deltaTime)
         default: break;
     }
 
+    // === ノックバック終了判定 ===
     if (m_elapsedTime >= m_currentRequest.duration) {
         m_isActive = false;
 
-        if (m_currentRequest.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
-            m_rigidbody->SetGravityScale(-9.8f);
-            m_rigidbody->SetFriction({ 0.6f, 1.0f, 0.6f });
+        if (m_currentRequest.movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
+            m_rigidbody->SetGravityScale(m_rbGravity);
+            m_rigidbody->SetFriction(m_rbFriction);
         }
         return;
     }
@@ -70,29 +71,38 @@ bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
     if (!m_transform) return false;
     if (!request.enabled) return false;
     if (request.duration <= 0.0f) return false;
-    if (request.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && !m_rigidbody) return false;
 
-    m_currentRequest = request;
-    m_isActive = true;
-    m_elapsedTime = 0.0f;
-    m_isStartFrame = true;
+    KnockbackMovementSource movementSource = request.overrideMovementSource ? request.movementSource : m_defaultMovementSource;
+    if (movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && !m_rigidbody) return false;
+
+    if (movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
+        if (!m_isActive) { // 初回のノックバック開始時にのみ、Rigidbodyのパラメータを保存する
+            m_rbMass = m_rigidbody->GetMass();
+            m_rbGravity = m_rigidbody->GetGravityScale();
+            m_rbFriction = m_rigidbody->GetFriction();
+        }
+        m_rigidbody->SetGravityScale(0.0f);
+        m_rigidbody->SetFriction({ 1.0f, 1.0f, 1.0f });
+    }
 
     // 開始位置と目標位置の計算
     m_startPosition = request.overrideStartPosition ? request.startPosition : m_transform->GetPosition();
     XMFLOAT3 targetPosition = EvaluateTargetPosition(
         m_startPosition, 
         request);
+    float gravity = movementSource.useRbGravity && m_rigidbody ? (m_rbGravity * m_rbMass) : movementSource.gravity;
     m_velocity = CalculateInitialVelocity(
-        m_startPosition, 
-        targetPosition, 
-        request.gravity, 
+        m_startPosition,
+        targetPosition,
+        gravity,
         request.duration);
 
-    if (request.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
-        m_rigidbody->SetGravityScale(0.0f);
-        m_rigidbody->SetFriction({ 1.0f, 1.0f, 1.0f });
-    }
+    m_currentRequest = request;
+    m_currentRequest.movementSource = movementSource;
 
+    m_isActive = true;
+    m_elapsedTime = 0.0f;
+    m_isStartFrame = true;
     return true;
 }
 

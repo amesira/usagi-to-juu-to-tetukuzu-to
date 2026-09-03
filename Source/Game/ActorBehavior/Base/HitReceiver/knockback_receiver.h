@@ -18,12 +18,24 @@ private:
 
     KnockbackRequest m_currentRequest;
 
-    bool m_isStartFrame = true;
     DirectX::XMFLOAT3 m_startPosition = { 0.0f, 0.0f, 0.0f };
-
     DirectX::XMFLOAT3 m_velocity = { 0.0f, 0.0f, 0.0f };
     float m_elapsedTime = 0.0f;
     bool m_isActive = false;
+
+    bool m_isStartFrame = true;
+
+    // 一時保持するRigidbodyのパラメータ
+    float m_rbMass = 1.0f;
+    float m_rbGravity = -9.81f;
+    DirectX::XMFLOAT3 m_rbFriction = { 0.0f, 0.0f, 0.0f };
+
+    // デフォルトとなるノックバック移動方法
+    KnockbackMovementSource m_defaultMovementSource = {
+        KnockbackMovementMode::SetTransformPosition,
+        true,
+        -9.81f
+    };
 
 public:
     void Initialize(TransformComponent* transform, RigidbodyComponent* rigidbody);
@@ -34,6 +46,11 @@ public:
 
     bool IsActive() const { return m_isActive; }
     const KnockbackRequest& GetCurrentRequest() const { return m_currentRequest; }
+
+    /// @brief デフォルトのノックバック移動方法を設定する
+    void SetDefaultMovementSource(const KnockbackMovementSource& movementSource) {
+        m_defaultMovementSource = movementSource;
+    }
 
 private:
     /// @brief ノックバックの初速度を計算する
