@@ -27,26 +27,76 @@ namespace {
 
             style.ItemSpacing = ImVec2(8, 6);
             style.ItemInnerSpacing = ImVec2(6, 4);
-
+            style.WindowRounding = 4.0f;
+            style.ChildRounding = 4.0f;
+            style.PopupRounding = 4.0f;
+            style.ScrollbarRounding = 4.0f;
+            style.GrabRounding = 3.0f;
+            style.TabRounding = 3.0f;
         }
 
         ImVec4* colors = style.Colors;
         {
-            // テキスト色
-            colors[ImGuiCol_Text] = ImVec4(0.95f, 0.96f, 0.98f, 1.00f);
+            // 濃紺を背景、明るい紺色を操作部分、クリーム色を文字や装飾に使用する
+            const ImVec4 navyDark = ImVec4(0.035f, 0.055f, 0.100f, 1.00f);
+            const ImVec4 navy = ImVec4(0.065f, 0.095f, 0.160f, 1.00f);
+            const ImVec4 navyLight = ImVec4(0.105f, 0.145f, 0.225f, 1.00f);
+            const ImVec4 navyAccentDark = ImVec4(0.075f, 0.155f, 0.300f, 1.00f);
+            const ImVec4 navyAccent = ImVec4(0.100f, 0.245f, 0.480f, 1.00f);
+            const ImVec4 navyAccentLight = ImVec4(0.150f, 0.350f, 0.650f, 1.00f);
+            const ImVec4 cream = ImVec4(0.965f, 0.910f, 0.760f, 1.00f);
+            const ImVec4 creamMuted = ImVec4(0.690f, 0.650f, 0.555f, 1.00f);
+            const ImVec4 creamDark = ImVec4(0.390f, 0.365f, 0.305f, 1.00f);
 
-            // ウィンドウ背景色
-            colors[ImGuiCol_WindowBg] = ImVec4(0.14f, 0.14f, 0.16f, 1.00f);
+            // テキスト
+            colors[ImGuiCol_Text] = cream;
+            colors[ImGuiCol_TextDisabled] = creamMuted;
 
-            // タイトルバー背景色
-            colors[ImGuiCol_TitleBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-            colors[ImGuiCol_TitleBgActive] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
-            colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+            // 背景
+            colors[ImGuiCol_WindowBg] = navyDark;
+            colors[ImGuiCol_ChildBg] = navyDark;
+            colors[ImGuiCol_PopupBg] = navy;
+            colors[ImGuiCol_MenuBarBg] = navy;
 
-            // タブの背景色
-            colors[ImGuiCol_Tab] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-            colors[ImGuiCol_TabHovered] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
-            colors[ImGuiCol_TabActive] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+            // 枠・入力欄
+            colors[ImGuiCol_Border] = creamDark;
+            colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+            colors[ImGuiCol_FrameBg] = navy;
+            colors[ImGuiCol_FrameBgHovered] = navyLight;
+            colors[ImGuiCol_FrameBgActive] = navyAccentDark;
+
+            // タイトルバー
+            colors[ImGuiCol_TitleBg] = navy;
+            colors[ImGuiCol_TitleBgActive] = navyAccentDark;
+            colors[ImGuiCol_TitleBgCollapsed] = navyDark;
+
+            // ボタン・選択項目
+            colors[ImGuiCol_Button] = navyAccentDark;
+            colors[ImGuiCol_ButtonHovered] = navyAccent;
+            colors[ImGuiCol_ButtonActive] = navyAccentLight;
+            colors[ImGuiCol_Header] = navyAccentDark;
+            colors[ImGuiCol_HeaderHovered] = navyAccent;
+            colors[ImGuiCol_HeaderActive] = navyAccentLight;
+
+            // タブ
+            colors[ImGuiCol_Tab] = navy;
+            colors[ImGuiCol_TabHovered] = navyAccent;
+            colors[ImGuiCol_TabSelected] = navyAccentDark;
+            colors[ImGuiCol_TabSelectedOverline] = cream;
+            colors[ImGuiCol_TabDimmed] = navyDark;
+            colors[ImGuiCol_TabDimmedSelected] = navyLight;
+
+            // 各種アクセント
+            colors[ImGuiCol_CheckMark] = cream;
+            colors[ImGuiCol_SliderGrab] = navyAccent;
+            colors[ImGuiCol_SliderGrabActive] = cream;
+            colors[ImGuiCol_ResizeGrip] = navyAccentDark;
+            colors[ImGuiCol_ResizeGripHovered] = navyAccent;
+            colors[ImGuiCol_ResizeGripActive] = cream;
+            colors[ImGuiCol_Separator] = creamDark;
+            colors[ImGuiCol_SeparatorHovered] = navyAccent;
+            colors[ImGuiCol_SeparatorActive] = cream;
+            colors[ImGuiCol_NavCursor] = cream;
         }
     }
 }
@@ -59,7 +109,20 @@ void EditorImGuiBackend::Initialize(HWND hwnd)
     ImGui::CreateContext();
 
     // 2. IO設定
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGuiIO& io = ImGui::GetIO();
+
+    // フォント設定
+    constexpr const char* editorFontPath = "asset/Font/Makinas-4-Flat.otf";
+    ImFont* editorFont = io.Fonts->AddFontFromFileTTF(
+        editorFontPath,
+        12.0f,
+        nullptr,
+        io.Fonts->GetGlyphRangesJapanese());
+
+    // ファイルがまだ存在しない場合はImGui標準フォントを使用する
+    if (editorFont != nullptr) {
+        io.FontDefault = editorFont;
+    }
 
     // 3. プラットフォーム用初期化（Win32）
     ImGui_ImplWin32_Init(hwnd);
