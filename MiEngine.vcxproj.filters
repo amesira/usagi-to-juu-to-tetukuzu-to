@@ -402,6 +402,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\game_object.h">
@@ -704,9 +705,6 @@
     <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\sprite_render_utility.h">
       <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\draw_command.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.h" />
@@ -730,7 +728,6 @@
     <ClInclude Include="Source\Engine\Editor\Schema\enum_field_editor.h" />
     <ClInclude Include="Source\Engine\Editor\Schema\field_editor.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\settings_view_window.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\game_view_window.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\canvas_view_window.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
@@ -968,5 +965,11 @@
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
   </ItemGroup>
 </Project>

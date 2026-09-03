@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
@@ -326,6 +327,12 @@
     <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset.h" />
     <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_loader.h" />
     <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_type_id.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_data.h" />
     <ClInclude Include="Source\Engine\Asset\i_asset.h" />
     <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset.h" />
     <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.h" />
@@ -384,10 +391,6 @@
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
     <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
-    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />

@@ -7,7 +7,6 @@
 #ifndef CUSTOM_POST_EFFECT_CONTROLLER_H
 #define CUSTOM_POST_EFFECT_CONTROLLER_H
 #include "Engine/Component/behavior_component.h"
-
 #include "Engine/Core/GamePlay/tween_task.h"
 
 #include "Engine/Settings/post_process_settings.h"
