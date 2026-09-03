@@ -63,12 +63,11 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float2 shadowUV = CalcShadowUV(lightSpacePos);
     
     float depthInLightSpace = lightSpacePos.z / lightSpacePos.w;
-    float depthInShadowMap = g_ShadowMap.Sample(g_SamplerState, shadowUV).r;
+    float depthInShadowMap = GetShadowDepth(shadowUV, depthInLightSpace);
+    float t = depthInShadowMap * depthInShadowMap;
+    t = saturate(t);
     
-    float bias = 0.001f;
-    if (depthInLightSpace > depthInShadowMap + bias){
-        col.rgb = lerp(col.rgb, float3(0.0, 0.1, 0.3), 0.5f); // シャドウの影響を減算
-    }
+    col.rgb = lerp(col.rgb, col.rgb * float3(0.5, 0.6, 0.8), 1.0f - t); // シャドウの影響を減算（0.5倍にする）
     
     return col;
 }

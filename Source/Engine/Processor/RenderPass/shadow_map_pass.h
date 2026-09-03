@@ -35,6 +35,7 @@ private:
     ComPtr<ID3D11Texture2D>             depthBufferTexture;
     ComPtr<ID3D11DepthStencilView>      depthBufferDSV;
     ComPtr<ID3D11ShaderResourceView>    depthBufferSRV;
+    ComPtr<ID3D11SamplerState>          m_shadowComparisonSampler;
 
     // スプライトをシャドウマップへ書き込むための頂点バッファ
     ComPtr<ID3D11Buffer> m_spriteVertexBuffer;
@@ -57,9 +58,11 @@ public:
     // シャドウマップ用のバインド
     void BindShadowCB();
     void BindShadowTexture();
+    void BindShadowSampler();
 
-    // シャドウマップ用テクスチャを外す
+    // シャドウマップ用リソースを外す
     void UnbindShadowTexture();
+    void UnbindShadowSampler();
 
 };
 

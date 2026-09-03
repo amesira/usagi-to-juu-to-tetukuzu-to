@@ -54,13 +54,34 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
         SHADOW_MAP_SIZE
     );
 
+    // シャドウマップ参照用の比較サンプラーを生成（ピクセルシェーダーのs1へバインド）
+    // COMPARISON_LESS_EQUALを使用することで、深度値が比較対象の値以下であれば1.0、それ以外は0.0を返すようになる。
+    // BORDERなので、シャドウマップの外側は1.0（影が落ちない）となる。
+    {
+        D3D11_SAMPLER_DESC shadowSamplerDesc = {};
+        shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+        shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+        shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+        shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+        shadowSamplerDesc.BorderColor[0] = 1.0f;
+        shadowSamplerDesc.BorderColor[1] = 1.0f;
+        shadowSamplerDesc.BorderColor[2] = 1.0f;
+        shadowSamplerDesc.BorderColor[3] = 1.0f;
+        shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+        shadowSamplerDesc.MinLOD = 0.0f;
+        shadowSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+        m_pDevice->CreateSamplerState(&shadowSamplerDesc, m_shadowComparisonSampler.GetAddressOf());
+    }
+
     // スプライトをシャドウマップへ書き込むための頂点バッファを生成
-    D3D11_BUFFER_DESC bd = {};
-    bd.Usage = D3D11_USAGE_DYNAMIC;
-    bd.ByteWidth = sizeof(ShaderDefinitions::SpriteVertex) * 4;
-    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    m_pDevice->CreateBuffer(&bd, NULL, m_spriteVertexBuffer.GetAddressOf());
+    {
+        D3D11_BUFFER_DESC bd = {};
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.ByteWidth = sizeof(ShaderDefinitions::SpriteVertex) * 4;
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_pDevice->CreateBuffer(&bd, NULL, m_spriteVertexBuffer.GetAddressOf());
+    }
 }
 
 void ShadowMapPass::Finalize()
@@ -77,9 +98,9 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
     SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     {
-        constexpr float shadowWidth = 150.0f;
-        constexpr float shadowHeight = 150.0f;
-        constexpr float shadowDepth = 300.0f;
+        constexpr float shadowWidth = 50.0f;
+        constexpr float shadowHeight = 50.0f;
+        constexpr float shadowDepth = 100.0f;
 
         // シャドウマップの基準となる（可視領域の中心の方が良いかもしれない）
         XMFLOAT3 center = view.eyePosition;
@@ -112,7 +133,7 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
     // モデルの描画
     //-------------------------------------
     ModelResource::VertexType currentVertexType = ModelResource::VertexType::Static;
-    EngineServiceLocator::BindShader(ShaderBase::Lit);
+    EngineServiceLocator::BindShader(ShaderBase::Unlit);
     m_pContext->PSSetShader(nullptr, nullptr, 0);
 
     ModelRenderUtility::ForEachRenderableModel(
@@ -123,10 +144,10 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
             if (currentVertexType != model.vertexType) {
                 switch (model.vertexType) {
                 case ModelResource::VertexType::Static:
-                    EngineServiceLocator::BindShader(ShaderBase::Lit);
+                    EngineServiceLocator::BindShader(ShaderBase::Unlit);
                     break;
                 case ModelResource::VertexType::Skinned:
-                    EngineServiceLocator::BindShader(ShaderBase::SkinnedLit);
+                    EngineServiceLocator::BindShader(ShaderBase::SkinnedUnlit);
                     break;
                 }
                 m_pContext->PSSetShader(nullptr, nullptr, 0);
@@ -215,9 +236,23 @@ void ShadowMapPass::BindShadowTexture()
     m_pContext->PSSetShaderResources(10, 1, depthBufferSRV.GetAddressOf());
 }
 
+// シャドウマップ用の比較サンプラーをピクセルシェーダーのs1にバインド
+void ShadowMapPass::BindShadowSampler()
+{
+    ID3D11SamplerState* sampler = m_shadowComparisonSampler.Get();
+    m_pContext->PSSetSamplers(1, 1, &sampler);
+}
+
 // シャドウマップ用の深度テクスチャをピクセルシェーダーから外す
 void ShadowMapPass::UnbindShadowTexture()
 {
     ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
     m_pContext->PSSetShaderResources(10, 1, nullSRV);
+}
+
+// シャドウマップ用の比較サンプラーをピクセルシェーダーのs1から外す
+void ShadowMapPass::UnbindShadowSampler()
+{
+    ID3D11SamplerState* nullSampler[1] = { nullptr };
+    m_pContext->PSSetSamplers(1, 1, nullSampler);
 }
