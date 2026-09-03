@@ -53,6 +53,7 @@ void LightingPass::Process(IScene* pScene, const RenderView& view)
         CollectLightComponents(lightCompPool, transformCompPool);
     }
 
+    // EnvironmentAssetからライトの情報を転送
     CollectEnvironmentLighting(pScene->GetEnvironmentAsset().GetData().lighting);
 
     // 定数バッファにライトの情報を転送
@@ -169,5 +170,21 @@ void LightingPass::CollectEnvironmentLighting(const EnvironmentLightingData& lig
     m_lightBufferData.hemisphereLight.intensity = hemisphereLightSettings.intensity;
     m_lightBufferData.hemisphereLight.skyColor = XMFLOAT4(hemisphereLightSettings.skyColor.x, hemisphereLightSettings.skyColor.y, hemisphereLightSettings.skyColor.z, 1.0f);
     m_lightBufferData.hemisphereLight.groundColor = XMFLOAT4(hemisphereLightSettings.groundColor.x, hemisphereLightSettings.groundColor.y, hemisphereLightSettings.groundColor.z, 1.0f);
+
+    const CubicColorLightSettings& cubic = lighting.cubicColorLight;
+    m_lightBufferData.cubicColorLight.enable = cubic.enabled ? 1 : 0;
+    m_lightBufferData.cubicColorLight.intensity = cubic.intensity;
+    m_lightBufferData.cubicColorLight.upColor = XMFLOAT4(
+        cubic.upColor.x, cubic.upColor.y, cubic.upColor.z, 1.0f);
+    m_lightBufferData.cubicColorLight.downColor = XMFLOAT4(
+        cubic.downColor.x, cubic.downColor.y, cubic.downColor.z, 1.0f);
+    m_lightBufferData.cubicColorLight.leftColor = XMFLOAT4(
+        cubic.leftColor.x, cubic.leftColor.y, cubic.leftColor.z, 1.0f);
+    m_lightBufferData.cubicColorLight.rightColor = XMFLOAT4(
+        cubic.rightColor.x, cubic.rightColor.y, cubic.rightColor.z, 1.0f);
+    m_lightBufferData.cubicColorLight.frontColor = XMFLOAT4(
+        cubic.frontColor.x, cubic.frontColor.y, cubic.frontColor.z, 1.0f);
+    m_lightBufferData.cubicColorLight.backColor = XMFLOAT4(
+        cubic.backColor.x, cubic.backColor.y, cubic.backColor.z, 1.0f);
 
 }

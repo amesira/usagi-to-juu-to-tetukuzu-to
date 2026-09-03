@@ -53,6 +53,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
         
         col.rgb += CalcRimLight(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz); // リムライトを加算
         col.rgb += CalcHemiLight(ps_in.normal.xyz); // 半球ライトを加算
+        col.rgb += CalcCubicColorLight(ps_in.normal.xyz);
     }
     
     // エミッシブカラーを加算

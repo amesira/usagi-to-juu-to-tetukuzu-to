@@ -90,6 +90,22 @@ struct alignas(16) GPU_HemisphereLight {
     XMFLOAT4 groundColor;
 };
 
+// 6方向の環境色を保持するライト構造体
+struct alignas(16) GPU_CubicColorLight {
+    int enable;
+    float padding[3];
+
+    float intensity;
+    float padding2[3];
+
+    XMFLOAT4 upColor;
+    XMFLOAT4 downColor;
+    XMFLOAT4 leftColor;
+    XMFLOAT4 rightColor;
+    XMFLOAT4 frontColor;
+    XMFLOAT4 backColor;
+};
+
 #pragma endregion
 
 class LightingPass : public Pass {
@@ -108,6 +124,7 @@ private:
 
         GPU_RimLight rimLight;
         GPU_HemisphereLight hemisphereLight;
+        GPU_CubicColorLight cubicColorLight;
 
     } m_lightBufferData;
 
