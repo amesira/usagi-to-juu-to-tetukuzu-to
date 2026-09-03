@@ -31,8 +31,8 @@ struct KnockbackRequest {
     bool overrideStartPosition = false;
     DirectX::XMFLOAT3 startPosition = { 0.0f, 0.0f, 0.0f };
 
-    DirectX::XMFLOAT3 direction = { 0.0f, 0.0f, 0.0f };
     DirectX::XMFLOAT3 targetPosition = { 0.0f, 0.0f, 0.0f };
+    DirectX::XMFLOAT3 direction = { 0.0f, 0.0f, 0.0f };
     float distance = 0.0f;
     float duration = 0.0f;
 
@@ -43,7 +43,6 @@ struct KnockbackRequest {
 
 struct HitData {
     GameObject* attacker = nullptr;
-    int attackID = 0;
 
     float damage = 0.0f;
     DirectX::XMFLOAT3 hitPoint = { 0.0f, 0.0f, 0.0f };

@@ -56,6 +56,11 @@ void KnockbackReceiver::Update(float deltaTime)
 
     if (m_elapsedTime >= m_currentRequest.duration) {
         m_isActive = false;
+
+        if (m_currentRequest.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
+            m_rigidbody->SetGravityScale(-9.8f);
+            m_rigidbody->SetFriction({ 0.6f, 1.0f, 0.6f });
+        }
         return;
     }
 }
@@ -82,6 +87,11 @@ bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
         targetPosition, 
         request.gravity, 
         request.duration);
+
+    if (request.movementMode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
+        m_rigidbody->SetGravityScale(0.0f);
+        m_rigidbody->SetFriction({ 1.0f, 1.0f, 1.0f });
+    }
 
     return true;
 }

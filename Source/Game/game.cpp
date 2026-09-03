@@ -56,7 +56,7 @@ void GameScene::Initialize()
 
     // Field
     GameObject* field = this->CreateGameObject();
-    Factory::CreateField(field, { 0.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 20.0f, 1.0f, 20.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
+    Factory::CreateField(field, { 0.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 60.0f, 1.0f, 60.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
     {
         GameObject* field2 = this->CreateGameObject();
         Factory::CreateField(field2, { -10.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 3.0f, 6.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
@@ -68,8 +68,8 @@ void GameScene::Initialize()
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
 
     // テスト：JointGroup
-    GameObject* jointGroup = this->CreateGameObject();
-    Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);
+   /* GameObject* jointGroup = this->CreateGameObject();
+    Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);*/
 
     // モデルを５つ生成
     for (int i = 0; i < 5; i++) {

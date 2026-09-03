@@ -15,6 +15,7 @@
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
@@ -79,14 +80,41 @@ void BulletBehavior::Update()
             m_hasHit = true;
 
             bool isHitStop = false;
-            if (hit.hitObject->GetName() == "Enemy") {
+            if (hit.hitObject->GetCollisionLayer() == CollisionLayer::Enemy) {
                 XMFLOAT3 scale = m_transform->GetScaling();
-                HealthBehavior* health = hit.hitObject->GetComponent<HealthBehavior>();
-                health->TakeDamage(scale.x * 10.0f);
+                HitReceiverBehavior* hitReceiver = hit.hitObject->GetComponent<HitReceiverBehavior>();
+                if (hitReceiver) {
+                    XMFLOAT3 knockbackDir = direction;
+                    knockbackDir.y = 0.0f; // 水平方向のみにする
+                    knockbackDir = MiMath::Normalize(knockbackDir);
 
-                if (health->IsDead()) {
-                    isHitStop = true;
+                    HitData hitData = {
+                        .attacker = GetOwner(),
+                        .damage = scale.x * 10.0f,
+                        .hitPoint = hit.hitPoint,
+                        .hitDirection = direction,
+                        .knockback = {
+                            .enabled = true,
+                            .overrideStartPosition = false,
+                            .startPosition = { 0.0f, 0.0f, 0.0f },
+                            .targetPosition = { 0.0f, 0.0f, 0.0f },
+                            .direction = knockbackDir,
+                            .distance = 5.0f,
+                            .duration = 1.0f,
+                            .mode = KnockbackMode::RelativeDistance,
+                            .movementMode = KnockbackMovementMode::SetRigidbodyVelocity,
+                        }
+                    };
+                    hitReceiver->ReceiveHit(hitData);
                 }
+
+
+               // HealthBehavior* health = hit.hitObject->GetComponent<HealthBehavior>();
+              //  health->TakeDamage(scale.x * 10.0f);
+
+              /*  if (health->IsDead()) {
+                    isHitStop = true;
+                }*/
             }
             
             // ヒットポイントに弾を移動させる

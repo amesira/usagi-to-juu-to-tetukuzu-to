@@ -35,6 +35,7 @@ GameObject* ActorFactory::CreatePlayer(
 {
     GameObject* player = scene->CreateGameObject();
     player->SetName("Player");
+    player->SetTag("Player");
     player->SetCollisionLayer(CollisionLayer::Player);
     player->SetRenderLayer(RenderLayer::Player);
 

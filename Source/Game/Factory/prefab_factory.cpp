@@ -100,7 +100,9 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     GameObject* dummy = scene->CreateGameObject();
     if (!dummy) return prefab;
 
+    // Enemyタグを付与
     dummy->SetName("TrainingDummy");
+    dummy->SetTag("Enemy");
     dummy->SetCollisionLayer(CollisionLayer::Enemy);
     dummy->SetRenderLayer(RenderLayer::Enemy);
 
