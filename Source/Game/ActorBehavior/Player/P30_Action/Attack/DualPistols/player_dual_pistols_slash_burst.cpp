@@ -211,23 +211,35 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 
     m_hasBursted = true;
 
-    XMFLOAT3 dir = context.playerTransform->GetForward();
-    dir.y = 0.0f;
-    dir = MiMath::Normalize(dir);
+    XMFLOAT3 attackDir = context.playerTransform->GetForward();
+    attackDir = MiMath::HorizontalNormalize(attackDir);
 
     // 攻撃ターゲットの検出
     std::vector<GameObject*> hitTargets = DetectAttackTarget(context);
+
     for (GameObject* target : hitTargets) {
+        TransformComponent* targetTransform = target->GetComponent<TransformComponent>();
         HitReceiverBehavior* hitReceiver = target->GetComponent<HitReceiverBehavior>();
-        if (hitReceiver) {
+        if (targetTransform && hitReceiver) {
+            XMFLOAT3 knockbackStartPosition = {};
+            XMFLOAT3 knockbackEndPosition = {};
+            CalculateKnockbackPosition(
+                context,
+                targetTransform->GetPosition(),
+                attackDir,
+                knockbackStartPosition,
+                knockbackEndPosition);
+
             HitData hitData = {
                 .attacker = context.playerTransform->GetOwner(),
-                .damage = 10,
+                .damage = 10.0f,
+                .hitDirection = attackDir,
                 .knockback = {
                     .enabled = true,
                     .overrideStartPosition = true,
-                    .startPosition = context.playerTransform->GetPosition(),
-                    .targetPosition = { 0.0f, 0.0f, 0.0f },
+                    .startPosition = knockbackStartPosition,
+                    .targetPosition = knockbackEndPosition,
+                    .duration = context.settings().slashBurstKnockbackDuration,
                     .mode = KnockbackMode::TargetPosition,
                     .overrideMovementSource = false,
                 },
@@ -272,6 +284,75 @@ std::vector<GameObject*> PlayerDualPistolsSlashBurst::DetectAttackTarget(PlayerD
 
     return hitGameObjects;
 }
+
+#pragma region 攻撃のノックバック計算
+/// @brief ノックバックの開始位置と終了位置を計算する
+void PlayerDualPistolsSlashBurst::CalculateKnockbackPosition(
+    const PlayerDualPistolsContext& context,
+    const XMFLOAT3& targetPosition,
+    const XMFLOAT3& attackDirection,
+    XMFLOAT3& outStartPosition,
+    XMFLOAT3& outEndPosition) const
+{
+    outStartPosition = {};
+    outEndPosition = {};
+
+    if (!context.playerTransform) return;
+
+    const XMFLOAT3 playerPosition = context.playerTransform->GetPosition();
+    const XMFLOAT3 attackDirBack = MiMath::Multiply(attackDirection, -1.0f);
+
+    // 攻撃後方の対象を、攻撃方向側へ移してから吹き飛ばす
+    outStartPosition = targetPosition;
+    const float distanceBehindPlayer = CalculateDistanceBehindPlayer(
+        playerPosition,
+        attackDirBack,
+        outStartPosition);
+    if (distanceBehindPlayer > 0.0f) {
+        XMFLOAT3 blowOffset = MiMath::Multiply(attackDirection, distanceBehindPlayer + context.settings().slashBurstKnockbackStartMargin);
+        outStartPosition = MiMath::Add(outStartPosition, blowOffset);
+    }
+
+    // 終了位置を計算する
+    outEndPosition = MiMath::Add(
+        outStartPosition,
+        MiMath::Multiply(
+            attackDirection,
+            context.settings().slashBurstKnockbackDistance));
+
+    // 終了位置の攻撃方向成分を、プレイヤーからの最大距離以内に収める。
+    // 横方向のずれと高さは維持し、攻撃方向に進み過ぎた分だけを戻す。
+    XMFLOAT3 playerToEnd = MiMath::Subtract(outEndPosition, playerPosition);
+    playerToEnd.y = 0.0f;
+    const float endDistanceAlongAttack = MiMath::Dot(playerToEnd, attackDirection);
+    const float maxDistance = context.settings().slashBurstMaxKnockbackDistanceFromPlayer;
+    if (endDistanceAlongAttack > maxDistance) {
+        outEndPosition = MiMath::Subtract(
+            outEndPosition,
+            MiMath::Multiply(
+                attackDirection,
+                endDistanceAlongAttack - maxDistance));
+    }
+
+    // 終了位置の高さを、開始位置と同じにする
+    outEndPosition.y = outStartPosition.y;
+}
+
+/// @brief 対象がプレイヤー後方にいる距離を計算する
+float PlayerDualPistolsSlashBurst::CalculateDistanceBehindPlayer(
+    const XMFLOAT3& playerPosition,
+    const XMFLOAT3& playerBack,
+    const XMFLOAT3& targetPosition) const
+{
+    XMFLOAT3 toTarget = MiMath::Subtract(targetPosition, playerPosition);
+    toTarget.y = 0.0f;
+
+    XMFLOAT3 horizontalPlayerBack = playerBack;
+    horizontalPlayerBack.y = 0.0f;
+
+    return MiMath::Dot(toTarget, horizontalPlayerBack);
+}
+#pragma endregion
 
 /// @brief 次の連鎖攻撃が入力可能かどうか
 bool PlayerDualPistolsSlashBurst::CanRequestChainableInput(PlayerDualPistolsContext& context)

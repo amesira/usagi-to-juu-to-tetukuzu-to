@@ -79,6 +79,10 @@ namespace PlayerDualPistolsSettings {
         float stepMoveDistance = 1.0f;
         float finalStepMoveDuration = 0.3f;
         float finalStepMoveDistance = 1.5f;
+        float slashBurstKnockbackDistance = 5.0f;
+        float slashBurstMaxKnockbackDistanceFromPlayer = 8.0f;
+        float slashBurstKnockbackStartMargin = 0.5f;
+        float slashBurstKnockbackDuration = 0.5f;
 
         // === Bullet Spread ===
         float bulletSpeed = 50.0f;
@@ -180,6 +184,16 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
             MakeField("finalStepMoveDistance", "Final Step Move Distance", &Data::finalStepMoveDistance,
                 DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+            MakeField("slashBurstKnockbackDistance", "Knockback Distance", &Data::slashBurstKnockbackDistance,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 50.0f}),
+            MakeField("slashBurstMaxKnockbackDistanceFromPlayer", "Max Knockback Distance From Player",
+                &Data::slashBurstMaxKnockbackDistanceFromPlayer,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f}),
+            MakeField("slashBurstKnockbackStartMargin", "Knockback Start Margin",
+                &Data::slashBurstKnockbackStartMargin,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f}),
+            MakeField("slashBurstKnockbackDuration", "Knockback Duration", &Data::slashBurstKnockbackDuration,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f}),
 
                 // === Bullet Spread ===
             MakeHeaderField("Bullet Spread"),

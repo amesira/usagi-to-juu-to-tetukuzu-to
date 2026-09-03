@@ -54,6 +54,18 @@ private:
     bool HandleSlashBurstAttack(PlayerDualPistolsContext& context, int step);
     std::vector<GameObject*> DetectAttackTarget(PlayerDualPistolsContext& context);
 
+    // === ノックバックの計算 ===
+    void CalculateKnockbackPosition(
+        const PlayerDualPistolsContext& context,
+        const DirectX::XMFLOAT3& targetPosition,
+        const DirectX::XMFLOAT3& attackDirection,
+        DirectX::XMFLOAT3& outStartPosition,
+        DirectX::XMFLOAT3& outEndPosition) const;
+    float CalculateDistanceBehindPlayer(
+        const DirectX::XMFLOAT3& playerPosition,
+        const DirectX::XMFLOAT3& playerBack,
+        const DirectX::XMFLOAT3& targetPosition) const;
+
     bool CanRequestChainableInput(PlayerDualPistolsContext& context);
 
     bool IsBurstFrame(PlayerDualPistolsContext& context) const;
