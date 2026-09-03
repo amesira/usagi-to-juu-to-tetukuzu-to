@@ -59,13 +59,12 @@ void RenderProcessor::Process(IScene* pScene)
     // 2.シャドウマップパス
     m_shadowMapPass.UnbindShadowTexture();
     if (m_renderView->enableShadowMap) {
+        Direct3D_SetViewport(2048, 2048); // FIX: シャドウパスから取得するべき
         Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
         Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
 
         m_lightingPass.BindLightCB(false);
-
         m_shadowMapPass.SetLightDirection(m_lightingPass.GetDirectionalLightDirection()); // ライトの方向は適当
-
         m_shadowMapPass.Process(pScene, *m_renderView);
     }
 

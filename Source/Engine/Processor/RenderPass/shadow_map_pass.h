@@ -51,7 +51,6 @@ public:
     // DepthStencilViewの取得
     ID3D11DepthStencilView* GetDepthStencilView() const { return depthBufferDSV.Get(); }
 
-    // 視点位置のセット
     // ライト方向のセット
     void SetLightDirection(const XMFLOAT3& lightDir) { m_lightDirection = lightDir; }
 

@@ -74,22 +74,32 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
     SetBlendState(BLENDSTATE_NONE);
     SetDepthState(DEPTHSTATE_ENABLE);
     SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
-    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
-    // シャドウマップ用のライトビュー行列と射影行列を計算して、ライト定数バッファに転送
     {
-        float width = 300.0f;
-        float height = 300.0f;
+        constexpr float shadowWidth = 150.0f;
+        constexpr float shadowHeight = 150.0f;
+        constexpr float shadowDepth = 300.0f;
 
+        // シャドウマップの基準となる（可視領域の中心の方が良いかもしれない）
+        XMFLOAT3 center = view.eyePosition;
+
+        // ライト方向と（仮想的な）ライト位置を計算してビュー行列を作成
         XMFLOAT3 dir = MiMath::Normalize(m_lightDirection);
-        XMFLOAT3 eye = MiMath::Subtract(view.eyePosition, MiMath::Multiply(dir, 50.0f));
-
+        XMFLOAT3 eye = MiMath::Add(
+            center, 
+            MiMath::Multiply(dir, -shadowDepth * 0.5f));
         XMMATRIX viewMatrix = XMMatrixLookToLH(
             XMLoadFloat3(&eye),
             XMLoadFloat3(&dir),
             XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-        XMMATRIX projectionMatrix = XMMatrixOrthographicLH(width, height, 0.1f, 200.0f);
+        XMMATRIX projectionMatrix = XMMatrixOrthographicLH(
+            shadowWidth, 
+            shadowHeight, 
+            0.1f, 
+            shadowDepth);
 
+        // ライトのビュー行列とプロジェクション行列をシェーダーに転送
         EngineServiceLocator::UpdateCameraCB({ 
             .view = viewMatrix, 
             .projection = projectionMatrix,
