@@ -20,9 +20,6 @@ private:
 
     // デフォルトテクスチャリソース
     TextureResource* m_defaultAlbedoTexture = nullptr;
-    TextureResource* m_defaultNormalTexture = nullptr;
-    TextureResource* m_defaultEmissiveTexture = nullptr;
-    TextureResource* m_defaultAOTexture = nullptr;
 
     // マテリアルリソースのキャッシュ
     std::unordered_map<std::string, std::unique_ptr<MaterialResource>> m_materialCache;

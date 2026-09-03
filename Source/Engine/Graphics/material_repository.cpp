@@ -52,17 +52,11 @@ void MaterialRepository::Initialize()
 
     // デフォルトテクスチャの作成
     m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
-    m_defaultNormalTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_normal.png");
-    m_defaultEmissiveTexture = m_defaultAlbedoTexture;
-    m_defaultAOTexture = m_defaultAlbedoTexture;
 
     // デフォルトマテリアルの作成
     MaterialResource defaultMaterial;
     defaultMaterial.name = "default";
     defaultMaterial.albedoTexture = m_defaultAlbedoTexture;
-    defaultMaterial.normalTexture = m_defaultNormalTexture;
-    defaultMaterial.emissiveTexture = m_defaultEmissiveTexture;
-    defaultMaterial.aoTexture = m_defaultAOTexture;
     GenerateMaterial(defaultMaterial);
 }
 
@@ -120,18 +114,6 @@ void MaterialRepository::BindMaterialTexture(const MaterialResource& material)
     m_pContext->PSSetShaderResources(0, 1, material.albedoTexture ?
         material.albedoTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(1, 1, material.normalTexture ?
-        material.normalTexture->texture.GetAddressOf() :
-        m_defaultNormalTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(2, 1, material.emissiveTexture ?
-        material.emissiveTexture->texture.GetAddressOf() :
-        m_defaultEmissiveTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(3, 1, material.aoTexture ?
-        material.aoTexture->texture.GetAddressOf() :
-        m_defaultAOTexture->texture.GetAddressOf());
 }
 
 void MaterialRepository::BindMaterialTexture(const MaterialInstance& materialInstance)

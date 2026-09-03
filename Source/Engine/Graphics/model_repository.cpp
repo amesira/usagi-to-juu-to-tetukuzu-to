@@ -624,9 +624,6 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (!albedoTexturePath.empty()) {
             material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
         }
-        if (!normalTexturePath.empty()) {
-            material.normalTexture = TEXTURE_REPOSITORY->GetTextureResource(normalTexturePath);
-        }
     }
 
     return material;

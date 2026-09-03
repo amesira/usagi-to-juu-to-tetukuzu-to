@@ -173,9 +173,6 @@ namespace
 
         ImGui::Text("Textures:");
         InputTextureResource("Albedo Texture", materialResource.albedoTexture);
-        InputTextureResource("Normal Texture", materialResource.normalTexture);
-        InputTextureResource("Emissive Texture", materialResource.emissiveTexture);
-        InputTextureResource("AO Texture", materialResource.aoTexture);
 
         ImGui::Text("Params:");
         ImGui::ColorEdit4("Base Color", &materialResource.baseColor.x);
@@ -609,9 +606,6 @@ void InspectorViewWindow::DrawComponentInspector(GameObject* gameObject)
                         // マテリアルリソースのテクスチャ
                         ImGui::Text("Textures:");
                         InputTextureResource("Albedo Texture", matRes->albedoTexture);
-                        InputTextureResource("Normal Texture", matRes->normalTexture);
-                        InputTextureResource("Emissive Texture", matRes->emissiveTexture);
-                        InputTextureResource("AO Texture", matRes->aoTexture);
 
                         // マテリアルリソースのプロパティ
                         ImGui::Text("Params:");

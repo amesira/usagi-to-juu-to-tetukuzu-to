@@ -58,9 +58,6 @@ public:
 
     // === テクスチャ ===
     TextureResource* albedoTexture = nullptr;   // アルベドテクスチャ
-    TextureResource* normalTexture = nullptr;   // 法線マップテクスチャ（未実装）
-    TextureResource* emissiveTexture = nullptr; // 発光テクスチャ（未実装）
-    TextureResource* aoTexture = nullptr;       // アンビエントオクルージョンテクスチャ（未実装）
 
     // === UV ===
     XMFLOAT2 uvTiling = { 1,1 };    // UVのループ数（未実装）

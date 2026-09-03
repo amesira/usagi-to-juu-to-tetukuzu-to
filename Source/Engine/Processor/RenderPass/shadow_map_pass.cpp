@@ -45,7 +45,14 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_shadowLightCB);
 
     // シャドウマップ用の深度バッファと対応するビューを生成
-    Direct3D_CreateDepthBuffer(depthBufferTexture.GetAddressOf(), depthBufferDSV.GetAddressOf(), depthBufferSRV.GetAddressOf(), 1920, 1080);
+    constexpr UINT SHADOW_MAP_SIZE = 2048;
+    Direct3D_CreateDepthBuffer(
+        depthBufferTexture.GetAddressOf(), 
+        depthBufferDSV.GetAddressOf(), 
+        depthBufferSRV.GetAddressOf(), 
+        SHADOW_MAP_SIZE,
+        SHADOW_MAP_SIZE
+    );
 
     // スプライトをシャドウマップへ書き込むための頂点バッファを生成
     D3D11_BUFFER_DESC bd = {};
@@ -71,11 +78,11 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
 
     // シャドウマップ用のライトビュー行列と射影行列を計算して、ライト定数バッファに転送
     {
-        float width = 30.0f;
-        float height = 30.0f;
+        float width = 300.0f;
+        float height = 300.0f;
 
         XMFLOAT3 dir = MiMath::Normalize(m_lightDirection);
-        XMFLOAT3 eye = MiMath::Subtract(view.eyePosition, MiMath::Multiply(dir, 30.0f));
+        XMFLOAT3 eye = MiMath::Subtract(view.eyePosition, MiMath::Multiply(dir, 50.0f));
 
         XMMATRIX viewMatrix = XMMatrixLookToLH(
             XMLoadFloat3(&eye),
@@ -83,7 +90,11 @@ void ShadowMapPass::Process(IScene* pScene, const RenderView& view)
             XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
         XMMATRIX projectionMatrix = XMMatrixOrthographicLH(width, height, 0.1f, 200.0f);
 
-        EngineServiceLocator::UpdateCameraCB({ viewMatrix, projectionMatrix, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f) });
+        EngineServiceLocator::UpdateCameraCB({ 
+            .view = viewMatrix, 
+            .projection = projectionMatrix,
+            .eyePos = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)
+            });
         m_shadowLightMatrix = viewMatrix * projectionMatrix;
     }
 
