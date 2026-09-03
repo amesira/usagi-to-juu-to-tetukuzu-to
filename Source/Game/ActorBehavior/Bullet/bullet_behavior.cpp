@@ -94,13 +94,13 @@ void BulletBehavior::Update()
                         .hitPoint = hit.hitPoint,
                         .hitDirection = direction,
                         .knockback = {
-                            .enabled = true,
+                            .enabled = false,
                             .overrideStartPosition = false,
                             .startPosition = { 0.0f, 0.0f, 0.0f },
                             .targetPosition = { 0.0f, 0.0f, 0.0f },
                             .direction = knockbackDir,
-                            .distance = 5.0f,
-                            .duration = 0.3f,
+                            .distance = 3.0f,
+                            .duration = 0.2f,
                             .overrideMovementSource = false,
                         }
                     };

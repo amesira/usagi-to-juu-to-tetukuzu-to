@@ -7,8 +7,15 @@
 #include "player_dual_pistols_context.h"
 #include "player_dual_pistols_action.h"
 
+#include "Engine/Core/game_object.h"
+
 #include "Engine/Component/transform_component.h"
+#include "Engine/Component/collider_component.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+
+#include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
+
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
 
 #include "Utility/mi_math.h"
 
@@ -18,6 +25,7 @@ void PlayerDualPistolsSlashBurst::Initialize(PlayerDualPistolsContext& context)
     context.runtimeState.comboStep = 0;
 }
 
+/// @brief 攻撃を開始する
 void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
 {
     m_isActive = true;
@@ -39,6 +47,7 @@ void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
     StartNextStep(context);
 }
 
+/// @brief 次の攻撃ステップを開始する
 void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& context)
 {
     m_attackTimer = 0.0f;
@@ -86,6 +95,7 @@ void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
     }
 }
 
+/// @brief 攻撃の更新処理
 void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, float deltaTime)
 {
     m_attackTimer += deltaTime;
@@ -167,6 +177,7 @@ void PlayerDualPistolsSlashBurst::Cancel(PlayerDualPistolsContext& context)
     }
 }
 
+/// @brief 攻撃中の移動ステップを更新する
 void PlayerDualPistolsSlashBurst::UpdateStepMovement(PlayerDualPistolsContext& context, float deltaTime)
 {
     const float stepMoveDuration = (context.runtimeState.comboStep < MAX_ATTACK_COUNT) ? 
@@ -193,14 +204,6 @@ void PlayerDualPistolsSlashBurst::UpdateStepMovement(PlayerDualPistolsContext& c
     }
 }
 
-/// @brief 次の連鎖攻撃が入力可能かどうか
-bool PlayerDualPistolsSlashBurst::CanRequestChainableInput(PlayerDualPistolsContext& context)
-{
-    return context.runtimeState.comboStep >= 1 && 
-        context.runtimeState.comboStep < MAX_ATTACK_COUNT &&
-        IsInputBufferFrame(context);
-}
-
 /// @brief 攻撃の実行
 bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContext& context, int step)
 {
@@ -208,7 +211,30 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 
     m_hasBursted = true;
 
+    XMFLOAT3 dir = context.playerTransform->GetForward();
+    dir.y = 0.0f;
+    dir = MiMath::Normalize(dir);
+
     // 攻撃ターゲットの検出
+    std::vector<GameObject*> hitTargets = DetectAttackTarget(context);
+    for (GameObject* target : hitTargets) {
+        HitReceiverBehavior* hitReceiver = target->GetComponent<HitReceiverBehavior>();
+        if (hitReceiver) {
+            HitData hitData = {
+                .attacker = context.playerTransform->GetOwner(),
+                .damage = 10,
+                .knockback = {
+                    .enabled = true,
+                    .overrideStartPosition = true,
+                    .startPosition = context.playerTransform->GetPosition(),
+                    .targetPosition = { 0.0f, 0.0f, 0.0f },
+                    .mode = KnockbackMode::TargetPosition,
+                    .overrideMovementSource = false,
+                },
+            };
+            hitReceiver->ReceiveHit(hitData);
+        }
+    }
 
     // 攻撃のヒット判定処理
     {
@@ -220,6 +246,39 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
     }
 
     return true;
+}
+
+/// @brief 攻撃対象の検出
+std::vector<GameObject*> PlayerDualPistolsSlashBurst::DetectAttackTarget(PlayerDualPistolsContext& context)
+{
+    const float width = 3.0f;
+    const float depth = 2.0f;
+
+    std::vector<ColliderComponent*> outHitTargets = {};
+    constexpr CollisionLayerMask layerMask = CollisionLayerToMask(CollisionLayer::Enemy);
+
+    CollisionQuery::OverlapBox(
+        context.scene,
+        outHitTargets,
+        context.playerTransform->GetPosition(),
+        { width, 1.0f, depth },
+        context.playerTransform->GetRotation(),
+        layerMask);
+
+    std::vector<GameObject*> hitGameObjects;
+    for (ColliderComponent* collider : outHitTargets) {
+        hitGameObjects.push_back(collider->GetOwner());
+    }
+
+    return hitGameObjects;
+}
+
+/// @brief 次の連鎖攻撃が入力可能かどうか
+bool PlayerDualPistolsSlashBurst::CanRequestChainableInput(PlayerDualPistolsContext& context)
+{
+    return context.runtimeState.comboStep >= 1 &&
+        context.runtimeState.comboStep < MAX_ATTACK_COUNT &&
+        IsInputBufferFrame(context);
 }
 
 #pragma region 攻撃モーションのフレーム判定
@@ -235,7 +294,6 @@ bool PlayerDualPistolsSlashBurst::IsChainableFrame(PlayerDualPistolsContext& con
 {
     return m_attackTimer >= context.settings().chainTime && m_attackTimer <= context.settings().endTime;
 }
-
 bool PlayerDualPistolsSlashBurst::IsEndMotionFrame(PlayerDualPistolsContext& context) const
 {
     return m_attackTimer >= context.settings().endTime;
@@ -275,3 +333,4 @@ void PlayerDualPistolsSlashBurst::FireRightPistol(PlayerDualPistolsContext& cont
         context.firing.Fire(context, request);
     }
 }
+#pragma endregion
