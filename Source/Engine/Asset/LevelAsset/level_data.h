@@ -46,8 +46,7 @@ struct LevelObjectData
 
     LevelTransformData transform;
     LevelColliderData collider;
-    std::string modelPath;
-    std::vector<std::string> materialNames;
+    std::string modelPath = "asset/Model/cube.fbx";
 };
 
 struct LevelData

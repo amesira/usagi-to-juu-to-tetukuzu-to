@@ -239,29 +239,6 @@ void LevelEditorWindow::DrawLevelInspector()
             changed |= FieldEditor::DrawFields(data->collider, LevelSchema::GetSphereColliderSchema());
     }
 
-    if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen)) {
-        for (size_t i = 0; i < data->materialNames.size(); ++i)
-        {
-            ImGui::PushID(static_cast<int>(i));
-            changed |= InputString("Material", data->materialNames[i]);
-            ImGui::SameLine();
-            if (ImGui::Button("Remove"))
-            {
-                data->materialNames.erase(data->materialNames.begin() + i);
-                changed = true;
-                ImGui::PopID();
-                break;
-            }
-            ImGui::PopID();
-        }
-        if (ImGui::Button("Add Material"))
-        {
-            data->materialNames.emplace_back();
-            changed = true;
-        }
-    }
-    ImGui::EndChild();
-
     if (changed)
     {
         m_document.MarkDirty();
@@ -384,11 +361,6 @@ bool LevelEditorWindow::ApplyObjectData(GameObject* object, const LevelObjectDat
         {
             model->SetModelResource(resource);
             model->SetEnable(true);
-            auto& slots = model->GetMaterialSlots();
-            const size_t count = (std::min)(slots.size(), data.materialNames.size());
-            for (size_t i = 0; i < count; ++i)
-                if (!data.materialNames[i].empty())
-                    slots[i].materialResource = MATERIAL_REPOSITORY->GetMaterial(data.materialNames[i]);
         }
     }
     return true;

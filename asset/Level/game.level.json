@@ -18,7 +18,9 @@
                 },
                 "collisionLayer": "Field",
                 "id": "level_object_0001",
-                "materialNames": [],
+                "materialNames": [
+                    ""
+                ],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "BaseFloor",
                 "renderLayer": "Default",
@@ -58,7 +60,9 @@
                 },
                 "collisionLayer": "Field",
                 "id": "level_object_0002",
-                "materialNames": [],
+                "materialNames": [
+                    ""
+                ],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "New Level Object",
                 "renderLayer": "Default",
@@ -98,7 +102,9 @@
                 },
                 "collisionLayer": "Field",
                 "id": "level_object_0003",
-                "materialNames": [],
+                "materialNames": [
+                    ""
+                ],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "New Level Object",
                 "renderLayer": "Default",

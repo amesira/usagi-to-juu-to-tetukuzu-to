@@ -51,12 +51,17 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteUnlit)], m_customPropertyCB);
 
     // デフォルトテクスチャの作成
-    m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
+    m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\TestField.png");
 
     // デフォルトマテリアルの作成
     MaterialResource defaultMaterial;
     defaultMaterial.name = "default";
     defaultMaterial.albedoTexture = m_defaultAlbedoTexture;
+    defaultMaterial.baseColor = { 0.5f, 0.5f, 0.5f, 0.5f };
+    defaultMaterial.metallic = 0.0f;
+    defaultMaterial.roughness = 1.0f;
+    defaultMaterial.emissiveColor = { 0.0f, 0.0f, 0.0f };
+    defaultMaterial.emissiveIntensity = 0.0f;
     GenerateMaterial(defaultMaterial);
 }
 

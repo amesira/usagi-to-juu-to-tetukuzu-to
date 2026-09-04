@@ -70,19 +70,6 @@ GameObject* LevelObjectFactory::CreateObject(
     if (modelResource)
     {
         model->SetModelResource(modelResource);
-
-        auto& slots = model->GetMaterialSlots();
-        const size_t materialCount = (std::min)(slots.size(), data.materialNames.size());
-        auto* repository = EngineServiceLocator::GetMaterialRepository();
-        if (!repository && materialCount > 0) return nullptr;
-
-        for (size_t i = 0; i < materialCount; ++i)
-        {
-            if (data.materialNames[i].empty()) continue;
-            MaterialResource* material = repository->GetMaterial(data.materialNames[i]);
-            if (!material) return nullptr;
-            slots[i].materialResource = material;
-        }
     }
 
     return object;

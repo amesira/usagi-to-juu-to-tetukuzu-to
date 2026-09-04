@@ -122,9 +122,8 @@ namespace LevelSchema
             MakeStructField("collider", "Collider", &Module::collider,
                 GetColliderSchema(), DefaultFieldOptions{}),
 
-            // モデルとマテリアルは検索用の文字列として保持
+            // モデルは検索用の文字列として保持
             MakeField("modelPath", "Model Path", &Module::modelPath),
-            MakeField("materialNames", "Materials", &Module::materialNames)
         };
         return schema;
     }
