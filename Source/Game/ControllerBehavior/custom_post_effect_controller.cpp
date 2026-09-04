@@ -8,7 +8,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include <algorithm>
 
@@ -81,7 +81,7 @@ void CustomPostEffectController::Update()
 
 void CustomPostEffectController::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Custom Post Effect Controller")) {
+    if (BehaviorDetailView::BeginSection(this, "Custom Post Effect Controller")) {
         if (ImGui::TreeNode("Radial Blur")) {
             ImGui::DragInt("Sample Count", &m_state.radialBlur.sampleCount, 1.0f, 1, 64);
             ImGui::DragFloat("Strength", &m_state.radialBlur.strength, 0.01f, 0.0f, 1.0f);
@@ -139,7 +139,7 @@ void CustomPostEffectController::DrawComponentInspector()
         }
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 // ポストエフェクトの再生

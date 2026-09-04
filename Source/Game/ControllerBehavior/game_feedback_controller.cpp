@@ -9,7 +9,7 @@
 #include "Engine/Device/mi_fps.h"
 #include "game_controller_locator.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Utility/mi_math.h"
 
@@ -68,7 +68,7 @@ void GameFeedbackController::Update()
 
 void GameFeedbackController::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Game Effect Controller")) {
+    if (BehaviorDetailView::BeginSection(this, "Game Effect Controller")) {
         if (ImGui::TreeNode("Time Scale")) {
             static float timeScale = 0.2f;
             static float duration = 0.15f;
@@ -140,7 +140,7 @@ void GameFeedbackController::DrawComponentInspector()
         }
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 //------------------------------- private

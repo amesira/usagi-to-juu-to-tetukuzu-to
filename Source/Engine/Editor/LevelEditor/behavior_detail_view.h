@@ -5,7 +5,7 @@
 #include "Engine/Editor/i_editor_window.h"
 
 namespace BehaviorDetailView {
-    inline bool BeginSection(Component* comp, const char* name, bool useEnableSetting)
+    inline bool BeginSection(Component* comp, const char* name, bool useEnableSetting = true)
     {
         ImGui::PushID(comp);
         ImGui::Separator();

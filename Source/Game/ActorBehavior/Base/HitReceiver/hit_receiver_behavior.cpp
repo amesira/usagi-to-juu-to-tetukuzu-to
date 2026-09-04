@@ -10,7 +10,7 @@
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
@@ -37,13 +37,13 @@ void HitReceiverBehavior::Update()
 
 void HitReceiverBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "HitReceiverBehavior"))
+    if (BehaviorDetailView::BeginSection(this, "HitReceiverBehavior"))
     {
         ImGui::Text("HealthBehavior: %s", m_healthBehavior ? "true" : "false");
         ImGui::Text("Knockback Active: %s", IsKnockbackActive() ? "true" : "false");
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 /// @brief 攻撃を受け取る

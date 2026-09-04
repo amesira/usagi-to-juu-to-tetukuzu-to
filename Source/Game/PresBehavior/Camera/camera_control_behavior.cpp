@@ -18,7 +18,7 @@
 #include "Engine/Device/mouse.h"
 #include "Engine/engine_service_locator.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/camera_component.h"
@@ -152,7 +152,7 @@ void CameraControlBehavior::Update()
 // ImGuiを使ったインスペクタの描画
 void CameraControlBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Camera Control Behavior")) 
+    if (BehaviorDetailView::BeginSection(this, "Camera Control Behavior"))
     {
         CameraRuntimeState& state = m_context.runtimeState;
 
@@ -232,7 +232,7 @@ void CameraControlBehavior::DrawComponentInspector()
         }
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 // ----- CameraEffect関連の操作 -----

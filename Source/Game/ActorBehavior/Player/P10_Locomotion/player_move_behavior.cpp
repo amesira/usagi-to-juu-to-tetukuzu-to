@@ -10,7 +10,7 @@
 
 #include "Utility/mi_math.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 #include "Engine/engine_service_locator.h"
 
 // === Component ===
@@ -35,7 +35,7 @@ void PlayerMoveBehavior::Update() {}
 
 void PlayerMoveBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Player Move Behavior")) 
+    if (BehaviorDetailView::BeginSection(this, "Player Move Behavior"))
     {
         ImGui::Text("=== Runtime State ===");
         ImGui::Text("Control Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_controlVelocity.x, m_context.runtimeState.m_controlVelocity.y, m_context.runtimeState.m_controlVelocity.z);
@@ -44,7 +44,7 @@ void PlayerMoveBehavior::DrawComponentInspector()
         ImGui::Text("Grounded: %s", m_context.runtimeState.m_isGrounded ? "true" : "false");
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 // -----------------------------------------------

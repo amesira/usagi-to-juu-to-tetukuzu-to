@@ -7,7 +7,7 @@
 #include "hit_stop_behavior.h"
 
 #include "Engine/Device/mi_fps.h"
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 void HitStopBehavior::Start()
 {
@@ -21,11 +21,11 @@ void HitStopBehavior::Update()
 
 void HitStopBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Hit Stop")) {
+    if (BehaviorDetailView::BeginSection(this, "Hit Stop")) {
         ImGui::Text("Running: %s", IsHitStopping() ? "true" : "false");
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 // ----------------------------------------------- public

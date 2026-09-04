@@ -9,7 +9,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Component/transform_component.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Utility/mi_math.h"
 
@@ -39,12 +39,16 @@ void TransformConstraintBehavior::ApplyConstraint()
 
 void TransformConstraintBehavior::DrawComponentInspector()
 {
-    ImGui::DragFloat3("Local Position", &m_localPosition.x, 0.05f);
-    ImGui::DragFloat4("Local Rotation", &m_localRotation.x, 0.01f);
-    ImGui::DragFloat3("Local Scaling", &m_localScaling.x, 0.05f);
-    ImGui::Checkbox("Consider Rotation", &m_considerRotation);
-    ImGui::Checkbox("Consider Scaling", &m_considerScaling);
-    ApplyConstraint();
+    if (BehaviorDetailView::BeginSection(this, "Transform Constraint Behavior")) {
+        ImGui::DragFloat3("Local Position", &m_localPosition.x, 0.05f);
+        ImGui::DragFloat4("Local Rotation", &m_localRotation.x, 0.01f);
+        ImGui::DragFloat3("Local Scaling", &m_localScaling.x, 0.05f);
+        ImGui::Checkbox("Consider Rotation", &m_considerRotation);
+        ImGui::Checkbox("Consider Scaling", &m_considerScaling);
+        ApplyConstraint();
+    }
+    
+    BehaviorDetailView::EndSection();
 }
 
 XMFLOAT3 TransformConstraintBehavior::CalculateConstrainedPosition() const

@@ -221,7 +221,6 @@
     <ClCompile Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\health_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
     <ClCompile Include="External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="External\ImGui\imgui_draw.cpp" />
@@ -229,7 +228,6 @@
     <ClCompile Include="External\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Engine\Editor\BaseEditor\inspector_view_window.cpp" />
     <ClCompile Include="Source\Engine\Processor\PhysicsPass\integrate_pass.cpp" />
     <ClCompile Include="Source\Engine\Graphics\material_repository.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_imgui_backend.cpp" />
@@ -482,7 +480,6 @@
     <ClInclude Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\health_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.h" />
-    <ClInclude Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.h" />
     <ClInclude Include="External\ImGui\imconfig.h" />
     <ClInclude Include="External\ImGui\imgui.h" />
     <ClInclude Include="External\ImGui\imgui_impl_dx11.h" />
@@ -491,7 +488,6 @@
     <ClInclude Include="External\ImGui\imstb_rectpack.h" />
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\Engine\Editor\BaseEditor\inspector_view_window.h" />
     <ClInclude Include="Source\Engine\Processor\PhysicsPass\integrate_pass.h" />
     <ClInclude Include="Source\Engine\Component\joint_component.h" />
     <ClInclude Include="Source\Engine\Component\joint_group_component.h" />

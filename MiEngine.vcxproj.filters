@@ -342,8 +342,6 @@
       <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Editor\BaseEditor\debug_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\BaseEditor\inspector_view_window.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.cpp" />
@@ -711,8 +709,6 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\draw_command.h" />
-    <ClInclude Include="Source\Engine\Editor\BaseEditor\hierarchy_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\BaseEditor\inspector_view_window.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.h" />

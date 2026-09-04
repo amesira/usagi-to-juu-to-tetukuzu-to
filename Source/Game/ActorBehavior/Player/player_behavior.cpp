@@ -13,7 +13,7 @@
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Device/mouse.h"
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Engine/Component/camera_component.h"
 #include "Engine/Component/transform_component.h"
@@ -120,9 +120,9 @@ void PlayerBehavior::Update()
 
 void PlayerBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Player Behavior")) {
+    if (BehaviorDetailView::BeginSection(this, "Player Behavior")) {
     }
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 /// @brief プレイヤーの入力を更新する

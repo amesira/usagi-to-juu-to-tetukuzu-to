@@ -9,7 +9,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Engine/Component/model_component.h"
 #include "Engine/Component/sprite_renderer_component.h"
@@ -59,7 +59,7 @@ void BlinkerBehavior::Update()
 
 void BlinkerBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Blinker")) {
+    if (BehaviorDetailView::BeginSection(this, "Blinker")) {
         ImGui::Text("Target Count: %d", static_cast<int>(m_targets.size()));
         ImGui::Text("Flashing: %s", IsFlashing() ? "true" : "false");
 
@@ -72,7 +72,7 @@ void BlinkerBehavior::DrawComponentInspector()
         }
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 void BlinkerBehavior::Flash(const XMFLOAT3& color, float intensity, float duration)

@@ -8,7 +8,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
 
-#include "Engine/Editor/BaseEditor/inspector_view_window.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/rigidbody_component.h"
@@ -42,10 +42,10 @@ void TrainingDummyBehavior::Update()
 
 void TrainingDummyBehavior::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "TrainingDummyBehavior"))
+    if (BehaviorDetailView::BeginSection(this, "TrainingDummyBehavior"))
     {
         ImGui::Text("This is a training dummy behavior.");
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
