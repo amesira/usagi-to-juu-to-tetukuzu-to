@@ -43,6 +43,7 @@ void EditorManager::Render()
 /// @brief シーン破棄時に呼び出す
 void EditorManager::OnSceneDestroyed()
 {
+    m_levelEditorWindow.OnSceneDestroyed();
     m_particleSystemEditorWindow.OnSceneDestroyed();
     m_meshEffectEditorWindow.OnSceneDestroyed();
 }
@@ -50,22 +51,13 @@ void EditorManager::OnSceneDestroyed()
 void EditorManager::RegisterWindows()
 {
     m_windowManager.Register(
-        EditorWindowId::Hierarchy,
-        &m_hierarchyViewWindow,
-        "Hierarchy",
-        "HierarchyView",
+        EditorWindowId::LevelEditor,
+        &m_levelEditorWindow,
+        "Level Editor",
+        "LevelEditor",
         true,
         { 20.0f, 80.0f },
-        { 320.0f, 600.0f });
-
-    m_windowManager.Register(
-        EditorWindowId::Inspector,
-        &m_inspectorViewWindow,
-        "Runtime Inspector",
-        "RuntimeInspector",
-        true,
-        { 1560.0f, 80.0f },
-        { 340.0f, 860.0f });
+        { 900.0f, 700.0f });
 
     m_windowManager.Register(
         EditorWindowId::Debug,

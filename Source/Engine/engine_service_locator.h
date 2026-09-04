@@ -85,6 +85,9 @@ public:
     static EnvironmentAssetLoader* EnvironmentLoader() {
         return s_engineInstance ? s_engineInstance->GetAssetManager().EnvironmentAssetLoader() : nullptr;
     }
+    static LevelAssetLoader* LevelLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().LevelAssetLoader() : nullptr;
+    }
 };
 
 using Engine = EngineServiceLocator;

@@ -77,8 +77,7 @@ void ToolBarWindow::Draw()
                 }
             };
 
-            drawWindowToggle("Hierarchy", EditorWindowId::Hierarchy);
-            drawWindowToggle("Runtime Inspector", EditorWindowId::Inspector);
+            drawWindowToggle("Level Editor", EditorWindowId::LevelEditor);
             drawWindowToggle("Debug", EditorWindowId::Debug);
             ImGui::Separator();
             drawWindowToggle("Game View", EditorWindowId::GameView);

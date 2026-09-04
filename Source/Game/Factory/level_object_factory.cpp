@@ -9,6 +9,7 @@
 #include "Engine/Component/collider_component.h"
 #include "Engine/Component/model_component.h"
 #include "Engine/Component/transform_component.h"
+#include "Engine/Component/level_object_component.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/engine_service_locator.h"
@@ -36,6 +37,10 @@ GameObject* LevelObjectFactory::CreateObject(
     if (!object) return nullptr;
     object->SetName(data.name);
 
+    LevelObjectComponent* marker = object->AddComponent<LevelObjectComponent>();
+    if (!marker) return nullptr;
+    marker->SetLevelObjectId(data.id);
+
     TransformComponent* transform = object->AddComponent<TransformComponent>();
     if (!transform) return nullptr;
     transform->SetPosition(data.transform.position);
@@ -46,25 +51,21 @@ GameObject* LevelObjectFactory::CreateObject(
     });
     transform->SetScaling(data.transform.scale);
 
-    if (data.collider.type == LevelColliderType::Box)
-    {
-        BoxColliderComponent* collider = object->AddComponent<BoxColliderComponent>();
-        if (!collider) return nullptr;
-        collider->SetCenter(data.collider.center);
-        collider->SetScale(data.collider.boxSize);
-    }
-    else if (data.collider.type == LevelColliderType::Sphere)
-    {
-        SphereColliderComponent* collider = object->AddComponent<SphereColliderComponent>();
-        if (!collider) return nullptr;
-        collider->SetCenter(data.collider.center);
-        collider->SetRadius(data.collider.sphereRadius);
-    }
+    BoxColliderComponent* boxCollider = object->AddComponent<BoxColliderComponent>();
+    SphereColliderComponent* sphereCollider = object->AddComponent<SphereColliderComponent>();
+    if (!boxCollider || !sphereCollider) return nullptr;
+    boxCollider->SetCenter(data.collider.center);
+    boxCollider->SetScale(data.collider.boxSize);
+    boxCollider->SetEnable(data.collider.type == LevelColliderType::Box);
+    sphereCollider->SetCenter(data.collider.center);
+    sphereCollider->SetRadius(data.collider.sphereRadius);
+    sphereCollider->SetEnable(data.collider.type == LevelColliderType::Sphere);
 
+    ModelComponent* model = object->AddComponent<ModelComponent>();
+    if (!model) return nullptr;
+    model->SetEnable(modelResource != nullptr);
     if (modelResource)
     {
-        ModelComponent* model = object->AddComponent<ModelComponent>();
-        if (!model) return nullptr;
         model->SetModelResource(modelResource);
 
         auto& slots = model->GetMaterialSlots();

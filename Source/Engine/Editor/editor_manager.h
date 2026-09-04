@@ -12,8 +12,7 @@
 #include "editor_context.h"
 #include "editor_window_manager.h"
 
-#include "BaseEditor/hierarchy_view_window.h"
-#include "BaseEditor/inspector_view_window.h"
+#include "LevelEditor/level_editor_window.h"
 #include "BaseEditor/scene_view_window.h"
 #include "BaseEditor/tool_bar_window.h"
 #include "BaseEditor/debug_view_window.h"
@@ -34,8 +33,7 @@ private:
     EditorWindowManager m_windowManager;
 
     // === 各ウィンドウ ===
-    HierarchyViewWindow m_hierarchyViewWindow;  // Hierarchyウィンドウ
-    InspectorViewWindow m_inspectorViewWindow;  // Inspectorウィンドウ
+    LevelEditorWindow m_levelEditorWindow;
 
     ToolBarWindow       m_toolBarWindow;        // ツールバーウィンドウ
     DebugViewWindow     m_debugViewWindow;      // デバッグウィンドウ
@@ -51,8 +49,7 @@ private:
 
 public:
     EditorManager()
-        : m_hierarchyViewWindow(&m_editorContext)
-        , m_inspectorViewWindow(&m_editorContext)
+        : m_levelEditorWindow(&m_editorContext)
         , m_sceneViewWindow(&m_editorContext)
         , m_toolBarWindow(&m_editorContext)
         , m_debugViewWindow(&m_editorContext)

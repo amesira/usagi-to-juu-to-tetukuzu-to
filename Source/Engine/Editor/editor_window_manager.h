@@ -17,8 +17,7 @@ class IEditorWindow;
 // ウィンドウの種類を識別するための列挙型
 enum class EditorWindowId
 {
-    Hierarchy,
-    Inspector,
+    LevelEditor,
     Debug,
 
     GameView,
