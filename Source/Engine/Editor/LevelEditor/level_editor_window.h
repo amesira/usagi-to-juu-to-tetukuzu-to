@@ -25,6 +25,9 @@ private:
     
     IScene* m_appliedScene = nullptr;
 
+    bool m_autoSave = true;
+    int m_autoSaveFrameCounter = 0;
+
 public:
     explicit LevelEditorWindow(EditorContext* editorContext);
     void Draw() override;

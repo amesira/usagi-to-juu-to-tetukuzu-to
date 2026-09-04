@@ -81,7 +81,7 @@ void LevelEditorWindow::Draw()
 #pragma region エディター内部描画
 void LevelEditorWindow::DrawToolbar()
 {
-    ImGui::SetNextItemWidth(-360.0f);
+    ImGui::SetNextItemWidth(-520.0f);
     ImGui::InputText("##LevelAssetPath", m_pathBuffer.data(), m_pathBuffer.size());
     ImGui::SameLine();
     if (ImGui::Button("New"))
@@ -115,6 +115,25 @@ void LevelEditorWindow::DrawToolbar()
             SyncPathBuffer();
             RebuildLevelObjects();
         }
+    }
+
+    // === 自動保存処理 ===
+    ImGui::SameLine();
+    ImGui::Checkbox("Auto Save", &m_autoSave);
+    ImGui::SameLine();
+    ImGui::Text("%d/100", m_autoSaveFrameCounter);
+
+    if (m_autoSave) {
+        m_autoSaveFrameCounter++;
+        if (m_autoSaveFrameCounter >= 100)
+        {
+            m_autoSaveFrameCounter = 0;
+            if (m_document.IsDirty() && m_document.HasAssetPath())
+                m_document.Save();
+        }
+    }
+    else {
+        m_autoSaveFrameCounter = 0;
     }
 }
 

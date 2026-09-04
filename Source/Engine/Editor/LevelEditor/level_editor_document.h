@@ -31,6 +31,7 @@ public:
     LevelAsset& GetAsset() { return m_asset; }
     const LevelAsset& GetAsset() const { return m_asset; }
     const std::filesystem::path& GetAssetPath() const { return m_assetPath; }
+    bool HasAssetPath() const { return !m_assetPath.empty(); }
     const std::string& GetStatusMessage() const { return m_statusMessage; }
     bool IsDirty() const { return m_dirty; }
     void MarkDirty() { m_dirty = true; }
