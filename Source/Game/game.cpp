@@ -47,6 +47,9 @@ void GameScene::Initialize()
             GetEnvironmentAsset());
     }
 
+    // シーン固有の初期配置物をLevelAssetから生成する。
+    LoadLevel("asset/Level/game.level.json");
+
     // GameEffectControllerの生成
     GameObject* gameControllerObj = this->CreateGameObject();
     gameControllerObj->SetName("GameController");

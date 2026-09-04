@@ -1,0 +1,46 @@
+{
+    "data": {
+        "objects": [
+            {
+                "collider": {
+                    "boxSize": [
+                        10.199999809265137,
+                        1.0,
+                        7.5
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "id": "level_object_0001",
+                "materialNames": [],
+                "modelPath": "asset/Model/cube.fbx",
+                "name": "New Level Object",
+                "transform": {
+                    "position": [
+                        0.0,
+                        -0.699999988079071,
+                        0.0
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        -30.75,
+                        0.0
+                    ],
+                    "scale": [
+                        2.0999999046325684,
+                        1.0,
+                        1.0
+                    ]
+                }
+            }
+        ]
+    },
+    "formatVersion": 1,
+    "name": "game",
+    "type": "Level"
+}

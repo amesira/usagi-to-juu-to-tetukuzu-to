@@ -142,6 +142,7 @@
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\LevelAsset\level_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Core\scene_base.cpp" />
     <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_document.cpp" />
     <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_window.cpp" />
     <ClCompile Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.cpp" />
@@ -341,6 +342,7 @@
     <ClInclude Include="Source\Engine\Asset\LevelAsset\level_data.h" />
     <ClInclude Include="Source\Engine\Asset\LevelAsset\level_schema.h" />
     <ClInclude Include="Source\Engine\Component\level_object_component.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\behavior_detail_view.h" />
     <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_document.h" />
     <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_window.h" />
     <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />

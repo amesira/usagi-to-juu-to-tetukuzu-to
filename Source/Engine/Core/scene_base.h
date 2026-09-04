@@ -18,6 +18,8 @@
 #include "Engine/Asset/EnvironmentAsset/environment_asset.h"
 #include "Engine/Core/scene_post_effect_state.h"
 
+class LevelAsset;
+
 class SceneBase : public IScene {
 private:
     static constexpr int    MAX_GAMEOBJECTS = 1024;  // シーン内の最大GameObject数
@@ -36,6 +38,10 @@ private:
     // シーン内の環境設定アセット
     EnvironmentAsset m_environmentAsset;
     CustomPostEffectState m_postEffectState;
+
+    // シーンが初期配置に使用しているLevelAsset。
+    std::filesystem::path m_levelAssetPath;
+    LevelAsset* m_levelAsset = nullptr;
 
 protected: // ISceneのComponentPools()を実装
     std::vector<std::unique_ptr<IComponentPool>>& ComponentPools() override {
@@ -62,6 +68,8 @@ public:
         m_componentPools.clear();
         m_componentPools.reserve(MAX_COMPONENTPOOLS);
         m_freeGameObjectIndices.clear();
+        m_levelAssetPath.clear();
+        m_levelAsset = nullptr;
     }
 
     // GameObjectの生成
@@ -135,6 +143,9 @@ public:
     std::vector<std::unique_ptr<IComponentPool>>& GetComponentPools() override {
         return m_componentPools;
     }
+
+    bool LoadLevel(const std::filesystem::path& path) override;
+    const std::filesystem::path& GetLevelAssetPath() const override { return m_levelAssetPath; }
 
     EnvironmentAsset& GetEnvironmentAsset() override { return m_environmentAsset; }
     const EnvironmentAsset& GetEnvironmentAsset() const override { return m_environmentAsset; }

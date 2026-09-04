@@ -46,11 +46,17 @@ LevelEditorWindow::LevelEditorWindow(EditorContext* editorContext)
 void LevelEditorWindow::Draw()
 {
     // シーン自体がリロードされた場合は、開いているLevelAssetを新しいシーンへ復元する
-    // FIX: アセットを読み込んで生成するのはシーン内でするべきかも
     if (m_editorContext->scene && m_editorContext->scene != m_appliedScene)
     {
         m_appliedScene = m_editorContext->scene;
-        LevelObjectFactory::CreateLevel(m_appliedScene, m_document.GetAsset());
+        const std::filesystem::path& levelPath = m_appliedScene->GetLevelAssetPath();
+        if (!levelPath.empty()) {
+            m_document.Load(levelPath);
+            SyncPathBuffer();
+        }
+        else {
+            m_document.New();
+        }
     }
 
     DrawToolbar();

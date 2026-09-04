@@ -13,6 +13,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <filesystem>
 #include "component_pool.h"
 #include "component_type_id.h"
 
@@ -86,6 +87,10 @@ public:
     virtual GameObject* GetGameObjectByName(const std::string& name) = 0;
 
     virtual std::vector<GameObject>& GetGameObjects() = 0;
+
+    // === LevelAsset関連 ===
+    virtual bool LoadLevel(const std::filesystem::path& path) = 0;
+    virtual const std::filesystem::path& GetLevelAssetPath() const = 0;
 
     // === EnvironmentAsset関連 ===
     virtual EnvironmentAsset& GetEnvironmentAsset() = 0;

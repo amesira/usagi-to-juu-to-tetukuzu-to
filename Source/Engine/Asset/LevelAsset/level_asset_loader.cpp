@@ -94,7 +94,10 @@ LevelAsset* LevelAssetLoader::Get(const std::filesystem::path& filePath)
     if (found != m_cache.end()) return found->second.get();
 
     auto asset = std::make_unique<LevelAsset>();
-    if (!Load(key, *asset)) return nullptr;
+    if (!Load(key, *asset)) {
+        // ロードにも失敗した場合は新規作成して保存する
+        Save(key, *asset);
+    }
 
     LevelAsset* result = asset.get();
     m_cache[key] = std::move(asset);
