@@ -4,9 +4,9 @@
             {
                 "collider": {
                     "boxSize": [
-                        10.199999809265137,
-                        1.0,
-                        7.5
+                        70.0,
+                        2.0,
+                        40.0
                     ],
                     "center": [
                         0.0,
@@ -19,22 +19,96 @@
                 "id": "level_object_0001",
                 "materialNames": [],
                 "modelPath": "asset/Model/cube.fbx",
-                "name": "New Level Object",
+                "name": "BaseFloor",
                 "transform": {
                     "position": [
                         0.0,
-                        -0.699999988079071,
+                        -2.0,
                         0.0
                     ],
                     "rotationDegrees": [
                         0.0,
-                        -30.75,
+                        0.0,
                         0.0
                     ],
                     "scale": [
-                        2.0999999046325684,
+                        35.0,
                         1.0,
-                        1.0
+                        20.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        30.0,
+                        20.0,
+                        14.0
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "id": "level_object_0002",
+                "materialNames": [],
+                "modelPath": "asset/Model/cube.fbx",
+                "name": "New Level Object",
+                "transform": {
+                    "position": [
+                        -20.0,
+                        7.0,
+                        13.0
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        15.0,
+                        10.0,
+                        7.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        1.0,
+                        10.0,
+                        16.0
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "id": "level_object_0003",
+                "materialNames": [],
+                "modelPath": "asset/Model/cube.fbx",
+                "name": "New Level Object",
+                "transform": {
+                    "position": [
+                        -6.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        5.0,
+                        8.0
                     ]
                 }
             }
