@@ -403,6 +403,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
     <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\LevelAsset\level_asset_loader.cpp" />
+    <ClCompile Include="Source\Game\Factory\level_object_factory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\game_object.h">
@@ -972,6 +974,11 @@
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_data.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_schema.h" />
+    <ClInclude Include="Source\Game\Factory\level_object_factory.h" />
     <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
     <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
   </ItemGroup>

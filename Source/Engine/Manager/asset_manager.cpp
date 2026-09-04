@@ -14,6 +14,7 @@ void AssetManager::Initialize()
     m_particleAssetLoader.Initialize();
     m_meshEffectAssetLoader.Initialize();
     m_environmentAssetLoader.Initialize();
+    m_levelAssetLoader.Initialize();
 }
 
 /// @brief AssetManagerの終了処理
@@ -23,4 +24,5 @@ void AssetManager::Finalize()
     m_particleAssetLoader.Finalize();
     m_meshEffectAssetLoader.Finalize();
     m_environmentAssetLoader.Finalize();
+    m_levelAssetLoader.Finalize();
 }

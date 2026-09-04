@@ -10,6 +10,7 @@
 #include "Engine/Asset/DataAsset/data_asset_loader.h"
 #include "Engine/Asset/MeshEffectAsset/mesh_effect_asset_loader.h"
 #include "Engine/Asset/EnvironmentAsset/environment_asset_loader.h"
+#include "Engine/Asset/LevelAsset/level_asset_loader.h"
 
 class AssetManager {
 private:
@@ -20,6 +21,7 @@ private:
     // MeshEffectAssetLoaderのインスタンス
     MeshEffectAssetLoader m_meshEffectAssetLoader;
     EnvironmentAssetLoader m_environmentAssetLoader;
+    LevelAssetLoader m_levelAssetLoader;
 
 public:
     /// @brief AssetManagerを初期化する
@@ -34,5 +36,6 @@ public:
     /// @brief MeshEffectAssetLoaderを取得
     MeshEffectAssetLoader* MeshEffectAssetLoader() { return &m_meshEffectAssetLoader; }
     EnvironmentAssetLoader* EnvironmentAssetLoader() { return &m_environmentAssetLoader; }
+    LevelAssetLoader* LevelAssetLoader() { return &m_levelAssetLoader; }
 
 };
