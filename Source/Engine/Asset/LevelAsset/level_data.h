@@ -6,6 +6,7 @@
 #pragma once
 
 #include <DirectXMath.h>
+#include "Engine/Core/game_object_layer.h"
 
 #include <string>
 #include <vector>
@@ -37,7 +38,12 @@ struct LevelObjectData
 {
     // エディター上でオブジェクトを追跡するための、レベル内で一意なID。
     std::string id;
+
     std::string name = "GameObject";
+    std::string tag = "Untagged";
+    RenderLayer renderLayer = RenderLayer::Default;
+    CollisionLayer collisionLayer = CollisionLayer::Default;
+
     LevelTransformData transform;
     LevelColliderData collider;
     std::string modelPath;

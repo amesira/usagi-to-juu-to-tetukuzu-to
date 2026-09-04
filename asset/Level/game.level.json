@@ -16,10 +16,13 @@
                     "sphereRadius": 0.5,
                     "type": "Box"
                 },
+                "collisionLayer": "Field",
                 "id": "level_object_0001",
                 "materialNames": [],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "BaseFloor",
+                "renderLayer": "Default",
+                "tag": "Untagged",
                 "transform": {
                     "position": [
                         0.0,
@@ -53,10 +56,13 @@
                     "sphereRadius": 0.5,
                     "type": "Box"
                 },
+                "collisionLayer": "Field",
                 "id": "level_object_0002",
                 "materialNames": [],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "New Level Object",
+                "renderLayer": "Default",
+                "tag": "Untagged",
                 "transform": {
                     "position": [
                         -20.0,
@@ -90,10 +96,13 @@
                     "sphereRadius": 0.5,
                     "type": "Box"
                 },
+                "collisionLayer": "Field",
                 "id": "level_object_0003",
                 "materialNames": [],
                 "modelPath": "asset/Model/cube.fbx",
                 "name": "New Level Object",
+                "renderLayer": "Default",
+                "tag": "Untagged",
                 "transform": {
                     "position": [
                         -6.0,

@@ -41,9 +41,26 @@ namespace LevelSchema
     inline const auto& GetObjectSchema()
     {
         using Module = LevelObjectData;
+        static const EnumFieldOptions<RenderLayer> renderLayerOptions = { {
+            { RenderLayer::Default, "Default", "Default" },
+            { RenderLayer::Player, "Player", "Player" },
+            { RenderLayer::Enemy, "Enemy", "Enemy" },
+            { RenderLayer::Bullet, "Bullet", "Bullet" },
+            { RenderLayer::Particle, "Particle", "Particle" },
+        } };
+        static const EnumFieldOptions<CollisionLayer> collisionLayerOptions = { {
+            { CollisionLayer::Default, "Default", "Default" },
+            { CollisionLayer::Field, "Field", "Field" },
+            { CollisionLayer::Player, "Player", "Player" },
+            { CollisionLayer::Bullet, "Bullet", "Bullet" },
+            { CollisionLayer::Enemy, "Enemy", "Enemy" },
+        } };
         static const auto schema = FieldSchema{
             MakeField("id", "ID", &Module::id),
             MakeField("name", "Name", &Module::name),
+            MakeField("tag", "Tag", &Module::tag),
+            MakeField("renderLayer", "Render Layer", &Module::renderLayer, renderLayerOptions),
+            MakeField("collisionLayer", "Collision Layer", &Module::collisionLayer, collisionLayerOptions),
             MakeStructField("transform", "Transform", &Module::transform,
                 GetTransformSchema(), DefaultFieldOptions{}),
             MakeStructField("collider", "Collider", &Module::collider,

@@ -36,6 +36,9 @@ GameObject* LevelObjectFactory::CreateObject(
     GameObject* object = scene->CreateGameObject();
     if (!object) return nullptr;
     object->SetName(data.name);
+    object->SetTag(data.tag);
+    object->SetRenderLayer(data.renderLayer);
+    object->SetCollisionLayer(data.collisionLayer);
 
     LevelObjectComponent* marker = object->AddComponent<LevelObjectComponent>();
     if (!marker) return nullptr;

@@ -224,6 +224,23 @@ void LevelEditorWindow::DrawLevelInspector()
     ImGui::BeginChild("LevelObjectInspector");
     ImGui::TextDisabled("ID: %s", data->id.c_str());
     changed |= InputString("Name", data->name);
+    changed |= InputString("Tag", data->tag);
+
+    int renderLayer = static_cast<int>(data->renderLayer);
+    const char* renderLayers[] = { "Default", "Player", "Enemy", "Bullet", "Particle" };
+    if (ImGui::Combo("Render Layer", &renderLayer, renderLayers, IM_ARRAYSIZE(renderLayers)))
+    {
+        data->renderLayer = static_cast<RenderLayer>(renderLayer);
+        changed = true;
+    }
+
+    int collisionLayer = static_cast<int>(data->collisionLayer);
+    const char* collisionLayers[] = { "Default", "Field", "Player", "Bullet", "Enemy" };
+    if (ImGui::Combo("Collision Layer", &collisionLayer, collisionLayers, IM_ARRAYSIZE(collisionLayers)))
+    {
+        data->collisionLayer = static_cast<CollisionLayer>(collisionLayer);
+        changed = true;
+    }
 
     if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
     {
@@ -366,6 +383,9 @@ bool LevelEditorWindow::ApplyObjectData(GameObject* object, const LevelObjectDat
 {
     if (!object) return false;
     object->SetName(data.name);
+    object->SetTag(data.tag);
+    object->SetRenderLayer(data.renderLayer);
+    object->SetCollisionLayer(data.collisionLayer);
     if (TransformComponent* transform = object->GetComponent<TransformComponent>())
     {
         transform->SetPosition(data.transform.position);
