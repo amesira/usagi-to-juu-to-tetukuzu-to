@@ -60,7 +60,7 @@ void RenderProcessor::Process(IScene* pScene)
     m_shadowMapPass.UnbindShadowTexture();
     m_shadowMapPass.UnbindShadowSampler();
     if (m_renderView->enableShadowMap) {
-        Direct3D_SetViewport(2048, 2048); // FIX: シャドウパスから取得するべき
+        Direct3D_SetViewport(m_shadowMapPass.GetShadowMapSize(), m_shadowMapPass.GetShadowMapSize());
         Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
         Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
 

@@ -21,6 +21,8 @@ class ConstantBufferResource;
 
 class ShadowMapPass : public Pass {
 private:
+    const UINT SHADOW_MAP_SIZE = 1024; // シャドウマップの解像度
+
     ID3D11Device* m_pDevice;
     ID3D11DeviceContext* m_pContext;
 
@@ -63,6 +65,8 @@ public:
     // シャドウマップ用リソースを外す
     void UnbindShadowTexture();
     void UnbindShadowSampler();
+
+    const UINT GetShadowMapSize() const { return SHADOW_MAP_SIZE; }
 
 };
 

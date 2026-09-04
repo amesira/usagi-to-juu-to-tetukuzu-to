@@ -45,7 +45,6 @@ void ShadowMapPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteLit)], m_shadowLightCB);
 
     // シャドウマップ用の深度バッファと対応するビューを生成
-    constexpr UINT SHADOW_MAP_SIZE = 2048;
     Direct3D_CreateDepthBuffer(
         depthBufferTexture.GetAddressOf(), 
         depthBufferDSV.GetAddressOf(), 

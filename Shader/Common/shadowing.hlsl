@@ -47,8 +47,8 @@ float GetShadowDepth(float2 shadowUV, float depthInLightSpace)
         {
             float2 offsetUV = shadowUV + float2(x, y) * 0.001f;
             sampledDepth += g_ShadowMap.SampleCmpLevelZero(
-                g_ShadowSampler, 
-                offsetUV, 
+                g_ShadowSampler,
+                offsetUV,
                 depthInLightSpace - 0.001f).r;
         }
     }
