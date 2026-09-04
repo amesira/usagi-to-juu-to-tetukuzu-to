@@ -177,7 +177,7 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 //===================================================
 // OverlapBoxクエリー
 bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& outObjects, 
-    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation,
+    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& rotation,
     CollisionLayerMask layerMask)
 {
     auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
@@ -189,7 +189,7 @@ bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& 
     BoxColliderComponent tempBoxCollider;
     {
         tempTransform.SetPosition(center);
-        tempTransform.SetRotation(orientation);
+        tempTransform.SetRotation(rotation);
         tempBoxCollider.SetScale(scale);
     }
 

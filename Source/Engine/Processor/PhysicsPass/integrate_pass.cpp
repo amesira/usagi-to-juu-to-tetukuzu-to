@@ -55,11 +55,9 @@ void IntegratePass::Process(IScene* pScene)
 
         XMFLOAT3 velocity = rigidbody->GetVelocity();
         {
-            // 摩擦の適用
-            const XMFLOAT3 friction = rigidbody->GetFriction();
-            velocity.x *= friction.x;
-            velocity.y *= friction.y;
-            velocity.z *= friction.z;
+            // 摩擦の適用（空中と地上で摩擦係数を変える）
+            const XMFLOAT3 friction = rigidbody->GetIsGrounded() ? rigidbody->GetFriction() : rigidbody->GetAirFriction();
+            velocity = MiMath::Multiply(velocity, friction);
 
             // 重力の適用
             velocity.y += rigidbody->GetGravityScale() * rigidbody->GetMass() * deltaTime;
@@ -68,9 +66,7 @@ void IntegratePass::Process(IScene* pScene)
 
         // 位置の更新
         XMFLOAT3 position = transform->GetPosition();
-        position.x += velocity.x * deltaTime;
-        position.y += velocity.y * deltaTime;
-        position.z += velocity.z * deltaTime;
+        position = MiMath::Add(position, MiMath::Multiply(velocity, deltaTime));
         transform->SetPosition(position);
     }
 }

@@ -137,6 +137,16 @@ namespace MiMath
         };
     }
 
+    inline XMFLOAT3 HorizontalNormalize(const XMFLOAT3& v) {
+        float length = sqrtf(v.x * v.x + v.z * v.z);
+        if (length == 0.0f) return XMFLOAT3(0.0f, 0.0f, 0.0f);
+        return {
+            v.x / length,
+            0.0f,
+            v.z / length
+        };
+    }
+
     // ２つのベクトル間の角度を計算する（ラジアン）
     inline float Angle(const XMVECTOR& from, const XMVECTOR& to) {
         XMVECTOR vf = XMVector3Normalize(from);

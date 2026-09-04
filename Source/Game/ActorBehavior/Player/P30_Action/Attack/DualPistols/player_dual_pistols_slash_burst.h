@@ -6,9 +6,11 @@
 // ・二丁拳銃による薙ぎ払い回転攻撃を制御するクラス
 //---------------------------------------------------
 #pragma once
+#include <vector>
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 struct PlayerDualPistolsContext;
+class GameObject;
 
 class PlayerDualPistolsSlashBurst {
 private:
@@ -48,10 +50,23 @@ private:
     /// @brief 攻撃中の移動ステップを更新する
     void UpdateStepMovement(PlayerDualPistolsContext& context, float deltaTime);
 
-    /// @brief 次の連鎖攻撃が入力可能かどうか
-    bool CanRequestChainableInput(PlayerDualPistolsContext& context);
     /// @brief 攻撃の実行
     bool HandleSlashBurstAttack(PlayerDualPistolsContext& context, int step);
+    std::vector<GameObject*> DetectAttackTarget(PlayerDualPistolsContext& context);
+
+    // === ノックバックの計算 ===
+    void CalculateKnockbackPosition(
+        const PlayerDualPistolsContext& context,
+        const DirectX::XMFLOAT3& targetPosition,
+        const DirectX::XMFLOAT3& attackDirection,
+        DirectX::XMFLOAT3& outStartPosition,
+        DirectX::XMFLOAT3& outEndPosition) const;
+    float CalculateDistanceBehindPlayer(
+        const DirectX::XMFLOAT3& playerPosition,
+        const DirectX::XMFLOAT3& playerBack,
+        const DirectX::XMFLOAT3& targetPosition) const;
+
+    bool CanRequestChainableInput(PlayerDualPistolsContext& context);
 
     bool IsBurstFrame(PlayerDualPistolsContext& context) const;
     bool IsInputBufferFrame(PlayerDualPistolsContext& context) const;

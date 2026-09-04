@@ -24,6 +24,13 @@ enum class KnockbackMovementMode {
     SetRigidbodyVelocity,   // Rigidbodyの速度を設定する
 };
 
+/// @brief ノックバックの移動方法に関する設定
+struct KnockbackMovementSource{
+    KnockbackMovementMode mode = KnockbackMovementMode::SetTransformPosition;
+    bool useRbGravity = true; // Rigidbodyの重力を使用するかどうか
+    float gravity = -9.81f; // 重力加速度
+};;
+
 struct KnockbackRequest {
     bool enabled = false;
 
@@ -36,9 +43,10 @@ struct KnockbackRequest {
     float distance = 0.0f;
     float duration = 0.0f;
 
-    float gravity = -9.81f; // 重力加速度
     KnockbackMode mode = KnockbackMode::RelativeDistance;
-    KnockbackMovementMode movementMode = KnockbackMovementMode::SetRigidbodyVelocity;
+
+    bool overrideMovementSource = false;
+    KnockbackMovementSource movementSource;
 };
 
 struct HitData {

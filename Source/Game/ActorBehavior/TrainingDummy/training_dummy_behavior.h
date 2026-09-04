@@ -12,6 +12,9 @@ class TrainingDummyBehavior : public BehaviorComponent {
 private:
     class TransformComponent* m_transform = nullptr;
 
+    class HitReceiverBehavior* m_hitReceiverBehavior = nullptr;
+    class HealthBehavior* m_healthBehavior = nullptr;
+
 public:
     TrainingDummyBehavior() = default;
     ~TrainingDummyBehavior() override = default;
