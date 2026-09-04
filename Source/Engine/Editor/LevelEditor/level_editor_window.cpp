@@ -6,6 +6,8 @@
 #include "level_editor_window.h"
 
 #include "Engine/Editor/editor_context.h"
+#include "Engine/Editor/Schema/enum_field_editor.h"
+#include "Engine/Editor/Schema/field_editor.h"
 #include "Engine/Asset/LevelAsset/level_schema.h"
 #include "Engine/Component/collider_component.h"
 #include "Engine/Component/level_object_component.h"
@@ -223,53 +225,21 @@ void LevelEditorWindow::DrawLevelInspector()
     bool changed = false;
     ImGui::BeginChild("LevelObjectInspector");
     ImGui::TextDisabled("ID: %s", data->id.c_str());
-    changed |= InputString("Name", data->name);
-    changed |= InputString("Tag", data->tag);
+    changed |= FieldEditor::DrawFields(*data, LevelSchema::GetObjectBasicSchema());
 
-    int renderLayer = static_cast<int>(data->renderLayer);
-    const char* renderLayers[] = { "Default", "Player", "Enemy", "Bullet", "Particle" };
-    if (ImGui::Combo("Render Layer", &renderLayer, renderLayers, IM_ARRAYSIZE(renderLayers)))
-    {
-        data->renderLayer = static_cast<RenderLayer>(renderLayer);
-        changed = true;
+    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
+        changed |= FieldEditor::DrawFields(data->transform, LevelSchema::GetTransformSchema());
     }
 
-    int collisionLayer = static_cast<int>(data->collisionLayer);
-    const char* collisionLayers[] = { "Default", "Field", "Player", "Bullet", "Enemy" };
-    if (ImGui::Combo("Collision Layer", &collisionLayer, collisionLayers, IM_ARRAYSIZE(collisionLayers)))
-    {
-        data->collisionLayer = static_cast<CollisionLayer>(collisionLayer);
-        changed = true;
-    }
-
-    if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        changed |= ImGui::DragFloat3("Position", &data->transform.position.x, 0.1f);
-        changed |= ImGui::DragFloat3("Rotation", &data->transform.rotationDegrees.x, 0.25f);
-        changed |= ImGui::DragFloat3("Scale", &data->transform.scale.x, 0.1f);
-    }
-
-    if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        int type = static_cast<int>(data->collider.type);
-        const char* types[] = { "None", "Box", "Sphere" };
-        if (ImGui::Combo("Type", &type, types, IM_ARRAYSIZE(types)))
-        {
-            data->collider.type = static_cast<LevelColliderType>(type);
-            changed = true;
-        }
-        changed |= ImGui::DragFloat3("Center", &data->collider.center.x, 0.1f);
+    if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen)) {
+        changed |= FieldEditor::DrawFields(data->collider, LevelSchema::GetColliderCommonSchema());
         if (data->collider.type == LevelColliderType::Box)
-            changed |= ImGui::DragFloat3("Size", &data->collider.boxSize.x, 0.1f, 0.0f);
+            changed |= FieldEditor::DrawFields(data->collider, LevelSchema::GetBoxColliderSchema());
         else if (data->collider.type == LevelColliderType::Sphere)
-            changed |= ImGui::DragFloat("Radius", &data->collider.sphereRadius, 0.05f, 0.0f);
+            changed |= FieldEditor::DrawFields(data->collider, LevelSchema::GetSphereColliderSchema());
     }
 
-    if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
-        changed |= InputString("Model Path", data->modelPath);
-
-    if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen))
-    {
+    if (ImGui::CollapsingHeader("Materials", ImGuiTreeNodeFlags_DefaultOpen)) {
         for (size_t i = 0; i < data->materialNames.size(); ++i)
         {
             ImGui::PushID(static_cast<int>(i));

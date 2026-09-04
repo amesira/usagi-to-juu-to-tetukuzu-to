@@ -10,13 +10,88 @@
 
 namespace LevelSchema
 {
+    inline const auto& GetColliderTypeOptions()
+    {
+        static const EnumFieldOptions<LevelColliderType> options = { {
+            { LevelColliderType::None, "None", "None" },
+            { LevelColliderType::Box, "Box", "Box" },
+            { LevelColliderType::Sphere, "Sphere", "Sphere" },
+        } };
+        return options;
+    }
+
+    inline const auto& GetRenderLayerOptions()
+    {
+        static const EnumFieldOptions<RenderLayer> options = { {
+            { RenderLayer::Default, "Default", "Default" },
+            { RenderLayer::Player, "Player", "Player" },
+            { RenderLayer::Enemy, "Enemy", "Enemy" },
+            { RenderLayer::Bullet, "Bullet", "Bullet" },
+            { RenderLayer::Particle, "Particle", "Particle" },
+        } };
+        return options;
+    }
+
+    inline const auto& GetCollisionLayerOptions()
+    {
+        static const EnumFieldOptions<CollisionLayer> options = { {
+            { CollisionLayer::Default, "Default", "Default" },
+            { CollisionLayer::Field, "Field", "Field" },
+            { CollisionLayer::Player, "Player", "Player" },
+            { CollisionLayer::Bullet, "Bullet", "Bullet" },
+            { CollisionLayer::Enemy, "Enemy", "Enemy" },
+        } };
+        return options;
+    }
+
+    inline const auto& GetObjectBasicSchema()
+    {
+        using Module = LevelObjectData;
+        static const auto schema = FieldSchema{
+            MakeField("name", "Name", &Module::name),
+            MakeField("tag", "Tag", &Module::tag),
+            MakeField("renderLayer", "Render Layer", &Module::renderLayer, GetRenderLayerOptions()),
+            MakeField("collisionLayer", "Collision Layer", &Module::collisionLayer, GetCollisionLayerOptions()),
+            MakeField("modelPath", "Model Path", &Module::modelPath)
+        };
+        return schema;
+    }
+
     inline const auto& GetTransformSchema()
     {
         using Module = LevelTransformData;
         static const auto schema = FieldSchema{
-            MakeField("position", "Position", &Module::position),
-            MakeField("rotationDegrees", "Rotation", &Module::rotationDegrees),
-            MakeField("scale", "Scale", &Module::scale)
+            MakeField("position", "Position", &Module::position, DragFieldOptions{ 0.1f, 0.0f, 0.0f }),
+            MakeField("rotationDegrees", "Rotation", &Module::rotationDegrees, DragFieldOptions{ 0.25f, 0.0f, 0.0f }),
+            MakeField("scale", "Scale", &Module::scale, DragFieldOptions{ 0.1f, 0.0f, 0.0f })
+        };
+        return schema;
+    }
+
+    inline const auto& GetColliderCommonSchema()
+    {
+        using Module = LevelColliderData;
+        static const auto schema = FieldSchema{
+            MakeField("type", "Type", &Module::type, GetColliderTypeOptions()),
+            MakeField("center", "Center", &Module::center, DragFieldOptions{ 0.1f, 0.0f, 0.0f })
+        };
+        return schema;
+    }
+
+    inline const auto& GetBoxColliderSchema()
+    {
+        using Module = LevelColliderData;
+        static const auto schema = FieldSchema{
+            MakeField("boxSize", "Size", &Module::boxSize, DragFieldOptions{ 0.1f, 0.0f, 0.0f })
+        };
+        return schema;
+    }
+
+    inline const auto& GetSphereColliderSchema()
+    {
+        using Module = LevelColliderData;
+        static const auto schema = FieldSchema{
+            MakeField("sphereRadius", "Radius", &Module::sphereRadius, DragFieldOptions{ 0.05f, 0.0f, 0.0f })
         };
         return schema;
     }
@@ -24,16 +99,11 @@ namespace LevelSchema
     inline const auto& GetColliderSchema()
     {
         using Module = LevelColliderData;
-        static const EnumFieldOptions<LevelColliderType> typeOptions = { {
-            { LevelColliderType::None, "None", "None" },
-            { LevelColliderType::Box, "Box", "Box" },
-            { LevelColliderType::Sphere, "Sphere", "Sphere" },
-        } };
         static const auto schema = FieldSchema{
-            MakeField("type", "Type", &Module::type, typeOptions),
-            MakeField("center", "Center", &Module::center),
-            MakeField("boxSize", "Box Size", &Module::boxSize),
-            MakeField("sphereRadius", "Sphere Radius", &Module::sphereRadius)
+            MakeField("type", "Type", &Module::type, GetColliderTypeOptions()),
+            MakeField("center", "Center", &Module::center, DragFieldOptions{ 0.1f, 0.0f, 0.0f }),
+            MakeField("boxSize", "Box Size", &Module::boxSize, DragFieldOptions{ 0.1f, 0.0f, 0.0f }),
+            MakeField("sphereRadius", "Sphere Radius", &Module::sphereRadius, DragFieldOptions{ 0.05f, 0.0f, 0.0f })
         };
         return schema;
     }
@@ -41,26 +111,12 @@ namespace LevelSchema
     inline const auto& GetObjectSchema()
     {
         using Module = LevelObjectData;
-        static const EnumFieldOptions<RenderLayer> renderLayerOptions = { {
-            { RenderLayer::Default, "Default", "Default" },
-            { RenderLayer::Player, "Player", "Player" },
-            { RenderLayer::Enemy, "Enemy", "Enemy" },
-            { RenderLayer::Bullet, "Bullet", "Bullet" },
-            { RenderLayer::Particle, "Particle", "Particle" },
-        } };
-        static const EnumFieldOptions<CollisionLayer> collisionLayerOptions = { {
-            { CollisionLayer::Default, "Default", "Default" },
-            { CollisionLayer::Field, "Field", "Field" },
-            { CollisionLayer::Player, "Player", "Player" },
-            { CollisionLayer::Bullet, "Bullet", "Bullet" },
-            { CollisionLayer::Enemy, "Enemy", "Enemy" },
-        } };
         static const auto schema = FieldSchema{
             MakeField("id", "ID", &Module::id),
             MakeField("name", "Name", &Module::name),
             MakeField("tag", "Tag", &Module::tag),
-            MakeField("renderLayer", "Render Layer", &Module::renderLayer, renderLayerOptions),
-            MakeField("collisionLayer", "Collision Layer", &Module::collisionLayer, collisionLayerOptions),
+            MakeField("renderLayer", "Render Layer", &Module::renderLayer, GetRenderLayerOptions()),
+            MakeField("collisionLayer", "Collision Layer", &Module::collisionLayer, GetCollisionLayerOptions()),
             MakeStructField("transform", "Transform", &Module::transform,
                 GetTransformSchema(), DefaultFieldOptions{}),
             MakeStructField("collider", "Collider", &Module::collider,
