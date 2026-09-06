@@ -11,9 +11,9 @@
 #include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
 
 #include <functional>
+#include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_sequence_task.h"
 
 class TransformComponent;
-class HitStopBehavior;
 class BlinkerBehavior;
 
 class BulletBehavior : public BehaviorComponent {
@@ -37,7 +37,7 @@ private:
     HitCallback m_onHit = nullptr;  // ヒットコールバック関数
 
     // === 演出関連 ===
-    HitStopBehavior* m_hitStopBehavior = nullptr;
+    HitStopTask m_hitStopTask;
     BlinkerBehavior* m_blinkerBehavior = nullptr;
 
 public:

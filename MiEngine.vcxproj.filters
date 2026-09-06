@@ -265,9 +265,6 @@
     <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.cpp">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.cpp">
-      <Filter>Sources\Game\ActorBehavior\Base</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
@@ -615,7 +612,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.h">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_behavior.h">
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_sequence_task.h">
       <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_resource.h">

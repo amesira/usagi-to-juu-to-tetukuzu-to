@@ -16,7 +16,6 @@
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
-#include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
 #include "External/ImGui/imgui.h"
@@ -32,10 +31,7 @@ void BulletBehavior::Start()
     if (!m_transform) {
         m_transform = GetOwner()->AddComponent<TransformComponent>();
     }
-    m_hitStopBehavior = GetOwner()->GetComponent<HitStopBehavior>();
-    if (!m_hitStopBehavior) {
-        m_hitStopBehavior = GetOwner()->AddComponent<HitStopBehavior>();
-    }
+    m_hitStopTask.Reset();
     m_blinkerBehavior = GetOwner()->GetComponent<BlinkerBehavior>();
     // 半径に応じてスケーリングを設定
     SetRadius(m_radius);
@@ -43,6 +39,8 @@ void BulletBehavior::Start()
 
 void BulletBehavior::Update()
 {
+    // 終了演出中もタスクを進め、終了コールバックまで実行する。
+    m_hitStopTask.Update(FPS_GetUnscaledDeltaTime());
     if (m_isExpired) return; // すでに寿命切れの場合は処理しない
 
     const float deltaTime = FPS_GetDeltaTime();
@@ -162,6 +160,7 @@ void BulletBehavior::Initialize(
     m_lifeTime = lifeTime;
     m_layerMask = layerMask;
     m_lifeTimer = 0.0f;
+    m_hitStopTask.Reset();
     m_isExpired = false;
     m_hasHit = false;
     m_lastHit = {};
@@ -190,7 +189,7 @@ void BulletBehavior::Finalize(bool isHitStop)
 
     if (isHitStop) {
         // ヒットストップ処理
-        m_hitStopBehavior->StartHitStop(
+        m_hitStopTask.RequestHitStop(
             0.5f,
             [this]() {
                 m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.5f);

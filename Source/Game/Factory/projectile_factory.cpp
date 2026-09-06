@@ -14,7 +14,6 @@
 #include "Engine/Component/transform_component.h"
 
 #include "Game/ActorBehavior/Bullet/bullet_behavior.h"
-#include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
@@ -126,7 +125,6 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
 
     BulletBehavior* bulletBehavior = bullet->AddComponent<BulletBehavior>();
     
-    bullet->AddComponent<HitStopBehavior>();
     bullet->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(desc.position);
