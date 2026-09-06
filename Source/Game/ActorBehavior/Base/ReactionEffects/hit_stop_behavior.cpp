@@ -33,7 +33,6 @@ void HitStopBehavior::DrawComponentInspector()
 // ヒットストップの開始
 void HitStopBehavior::StartHitStop(
     float duration,
-    HitStopCallback onEnter,
     HitStopCallback onEntered,
     HitStopCallback onUpdate,
     HitStopCallback onExit)
@@ -41,7 +40,6 @@ void HitStopBehavior::StartHitStop(
     m_hitStopTask.Reset();
 
     m_hitStopTask.m_duration = duration;
-    m_hitStopTask.m_onEnter = onEnter;
     m_hitStopTask.m_onEntered = onEntered;
     m_hitStopTask.m_onUpdate = onUpdate;
     m_hitStopTask.m_onExit = onExit;
@@ -60,11 +58,6 @@ bool HitStopBehavior::IsHitStopping() const
 void HitStopBehavior::HitStopTask::Start()
 {
     SequenceTask::Start();
-
-    // ヒットストップ開始時のコールバックを呼び出す
-    if (m_onEnter) {
-        m_onEnter();
-    }
 }
 
 void HitStopBehavior::HitStopTask::Update(float deltaTime)

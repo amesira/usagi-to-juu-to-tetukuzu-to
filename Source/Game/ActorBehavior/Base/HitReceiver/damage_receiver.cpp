@@ -7,6 +7,8 @@
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
+using namespace HitReceiver;
+
 void DamageReceiver::Initialize(HealthBehavior* healthBehavior)
 {
     m_healthBehavior = healthBehavior;

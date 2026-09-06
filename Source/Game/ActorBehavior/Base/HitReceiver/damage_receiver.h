@@ -18,12 +18,12 @@ private:
 public:
     void Initialize(HealthBehavior* healthBehavior);
 
-    HitResult ReceiveDamage(const HitData& hitData);
+    HitReceiver::HitResult ReceiveDamage(const HitReceiver::HitData& hitData);
 
     // === ダメージ倍率設定 ===
     void SetDamageMultiplier(float multiplier) { m_damageMultiplier = multiplier; }
     float GetDamageMultiplier() const { return m_damageMultiplier; }
 
 private:
-    HitAcceptance EvaluateAcceptance(const HitData& hitData) const;
+    HitReceiver::HitAcceptance EvaluateAcceptance(const HitReceiver::HitData& hitData) const;
 };

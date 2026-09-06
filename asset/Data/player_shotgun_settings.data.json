@@ -31,9 +31,9 @@
         "chargeStartTransitionTime": 1.0,
         "chargeTime": 1.2999999523162842,
         "maxBulletRadius": 0.75,
-        "maxBulletSpeed": 100.0,
+        "maxBulletSpeed": 300.0,
         "minBulletRadius": 0.20000000298023224,
-        "minBulletSpeed": 80.0,
+        "minBulletSpeed": 200.0,
         "muzzleFlashEffectOffset": [
             1.0,
             1.0,

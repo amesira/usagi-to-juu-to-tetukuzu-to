@@ -1,10 +1,10 @@
 {
     "data": {
         "aimMaxDistance": 1000.0,
-        "bulletLifetime": 1.0,
+        "bulletLifetime": 3.0,
         "bulletRadius": 0.10000000149011612,
         "bulletSpawnForwardOffset": 0.20000000298023224,
-        "bulletSpeed": 60.0,
+        "bulletSpeed": 150.0,
         "chainTime": 0.20000000298023224,
         "endTime": 0.4000000059604645,
         "finalStepMoveDistance": 6.0,

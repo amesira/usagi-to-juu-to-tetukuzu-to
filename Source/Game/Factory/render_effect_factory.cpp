@@ -17,12 +17,12 @@
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_string.h"
 
-namespace
+namespace RenderEffectFactory
 {
     bool ApplyParticleAsset(
         ParticleSystemComponent* particleSystem,
         const std::filesystem::path& assetPath,
-        const std::wstring* textureOverride = nullptr)
+        const std::wstring* textureOverride)
     {
         if (!particleSystem) return false;
 
@@ -55,7 +55,10 @@ namespace
         particleSystem->SetTextureResource(texture);
         return true;
     }
+}
 
+namespace
+{
     GameObject* CreateParticleObject(
         IScene* scene,
         const char* objectName,
@@ -75,7 +78,7 @@ namespace
         transform->SetRotation(effectTransform.rotation);
         transform->SetScaling(effectTransform.scaling);
 
-        if (!ApplyParticleAsset(particleSystem, assetPath, textureOverride))
+        if (!RenderEffectFactory::ApplyParticleAsset(particleSystem, assetPath, textureOverride))
         {
             EngineServiceLocator::AddLogMessage(
                 "Failed to load particle asset: " + assetPath.generic_string());

@@ -17,6 +17,7 @@ using namespace DirectX;
 class GameObject;
 class IScene;
 class TransformComponent;
+class ParticleSystemComponent;
 
 struct EffectAttachmentDesc {
     TransformComponent* target = nullptr;
@@ -26,6 +27,12 @@ struct EffectAttachmentDesc {
 };
 
 namespace RenderEffectFactory {
+    // 既存のComponentへパーティクル設定とテクスチャを適用する
+    bool ApplyParticleAsset(
+        ParticleSystemComponent* particleSystem,
+        const std::filesystem::path& assetPath,
+        const std::wstring* textureOverride = nullptr);
+
     // デカールエフェクト生成
     GameObject* CreateDecalEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
     

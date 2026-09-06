@@ -230,7 +230,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                 knockbackStartPosition,
                 knockbackEndPosition);
 
-            HitData hitData = {
+            HitReceiver::HitData hitData = {
                 .attacker = context.playerTransform->GetOwner(),
                 .damage = 10.0f,
                 .hitDirection = attackDir,
@@ -240,7 +240,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .startPosition = knockbackStartPosition,
                     .targetPosition = knockbackEndPosition,
                     .duration = context.settings().slashBurstKnockbackDuration,
-                    .mode = KnockbackMode::TargetPosition,
+                    .mode = HitReceiver::KnockbackMode::TargetPosition,
                     .overrideMovementSource = false,
                 },
             };

@@ -25,8 +25,12 @@
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_math.h"
 
+#include "Game/Factory/render_effect_factory.h"
+
 namespace
 {
+    const std::filesystem::path BULLET_PARTICLE_PATH = "asset//Particle//bullet_trail.particle.json";
+
     // ホログラムシェーダーの取得または生成
     ShaderProgramResource* GetOrCreateHologramShader(const ProjectileFactory::BulletCreateDesc& desc)
     {
@@ -103,44 +107,6 @@ namespace
             materialSlot.materialResource = bulletMaterial;
         }
     }
-
-    // パーティクルコンポーネントのセットアップ
-    void SetupBulletParticle(ParticleSystemComponent* particleSystem, const ProjectileFactory::BulletCreateDesc& desc)
-    {
-        if (!particleSystem) return;
-
-        particleSystem->Main().loop = true;
-        particleSystem->Main().playOnAwake = true;
-        particleSystem->Main().startLifetime = { false, 0.5f, 0.5f, 0.5f };
-        particleSystem->Main().startSpeed = { false, 0.0f, 0.0f, 0.0f };
-        particleSystem->Main().startSize = { false, desc.radius * 0.8f, desc.radius * 0.8f, desc.radius * 0.8f };
-        particleSystem->Main().startColor = { false, {0.6f, 0.2f, 0.3f, 0.5f}, {0.4f, 0.5f, 0.5f, 0.8f}};
-
-        particleSystem->Main().simulationSpace = ParticleSystemComponent::SimulationSpace::World;
-
-        particleSystem->Emission().enabled = true;
-        particleSystem->Emission().rateOverTime = 60.0f;
-        particleSystem->Emission().rateOverDistance = 0.0f;
-
-        particleSystem->Shape().enabled = true;
-        particleSystem->Shape().shapeType = ParticleSystemComponent::ShapeType::Sphere;
-        particleSystem->Shape().sphere.radius = desc.radius;
-        particleSystem->Shape().sphere.emitFromShell = true;
-        particleSystem->Shape().randomDirectionAmount = 1.0f;
-
-        particleSystem->SizeOverLifetime().enabled = true;
-        particleSystem->SizeOverLifetime().size.keys = {
-            { 0.0f, 1.0f },
-            { 1.0f, 0.0f },
-        };
-
-        particleSystem->Renderer().blendMode = ParticleSystemComponent::BlendMode::Additive;
-        particleSystem->Renderer().billboardMode = ParticleSystemComponent::BillboardMode::View;
-
-        if (TEXTURE_REPOSITORY) {
-            particleSystem->Renderer().textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset/Texture/white.bmp");
-        }
-    }
 }
 // 弾の生成
 GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDesc& desc)
@@ -173,7 +139,11 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     transform->SetRotation(rotation);
 
     SetupBulletModel(modelComponent, desc);
-    SetupBulletParticle(particleSystem, desc);
+
+    if (!RenderEffectFactory::ApplyParticleAsset(particleSystem, BULLET_PARTICLE_PATH)) {
+        EngineServiceLocator::AddLogMessage(
+            "Failed to load particle asset: " + BULLET_PARTICLE_PATH.generic_string());
+    }
 
     bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
 

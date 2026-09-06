@@ -88,7 +88,7 @@ void BulletBehavior::Update()
                     knockbackDir.y = 0.0f; // 水平方向のみにする
                     knockbackDir = MiMath::Normalize(knockbackDir);
 
-                    HitData hitData = {
+                    HitReceiver::HitData hitData = {
                         .attacker = GetOwner(),
                         .damage = scale.x * 10.0f,
                         .hitPoint = hit.hitPoint,
@@ -194,7 +194,6 @@ void BulletBehavior::Finalize(bool isHitStop)
             [this]() {
                 m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.5f);
             },
-            nullptr,
             nullptr,
             [this]() {
                 //RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());

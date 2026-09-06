@@ -6,10 +6,11 @@
 // ・攻撃が当たった時の処理をまとめるBehavior
 //---------------------------------------------------
 #pragma once
+#include <functional>
+
 #include "Engine/Component/behavior_component.h"
 #include "damage_receiver.h"
 #include "knockback_receiver.h"
-#include "hit_reaction.h"
 
 class HealthBehavior;
 
@@ -19,7 +20,10 @@ private:
 
     DamageReceiver m_damageReceiver;
     KnockbackReceiver m_knockbackReceiver;
-    HitReaction m_hitReaction;
+
+    // === 攻撃を受けた時のコールバック ===
+    using OnHitCallback = std::function<void(const HitReceiver::HitData&, const HitReceiver::HitResult&)>;
+    OnHitCallback m_onHitCallback = nullptr;
 
 public:
     HitReceiverBehavior() = default;
@@ -29,12 +33,13 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
 
+    void SetOnHitCallback(OnHitCallback callback) { m_onHitCallback = callback; }
+
     DamageReceiver* DamageReceiver() { return &m_damageReceiver; }
     KnockbackReceiver* KnockbackReceiver() { return &m_knockbackReceiver; }
-    HitReaction* HitReaction() { return &m_hitReaction; }
 
     /// @brief 攻撃を受け取る
-    HitResult ReceiveHit(const HitData& hitData);
+    HitReceiver::HitResult ReceiveHit(const HitReceiver::HitData& hitData);
 
     // === Knockback関連 ===
     bool IsKnockbackActive() const;

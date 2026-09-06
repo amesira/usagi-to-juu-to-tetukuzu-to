@@ -16,9 +16,12 @@
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
 
+using namespace HitReceiver;
+
 void TrainingDummyBehavior::Start()
 {
     m_transform = GetOwner()->GetComponent<TransformComponent>();
+    m_rigidbody = GetOwner()->GetComponent<RigidbodyComponent>();
     m_healthBehavior = GetOwner()->GetComponent<HealthBehavior>();
     m_hitReceiverBehavior = GetOwner()->GetComponent<HitReceiverBehavior>();
 
@@ -29,7 +32,10 @@ void TrainingDummyBehavior::Start()
             true,
             -9.81f
             });
+        m_hitReceiverBehavior->KnockbackReceiver()->SetLockKnockback(true);
     }
+
+    m_rigidbody->SetIsKinematic(true);
 }
 
 void TrainingDummyBehavior::Update()
@@ -48,4 +54,16 @@ void TrainingDummyBehavior::DrawComponentInspector()
     }
 
     BehaviorDetailView::EndSection();
+}
+
+void TrainingDummyBehavior::OnHitReceived(const HitReceiver::HitData& hitData, const HitReceiver::HitResult& hitResult)
+{
+    if (!hitResult.WasAccepted()) return;
+
+    if (!hitResult.killed) {
+
+    }
+    else {
+
+    }
 }

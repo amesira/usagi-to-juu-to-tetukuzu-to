@@ -14,6 +14,8 @@
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
+using namespace HitReceiver;
+
 void HitReceiverBehavior::Start()
 {
     GameObject* owner = GetOwner();
@@ -24,7 +26,6 @@ void HitReceiverBehavior::Start()
     m_knockbackReceiver.Initialize(
         owner->GetComponent<TransformComponent>(),
         owner->GetComponent<RigidbodyComponent>());
-    m_hitReaction.Initialize(owner);
 }
 
 void HitReceiverBehavior::Update()
@@ -32,7 +33,6 @@ void HitReceiverBehavior::Update()
     const float deltaTime = FPS_GetDeltaTime();
 
     m_knockbackReceiver.Update(deltaTime);
-    m_hitReaction.Update(deltaTime);
 }
 
 void HitReceiverBehavior::DrawComponentInspector()
@@ -57,13 +57,17 @@ HitResult HitReceiverBehavior::ReceiveHit(const HitData& hitData)
 
     // ヒットリアクション、ノックバック開始処理
     if (!result.killed) {
-        m_hitReaction.OnHit(hitData, result);
         result.startedKnockback = m_knockbackReceiver.StartKnockback(hitData.knockback);
     }
     else {
         m_knockbackReceiver.CancelKnockback();
-        m_hitReaction.OnDeath(hitData);
     }
+
+    // ヒットリアクションの開始
+    if (m_onHitCallback) {
+        m_onHitCallback(hitData, result);
+    }
+
     return result;
 }
 

@@ -8,6 +8,8 @@
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/rigidbody_component.h"
 
+using namespace HitReceiver;
+
 void KnockbackReceiver::Initialize(TransformComponent* transform, RigidbodyComponent* rigidbody)
 {
     m_transform = transform;
@@ -71,6 +73,8 @@ bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
     if (!m_transform) return false;
     if (!request.enabled) return false;
     if (request.duration <= 0.0f) return false;
+
+    if (m_isLockKnockback) return false;
 
     KnockbackMovementSource movementSource = request.overrideMovementSource ? request.movementSource : m_defaultMovementSource;
     if (movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && !m_rigidbody) return false;

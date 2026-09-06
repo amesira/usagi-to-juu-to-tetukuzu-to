@@ -23,7 +23,6 @@ private:
     public:
         float m_duration = 0.0f;
 
-        HitStopCallback m_onEnter = nullptr;
         HitStopCallback m_onEntered = nullptr;
         HitStopCallback m_onUpdate = nullptr;
         HitStopCallback m_onExit = nullptr;
@@ -46,7 +45,6 @@ public:
     // ヒットストップの開始
     void StartHitStop(
         float duration,
-        HitStopCallback onEnter = nullptr,
         HitStopCallback onEntered = nullptr,
         HitStopCallback onUpdate = nullptr,
         HitStopCallback onExit = nullptr);
