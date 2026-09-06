@@ -6,6 +6,17 @@ class GameObject;
 
 namespace HitReceiver
 {
+    enum class AttackType {
+        Slash,
+        Shot,
+    };
+
+    struct HitStopRequest {
+        float duration = 0.0f; // 0なら停止しない
+        bool affectAttacker = true;
+        bool affectReceiver = true;
+    };
+
     /// @brief 攻撃を受け取った時の結果を表す列挙型
     enum class HitAcceptance {
         Accepted,   // 攻撃を受け入れた
@@ -59,6 +70,8 @@ namespace HitReceiver
         DirectX::XMFLOAT3 hitDirection = { 0.0f, 0.0f, 0.0f };
 
         KnockbackRequest knockback;
+        AttackType attackType = AttackType::Slash;
+        HitStopRequest hitStop;
     };
 
     struct HitResult {

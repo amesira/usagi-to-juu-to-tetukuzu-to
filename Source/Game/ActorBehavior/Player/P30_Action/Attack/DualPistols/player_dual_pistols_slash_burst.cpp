@@ -243,6 +243,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .mode = HitReceiver::KnockbackMode::TargetPosition,
                     .overrideMovementSource = false,
                 },
+                .attackType = HitReceiver::AttackType::Slash,
             };
             hitReceiver->ReceiveHit(hitData);
         }

@@ -102,7 +102,8 @@ void BulletBehavior::Update()
                             .distance = 3.0f,
                             .duration = 0.2f,
                             .overrideMovementSource = false,
-                        }
+                        },
+                        .attackType = HitReceiver::AttackType::Shot,
                     };
                     hitReceiver->ReceiveHit(hitData);
                 }
