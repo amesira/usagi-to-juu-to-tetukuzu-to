@@ -9,6 +9,9 @@
 #include "Engine/Component/behavior_component.h"
 #include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
 
+#include "training_dummy_effects.h"
+#include "training_dummy_motions.h"
+
 class TrainingDummyBehavior : public BehaviorComponent {
 private:
     class TransformComponent* m_transform = nullptr;
@@ -16,6 +19,9 @@ private:
 
     class HitReceiverBehavior* m_hitReceiverBehavior = nullptr;
     class HealthBehavior* m_healthBehavior = nullptr;
+
+    TrainingDummyEffects m_effects;
+    TrainingDummyMotions m_motions;
 
 public:
     TrainingDummyBehavior() = default;

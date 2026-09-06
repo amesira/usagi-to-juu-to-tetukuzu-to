@@ -174,7 +174,6 @@
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
     <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.cpp" />
@@ -195,6 +194,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\attached_effect_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
@@ -406,7 +407,6 @@
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
     <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
@@ -419,6 +419,8 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.h" />
     <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
     <ClInclude Include="Source\Game\PresBehavior\attached_effect_handle.h" />
     <ClInclude Include="Source\Game\PresBehavior\effect_transform.h" />

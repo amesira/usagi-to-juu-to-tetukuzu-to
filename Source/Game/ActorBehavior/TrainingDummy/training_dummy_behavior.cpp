@@ -33,13 +33,24 @@ void TrainingDummyBehavior::Start()
             -9.81f
             });
         m_hitReceiverBehavior->KnockbackReceiver()->SetLockKnockback(true);
+        m_hitReceiverBehavior->SetOnHitCallback([this](const HitData& hitData, const HitResult& hitResult) {
+            OnHitReceived(hitData, hitResult);
+            });
     }
 
     m_rigidbody->SetIsKinematic(true);
+
+    m_effects.Initialize(GetOwner());
+    m_motions.Initialize(GetOwner());
 }
 
 void TrainingDummyBehavior::Update()
 {
+    float deltaTime = FPS_GetDeltaTime();
+
+    m_effects.Update(deltaTime);
+    m_motions.Update(deltaTime);
+
     // 練習用のかかしの振る舞いをここに実装する
 
     // ダメージを受けてから一定時間経過で回復
@@ -61,7 +72,9 @@ void TrainingDummyBehavior::OnHitReceived(const HitReceiver::HitData& hitData, c
     if (!hitResult.WasAccepted()) return;
 
     if (!hitResult.killed) {
-
+        m_effects.PlayHitEffects(hitData.hitPoint, hitData.hitDirection);
+        m_effects.PlayConfusionEffects(0.5f);
+        m_motions.PlayKnockbackMotion(hitData.knockback.direction, 0.8f, hitData.knockback.duration);
     }
     else {
 

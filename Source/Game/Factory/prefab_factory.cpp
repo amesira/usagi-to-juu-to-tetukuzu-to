@@ -110,6 +110,7 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     BoxColliderComponent* collider = dummy->AddComponent<BoxColliderComponent>();
     RigidbodyComponent* rigidbody = dummy->AddComponent<RigidbodyComponent>();
     ModelComponent* model = dummy->AddComponent<ModelComponent>();
+    AnimationComponent* animation = dummy->AddComponent<AnimationComponent>();
 
     HealthBehavior* health = dummy->AddComponent<HealthBehavior>();
     dummy->AddComponent<HitReceiverBehavior>();

@@ -1,1 +1,31 @@
+//---------------------------------------------------
+// File  ：_/TrainingDummy/training_dummy_effects.h
+// Date  ：2026/09/07
+// Author：Miu Kitamura
+// 
+// ・TrainingDummyのエフェクトをまとめるクラス
+//---------------------------------------------------
 #pragma once
+#include <DirectXMath.h>
+#include "Game/PresBehavior/effect_handle.h"
+#include "Game/PresBehavior/attached_effect_handle.h"
+
+class TrainingDummyEffects {
+private:
+    AttachedEffectHandle m_hitEffect;
+    AttachedEffectHandle m_confusionEffect;
+
+    class TransformComponent* m_transform = nullptr;
+
+    bool m_isActiveConfusionEffect = false;
+    float m_confusionEffectTimer = 0.0f;
+    float m_confusionEffectRate = 10.0f; // 1秒あたりのパーティクル発生数
+
+public:
+    void Initialize(class GameObject* owner);
+    void Update(float deltaTime);
+
+    void PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, const DirectX::XMFLOAT3& hitDirection);
+    void PlayConfusionEffects(float duration);
+
+};
