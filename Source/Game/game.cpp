@@ -89,7 +89,7 @@ void GameScene::Initialize()
     }
 
     // かかしプレハブ生成
-    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 0.0f, 5.0f });
+    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, -0.5f, 5.0f });
 
     // UI生成
     GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");

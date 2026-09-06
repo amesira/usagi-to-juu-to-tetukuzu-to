@@ -20,8 +20,8 @@ private:
     
     std::vector<AnimationBlendTree2DNode> m_knockbackBlendTreeNodes;
 
-    float m_motionSmoothTime = 0.05f;
-    float m_endMotionSmoothTime = 0.2f;
+    float m_springAngularFrequency = 24.0f; // 揺れの角周波数（rad/s）
+    float m_springDampingRatio = 0.25f;     // 減衰比。0より大きく1未満で振動しながら収束
 
     DirectX::XMFLOAT2 m_currentKnockbackParameter = {};
     DirectX::XMFLOAT2 m_targetKnockbackParameter = {};
