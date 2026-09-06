@@ -12,9 +12,11 @@
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
+#include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
 #include "Game/ActorBehavior/TrainingDummy/training_dummy_behavior.h"
+
 #include "Game/Factory/Prefab/player_prefab_settings_asset.h"
 #include "Game/Factory/Prefab/training_dummy_prefab_settings_asset.h"
 #include "Game/PresBehavior/Camera/camera_settings_asset.h"
@@ -115,6 +117,7 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     HealthBehavior* health = dummy->AddComponent<HealthBehavior>();
     dummy->AddComponent<HitReceiverBehavior>();
     dummy->AddComponent<TrainingDummyBehavior>();
+    dummy->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(position);
     transform->SetScaling(settings.scaling);

@@ -16,10 +16,13 @@ private:
     AttachedEffectHandle m_confusionEffect;
 
     class TransformComponent* m_transform = nullptr;
+    class BlinkerBehavior* m_blinkerBehavior = nullptr;
 
     bool m_isActiveConfusionEffect = false;
     float m_confusionEffectTimer = 0.0f;
     float m_confusionEffectRate = 10.0f; // 1秒あたりのパーティクル発生数
+
+    bool m_isActiveFlashBlinkerEffect = false;
 
 public:
     void Initialize(class GameObject* owner);
@@ -28,4 +31,5 @@ public:
     void PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, const DirectX::XMFLOAT3& hitDirection);
     void PlayConfusionEffects(float duration);
 
+    void PlayFlashBlinkerEffect();
 };

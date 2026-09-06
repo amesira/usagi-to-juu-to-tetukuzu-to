@@ -71,6 +71,12 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
 
 void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
 {
+    if (moveIntent.pauseMovement) {
+        // 内部の物理速度は保持し、Rigidbodyへの移動出力だけ止める。
+        m_context.rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
+        return;
+    }
+
     m_context.runtimeState.m_isGrounded = CheckGrounded();
     m_context.runtimeState.m_desiredPosition = m_context.transform->GetPosition();
     if (moveIntent.forceMoveIntent.isActive) {

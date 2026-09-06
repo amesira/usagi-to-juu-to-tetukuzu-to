@@ -8,6 +8,9 @@
 #include "player_dual_pistols_action.h"
 
 #include "Engine/Core/game_object.h"
+#include "Engine/Device/mi_fps.h"
+#include "Engine/Component/animation_component.h"
+#include <algorithm>
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/collider_component.h"
@@ -28,6 +31,7 @@ void PlayerDualPistolsSlashBurst::Initialize(PlayerDualPistolsContext& context)
 /// @brief 攻撃を開始する
 void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
 {
+    EndHitStop();
     m_isActive = true;
     m_isFinished = false;
     context.runtimeState.comboStep = 0;
@@ -98,6 +102,16 @@ void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
 /// @brief 攻撃の更新処理
 void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, float deltaTime)
 {
+    // ヒットストップタスク更新
+    if (m_hitStopTask.IsRunning()) {
+        m_hitStopTask.Update(FPS_GetUnscaledDeltaTime());
+        if (m_hitStopTask.IsRunning()) {
+            HoldPosition(context);
+            return;
+        }
+        EndHitStop();
+    }
+
     m_attackTimer += deltaTime;
 
     // 入力解決（次の攻撃入力の予約判定）
@@ -137,6 +151,7 @@ void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, floa
     // 攻撃のヒット判定処理
     if (!m_hasBursted && IsBurstFrame(context)) {
         HandleSlashBurstAttack(context, context.runtimeState.comboStep);
+        if (m_hitStopTask.IsRunning()) return;
     }
 
     // 次の攻撃への連鎖判定
@@ -154,6 +169,7 @@ void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, floa
 
 void PlayerDualPistolsSlashBurst::Finish(PlayerDualPistolsContext& context)
 {
+    EndHitStop();
     m_isActive = false;
     m_isFinished = true;
 
@@ -165,6 +181,7 @@ void PlayerDualPistolsSlashBurst::Finish(PlayerDualPistolsContext& context)
 
 void PlayerDualPistolsSlashBurst::Cancel(PlayerDualPistolsContext& context)
 {
+    EndHitStop();
     m_isActive = false;
     m_isFinished = false;
 
@@ -244,20 +261,14 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .overrideMovementSource = false,
                 },
                 .attackType = HitReceiver::AttackType::Slash,
+                .hitStop = { .duration = 0.03f, .affectAttacker = true, .affectReceiver = true },
             };
-            hitReceiver->ReceiveHit(hitData);
+            const auto result = hitReceiver->ReceiveHit(hitData);
+            if (result.WasAccepted() && hitData.hitStop.affectAttacker) {
+                BeginHitStop(context, hitData.hitStop.duration);
+            }
         }
     }
-
-    // 攻撃のヒット判定処理
-    {
-        // ノックバック処理
-
-        // ダメージ処理
-
-        // ヒットストップの再生
-    }
-
     return true;
 }
 
@@ -280,7 +291,10 @@ std::vector<GameObject*> PlayerDualPistolsSlashBurst::DetectAttackTarget(PlayerD
 
     std::vector<GameObject*> hitGameObjects;
     for (ColliderComponent* collider : outHitTargets) {
-        hitGameObjects.push_back(collider->GetOwner());
+        GameObject* owner = collider->GetOwner();
+        if (std::find(hitGameObjects.begin(), hitGameObjects.end(), owner) == hitGameObjects.end()) {
+            hitGameObjects.push_back(owner);
+        }
     }
 
     return hitGameObjects;
@@ -414,5 +428,48 @@ void PlayerDualPistolsSlashBurst::FireRightPistol(PlayerDualPistolsContext& cont
         request.fireDirection = MiMath::RotateVector(muzzle.rotation, { 0.0f, 1.0f, 0.0f });
         context.firing.Fire(context, request);
     }
+}
+#pragma endregion
+
+#pragma region ヒットストップ処理
+void PlayerDualPistolsSlashBurst::BeginHitStop(PlayerDualPistolsContext& context, float duration)
+{
+    if (duration <= 0.0f) return;
+
+    // ヒットストップ開始時の状態を保存
+    if (!m_hitStopTask.IsRunning()) {
+        m_previousCanMove = m_locomotionRequest.canMove;
+        m_previousUseGravity = m_locomotionRequest.useGravity;
+        m_hitStopAnimation = context.animationController->GetAnimationComponent();
+        if (m_hitStopAnimation) {
+            m_hitStopAnimation->SetPaused(true);
+        }
+    }
+
+    m_hitStopTask.RequestHold((std::max)(duration, m_hitStopTask.GetRemainingTime()));
+    HoldPosition(context);
+}
+
+void PlayerDualPistolsSlashBurst::HoldPosition(PlayerDualPistolsContext& context)
+{
+    m_locomotionRequest.canMove = false;
+    m_locomotionRequest.useGravity = false;
+    m_locomotionRequest.pauseMovement = true;
+}
+
+void PlayerDualPistolsSlashBurst::EndHitStop()
+{
+    if (m_hitStopAnimation) {
+        m_hitStopAnimation->SetPaused(false);
+        m_hitStopAnimation = nullptr;
+    }
+
+    if (m_hitStopTask.IsRunning() || m_hitStopTask.m_duration > 0.0f) {
+        m_locomotionRequest.canMove = m_previousCanMove;
+        m_locomotionRequest.useGravity = m_previousUseGravity;
+    }
+    m_locomotionRequest.pauseMovement = false;
+    m_hitStopTask.Reset();
+    m_hitStopTask.m_duration = 0.0f;
 }
 #pragma endregion

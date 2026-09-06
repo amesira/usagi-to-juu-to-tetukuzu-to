@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include <vector>
+#include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_sequence_task.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
 
 struct PlayerDualPistolsContext;
@@ -15,6 +16,12 @@ class GameObject;
 class PlayerDualPistolsSlashBurst {
 private:
     static constexpr int MAX_ATTACK_COUNT = 3; // 最大攻撃回数
+
+    HitStopTask m_hitStopTask;
+    class AnimationComponent* m_hitStopAnimation = nullptr;
+    bool m_previousCanMove = false;
+    bool m_previousUseGravity = false;
+
     float m_attackTimer = 0.0f; // 攻撃の経過時間
     float m_fireTimer = 0.0f;   // 攻撃の発射タイマー
 
@@ -76,4 +83,8 @@ private:
     void FireVolley(PlayerDualPistolsContext& context);
     void FireLeftPistol(PlayerDualPistolsContext& context);
     void FireRightPistol(PlayerDualPistolsContext& context);
+
+    void BeginHitStop(PlayerDualPistolsContext& context, float duration);
+    void EndHitStop();
+    void HoldPosition(PlayerDualPistolsContext& context);
 };

@@ -31,6 +31,9 @@ void PlayerMoveMotor::UpdateMotor(PlayerMoveContext& context, const PlayerMoveIn
             context.runtimeState.m_physicsVelocity.y += gravityAcceleration * deltaTime;
         }
     }
+    else {
+        context.runtimeState.m_physicsVelocity.y = 0.0f;
+    }
 
     if (intent.canMove) 
     {

@@ -112,6 +112,7 @@ PlayerMoveIntent PlayerLocomotionController::BuildIntent(const PlayerContext& co
     intent.speedMultiplier = selectedRequest->speedMultiplier;
     intent.jumpPowerMultiplier = selectedRequest->jumpPowerMultiplier;
 
+    intent.pauseMovement = selectedRequest->pauseMovement;
     intent.canMove = selectedRequest->canMove;
     intent.canRotate = selectedRequest->canRotate;
     intent.useGravity = selectedRequest->useGravity;

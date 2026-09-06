@@ -7,12 +7,15 @@
 
 #include <algorithm>
 #include <cmath>
+#include "Engine/Device/mi_fps.h"
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/model_component.h"
+
+#include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -54,11 +57,18 @@ void TrainingDummyMotions::Initialize(GameObject* owner)
         { FindClipIndex(m_modelComponent, "kakashi_break_left.anim.fbx"), { -1.0f, 0.0f } },
     };
     m_animationComponent->PlayBlendTree2D(m_knockbackBlendTreeNodes, m_currentKnockbackParameter);
+
 }
 
 void TrainingDummyMotions::Update(float deltaTime)
 {
-    if (!m_animationComponent || deltaTime <= 0.0f) return;
+    if (!m_animationComponent) return;
+    if (m_holdingHitPose) {
+        m_hitStopTask.Update(FPS_GetUnscaledDeltaTime());
+        if (m_hitStopTask.IsRunning()) return;
+        CancelHitStop();
+    }
+    if (deltaTime <= 0.0f) return;
 
     // 小刻みに積分して、フレーム時間が長い場合もばねを安定させる
     constexpr float maxStep = 1.0f / 240.0f;
@@ -116,4 +126,29 @@ void TrainingDummyMotions::PlayKnockbackMotion(const DirectX::XMFLOAT3& directio
 
     // 再被弾でも現在の姿勢と速度は維持する。
     m_knockbackMotionTimer = duration;
+}
+
+void TrainingDummyMotions::PlaySlashHitMotion(const DirectX::XMFLOAT3& direction, float powerRate, float duration)
+{
+    if (!m_animationComponent || !m_transform) return;
+
+    // ノックバックモーションを瞬時に適用
+    PlayKnockbackMotion(direction, powerRate, 0.0f);
+    m_currentKnockbackParameter = m_targetKnockbackParameter;
+    m_knockbackParameterVelocity = {};
+
+    m_animationComponent->SetBlendTree2DParameter(m_currentKnockbackParameter);
+    if (duration <= 0.0f) return;
+    m_holdingHitPose = true;
+    m_animationComponent->SetPaused(true);
+    m_hitStopTask.RequestHold((std::max)(duration, m_hitStopTask.GetRemainingTime()));
+}
+
+void TrainingDummyMotions::CancelHitStop()
+{
+    if (m_holdingHitPose && m_animationComponent) {
+        m_animationComponent->SetPaused(false);
+    }
+    m_holdingHitPose = false;
+    m_hitStopTask.Reset();
 }

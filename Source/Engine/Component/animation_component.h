@@ -99,10 +99,14 @@ public:
     using PlaybackType = AnimationPlaybackType;
 
 private:
+    bool m_paused = false;
     AnimationPlaybackState m_playbackState;
     std::vector<AnimationLayer> m_animationLayers;
 
 public:
+    void SetPaused(bool paused) { m_paused = paused; }
+    bool IsPaused() const { return m_paused; }
+
     static constexpr char CLIP_NONE[] = "None";
 
     /// @brief 指定ボーンとその全子ボーンを有効にしたマスクを作成する

@@ -76,9 +76,17 @@ void TrainingDummyBehavior::OnHitReceived(const HitReceiver::HitData& hitData, c
         m_effects.PlayConfusionEffects(0.5f);
 
         // powerRateはダメージ量に応じて0.0f~1.0fの範囲で設定する
-        m_motions.PlayKnockbackMotion(hitData.hitDirection, 0.5f, 0.2f);
+        if (hitData.attackType == AttackType::Slash) {
+            m_motions.PlaySlashHitMotion(hitData.hitDirection, 0.5f,
+                hitData.hitStop.affectReceiver ? hitData.hitStop.duration : 0.0f);
+        }
+        else {
+            m_motions.PlayKnockbackMotion(hitData.hitDirection, 0.5f, 0.2f);
+        }
+
+        m_effects.PlayFlashBlinkerEffect();
     }
     else {
-
+        m_motions.CancelHitStop();
     }
 }

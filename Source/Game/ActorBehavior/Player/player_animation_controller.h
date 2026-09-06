@@ -165,6 +165,8 @@ public:
     void BeginFrame();
     void Update();
 
+    AnimationComponent* GetAnimationComponent() const { return m_animationComponent; }
+
     // === アニメーション再生 ===
     void PlayAnimation(Animation animation);
     void PlayAnimation(Animation animation, const PlayOptions& options);

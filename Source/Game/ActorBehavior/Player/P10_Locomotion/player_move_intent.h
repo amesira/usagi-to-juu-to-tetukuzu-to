@@ -3,7 +3,7 @@
 // Date  ：2026/08/07
 // Author：Miu Kitamura
 // 
-// ・プリヤ―の移動意図を表す構造体
+// ・Playerの移動意図を表す構造体
 //---------------------------------------------------
 #pragma once
 #include "Utility/utility_master.h"
@@ -29,6 +29,8 @@ struct PlayerMoveIntent
     
     float speedMultiplier = 1.0f; // 移動速度の倍率
     float jumpPowerMultiplier = 1.0f; // ジャンプ力の倍率
+
+    bool pauseMovement = false; // 移動を一時停止するかどうか
 
     bool canMove = true;   // 移動可能かどうか
     bool canRotate = true; // 回転可能かどうか

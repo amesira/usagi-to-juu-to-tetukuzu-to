@@ -62,8 +62,16 @@ public:
         Start();
     }
 
+    // 姿勢を呼び出し側で適用済みの場合、段階待ちなしで保持を開始する。
+    void RequestHold(float duration) {
+        RequestHitStop(duration);
+        m_taskStep = 2;
+        if (duration <= 0.0f) Finish();
+    }
+
     /// @brief ヒットストップの残り時間を取得する
     float GetRemainingTime() const {
-        return m_duration - m_taskTimer;
+        if (!m_isRunning) return 0.0f;
+        return m_duration > m_taskTimer ? m_duration - m_taskTimer : 0.0f;
     }
 };

@@ -26,9 +26,10 @@ void AnimationProcessor::Process(IScene* pScene)
     auto* modelPool = pScene->GetComponentPool<ModelComponent>();
     if (!animationPool || !modelPool) return;
 
-    const float deltaTime = FPS_GetDeltaTime();
+    const float frameDeltaTime = FPS_GetDeltaTime();
     for (AnimationComponent& animationComponent : animationPool->GetList()) {
         if (!animationComponent.GetEnable()) continue;
+        const float deltaTime = animationComponent.IsPaused() ? 0.0f : frameDeltaTime;
 
         ModelComponent* modelComponent =
             modelPool->GetByGameObjectID(animationComponent.GetOwner()->GetID());

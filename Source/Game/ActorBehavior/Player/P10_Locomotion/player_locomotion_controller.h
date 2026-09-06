@@ -45,6 +45,7 @@ public:
         float speedMultiplier = 1.0f; // 移動速度の倍率
         float jumpPowerMultiplier = 1.0f; // ジャンプ力の倍率
 
+        bool pauseMovement = false; // 速度を保持して移動更新を一時停止
         bool canMove = true;   // 移動可能かどうか
         bool canRotate = true; // 回転可能かどうか
         bool useGravity = true;  // 重力を使用するかどうか
