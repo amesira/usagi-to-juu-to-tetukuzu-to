@@ -74,7 +74,9 @@ void TrainingDummyBehavior::OnHitReceived(const HitReceiver::HitData& hitData, c
     if (!hitResult.killed) {
         m_effects.PlayHitEffects(hitData.hitPoint, hitData.hitDirection);
         m_effects.PlayConfusionEffects(0.5f);
-        m_motions.PlayKnockbackMotion(hitData.knockback.direction, 0.8f, hitData.knockback.duration);
+
+        // powerRateはダメージ量に応じて0.0f~1.0fの範囲で設定する
+        m_motions.PlayKnockbackMotion(hitData.hitDirection, 0.8f, 0.5f);
     }
     else {
 
