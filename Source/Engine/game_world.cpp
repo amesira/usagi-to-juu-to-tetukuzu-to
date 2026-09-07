@@ -138,8 +138,8 @@ void GameWorld::SetSceneRenderView(IScene* scene)
         sceneView.aspectRatio = sceneCamera.aspect;
 
         sceneView.enable3D = true;
-        sceneView.enableLighting = true;
-        sceneView.enableShadowMap = true;
+        sceneView.enableLighting = false;
+        sceneView.enableShadowMap = false;
         sceneView.enablePostEffect = false;
         sceneView.enableUI = false;
         sceneView.enableDebugDraw = true;

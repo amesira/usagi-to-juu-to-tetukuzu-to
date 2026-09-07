@@ -287,6 +287,28 @@ void LevelEditorWindow::DrawRuntimeInspector()
     for (Component* component : object->GetAllComponents())
         ImGui::BulletText("%s%s", typeid(*component).name(), component->GetEnable() ? "" : " (Disabled)");
 
+    bool changed = false;
+
+    // TransformComponentの詳細表示
+    if (TransformComponent* transform = object->GetComponent<TransformComponent>())
+    {
+        ImGui::PushID("TransformComponent");
+
+        ImGui::Separator();
+        ImGui::TextUnformatted("Transform Component");
+        DirectX::XMFLOAT3 position = transform->GetPosition();
+        DirectX::XMFLOAT3 rotation = transform->GetEulerRawAngle();
+        DirectX::XMFLOAT3 scale = transform->GetScaling();
+        ImGui::DragFloat3("Position", &position.x, 0.1f);
+        ImGui::DragFloat3("Rotation", &rotation.x, 0.1f);
+        ImGui::DragFloat3("Scale", &scale.x, 0.1f);
+        transform->SetPosition(position);
+        transform->SetEulerRawAngle(rotation);
+        transform->SetScaling(scale);
+
+        ImGui::PopID();
+    }
+
     // BehaviorComponentの詳細表示
     {
         auto behaviorComponents = object->GetBehaviorComponents();
