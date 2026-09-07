@@ -78,8 +78,7 @@ void TrainingDummyEffects::PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, 
         ProjectileFactory::CreateDamageNumber(m_scene, ProjectileFactory::DamageNumberCreateDesc{
             .position = hitPosition,
             .damage = damage,
-            .color = { 1.0f, 1.0f, 1.0f, 1.0f },
-            .fontPath = "asset/Font/Arial.fnt",
+            .color = { 1.0f, 1.0f, 1.0f, 1.0f }
             });
     }
 }

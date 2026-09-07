@@ -1,6 +1,7 @@
 // projectile_factory.h
 #pragma once
 #include <DirectXMath.h>
+#include <filesystem>
 #include "Engine/Core/game_object_layer.h"
 
 #include <string>
@@ -27,7 +28,7 @@ namespace ProjectileFactory
         XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };
         float damage = 1.0f;
         XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
-        const char* fontPath = "asset\\Font\\Arial.fnt";
+        const std::filesystem::path fontPath = "asset/Font/Makinas-4-Square.otf";
     };
 
     GameObject* CreateBullet(IScene* scene, const BulletCreateDesc& desc);
