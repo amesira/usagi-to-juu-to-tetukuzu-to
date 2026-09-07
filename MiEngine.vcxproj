@@ -213,6 +213,10 @@
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
     <ClCompile Include="Utility\debug_ostream.cpp" />
     <ClCompile Include="Utility\debug_renderer.cpp" />
     <ClCompile Include="Source\Engine\Editor\BaseEditor\debug_view_window.cpp" />
@@ -472,6 +476,11 @@
     <ClInclude Include="Source\Game\Factory\projectile_factory.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_context.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_handle.h" />
     <ClInclude Include="Utility\debug_renderer.h" />
     <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
     <ClInclude Include="Source\Engine\Component\decal_component.h" />

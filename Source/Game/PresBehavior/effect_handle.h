@@ -1,12 +1,10 @@
 // effect_handle.h
 #pragma once
-
 #include <limits>
 
 class EffectHandle {
 private:
-    static constexpr unsigned int InvalidGameObjectID =
-        (std::numeric_limits<unsigned int>::max)();
+    static constexpr unsigned int InvalidGameObjectID = (std::numeric_limits<unsigned int>::max)();
 
     class IScene* m_scene = nullptr;
     unsigned int m_gameObjectID = InvalidGameObjectID;
