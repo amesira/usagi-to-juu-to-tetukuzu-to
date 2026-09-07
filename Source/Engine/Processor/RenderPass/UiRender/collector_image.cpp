@@ -5,6 +5,7 @@
 // Date  ：2025/11/18
 //===================================================
 #include "collector_image.h"
+#include "image_fill_utility.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
@@ -58,6 +59,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComm
         instance.angleZ = rect->GetRotation().z;
         instance.color = image->GetColor();
         instance.uvRect = image->GetUvRect();
+        if (!ImageFillUtility::Apply(*image, instance)) continue;
 
         batch.instances.push_back(instance);
 
@@ -83,6 +85,7 @@ void CollectorImage::CollectDrawBatches3D(IScene* pScene, std::vector<UiDrawComm
         instance.scale = transform->GetScaling();
         instance.color = image.GetColor();
         instance.uvRect = image.GetUvRect();
+        if (!ImageFillUtility::Apply(image, instance)) continue;
         UiDrawCommand::FindOrAddBatch3D(outBatches, texture->texture.Get(), m_pDefaultUiShader)
             .instances.push_back(instance);
     }

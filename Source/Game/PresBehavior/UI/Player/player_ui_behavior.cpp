@@ -93,6 +93,21 @@ void PlayerUiBehavior::CreateTestWidgets()
         text->SetColor({1, 1, 1, 1});
     }
     RegisterWidget(WidgetGroupID::AmmoCount, ammoLabel, {0, -20}, {1, 1}, "PlayerUi.AmmoLabel.Test", 101);
+    auto ammoBar = UiFactory::CreateUiImageHandle(m_context.scene, L"asset/Texture/ammo_slider.png");
+    RegisterWidget(WidgetGroupID::AmmoCount, ammoBar,
+        { 0, -40 }, { 220, 220 }, "PlayerUi.AmmoBar2.Test", 102);
+    if (auto* image = ammoBar.GetImage()) {
+        image->SetFillMethod(ImageComponent::FillMethod::Horizontal);
+        image->SetFillReverse(false);
+        image->SetFillAmount(0.6f);
+        image->SetColor({ 0.3f, 0.7f, 1.0f, 1.0f });
+    }
+    auto ammoBgBar = UiFactory::CreateUiImageHandle(m_context.scene, L"asset/Texture/ammo_slider.png");
+    RegisterWidget(WidgetGroupID::AmmoCount, ammoBgBar,
+        { 0, -40 }, { 220, 220 }, "PlayerUi.AmmoBarBg.Test", 101);
+    if (auto* image = ammoBgBar.GetImage()) {
+        image->SetColor({ 0.08f, 0.1f, 0.14f, 1.0f });
+    }
 
     // 既存の白テクスチャを使い、専用アセットなしで十字照準を構成する。
     const XMFLOAT2 offsets[] = { {-10, 0}, {10, 0}, {0, -10}, {0, 10} };

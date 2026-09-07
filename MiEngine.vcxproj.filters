@@ -995,4 +995,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\ui_shake_task.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\image_fill_utility.h" />
+  </ItemGroup>
 </Project>
