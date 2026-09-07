@@ -19,6 +19,7 @@
 
 // behavior
 #include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 #include "Prefab/player_prefab_settings_asset.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
@@ -64,6 +65,7 @@ GameObject* ActorFactory::CreatePlayer(
 
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
+    player->AddComponent<PlayerUiBehavior>();
     player->AddComponent<PlayerMoveBehavior>();
     return player;
 }

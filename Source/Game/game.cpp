@@ -92,8 +92,8 @@ void GameScene::Initialize()
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, -0.5f, 5.0f });
 
     // UI生成
-    GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");
-    UiFactory::SetupUiTransform(uiText, { 960.0f, 300.0f }, {1.0f, 1.0f});
+   // GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");
+    //UiFactory::SetupUiTransform(uiText, { 960.0f, 300.0f }, {1.0f, 1.0f});
 
 }
 

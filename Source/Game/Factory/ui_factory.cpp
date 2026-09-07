@@ -6,7 +6,7 @@
 //===================================================
 #include "ui_factory.h"
 #include "Engine/Core/game_object.h"
-#include "Engine/Core/scene_base.h"
+#include "Engine/Core/scene_interface.h"
 
 // component
 #include "Engine/Component/rect_transform_component.h"
@@ -17,32 +17,37 @@
 #include "Engine/engine_service_locator.h"
 
 // UIイメージ生成
-GameObject* UiFactory::CreateUiImage(SceneBase* scene, const std::wstring& texturePath)
+GameObject* UiFactory::CreateUiImage(IScene* scene, const std::wstring& texturePath)
 {
+    if (!scene || !TEXTURE_REPOSITORY) return nullptr;
+    TextureResource* textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
+    if (!textureResource) return nullptr;
     GameObject* uiImage = scene->CreateGameObject();
+    if (!uiImage) return nullptr;
     uiImage->SetName("UiImage");
 
     // component生成・登録
     RectTransformComponent* rectTransform = uiImage->AddComponent<RectTransformComponent>();
     ImageComponent* imageComp = uiImage->AddComponent<ImageComponent>();
 
-    TextureResource* textureResource = TEXTURE_REPOSITORY->GetTextureResource(texturePath);
     imageComp->SetTextureResource(textureResource);
 
     return uiImage;
 }
 
 // UIテキスト生成
-GameObject* UiFactory::CreateUiText(SceneBase* scene, const std::u8string& text)
+GameObject* UiFactory::CreateUiText(IScene* scene, const std::u8string& text)
 {
+    if (!scene) return nullptr;
     GameObject* uiText = scene->CreateGameObject();
+    if (!uiText) return nullptr;
     uiText->SetName("UiText");
 
     // component生成・登録
     RectTransformComponent* rectTransform = uiText->AddComponent<RectTransformComponent>();
     TextComponent* textComp = uiText->AddComponent<TextComponent>();
     textComp->SetText(text);
-    textComp->SetFontSize(32.0f);
+    textComp->SetFontSize(32);
     textComp->SetColor({ 1.0f, 0.5f, 0.5f, 1.0f });
     textComp->SetCenter(true);
     textComp->SetFontPath("asset/Font/Makinas-4-Square.otf");
@@ -51,9 +56,11 @@ GameObject* UiFactory::CreateUiText(SceneBase* scene, const std::u8string& text)
 }
 
 // UIスライダー生成
-GameObject* UiFactory::CreateUiSlider(SceneBase* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value)
+GameObject* UiFactory::CreateUiSlider(IScene* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value)
 {
+    if (!scene) return nullptr;
     GameObject* uiSlider = scene->CreateGameObject();
+    if (!uiSlider) return nullptr;
     uiSlider->SetName("UiSlider");
 
     // component生成・登録
@@ -65,6 +72,22 @@ GameObject* UiFactory::CreateUiSlider(SceneBase* scene, const XMFLOAT4& bgColor,
     sliderComp->SetValue(value);
 
     return uiSlider;
+}
+
+UiHandle UiFactory::CreateUiImageHandle(IScene* scene, const std::wstring& texturePath)
+{
+    return UiHandle(CreateUiImage(scene, texturePath));
+}
+
+UiHandle UiFactory::CreateUiTextHandle(IScene* scene, const std::u8string& text)
+{
+    return UiHandle(CreateUiText(scene, text));
+}
+
+UiHandle UiFactory::CreateUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor,
+    const XMFLOAT4& fillColor, float value)
+{
+    return UiHandle(CreateUiSlider(scene, bgColor, fillColor, value));
 }
 
 // UITransformセットアップ

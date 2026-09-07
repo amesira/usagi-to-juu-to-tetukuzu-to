@@ -9,17 +9,22 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 #include <string>
+#include "Game/PresBehavior/UI/ui_handle.h"
 
 class GameObject;
-class SceneBase;
+class IScene;
 
 namespace UiFactory {
+    // Behavior内部で生成・保持するためのハンドル版。
+    UiHandle CreateUiImageHandle(IScene* scene, const std::wstring& texturePath);
+    UiHandle CreateUiTextHandle(IScene* scene, const std::u8string& text);
+    UiHandle CreateUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value);
     // UIイメージ生成
-    GameObject* CreateUiImage(SceneBase* scene, const std::wstring& texturePath);
+    GameObject* CreateUiImage(IScene* scene, const std::wstring& texturePath);
     // UIテキスト生成
-    GameObject* CreateUiText(SceneBase* scene, const std::u8string& text);
+    GameObject* CreateUiText(IScene* scene, const std::u8string& text);
     // UIスライダー生成
-    GameObject* CreateUiSlider(SceneBase* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value);
+    GameObject* CreateUiSlider(IScene* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value);
     // UITransformセットアップ
     bool    SetupUiTransform(GameObject* uiElement, const XMFLOAT2& position, const XMFLOAT2& size);
 

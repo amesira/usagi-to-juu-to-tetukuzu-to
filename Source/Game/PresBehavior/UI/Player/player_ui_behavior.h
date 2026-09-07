@@ -19,6 +19,7 @@ private:
 
     PlayerUiView m_view;
     PlayerUiPresentation m_presentation;
+    bool m_widgetsCreated = false;
 
 public:
     PlayerUiBehavior() = default;
@@ -26,5 +27,13 @@ public:
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
+    // シーン全体の破棄はシーンが担当。個別にUIを終了するときに呼ぶ。
+    void DestroyWidgets();
+
+private:
+    void CreateTestWidgets();
+    void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
+        const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
+        const char* name, float orderInLayer);
 
 };
