@@ -14,6 +14,7 @@
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 
 #include "Game/Factory/render_effect_factory.h"
+#include "Game/Factory/projectile_factory.h"
 
 #include "Utility/mi_math.h"
 
@@ -21,15 +22,16 @@ void TrainingDummyEffects::Initialize(GameObject* owner)
 {
     m_transform = owner->GetComponent<TransformComponent>();
     m_blinkerBehavior = owner->GetComponent<BlinkerBehavior>();
+    m_scene = owner->GetScene();
 
     m_hitEffect = RenderEffectFactory::CreateAttachedMeshEffect(
-        owner->GetScene(),
+        m_scene,
         "asset/MeshEffect/hit_effect.mesh_effect.json",
         EffectAttachmentDesc{
             .target = m_transform,
         });
     m_confusionEffect = RenderEffectFactory::CreateAttachedParticleEffect(
-        owner->GetScene(),
+        m_scene,
         "asset/Particle/confusion_effect.particle.json",
         EffectAttachmentDesc{
             .target = m_transform,
@@ -60,7 +62,9 @@ void TrainingDummyEffects::Update(float deltaTime)
     }
 }
 
-void TrainingDummyEffects::PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, const DirectX::XMFLOAT3& hitDirection)
+#pragma region エフェクト再生
+/// @brief ヒットエフェクトを再生する
+void TrainingDummyEffects::PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, const DirectX::XMFLOAT3& hitDirection, float damage)
 {
     DirectX::XMFLOAT3 localHitPosition = MiMath::Subtract(hitPosition, m_transform->GetPosition());
     m_hitEffect.SetLocalTransform(EffectTransform{
@@ -69,8 +73,18 @@ void TrainingDummyEffects::PlayHitEffects(const DirectX::XMFLOAT3& hitPosition, 
         .scaling = { 1.0f, 1.0f, 1.0f }
         });
     m_hitEffect.Play();
+
+    if (damage > 0.0f) {
+        ProjectileFactory::CreateDamageNumber(m_scene, ProjectileFactory::DamageNumberCreateDesc{
+            .position = hitPosition,
+            .damage = damage,
+            .color = { 1.0f, 1.0f, 1.0f, 1.0f },
+            .fontPath = "asset/Font/Arial.fnt",
+            });
+    }
 }
 
+/// @brief 混乱エフェクトを再生する
 void TrainingDummyEffects::PlayConfusionEffects(float duration)
 {
     m_confusionEffectTimer = duration;
@@ -81,6 +95,7 @@ void TrainingDummyEffects::PlayConfusionEffects(float duration)
     }
 }
 
+/// @brief BlinkerBehaviorのフラッシュエフェクトを再生する
 void TrainingDummyEffects::PlayFlashBlinkerEffect()
 {
     if (!m_isActiveFlashBlinkerEffect && m_blinkerBehavior) {
@@ -88,3 +103,4 @@ void TrainingDummyEffects::PlayFlashBlinkerEffect()
         m_blinkerBehavior->FlashTemporary({ 1.0f, 1.0f, 1.0f }, 0.8f, 0.05f, 0.01f);
     }
 }
+#pragma endregion

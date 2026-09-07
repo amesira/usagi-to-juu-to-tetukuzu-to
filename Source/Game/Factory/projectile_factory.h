@@ -13,7 +13,6 @@ class TextureResource;
 
 namespace ProjectileFactory
 {
-    // 弾の生成に必要な情報をまとめた構造体
     struct BulletCreateDesc {
         XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };
         XMFLOAT3 velocity = { 0.0f, 0.0f, 1.0f };
@@ -24,6 +23,13 @@ namespace ProjectileFactory
         const char* modelPath = "asset\\Model\\bullet.fbx";
         const char* materialName = "BulletHologramMaterial";
     };
-    // 弾の生成
+    struct DamageNumberCreateDesc {
+        XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };
+        float damage = 1.0f;
+        XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        const char* fontPath = "asset\\Font\\Arial.fnt";
+    };
+
     GameObject* CreateBullet(IScene* scene, const BulletCreateDesc& desc);
+    GameObject* CreateDamageNumber(IScene* scene, const DamageNumberCreateDesc& desc);
 }

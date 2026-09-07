@@ -72,7 +72,7 @@ void TrainingDummyBehavior::OnHitReceived(const HitReceiver::HitData& hitData, c
     if (!hitResult.WasAccepted()) return;
 
     if (!hitResult.killed) {
-        m_effects.PlayHitEffects(hitData.hitPoint, hitData.hitDirection);
+        m_effects.PlayHitEffects(hitData.hitPoint, hitData.hitDirection, hitResult.appliedDamage);
         m_effects.PlayConfusionEffects(0.5f);
 
         // powerRateはダメージ量に応じて0.0f~1.0fの範囲で設定する

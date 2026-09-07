@@ -983,4 +983,8 @@
     <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
     <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\damage_number_behavior.h" />
+  </ItemGroup>
 </Project>

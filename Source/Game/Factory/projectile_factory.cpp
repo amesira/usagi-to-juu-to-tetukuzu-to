@@ -15,6 +15,7 @@
 
 #include "Game/ActorBehavior/Bullet/bullet_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
+#include "Game/PresBehavior/UI/damage_number_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/model_repository.h"
@@ -146,4 +147,24 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
 
     return bullet;
+}
+
+GameObject* ProjectileFactory::CreateDamageNumber(IScene* scene, const DamageNumberCreateDesc& desc)
+{
+    GameObject* damageNumber = scene->CreateGameObject();
+    damageNumber->SetName("DamageNumber");
+    damageNumber->SetRenderLayer(RenderLayer::Default);
+
+    TransformComponent* transform = damageNumber->AddComponent<TransformComponent>();
+    transform->SetPosition(desc.position);
+    
+    TextComponent* textComponent = damageNumber->AddComponent<TextComponent>();
+    textComponent->SetCenter(true);
+    textComponent->SetFontType(TextComponent::Font::Default);
+    textComponent->SetFontSize(36);
+
+    DamageNumberBehavior* behavior = damageNumber->AddComponent<DamageNumberBehavior>();
+    behavior->Show(desc.damage, desc.position, desc.color);
+
+    return damageNumber;
 }

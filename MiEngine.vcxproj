@@ -220,6 +220,7 @@
     <ClCompile Include="Source\Engine\Device\direct3d.cpp" />
     <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Base\health_behavior.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
@@ -480,6 +481,7 @@
     <ClInclude Include="Source\Engine\engine_service_locator.h" />
     <ClInclude Include="Source\Game\Factory\environment_factory.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\damage_number_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\health_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_sequence_task.h" />
