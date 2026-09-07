@@ -6,7 +6,7 @@
 // ・PlayerMoveBehaviorの移動エフェクト処理を担当するクラス
 //---------------------------------------------------
 #pragma once
-
+#include <vector>
 #include "Game/PresBehavior/attached_effect_handle.h"
 
 class PlayerMoveEffects {
@@ -21,7 +21,10 @@ public:
 
 private:
     AttachedEffectHandle m_runDustEffect;
-    bool m_isRunDustParticleActive = false; // 走行時の砂埃パーティクルの有効/無効状態を保持する変数
+    bool m_isRunDustParticleActive = false;
+    float m_runDustEffectRate = 0.0f;
+
+    std::vector<EffectHandle> m_jumpEffects;
 
 public:
     void Initialize(struct PlayerMoveContext& context);
@@ -31,7 +34,7 @@ public:
     void UpdateEffects(struct PlayerMoveContext& context, float deltaTime);
 
 private:
-    /// @brief 走行時の砂埃パーティクルの有効/無効を設定する
     void SetRunDustParticleActive(bool active);
+    void PlayJumpEffect(struct PlayerMoveContext& context);
 
 };

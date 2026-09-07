@@ -55,9 +55,13 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
     m_context.owner = this;
 
     GameObject* player = playerContext.owner->GetOwner();
+    m_context.scene = playerContext.scene;
+
     m_context.transform = playerContext.transform;
     m_context.rigidbody = player->GetComponent<RigidbodyComponent>();
     m_context.collider = player->GetComponent<BoxColliderComponent>();
+
+    m_context.animationController = playerContext.animationController;
 
     m_context.moveMotor = {};
     m_context.moveRotate = {};
@@ -87,7 +91,9 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
     if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded && moveIntent.canJump) {
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce * moveIntent.jumpPowerMultiplier;
         m_context.runtimeState.m_isGrounded = false;
-        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
+
+        m_context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
+        m_context.moveEffects.PlayEffects(m_context, PlayerMoveEffects::EffectsType::Jump);
     }
 
     // === 移動処理 ===

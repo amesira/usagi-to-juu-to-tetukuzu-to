@@ -20,6 +20,7 @@ private:
     ID3D11DeviceContext* m_pContext = nullptr;
 
     ID3D11Buffer* m_pVertexBuffer = nullptr;
+    ID3D11Buffer* m_pInstanceBuffer = nullptr;
 
     // 描画コマンドのバッチリスト
     std::vector<DrawBatch2D> m_batches;

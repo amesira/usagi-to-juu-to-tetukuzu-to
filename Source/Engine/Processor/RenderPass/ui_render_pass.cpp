@@ -35,6 +35,15 @@ void UIRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
 	    bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	    m_pDevice->CreateBuffer(&bd, NULL, &m_pVertexBuffer);
     }
+    // インスタンスバッファ生成
+    {
+        D3D11_BUFFER_DESC bd = {};
+        bd.Usage = D3D11_USAGE_DYNAMIC;
+        bd.ByteWidth = sizeof(DrawCommand2DInstance) * 2048; // 最大2048個
+        bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        m_pDevice->CreateBuffer(&bd, NULL, &m_pInstanceBuffer);
+    }
 }
 
 // UiRenderPassの終了処理
@@ -81,6 +90,36 @@ void UIRenderPass::Process(IScene* pScene, const RenderView& view)
         // テクスチャのセット
         m_pContext->PSSetShaderResources(0, 1, &batch.texture);
 
+        // シェーダーの定数バッファにワールド行列を更新
+        // インスタンシングを行うので、ワールド行列はIdentityにしておく
+        EngineServiceLocator::UpdateTransformCB({ XMMatrixIdentity(), XMMatrixIdentity() });
+
+        // 頂点バッファに頂点データを転送
+        {
+            D3D11_MAPPED_SUBRESOURCE msr;
+            m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+            UiVertex* v = (UiVertex*)msr.pData;
+
+            v[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
+            v[0].texCoord = XMFLOAT2(0.0f, 0.0f);
+
+            v[1].position = XMFLOAT3(0.5f, -0.5f, 0.0f);
+            v[1].texCoord = XMFLOAT2(1.0f, 0.0f);
+
+            v[2].position = XMFLOAT3(-0.5f, 0.5f, 0.0f);
+            v[2].texCoord = XMFLOAT2(0.0f, 1.0f);
+
+            v[3].position = XMFLOAT3(0.5f, 0.5f, 0.0f);
+            v[3].texCoord = XMFLOAT2(1.0f, 1.0f);
+
+            m_pContext->Unmap(m_pVertexBuffer, 0);
+        }
+
+        D3D11_MAPPED_SUBRESOURCE msr;
+        m_pContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
+        UiInstanceData* instanceData = (UiInstanceData*)msr.pData;
+        int instanceCounter = 0;
+
         for (const DrawCommand2DInstance& instance : batch.instances) {
 
             // ワールド行列の計算
@@ -93,43 +132,29 @@ void UIRenderPass::Process(IScene* pScene, const RenderView& view)
                 world = scale * rotation * translation;
             }
 
-            // シェーダーの定数バッファにワールド行列を更新
-            EngineServiceLocator::UpdateTransformCB({ world, XMMatrixIdentity() });
-
-            // 頂点バッファに頂点データを転送
-            {
-                D3D11_MAPPED_SUBRESOURCE msr;
-                m_pContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &msr);
-                UiVertex* v = (UiVertex*)msr.pData;
-
-                v[0].position = XMFLOAT3(-0.5f, -0.5f, 0.0f);
-                v[0].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y);
-
-                v[1].position = XMFLOAT3(0.5f, -0.5f, 0.0f);
-                v[1].texCoord = XMFLOAT2(instance.uvRect.x + instance.uvRect.z, instance.uvRect.y);
-
-                v[2].position = XMFLOAT3(-0.5f, 0.5f, 0.0f);
-                v[2].texCoord = XMFLOAT2(instance.uvRect.x, instance.uvRect.y + instance.uvRect.w);
-
-                v[3].position = XMFLOAT3(0.5f, 0.5f, 0.0f);
-                v[3].texCoord = XMFLOAT2(instance.uvRect.x + instance.uvRect.z, instance.uvRect.y + instance.uvRect.w);
-
-                for (int i = 0; i < 4; i++) {
-                    v[i].color = instance.color;
-                }
-                m_pContext->Unmap(m_pVertexBuffer, 0);
-            }
-
-            // 頂点バッファの設定
-            UINT stride = sizeof(UiVertex);
-            UINT offset = 0;
-            m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
-
-            // プリミティブトポロジ設定 トライアングルストリップ
-            m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-
-            // ポリゴン描画命令発行
-            m_pContext->Draw(4, 0);
+            // インスタンスバッファにインスタンスデータを転送
+            if (instanceCounter >= 2048) continue;
+            instanceData[instanceCounter].world = world;
+            instanceData[instanceCounter].color = instance.color;
+            instanceData[instanceCounter].uvRect = instance.uvRect;
+            instanceCounter++;
         }
+
+        m_pContext->Unmap(m_pInstanceBuffer, 0);
+
+        // 頂点バッファの設定
+        UINT stride = sizeof(UiVertex);
+        UINT offset = 0;
+        m_pContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+        // インスタンスバッファの設定
+        UINT instanceStride = sizeof(UiInstanceData);
+        m_pContext->IASetVertexBuffers(1, 1, &m_pInstanceBuffer, &instanceStride, &offset);
+
+        // プリミティブトポロジ設定 トライアングルストリップ
+        m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+        // ポリゴン描画命令発行
+        m_pContext->DrawInstanced(4, instanceCounter, 0, 0);
     }
 }

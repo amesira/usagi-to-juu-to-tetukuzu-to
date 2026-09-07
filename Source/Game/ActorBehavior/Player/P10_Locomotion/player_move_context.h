@@ -31,6 +31,7 @@ struct PlayerMoveRuntimeState
 struct PlayerMoveContext
 {
     class PlayerMoveBehavior* owner = nullptr;
+    class IScene* scene = nullptr;
 
     PlayerMoveRuntimeState runtimeState;
     const PlayerMoveSettingsAsset* settingsAsset = nullptr;
@@ -41,6 +42,8 @@ struct PlayerMoveContext
     class TransformComponent* transform = nullptr;
     class RigidbodyComponent* rigidbody = nullptr;
     class BoxColliderComponent* collider = nullptr;
+
+    class PlayerAnimationController* animationController = nullptr;
 
     PlayerMoveMotor moveMotor;
     PlayerMoveRotate moveRotate;

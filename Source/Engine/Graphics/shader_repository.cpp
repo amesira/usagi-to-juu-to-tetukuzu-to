@@ -57,6 +57,12 @@ void ShaderRepository::Initialize()
         uiShader.pixelShader = GeneratePixelShaderResource("ui_ps.cso");
         GenerateShaderProgramResource(uiShader);
 
+        ShaderProgramResource debugLineShader;
+        debugLineShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::DebugLine)];
+        debugLineShader.vertexShader = GenerateVertexShaderResource("debug_line_vs.cso", VertexType::DebugLine);
+        debugLineShader.pixelShader = GeneratePixelShaderResource("debug_line_ps.cso");
+        GenerateShaderProgramResource(debugLineShader);
+
         ShaderProgramResource spriteLitShader;
         spriteLitShader.name = SHADER_BASE_NAMES[static_cast<int>(ShaderBase::SpriteLit)];
         spriteLitShader.vertexShader = GenerateVertexShaderResource("sprite_lit_vs.cso", VertexType::Sprite);
@@ -317,11 +323,21 @@ bool ShaderRepository::CreateInputLayout(ID3D11InputLayout** outInputLayout, Ver
         layout[6] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
         layout[7] = { "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
         break;
-    case VertexType::Ui:
-        layout.resize(3);
+    case VertexType::DebugLine:
+        layout.resize(2);
         layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
         layout[1] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-        layout[2] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+        break;
+    case VertexType::Ui:
+        layout.resize(8);
+        layout[0] = { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 };
+        layout[1] = { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 };
+        layout[2] = { "WORLD",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[3] = { "WORLD",    1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[4] = { "WORLD",    2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[5] = { "WORLD",    3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[6] = { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
+        layout[7] = { "TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 };
         break;
     default: return false; break;
     }

@@ -22,7 +22,11 @@
             "threshold": 0.0
         },
         "gradient": {
-            "enabled": true,
+            "enabled": false,
+            "gradientDirection": [
+                0.0,
+                1.0
+            ],
             "gradientEndColor": [
                 1.0,
                 1.0,
@@ -73,6 +77,7 @@
             ],
             "intensity": 1.0,
             "modelPath": "asset/Model/EffectModel/cylinder_A.fbx",
+            "samplerMode": "Wrap",
             "textureMappingMode": "MeshUV",
             "texturePath": "asset/Texture/EffectTexture/impact_spritesheet.png",
             "uvRect": [
@@ -156,6 +161,6 @@
         }
     },
     "formatVersion": 1,
-    "name": "jump.mesh_effect",
+    "name": "jump_effect.mesh_effect",
     "type": "MeshEffect"
 }

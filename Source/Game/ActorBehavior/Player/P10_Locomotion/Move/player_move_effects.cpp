@@ -39,6 +39,7 @@ void PlayerMoveEffects::Initialize(PlayerMoveContext& context)
             },
         });
     m_isRunDustParticleActive = false;
+    m_runDustEffectRate = m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance;
 }
 
 void PlayerMoveEffects::Finalize()
@@ -52,7 +53,7 @@ void PlayerMoveEffects::PlayEffects(PlayerMoveContext& context, EffectsType effe
 {
     switch (effectType) {
     case EffectsType::Jump: {
-        // TODO: リファレンス内のジャンプエフェクトを複製し、再生する
+        PlayJumpEffect(context);
         break;
         }
     case EffectsType::Land: {
@@ -88,14 +89,45 @@ void PlayerMoveEffects::UpdateEffects(PlayerMoveContext& context, float deltaTim
 void PlayerMoveEffects::SetRunDustParticleActive(bool active)
 {
     if (m_isRunDustParticleActive == active) return;
-
     if (!m_runDustEffect.IsValid()) return;
 
     if (active) {
+        m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = m_runDustEffectRate;
         m_runDustEffect.Play();
     }
     else {
-        m_runDustEffect.Stop();
+        m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = 0.0f;
     }
     m_isRunDustParticleActive = active;
+}
+
+void PlayerMoveEffects::PlayJumpEffect(PlayerMoveContext& context)
+{
+    XMFLOAT3 spawnPosition = context.transform->GetPosition();
+    spawnPosition.y += 0.1f;
+
+    for (int i = 0; i < m_jumpEffects.size(); i++) {
+        if (!m_jumpEffects[i].IsPlaying()) {
+            m_jumpEffects[i].GetTransform()->SetPosition(spawnPosition);
+            m_jumpEffects[i].Play();
+            return;
+        }
+    }
+
+    // 最大数に達している場合は、最初のエフェクトを再利用する
+    if (m_jumpEffects.size() >= 8) {
+        m_jumpEffects[0].GetTransform()->SetPosition(spawnPosition);
+        m_jumpEffects[0].Play();
+        return;
+    }
+
+    // 新しいエフェクトを作成して再生する
+    m_jumpEffects.push_back(RenderEffectFactory::CreateMeshEffect(
+        context.scene,
+        "asset/MeshEffect/jump_effect.mesh_effect.json",
+        {
+            .position = spawnPosition,
+            .scaling = { 0.6f, 0.6f, 0.6f },
+        }));
+    m_jumpEffects.back().Play();
 }
