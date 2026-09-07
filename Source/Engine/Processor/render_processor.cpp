@@ -57,9 +57,10 @@ void RenderProcessor::Process(IScene* pScene)
     }
 
     // 2.シャドウマップパス
-    m_shadowMapPass.UnbindShadowTexture();
-    m_shadowMapPass.UnbindShadowSampler();
     if (m_renderView->enableShadowMap) {
+        m_shadowMapPass.UnbindShadowTexture();
+        m_shadowMapPass.UnbindShadowSampler();
+
         Direct3D_SetViewport(m_shadowMapPass.GetShadowMapSize(), m_shadowMapPass.GetShadowMapSize());
         Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
         Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
@@ -106,6 +107,13 @@ void RenderProcessor::Process(IScene* pScene)
         m_transparentRenderPass.Process(pScene, *m_renderView);
 
         m_maskRenderPass.Process(pScene, *m_renderView);
+
+        if (m_renderView->enableUI) {
+            m_lightingPass.BindLightCB(false);
+            Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+            Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+            m_uiRenderPass.Process3D(pScene, *m_renderView);
+        }
     }
 
     if (m_renderView->enableDebugDraw) {

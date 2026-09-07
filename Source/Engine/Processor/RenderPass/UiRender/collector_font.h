@@ -17,7 +17,7 @@
 using Microsoft::WRL::ComPtr;
 
 #include "Engine/Component/text_component.h"
-#include "draw_command.h"
+#include "ui_draw_command.h"
 
 class IScene;
 class ShaderProgramResource;
@@ -65,8 +65,8 @@ public:
     void    Finalize();
 
     // シーンからTextComponentを収集して描画バッチを生成
-	void CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches);
-    void CollectDrawBatches3D(IScene* pScene, std::vector<DrawBatch3D>& outBatches);
+	void CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch2D>& outBatches);
+    void CollectDrawBatches3D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch3D>& outBatches);
 
 private:
     // UTF-8デコード関数。text_ptrが指す位置から1文字分のコードポイントを読み取り、text_ptrを次の文字の位置に進める。

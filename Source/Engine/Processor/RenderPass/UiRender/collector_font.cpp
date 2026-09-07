@@ -19,6 +19,7 @@
 
 #include "Engine/Graphics/shader_resource.h"
 #include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/transform_component.h"
 
 #include "Utility/mi_math.h"
 #include "Utility/debug_ostream.h"
@@ -94,7 +95,7 @@ void CollectorFont::Finalize()
 }
 
 // シーンからTextComponentを収集して描画バッチを生成
-void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches)
+void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch2D>& outBatches)
 {
 	auto* textPool = pScene->GetComponentPool<TextComponent>();
 	auto* rectTransformPool = pScene->GetComponentPool<RectTransformComponent>();
@@ -108,10 +109,12 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
 
         // コンポーネントが無効ならスキップ
         if (!rect) continue;
+        if (!text->GetEnable()) continue;
 		if (!rect->GetOwner()->GetActive()) continue;
 		if (!rect->GetEnable()) continue;
 
         int fontType = (int)text->GetFontType();
+        if (fontType < 0 || fontType >= (int)TextComponent::Font::MAX) continue;
         ComPtr<ID3D11ShaderResourceView>& fontSRV = m_fonts[fontType].fontSRV;
         if (!fontSRV) continue;
 
@@ -120,12 +123,12 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
         const char8_t* current_char = text->GetText().c_str();
 
 		// 描画コマンドに追加
-		DrawBatch2D batch;
+		UiDrawCommand::DrawBatch2D batch;
 		batch.orderInLayer = rect->GetPosition().z;
 		batch.texture = fontSRV.Get();
         batch.shaderProgram = m_pFontShader;
 
-		DrawCommand2DInstance instance;
+		UiDrawCommand::DrawCommand2DInstance instance;
 		instance.angleZ = rect->GetRotation().z;
 		instance.color = text->GetColor();
 
@@ -202,9 +205,54 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
     }
 }
 
-void CollectorFont::CollectDrawBatches3D(IScene* pScene, std::vector<DrawBatch3D>& outBatches)
+void CollectorFont::CollectDrawBatches3D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch3D>& outBatches)
 {
+    auto* texts = pScene->GetComponentPool<TextComponent>();
+    auto* transforms = pScene->GetComponentPool<TransformComponent>();
+    if (!texts || !transforms) return;
 
+    for (auto& text : texts->GetList()) {
+        auto* owner = text.GetOwner();
+        if (!owner || !owner->GetActive() || !text.GetEnable() || text.GetText().empty()) continue;
+
+        auto* transform = transforms->GetByGameObjectID(owner->GetID());
+        if (!transform || !transform->GetEnable()) continue;
+
+        const int fontType = static_cast<int>(text.GetFontType());
+        if (fontType < 0 || fontType >= static_cast<int>(TextComponent::Font::MAX)) continue;
+
+        auto* texture = m_fonts[fontType].fontSRV.Get();
+        if (!texture || text.GetFontSize() <= 0) continue;
+
+        const auto scale = transform->GetScaling();
+        const float fontScale = text.GetFontSize() / (BASE_FONT_SIZE * BASE_FONT_SIZE);
+        const float sx = fontScale * scale.x;
+        const float sy = fontScale * scale.y;
+        float penX = 0.0f;
+        if (text.IsCenter()) {
+            const char8_t* current = text.GetText().c_str();
+            while (*current) {
+                const auto* glyph = GetGlyph(fontType, DecodeUtf8(&current));
+                if (glyph) penX -= glyph->x_advance * sx * 0.5f;
+            }
+        }
+
+        auto& batch = UiDrawCommand::FindOrAddBatch3D(outBatches, texture, m_pFontShader);
+        const char8_t* current = text.GetText().c_str();
+        while (*current) {
+            const auto* glyph = GetGlyph(fontType, DecodeUtf8(&current));
+            if (!glyph) continue;
+            UiDrawCommand::DrawCommand3DInstance instance;
+            instance.position = transform->GetPosition();
+            instance.offset = { penX + (glyph->x_off + glyph->width * 0.5f) * sx,
+                (glyph->y_off + glyph->height * 0.5f) * sy };
+            instance.scale = { glyph->width * sx, glyph->height * sy, 1.0f };
+            instance.color = text.GetColor();
+            instance.uvRect = { glyph->u0, glyph->v0, glyph->u1 - glyph->u0, glyph->v1 - glyph->v0 };
+            batch.instances.push_back(instance);
+            penX += glyph->x_advance * sx;
+        }
+    }
 }
 
 // UTF-8デコード関数

@@ -6,7 +6,7 @@
 //----------------------------------------------------
 #ifndef COLLECTOR_SLIDER_H
 #define COLLECTOR_SLIDER_H
-#include "draw_command.h"
+#include "ui_draw_command.h"
 class IScene;
 class TextureResource;
 class ShaderProgramResource;
@@ -20,7 +20,8 @@ public:
     void Initialize();
     void Finalize();
 
-    void CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches);
+    void CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch2D>& outBatches);
+    void CollectDrawBatches3D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch3D>& outBatches);
 };
 
 #endif

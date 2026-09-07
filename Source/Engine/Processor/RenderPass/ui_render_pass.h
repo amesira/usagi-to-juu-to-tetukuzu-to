@@ -8,7 +8,7 @@
 #define UI_RENDER_PASS_H
 #include "Engine/Core/pass.h"
 #include <vector>
-#include "./UiRender/draw_command.h"
+#include "./UiRender/ui_draw_command.h"
 
 #include "./UiRender/collector_image.h"
 #include "./UiRender/collector_slider.h"
@@ -23,7 +23,8 @@ private:
     ID3D11Buffer* m_pInstanceBuffer = nullptr;
 
     // 描画コマンドのバッチリスト
-    std::vector<DrawBatch2D> m_batches;
+    std::vector<UiDrawCommand::DrawBatch2D> m_batches;
+    std::vector<UiDrawCommand::DrawBatch3D> m_batches3D;
 
     //　描画コマンドの収集クラス
     CollectorImage  m_collectorImage;
@@ -34,8 +35,9 @@ public:
     void    Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     void    Finalize() override;
     void    Process(IScene* pScene, const RenderView& view) override;
+    void    Process3D(IScene* pScene, const RenderView& view);
 
-    void    AddDrawBatch(const DrawBatch2D& batch) { m_batches.push_back(batch); }
+    void    AddDrawBatch(const UiDrawCommand::DrawBatch2D& batch) { m_batches.push_back(batch); }
 
 private:
 

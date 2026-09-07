@@ -29,12 +29,11 @@ void CollectorSlider::Finalize()
 
 }
 
-void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches) 
+void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch2D>& outBatches)
 {
     auto* sliderComponentPool = pScene->GetComponentPool<SliderComponent>();
     auto* rectTransformPool = pScene->GetComponentPool<RectTransformComponent>();
-    auto* transformPool = pScene->GetComponentPool<TransformComponent>();
-    if (sliderComponentPool == nullptr)return;
+    if (!sliderComponentPool || !rectTransformPool || !m_pDefaultTexture)return;
 
     auto& sliderList = sliderComponentPool->GetList();
 
@@ -44,17 +43,18 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch
         RectTransformComponent* rect = rectTransformPool->GetByGameObjectID(slider->GetOwner()->GetID());
 
         if (!rect) continue;
+        if (!rect->GetEnable()) continue;
         if (!slider->GetOwner()->GetActive()) continue;
         if (!slider->GetEnable()) continue;
 
         // 描画コマンドに追加
-        DrawBatch2D batch;
+        UiDrawCommand::DrawBatch2D batch;
         batch.orderInLayer = rect->GetPosition().z;
         batch.texture = m_pDefaultTexture->texture.Get();
         batch.shaderProgram = m_pDefaultUiShader;
 
         // BG描画コマンド
-        DrawCommand2DInstance instance;
+        UiDrawCommand::DrawCommand2DInstance instance;
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };
         instance.size = { rect->GetScaling().x, rect->GetScaling().y };
         instance.angleZ = rect->GetRotation().z;
@@ -86,5 +86,34 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch
         batch.instances.push_back(instance);
 
         outBatches.push_back(batch);
+    }
+}
+
+void CollectorSlider::CollectDrawBatches3D(IScene* pScene, std::vector<UiDrawCommand::DrawBatch3D>& outBatches)
+{
+    auto* sliders = pScene->GetComponentPool<SliderComponent>();
+    auto* transforms = pScene->GetComponentPool<TransformComponent>();
+    if (!sliders || !transforms || !m_pDefaultTexture || !m_pDefaultTexture->texture) return;
+
+    for (auto& slider : sliders->GetList()) {
+        auto* owner = slider.GetOwner();
+        if (!owner || !owner->GetActive() || !slider.GetEnable()) continue;
+        auto* transform = transforms->GetByGameObjectID(owner->GetID());
+        if (!transform || !transform->GetEnable()) continue;
+
+        auto& batch = UiDrawCommand::FindOrAddBatch3D(outBatches,
+            m_pDefaultTexture->texture.Get(), m_pDefaultUiShader);
+        UiDrawCommand::DrawCommand3DInstance instance;
+        instance.position = transform->GetPosition();
+        instance.scale = transform->GetScaling();
+        instance.color = slider.GetBgColor();
+        batch.instances.push_back(instance);
+
+        const float value = slider.GetValue();
+        if (value <= 0.0f) continue;
+        instance.offset.x = -instance.scale.x * (1.0f - value) * 0.5f;
+        instance.scale.x *= value;
+        instance.color = slider.GetFillColor();
+        batch.instances.push_back(instance);
     }
 }
