@@ -32,6 +32,9 @@ public:
     static TextureRepository* GetTextureRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetTextureRepository() : nullptr;
     }
+    static FontRepository* GetFontRepository() {
+        return s_engineInstance ? s_engineInstance->GetResourceManager().GetFontRepository() : nullptr;
+    }
     static MaterialRepository* GetMaterialRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetMaterialRepository() : nullptr;
     }

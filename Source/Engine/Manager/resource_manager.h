@@ -7,6 +7,7 @@
 #ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 #include "Engine/Graphics/texture_repository.h"
+#include "Engine/Graphics/font_repository.h"
 #include "Engine/Graphics/model_repository.h"
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/shader_repository.h"
@@ -15,6 +16,7 @@ class ResourceManager {
 private:
     // テクスチャリポジトリ
     TextureRepository m_textureRepository;
+    FontRepository m_fontRepository;
     // シェーダーリポジトリ
     ShaderRepository m_shaderRepository;
     // モデルリポジトリ
@@ -30,6 +32,7 @@ public:
 
     // テクスチャリポジトリへのアクセス
     TextureRepository* GetTextureRepository() { return &m_textureRepository; }
+    FontRepository* GetFontRepository() { return &m_fontRepository; }
     // シェーダーリポジトリへのアクセス
     ShaderRepository* GetShaderRepository() { return &m_shaderRepository; }
     // モデルリポジトリへのアクセス

@@ -1005,4 +1005,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\Graphics\font_repository.cpp" />
+    <ClInclude Include="Source\Engine\Graphics\font_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\font_resource.h" />
+  </ItemGroup>
 </Project>

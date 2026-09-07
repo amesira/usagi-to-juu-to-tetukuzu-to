@@ -987,4 +987,9 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
     <ClInclude Include="Source\Game\PresBehavior\UI\damage_number_behavior.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\Graphics\font_repository.cpp" />
+    <ClInclude Include="Source\Engine\Graphics\font_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\font_resource.h" />
+  </ItemGroup>
 </Project>

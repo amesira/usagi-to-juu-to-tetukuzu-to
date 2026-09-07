@@ -12,6 +12,7 @@
 #include "Engine/Component/model_component.h"
 #include "Engine/Component/particle_system_component.h"
 #include "Engine/Component/transform_component.h"
+#include "Engine/Component/text_component.h"
 
 #include "Game/ActorBehavior/Bullet/bullet_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
@@ -160,7 +161,7 @@ GameObject* ProjectileFactory::CreateDamageNumber(IScene* scene, const DamageNum
     
     TextComponent* textComponent = damageNumber->AddComponent<TextComponent>();
     textComponent->SetCenter(true);
-    textComponent->SetFontType(TextComponent::Font::Default);
+    textComponent->SetFontPath("asset/Font/PixelMplus12-Regular.ttf");
     textComponent->SetFontSize(36);
 
     DamageNumberBehavior* behavior = damageNumber->AddComponent<DamageNumberBehavior>();
