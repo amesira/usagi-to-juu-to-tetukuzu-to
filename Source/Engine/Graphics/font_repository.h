@@ -1,3 +1,8 @@
+//---------------------------------------------------
+// File  ：_/Graphics/font_repository.h
+// Date  ：2026/09/07
+// Author：Miu Kitamura
+//---------------------------------------------------
 #pragma once
 #include "font_resource.h"
 #include <memory>

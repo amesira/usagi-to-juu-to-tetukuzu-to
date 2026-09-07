@@ -1,3 +1,8 @@
+//---------------------------------------------------
+// File  ：_/Graphics/font_resource.h
+// Date  ：2026/09/07
+// Author：Miu Kitamura
+//---------------------------------------------------
 #pragma once
 #include <d3d11.h>
 #include <wrl/client.h>
