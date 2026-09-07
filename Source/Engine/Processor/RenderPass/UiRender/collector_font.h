@@ -27,10 +27,8 @@ private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
-    // 頂点バッファ
 	ComPtr<ID3D11Buffer> m_pVertexBuffer;
 
-    // シェーダープログラムリソース
     ShaderProgramResource* m_pFontShader = nullptr;
 
 	// 1文字の描画情報
@@ -68,6 +66,7 @@ public:
 
     // シーンからTextComponentを収集して描画バッチを生成
 	void CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D>& outBatches);
+    void CollectDrawBatches3D(IScene* pScene, std::vector<DrawBatch3D>& outBatches);
 
 private:
     // UTF-8デコード関数。text_ptrが指す位置から1文字分のコードポイントを読み取り、text_ptrを次の文字の位置に進める。

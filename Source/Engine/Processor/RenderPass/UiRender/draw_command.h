@@ -18,17 +18,32 @@ struct DrawCommand2DInstance {
 
 // 2D描画コマンドのバッチ情報
 struct DrawBatch2D {
-    // レイヤー内の描画順序
     int orderInLayer;
-    // 描画に使用するテクスチャ
     ID3D11ShaderResourceView* texture;
-    // 使用するシェーダープログラムリソース
     ShaderProgramResource* shaderProgram;
 
-    // 描画コマンドのインスタンス情報のリスト
     std::vector<DrawCommand2DInstance> instances;
     
     DrawBatch2D() : orderInLayer(0), texture(nullptr), shaderProgram(nullptr) {
+        instances.reserve(1024);
+    }
+};
+
+struct DrawCommand3DInstance {
+    XMFLOAT3 position;
+    XMFLOAT3 rotation;
+    XMFLOAT3 scale;
+    XMFLOAT4 color;
+    XMFLOAT4 uvRect;
+};
+
+struct DrawBatch3D {
+    ID3D11ShaderResourceView* texture;
+    ShaderProgramResource* shaderProgram;
+
+    std::vector<DrawCommand3DInstance> instances;
+
+    DrawBatch3D() : texture(nullptr), shaderProgram(nullptr) {
         instances.reserve(1024);
     }
 };

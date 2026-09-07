@@ -202,6 +202,11 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<DrawBatch2D
     }
 }
 
+void CollectorFont::CollectDrawBatches3D(IScene* pScene, std::vector<DrawBatch3D>& outBatches)
+{
+
+}
+
 // UTF-8デコード関数
 int CollectorFont::DecodeUtf8(const char8_t** text_ptr) 
 {
