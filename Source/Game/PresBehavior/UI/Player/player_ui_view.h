@@ -11,8 +11,6 @@
 #include "player_ui_context.h"
 
 class PlayerUiView {
-private:
-
 public:
     void SetWidgetGroupAlpha(
         PlayerUiContext& context, 
@@ -22,5 +20,12 @@ public:
         PlayerUiContext& context, 
         PlayerUi::WidgetGroupID groupID, 
         const DirectX::XMFLOAT2& position);
+
+    // 基準位置を変えずに演出オフセットだけを反映する。
+    void SetWidgetGroupShakeOffset(PlayerUiContext& context,
+        PlayerUi::WidgetGroupID groupID, const DirectX::XMFLOAT2& offset);
+
+private:
+    void ApplyWidgetGroupPosition(PlayerUi::WidgetGroup& group);
 
 };

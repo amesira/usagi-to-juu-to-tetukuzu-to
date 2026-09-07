@@ -992,4 +992,7 @@
     <ClInclude Include="Source\Engine\Graphics\font_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\font_resource.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\ui_shake_task.h" />
+  </ItemGroup>
 </Project>

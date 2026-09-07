@@ -76,7 +76,10 @@ void UiHandle::SetPosition(float x, float y)
 {
     if (!IsValid()) return;
     if (RectTransformComponent* rectTransform = GetRectTransform()) {
-        rectTransform->SetPosition({x, y, 0.0f});
+        auto position = rectTransform->GetPosition();
+        position.x = x;
+        position.y = y;
+        rectTransform->SetPosition(position); // 描画順のZは維持する。
     }
 }
 

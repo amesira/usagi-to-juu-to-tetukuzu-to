@@ -16,21 +16,18 @@ namespace PlayerUi
     /// @brief ウィジェットのグループを表す構造体
     struct WidgetGroup {
         std::vector<UiHandle> widgets;
-        DirectX::XMFLOAT2 originalCenterPosition;
-        DirectX::XMFLOAT2 currentCenterPosition;
+        DirectX::XMFLOAT2 originalCenterPosition = {}; // 演出前の基準位置
+        DirectX::XMFLOAT2 currentCenterPosition = {};  // 演出反映後の位置
+        DirectX::XMFLOAT2 shakeOffset = {};
+        float currentAlpha = 1.0f;
         std::vector<DirectX::XMFLOAT2> offsetPositions;
     };
 }
-
-struct PlayerUiRuntimeState {
-    
-};
 
 struct PlayerUiContext {
     class PlayerUiBehavior* owner = nullptr;
     class IScene* scene = nullptr;
 
-    PlayerUiRuntimeState runtimeState;
     // settings
 
     class TransformComponent* cameraTransform = nullptr;
