@@ -1,6 +1,7 @@
 // player_ui_context.h
 #pragma once
 #include <vector>
+#include <DirectXMath.h>
 #include "Game/PresBehavior/UI/ui_handle.h"
 
 namespace PlayerUi 
@@ -14,13 +15,22 @@ namespace PlayerUi
     };
     /// @brief ウィジェットのグループを表す構造体
     struct WidgetGroup {
-        WidgetGroupID id = WidgetGroupID::None;
         std::vector<UiHandle> widgets;
+        DirectX::XMFLOAT2 originalCenterPosition;
+        DirectX::XMFLOAT2 currentCenterPosition;
+        std::vector<DirectX::XMFLOAT2> offsetPositions;
+    };
+
+    struct PlayerUiRuntimeState {
+        WidgetGroup widgetGroups[static_cast<size_t>(WidgetGroupID::Max)];
     };
 
     struct PlayerUiContext {
         class PlayerUiBehavior* owner = nullptr;
         class IScene* scene = nullptr;
+
+        PlayerUiRuntimeState runtimeState;
+        // settings
 
         class TransformComponent* cameraTransform = nullptr;
         class CameraComponent* cameraComponent = nullptr;

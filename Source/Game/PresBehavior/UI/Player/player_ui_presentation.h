@@ -6,10 +6,27 @@
 // ・PlayerUiの演出を担当するクラス
 //---------------------------------------------------
 #pragma once
+#include <DirectXMath.h>
+#include "player_ui_context.h"
+
+class PlayerUiView;
 
 class PlayerUiPresentation {
 private:
 
 public:
+    void Initialize();
+    void Update(float deltaTime);
+
+    void FadeWidgetGroup(
+        PlayerUi::PlayerUiContext& context, 
+        PlayerUi::WidgetGroupID groupID, 
+        float targetAlpha, 
+        float duration);
+    void ShakeWidgetGroup(
+        PlayerUi::PlayerUiContext& context, 
+        PlayerUi::WidgetGroupID groupID, 
+        float intensity, 
+        float duration);
 
 };

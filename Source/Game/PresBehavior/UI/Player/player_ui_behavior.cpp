@@ -17,5 +17,5 @@ void PlayerUiBehavior::Update()
 
 void PlayerUiBehavior::DrawComponentInspector()
 {
-    
+
 }
