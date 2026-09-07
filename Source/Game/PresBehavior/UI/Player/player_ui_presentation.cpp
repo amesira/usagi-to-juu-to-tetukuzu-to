@@ -11,14 +11,14 @@ void PlayerUiPresentation::Initialize()
 
 }
 
-void PlayerUiPresentation::Update(float deltaTime)
+void PlayerUiPresentation::Update(PlayerUiContext& context, float deltaTime)
 {
 
 }
 
 /// @brief ウィジェットグループのフェード演出を行う
 void PlayerUiPresentation::FadeWidgetGroup(
-    PlayerUi::PlayerUiContext& context, 
+    PlayerUiContext& context, 
     PlayerUi::WidgetGroupID groupID, 
     float targetAlpha, 
     float duration)
@@ -28,7 +28,7 @@ void PlayerUiPresentation::FadeWidgetGroup(
 
 /// @brief ウィジェットグループのシェイク演出を行う
 void PlayerUiPresentation::ShakeWidgetGroup(
-    PlayerUi::PlayerUiContext& context, 
+    PlayerUiContext& context, 
     PlayerUi::WidgetGroupID groupID, 
     float intensity, 
     float duration)

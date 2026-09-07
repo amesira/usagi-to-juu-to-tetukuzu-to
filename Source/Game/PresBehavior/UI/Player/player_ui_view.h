@@ -15,11 +15,11 @@ private:
 
 public:
     void SetWidgetGroupAlpha(
-        PlayerUi::PlayerUiContext& context, 
+        PlayerUiContext& context, 
         PlayerUi::WidgetGroupID groupID, 
         float alpha);
     void SetWidgetGroupPosition(
-        PlayerUi::PlayerUiContext& context, 
+        PlayerUiContext& context, 
         PlayerUi::WidgetGroupID groupID, 
         const DirectX::XMFLOAT2& position);
 

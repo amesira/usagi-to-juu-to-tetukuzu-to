@@ -16,15 +16,15 @@ private:
 
 public:
     void Initialize();
-    void Update(float deltaTime);
+    void Update(PlayerUiContext& context, float deltaTime);
 
     void FadeWidgetGroup(
-        PlayerUi::PlayerUiContext& context, 
+        PlayerUiContext& context, 
         PlayerUi::WidgetGroupID groupID, 
         float targetAlpha, 
         float duration);
     void ShakeWidgetGroup(
-        PlayerUi::PlayerUiContext& context, 
+        PlayerUiContext& context, 
         PlayerUi::WidgetGroupID groupID, 
         float intensity, 
         float duration);

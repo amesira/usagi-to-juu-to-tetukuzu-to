@@ -9,11 +9,11 @@ using namespace PlayerUi;
 
 /// @brief ウィジェットグループのアルファ値を設定する
 void PlayerUiView::SetWidgetGroupAlpha(
-    PlayerUi::PlayerUiContext& context, 
+    PlayerUiContext& context, 
     PlayerUi::WidgetGroupID groupID, 
     float alpha)
 {
-    WidgetGroup& group = context.runtimeState.widgetGroups[static_cast<size_t>(groupID)];
+    WidgetGroup& group = context.widgetGroups[static_cast<size_t>(groupID)];
     for (UiHandle& widget : group.widgets) {
         widget.SetAlpha(alpha);
     }
@@ -21,11 +21,11 @@ void PlayerUiView::SetWidgetGroupAlpha(
 
 /// @brief ウィジェットグループの位置を設定する
 void PlayerUiView::SetWidgetGroupPosition(
-    PlayerUi::PlayerUiContext& context, 
+    PlayerUiContext& context, 
     PlayerUi::WidgetGroupID groupID, 
     const DirectX::XMFLOAT2& position)
 {
-    WidgetGroup& group = context.runtimeState.widgetGroups[static_cast<size_t>(groupID)];
+    WidgetGroup& group = context.widgetGroups[static_cast<size_t>(groupID)];
     group.currentCenterPosition = position;
 
     for (size_t i = 0; i < group.widgets.size(); ++i) {

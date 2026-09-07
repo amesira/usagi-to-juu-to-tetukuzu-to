@@ -20,20 +20,25 @@ namespace PlayerUi
         DirectX::XMFLOAT2 currentCenterPosition;
         std::vector<DirectX::XMFLOAT2> offsetPositions;
     };
-
-    struct PlayerUiRuntimeState {
-        WidgetGroup widgetGroups[static_cast<size_t>(WidgetGroupID::Max)];
-    };
-
-    struct PlayerUiContext {
-        class PlayerUiBehavior* owner = nullptr;
-        class IScene* scene = nullptr;
-
-        PlayerUiRuntimeState runtimeState;
-        // settings
-
-        class TransformComponent* cameraTransform = nullptr;
-        class CameraComponent* cameraComponent = nullptr;
-        class CameraControlBehavior* cameraControlBehavior = nullptr;
-    };
 }
+
+struct PlayerUiRuntimeState {
+    
+};
+
+struct PlayerUiContext {
+    class PlayerUiBehavior* owner = nullptr;
+    class IScene* scene = nullptr;
+
+    PlayerUiRuntimeState runtimeState;
+    // settings
+
+    class TransformComponent* cameraTransform = nullptr;
+    class CameraComponent* cameraComponent = nullptr;
+    class CameraControlBehavior* cameraControlBehavior = nullptr;
+
+    class PlayerUiView* view = nullptr;
+    class PlayerUiPresentation* presentation = nullptr;
+
+    PlayerUi::WidgetGroup widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::Max)];
+};
