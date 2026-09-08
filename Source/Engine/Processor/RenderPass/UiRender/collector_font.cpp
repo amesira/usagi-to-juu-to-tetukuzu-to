@@ -65,7 +65,10 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
         if (!font) continue;
 
 		// 描画スケール計算
-        float render_scale = (float)text->GetFontSize() / FontResource::BASE_FONT_SIZE;
+        const float renderScale = static_cast<float>(text->GetFontSize()) / FontResource::BASE_FONT_SIZE;
+        const auto textScale = rect->GetScaling();
+        const float scaleX = renderScale * textScale.x;
+        const float scaleY = renderScale * textScale.y;
         const char8_t* current_char = text->GetText().c_str();
 
 		// 描画コマンドに追加
@@ -94,7 +97,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
 					const FontGlyphInfo* glyph = m_fontRepository->GetGlyph(*font, codepoint);
 					if (!glyph) continue;
 
-					xOffset += (glyph->x_advance * render_scale) * 0.5f;
+					xOffset += (glyph->x_advance * scaleX) * 0.5f;
 				}
 			}
 			pivotPos.x -= xOffset;
@@ -109,10 +112,10 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
 			if (!glyph) continue;
 
             // ローカルな頂点データを計算
-			float x0 = pivotPos.x + (glyph->x_off * render_scale);
-			float y0 = pivotPos.y + (glyph->y_off * render_scale); // ★Y方向を反転
-			float x1 = x0 + (glyph->width * render_scale);
-			float y1 = y0 + (glyph->height * render_scale); // ★Y方向を反転
+			float x0 = pivotPos.x + (glyph->x_off * scaleX);
+			float y0 = pivotPos.y + (glyph->y_off * scaleY); // ★Y方向を反転
+			float x1 = x0 + (glyph->width * scaleX);
+			float y1 = y0 + (glyph->height * scaleY); // ★Y方向を反転
 
 			// インスタンス更新
             XMFLOAT2 localPos = { (x0 + x1) / 2.0f, (y0 + y1) / 2.0f };
@@ -140,7 +143,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
 			};
 
 			// 文字送り (変更なし)
-			pivotPos.x += (glyph->x_advance * render_scale);
+			pivotPos.x += (glyph->x_advance * scaleX);
 
 			// インスタンス追加
 			batch.instances.push_back(instance);

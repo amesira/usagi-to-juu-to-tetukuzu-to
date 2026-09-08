@@ -29,6 +29,7 @@ struct PlayerUiContext {
     class IScene* scene = nullptr;
 
     // settings
+    const class PlayerUiSettingsAsset* settingsAsset = nullptr;
 
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;

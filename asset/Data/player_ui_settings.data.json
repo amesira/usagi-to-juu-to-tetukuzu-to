@@ -1,0 +1,97 @@
+{
+    "data": {
+        "ammoCount": {
+            "backgroundImage": {
+                "position": [
+                    -50.0,
+                    -50.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    300.0,
+                    50.0
+                ]
+            },
+            "fillImage": {
+                "position": [
+                    -50.0,
+                    -50.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    300.0,
+                    50.0
+                ]
+            },
+            "label": {
+                "position": [
+                    -159.0,
+                    -16.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.800000011920929,
+                    0.800000011920929
+                ]
+            },
+            "placement": {
+                "position": [
+                    -150.0,
+                    -65.0
+                ],
+                "screenAnchor": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "slider": {
+                "position": [
+                    0.0,
+                    22.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    160.0,
+                    7.0
+                ]
+            }
+        },
+        "healthBar": {
+            "label": {
+                "position": [
+                    -140.0,
+                    5.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.800000011920929,
+                    0.800000011920929
+                ]
+            },
+            "placement": {
+                "position": [
+                    180.0,
+                    -65.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    1.0
+                ]
+            },
+            "slider": {
+                "position": [
+                    -12.0,
+                    18.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    256.79998779296875,
+                    10.0
+                ]
+            }
+        }
+    },
+    "formatVersion": 0,
+    "name": "player_ui_settings.data",
+    "type": "PlayerUiSettingsAsset"
+}

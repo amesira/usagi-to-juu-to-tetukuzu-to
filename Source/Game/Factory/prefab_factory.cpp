@@ -20,6 +20,8 @@
 #include "Game/Factory/Prefab/player_prefab_settings_asset.h"
 #include "Game/Factory/Prefab/training_dummy_prefab_settings_asset.h"
 #include "Game/PresBehavior/Camera/camera_settings_asset.h"
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
+#include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
 
 #include "actor_factory.h"
 
@@ -51,6 +53,11 @@ PrefabFactory::PlayerPrefab PrefabFactory::CreatePlayerPrefab(
         position,
         settingsAsset->GetData());
     if (!prefab.player) return prefab;
+
+    if (auto* ui = prefab.player->GetComponent<PlayerUiBehavior>()) {
+        ui->Setup(DATA_LOADER->GetAsset<PlayerUiSettingsAsset>(
+            "asset/Data/player_ui_settings.data.json", true));
+    }
 
     // 各種設定アセットをロードして、PlayerBehaviorに設定する
     PlayerMoveSettingsAsset* moveSettingsAsset =

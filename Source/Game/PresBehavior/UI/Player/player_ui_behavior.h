@@ -12,6 +12,9 @@
 #include "player_ui_context.h"
 #include "player_ui_presentation.h"
 #include "player_ui_view.h"
+#include <cstdint>
+
+class PlayerUiSettingsAsset;
 
 class PlayerUiBehavior : public BehaviorComponent {
 private:
@@ -20,6 +23,9 @@ private:
     PlayerUiView m_view;
     PlayerUiPresentation m_presentation;
     bool m_widgetsCreated = false;
+    std::uint64_t m_lastSettingsRevision = 0;
+    DirectX::XMFLOAT2 m_lastScreenSize = {};
+    bool m_layoutDirty = true;
 
 public:
     PlayerUiBehavior() = default;
@@ -29,9 +35,11 @@ public:
     void DrawComponentInspector() override;
     // シーン全体の破棄はシーンが担当。個別にUIを終了するときに呼ぶ。
     void DestroyWidgets();
+    void Setup(const PlayerUiSettingsAsset* settingsAsset);
 
 private:
     void CreateTestWidgets();
+    void ApplyLayoutSettings();
     void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
         const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
         const char* name, float orderInLayer);
