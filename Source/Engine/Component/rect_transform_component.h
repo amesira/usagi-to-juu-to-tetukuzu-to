@@ -17,7 +17,12 @@ private:
     DirectX::XMFLOAT3   m_rotation = { 0.0f,0.0f,0.0f };
     DirectX::XMFLOAT3   m_scaling = { 1.0f,1.0f,1.0f };
 
+    // UIの演出等に使う、描画時に適用する変換行列
+    DirectX::XMFLOAT4X4 m_presentationTransform = {1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1};
+
 public:
+    void SetPresentationTransform(const DirectX::XMFLOAT4X4& transform) { m_presentationTransform = transform; }
+    const DirectX::XMFLOAT4X4& GetPresentationTransform() const { return m_presentationTransform; }
     void    SetPosition(DirectX::XMFLOAT3 position) { m_position = position; }
     void    SetRotation(DirectX::XMFLOAT3 rotation) { m_rotation = rotation; }
     void    SetScaling(DirectX::XMFLOAT3 scaling) { m_scaling = scaling; }

@@ -1026,6 +1026,7 @@
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\image_fill_utility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_perspective.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_settings_asset.h" />
   </ItemGroup>
 </Project>

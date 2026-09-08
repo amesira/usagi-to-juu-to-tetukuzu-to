@@ -79,6 +79,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
 
 		UiDrawCommand::DrawCommand2DInstance instance;
 		instance.angleZ = rect->GetRotation().z;
+        instance.presentationTransform = rect->GetPresentationTransform();
 		instance.color = text->GetColor();
 
 		// 各文字の出力

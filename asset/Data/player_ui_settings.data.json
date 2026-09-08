@@ -89,6 +89,16 @@
                     10.0
                 ]
             }
+        },
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 12.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
         }
     },
     "formatVersion": 0,

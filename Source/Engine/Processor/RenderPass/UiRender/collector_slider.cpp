@@ -58,6 +58,7 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCom
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };
         instance.size = { rect->GetScaling().x, rect->GetScaling().y };
         instance.angleZ = rect->GetRotation().z;
+        instance.presentationTransform = rect->GetPresentationTransform();
         instance.color = slider->GetBgColor();
         instance.uvRect = {0.0f, 0.0f, 1.0f, 1.0f};
 

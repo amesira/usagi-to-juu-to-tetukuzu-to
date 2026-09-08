@@ -4,19 +4,23 @@
 // Author：Miu Kitamura
 //===================================================
 #include "player_ui_presentation.h"
+
 #include "player_ui_view.h"
+
 #include <algorithm>
 #include <cmath>
 
+using namespace PlayerUi;
+
 void PlayerUiPresentation::Initialize()
 {
-    // 初回初期化用。再生中の停止にはCancelAll(context)を使う。
     m_groupTasks = {};
 }
 
 void PlayerUiPresentation::Update(PlayerUiContext& context, float deltaTime)
 {
     if (!context.view || !std::isfinite(deltaTime) || deltaTime < 0.0f) return;
+
     for (size_t i = 1; i < m_groupTasks.size(); ++i) {
         const auto id = static_cast<PlayerUi::WidgetGroupID>(i);
         auto& tasks = m_groupTasks[i];

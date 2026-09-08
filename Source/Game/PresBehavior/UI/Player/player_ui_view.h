@@ -26,6 +26,6 @@ public:
         PlayerUi::WidgetGroupID groupID, const DirectX::XMFLOAT2& offset);
 
 private:
-    void ApplyWidgetGroupPosition(PlayerUi::WidgetGroup& group);
+    void ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::WidgetGroup& group);
 
 };

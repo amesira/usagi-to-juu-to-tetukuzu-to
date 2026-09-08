@@ -7,11 +7,15 @@
 namespace {
     constexpr UINT MAX_UI_INSTANCES = 2048;
 
+    /// @brief Batchesを描画するための共通関数
+    /// @param makeWorld インスタンスデータからワールド行列を生成する関数
     template<class Batch, class MakeWorld>
     void DrawBatches(ID3D11DeviceContext* context, ID3D11Buffer* vertices,
         ID3D11Buffer* instances, const std::vector<Batch>& batches, MakeWorld makeWorld)
     {
         if (!vertices || !instances) return;
+
+        // 頂点バッファとインスタンスバッファをセット
         ID3D11Buffer* buffers[] = { vertices, instances };
         UINT strides[] = { sizeof(UiVertex), sizeof(UiInstanceData) };
         UINT offsets[] = { 0, 0 };
@@ -23,16 +27,15 @@ namespace {
             EngineServiceLocator::BindShader(batch.shaderProgram);
             context->PSSetShaderResources(0, 1, &batch.texture);
 
-            // Split large batches instead of discarding instances beyond buffer capacity.
             for (size_t start = 0; start < batch.instances.size(); start += MAX_UI_INSTANCES) {
                 const UINT count = static_cast<UINT>((std::min)(
                     batch.instances.size() - start, static_cast<size_t>(MAX_UI_INSTANCES)));
 
+                // インスタンスバッファをマップしてデータを書き込む
                 D3D11_MAPPED_SUBRESOURCE mapped = {};
                 if (FAILED(context->Map(instances, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped))) break;
 
                 auto* data = static_cast<UiInstanceData*>(mapped.pData);
-
                 for (UINT i = 0; i < count; ++i) {
                     const auto& command = batch.instances[start + i];
                     data[i].world = makeWorld(command);
@@ -41,6 +44,8 @@ namespace {
                     data[i].roundFill = command.roundFill;
                 }
                 context->Unmap(instances, 0);
+
+                // インスタンス描画
                 context->DrawInstanced(4, count, 0, 0);
             }
         }
@@ -60,6 +65,7 @@ void UIRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     m_collectorSlider.Initialize();
     m_collectorFont.Initialize();
 
+    // 頂点バッファの作成
     const UiVertex vertices[] = {
         { { -0.5f, -0.5f, 0.0f }, { 0.0f, 0.0f } },
         { {  0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f } },
@@ -74,6 +80,7 @@ void UIRenderPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pConte
     initialData.pSysMem = vertices;
     m_pDevice->CreateBuffer(&desc, &initialData, &m_pVertexBuffer);
 
+    // インスタンスバッファの作成
     desc.Usage = D3D11_USAGE_DYNAMIC;
     desc.ByteWidth = sizeof(UiInstanceData) * MAX_UI_INSTANCES;
     desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -105,7 +112,8 @@ void UIRenderPass::Process(IScene* pScene, const RenderView& view)
         [](const UiDrawCommand::DrawCommand2DInstance& instance) {
             return XMMatrixScaling(instance.size.x, instance.size.y, 1.0f)
                 * XMMatrixRotationZ(instance.angleZ)
-                * XMMatrixTranslation(instance.position.x, instance.position.y, 0.0f);
+                * XMMatrixTranslation(instance.position.x, instance.position.y, 0.0f)
+                * XMLoadFloat4x4(&instance.presentationTransform);
         });
 }
 

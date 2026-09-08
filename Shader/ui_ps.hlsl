@@ -19,6 +19,7 @@ struct PS_INPUT
 // main関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
+    // RoundFillの値が0.5以上の場合、円形の塗りつぶしを行う
     if (ps_in.roundFill.x > 0.5f) {
         const float amount = ps_in.roundFill.y;
         if (amount <= 0.0f) discard;

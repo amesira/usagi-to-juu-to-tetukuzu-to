@@ -57,6 +57,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComm
         instance.position = { rect->GetPosition().x, rect->GetPosition().y };
         instance.size = { rect->GetScaling().x, rect->GetScaling().y };
         instance.angleZ = rect->GetRotation().z;
+        instance.presentationTransform = rect->GetPresentationTransform();
         instance.color = image->GetColor();
         instance.uvRect = image->GetUvRect();
         if (!ImageFillUtility::Apply(*image, instance)) continue;

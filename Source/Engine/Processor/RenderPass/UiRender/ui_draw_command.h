@@ -16,7 +16,11 @@ using namespace DirectX;
         float    angleZ;
         XMFLOAT4 color;
         XMFLOAT4 uvRect;
-        XMFLOAT4 roundFill = {}; // enabled, amount, start radians, direction (+1 clockwise)
+
+        // 演出用変換行列
+        XMFLOAT4X4 presentationTransform = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+        // 円形Fill専用パラメータ: (1.0, fillAmount, startAngleRadians, reverseFlag)
+        XMFLOAT4 roundFill = {};
     };
 
     // 2D描画コマンドのバッチ情報
@@ -33,8 +37,8 @@ using namespace DirectX;
     };
 
     struct DrawCommand3DInstance {
-        XMFLOAT3 position = {}; // World-space anchor; orientation is supplied by the camera.
-        XMFLOAT2 offset = {};   // Billboard-local offset (X right, Y down).
+        XMFLOAT3 position = {};
+        XMFLOAT2 offset = {};
         XMFLOAT3 scale = { 1.0f, 1.0f, 1.0f };
         XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };

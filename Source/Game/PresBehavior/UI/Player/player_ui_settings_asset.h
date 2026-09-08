@@ -1,3 +1,4 @@
+// player_ui_settings_asset.h
 #pragma once
 #include <DirectXMath.h>
 #include <cmath>
@@ -28,11 +29,20 @@ namespace PlayerUiSettings {
         WidgetTransform fillImage = {{0, -40}, {220, 220}, 0};
         WidgetTransform backgroundImage = {{0, -40}, {220, 220}, 0};
     };
+    struct PerspectiveSettings {
+        bool enabled = true;
+        DirectX::XMFLOAT2 vanishingPoint = {0.5f, 0.5f};
+        float tiltDegrees = 12.0f;
+        float maxTiltDegrees = 20.0f;
+        float cameraDistance = 1200.0f;
+    };
     struct Data {
+        PerspectiveSettings perspective;
         HealthBarSettings healthBar;
         AmmoCountSettings ammoCount;
     };
-
+    
+    /// @brief GroupPlacementのスクリーン上の座標を計算する関数
     inline DirectX::XMFLOAT2 ResolveGroupPosition(const GroupPlacement& placement,
         const DirectX::XMFLOAT2& screenSize) {
         return {screenSize.x * placement.screenAnchor.x + placement.position.x,
@@ -77,13 +87,30 @@ namespace PlayerUiSettings {
         };
         return schema;
     }
+    inline const auto& GetPerspectiveSchema() {
+        static const auto schema = FieldSchema{
+            MakeField("enabled", "Enabled", &PerspectiveSettings::enabled, DefaultFieldOptions{}),
+            MakeField("vanishingPoint", "Vanishing Point (0-1)", &PerspectiveSettings::vanishingPoint,
+                DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=1}),
+            MakeField("tiltDegrees", "Tilt (degrees)", &PerspectiveSettings::tiltDegrees,
+                DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=45}),
+            MakeField("maxTiltDegrees", "Max Tilt (degrees)", &PerspectiveSettings::maxTiltDegrees,
+                DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=45}),
+            MakeField("cameraDistance", "Camera Distance (px)", &PerspectiveSettings::cameraDistance,
+                DragFieldOptions{.dragSpeed=10, .minValue=100, .maxValue=10000})
+        };
+        return schema;
+    }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            MakeStructField("perspective", "HUD Perspective", &Data::perspective, GetPerspectiveSchema(), DefaultFieldOptions{}),
             MakeStructField("healthBar", "Health Bar", &Data::healthBar, GetHealthBarSchema(), DefaultFieldOptions{}),
             MakeStructField("ammoCount", "Ammo Count", &Data::ammoCount, GetAmmoCountSchema(), DefaultFieldOptions{})
         };
         return schema;
     }
+
+    // === パラメータが有効な範囲にあるかをチェックする関数 ===
     inline bool IsValid(const WidgetTransform& t) {
         return std::isfinite(t.position.x) && std::isfinite(t.position.y)
             && std::isfinite(t.size.x) && std::isfinite(t.size.y) && t.size.x >= 0 && t.size.y >= 0
@@ -96,7 +123,13 @@ namespace PlayerUiSettings {
             && p.screenAnchor.y >= 0 && p.screenAnchor.y <= 1;
     }
     inline bool IsValid(const Data& d) {
-        return IsValid(d.healthBar.placement) && IsValid(d.healthBar.slider) && IsValid(d.healthBar.label)
+        const auto& p = d.perspective;
+        return std::isfinite(p.vanishingPoint.x) && p.vanishingPoint.x >= 0 && p.vanishingPoint.x <= 1
+            && std::isfinite(p.vanishingPoint.y) && p.vanishingPoint.y >= 0 && p.vanishingPoint.y <= 1
+            && std::isfinite(p.tiltDegrees) && p.tiltDegrees >= 0 && p.tiltDegrees <= 45
+            && std::isfinite(p.maxTiltDegrees) && p.maxTiltDegrees >= 0 && p.maxTiltDegrees <= 45
+            && std::isfinite(p.cameraDistance) && p.cameraDistance >= 100
+            && IsValid(d.healthBar.placement) && IsValid(d.healthBar.slider) && IsValid(d.healthBar.label)
             && IsValid(d.ammoCount.placement) && IsValid(d.ammoCount.slider) && IsValid(d.ammoCount.label)
             && IsValid(d.ammoCount.fillImage) && IsValid(d.ammoCount.backgroundImage);
     }
