@@ -11,6 +11,7 @@ namespace PlayerUi
         HealthBar,  // 体力バー
         AmmoCount,  // 弾薬数表示
         Crosshair,  // 銃の照準
+        RemainingLife, // 残機表示
         Max
     };
     /// @brief ウィジェットのグループを表す構造体

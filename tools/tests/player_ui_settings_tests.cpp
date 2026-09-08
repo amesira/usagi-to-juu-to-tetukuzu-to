@@ -18,10 +18,10 @@ int main() {
     const auto hp = ResolveGroupPosition(defaults.healthBar.placement, {1920, 1080});
     const auto ammo = ResolveGroupPosition(defaults.ammoCount.placement, {1280, 720});
     assert(hp.x == 180 && hp.y == 1015);
-    assert(ammo.x == 1130 && ammo.y == 655);
+    assert(ammo.x == 1130 && ammo.y == 580);
     loaded.healthBar.label.size = {2, 3};
-    loaded.ammoCount.fillImage.rotationDegrees = 45;
-    loaded.ammoCount.backgroundImage.position = {-12, 34};
+    loaded.ammoCount.circleGauge.rotationDegrees = 45;
+    loaded.ammoCount.weaponIcon.position = {-12, 34};
     const auto saved = FieldSerialization::SerializeFields(loaded, GetSchema());
     Data restored;
     assert(FieldSerialization::DeserializeFields(saved, restored, GetSchema()));
@@ -67,5 +67,21 @@ int main() {
     Data migrated;
     assert(FieldSerialization::DeserializeFields(legacy, migrated, GetSchema()));
     assert(migrated.perspective.cameraDistance == 1200);
+    const WidgetTransform bar = {{10, 20}, {200, 12}, 90};
+    const auto left = MakeHealthMarker(bar, 0);
+    const auto right = MakeHealthMarker(bar, 1);
+    const auto fill = MakeHealthMarker(bar, 0.25f);
+    assert(NearlyEqual(left.position.x, 10) && NearlyEqual(left.position.y, -80));
+    assert(NearlyEqual(right.position.y, 120) && NearlyEqual(fill.position.y, -30));
+    assert(fill.size.x == 2 && fill.size.y == 20 && fill.rotationDegrees == 90);
+    const auto life = ResolveGroupPosition(defaults.remainingLife.placement, {1920, 1080});
+    assert(life.x == 150 && life.y == 70);
+    auto serialized = FieldSerialization::SerializeFields(defaults, GetSchema());
+    assert(serialized["healthBar"].size() == 4); // placement plus three editable elements
+    assert(serialized["ammoCount"].size() == 5); // placement plus four editable elements
+    assert(serialized["remainingLife"].contains("gauge"));
+    restored = defaults;
+    restored.remainingLife.gauge.size.x = -1;
+    assert(!IsValid(restored));
     std::cout << "Player UI settings tests passed\n";
 }

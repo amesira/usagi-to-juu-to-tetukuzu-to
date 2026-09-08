@@ -1,32 +1,10 @@
 {
     "data": {
         "ammoCount": {
-            "backgroundImage": {
+            "capacityText": {
                 "position": [
-                    -50.0,
-                    -50.0
-                ],
-                "rotationDegrees": 0.0,
-                "size": [
-                    300.0,
-                    50.0
-                ]
-            },
-            "fillImage": {
-                "position": [
-                    -50.0,
-                    -50.0
-                ],
-                "rotationDegrees": 0.0,
-                "size": [
-                    300.0,
-                    50.0
-                ]
-            },
-            "label": {
-                "position": [
-                    -159.0,
-                    -16.0
+                    28.0,
+                    35.0
                 ],
                 "rotationDegrees": 0.0,
                 "size": [
@@ -34,25 +12,47 @@
                     0.800000011920929
                 ]
             },
+            "circleGauge": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    180.0,
+                    180.0
+                ]
+            },
+            "currentText": {
+                "position": [
+                    -25.0,
+                    35.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.2000000476837158,
+                    1.2000000476837158
+                ]
+            },
             "placement": {
                 "position": [
                     -150.0,
-                    -65.0
+                    -140.0
                 ],
                 "screenAnchor": [
                     1.0,
                     1.0
                 ]
             },
-            "slider": {
+            "weaponIcon": {
                 "position": [
                     0.0,
-                    22.0
+                    -20.0
                 ],
                 "rotationDegrees": 0.0,
                 "size": [
-                    160.0,
-                    7.0
+                    80.0,
+                    48.0
                 ]
             }
         },
@@ -70,12 +70,23 @@
             },
             "placement": {
                 "position": [
-                    180.0,
-                    -65.0
+                    190.0,
+                    -100.0
                 ],
                 "screenAnchor": [
                     0.0,
                     1.0
+                ]
+            },
+            "recoveryGauge": {
+                "position": [
+                    -60.0,
+                    47.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    140.0,
+                    140.0
                 ]
             },
             "slider": {
@@ -93,12 +104,35 @@
         "perspective": {
             "cameraDistance": 1200.0,
             "enabled": true,
-            "maxTiltDegrees": 20.0,
-            "tiltDegrees": 12.0,
+            "maxTiltDegrees": 30.0,
+            "tiltDegrees": 20.0,
             "vanishingPoint": [
                 0.5,
                 0.5
             ]
+        },
+        "remainingLife": {
+            "gauge": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    180.0,
+                    180.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    120.0,
+                    100.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    0.0
+                ]
+            }
         }
     },
     "formatVersion": 0,

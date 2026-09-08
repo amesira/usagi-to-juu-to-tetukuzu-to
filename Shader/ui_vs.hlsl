@@ -29,6 +29,8 @@ struct VS_OUTPUT
     float4 color    : COLOR0;       // 頂点カラー
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
     float2 localUv : TEXCOORD1;
+    
+    // 補間を行わないパラメータ
     nointerpolation float4 roundFill : TEXCOORD2;
 };
 

@@ -23,6 +23,10 @@ private:
     PlayerUiView m_view;
     PlayerUiPresentation m_presentation;
     bool m_widgetsCreated = false;
+    float m_health = 100, m_maxHealth = 100;
+    float m_recovery = 1, m_remainingLife = 1;
+    int m_ammoCount = 20;
+
     std::uint64_t m_lastSettingsRevision = 0;
     DirectX::XMFLOAT2 m_lastScreenSize = {};
     bool m_layoutDirty = true;
@@ -36,10 +40,17 @@ public:
     // シーン全体の破棄はシーンが担当。個別にUIを終了するときに呼ぶ。
     void DestroyWidgets();
     void Setup(const PlayerUiSettingsAsset* settingsAsset);
+    void SetHealth(float current, float maximum);
+    void SetAmmoCount(int current);
+    void SetRecoveryGauge(float amount);
+    void SetRemainingLife(int current, int maximum);
+
 
 private:
     void CreateTestWidgets();
     void ApplyLayoutSettings();
+    void UpdateDisplayValues();
+    void UpdateHealthMarkers();
     void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
         const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
         const char* name, float orderInLayer);

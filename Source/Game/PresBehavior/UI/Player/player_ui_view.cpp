@@ -28,7 +28,7 @@ void PlayerUiView::SetWidgetGroupAlpha(PlayerUiContext& context,
 void PlayerUiView::SetWidgetGroupPosition(PlayerUiContext& context,
     PlayerUi::WidgetGroupID groupID, const DirectX::XMFLOAT2& position)
 {
-    WidgetGroup group = context.widgetGroups[static_cast<size_t>(groupID)];
+    WidgetGroup& group = context.widgetGroups[static_cast<size_t>(groupID)];
     group.originalCenterPosition = position;
     ApplyWidgetGroupPosition(context, group);
 }

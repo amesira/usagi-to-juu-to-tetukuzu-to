@@ -13,6 +13,13 @@ namespace PlayerUiSettings {
         DirectX::XMFLOAT2 size = {1, 1}; // 画像・バーはピクセル、文字はXY倍率
         float rotationDegrees = 0.0f;
     };
+    // Marker is derived from the bar, so it has no independent editor fields.
+    inline WidgetTransform MakeHealthMarker(const WidgetTransform& bar, float fraction) {
+        const float angle = DirectX::XMConvertToRadians(bar.rotationDegrees);
+        const float x = bar.size.x * (fraction - 0.5f);
+        return {{bar.position.x + x * std::cos(angle), bar.position.y + x * std::sin(angle)},
+            {2, bar.size.y + 8}, bar.rotationDegrees};
+    }
     struct GroupPlacement {
         DirectX::XMFLOAT2 screenAnchor = {}; // 左上(0,0)、右下(1,1)
         DirectX::XMFLOAT2 position = {};
@@ -21,13 +28,18 @@ namespace PlayerUiSettings {
         GroupPlacement placement = {{0, 1}, {180, -65}};
         WidgetTransform slider = {{0, 0}, {280, 20}, 0};
         WidgetTransform label = {{0, -22}, {1, 1}, 0};
+        WidgetTransform recoveryGauge = {{0, 28}, {280, 12}, 0};
     };
     struct AmmoCountSettings {
-        GroupPlacement placement = {{1, 1}, {-150, -65}};
-        WidgetTransform slider = {{0, 0}, {220, 16}, 0};
-        WidgetTransform label = {{0, -20}, {1, 1}, 0};
-        WidgetTransform fillImage = {{0, -40}, {220, 220}, 0};
-        WidgetTransform backgroundImage = {{0, -40}, {220, 220}, 0};
+        GroupPlacement placement = {{1, 1}, {-150, -140}};
+        WidgetTransform circleGauge = {{0, 0}, {180, 180}, 0};
+        WidgetTransform weaponIcon = {{0, -20}, {80, 48}, 0};
+        WidgetTransform currentText = {{-25, 35}, {1.2f, 1.2f}, 0};
+        WidgetTransform capacityText = {{28, 35}, {0.8f, 0.8f}, 0};
+    };
+    struct RemainingLifeSettings {
+        GroupPlacement placement = {{0, 0}, {150, 70}};
+        WidgetTransform gauge = {{0, 0}, {220, 32}, 0};
     };
     struct PerspectiveSettings {
         bool enabled = true;
@@ -40,6 +52,7 @@ namespace PlayerUiSettings {
         PerspectiveSettings perspective;
         HealthBarSettings healthBar;
         AmmoCountSettings ammoCount;
+        RemainingLifeSettings remainingLife;
     };
     
     /// @brief GroupPlacementのスクリーン上の座標を計算する関数
@@ -73,17 +86,25 @@ namespace PlayerUiSettings {
         static const auto schema = FieldSchema{
             MakeStructField("placement", "Group Placement", &HealthBarSettings::placement, GetGroupPlacementSchema(), DefaultFieldOptions{}),
             MakeStructField("slider", "HP Slider", &HealthBarSettings::slider, GetWidgetTransformSchema(), DefaultFieldOptions{}),
-            MakeStructField("label", "HP Text", &HealthBarSettings::label, GetWidgetTransformSchema(), DefaultFieldOptions{})
+            MakeStructField("label", "HP Text", &HealthBarSettings::label, GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("recoveryGauge", "Recovery Gauge", &HealthBarSettings::recoveryGauge, GetWidgetTransformSchema(), DefaultFieldOptions{})
         };
         return schema;
     }
     inline const auto& GetAmmoCountSchema() {
         static const auto schema = FieldSchema{
             MakeStructField("placement", "Group Placement", &AmmoCountSettings::placement, GetGroupPlacementSchema(), DefaultFieldOptions{}),
-            MakeStructField("slider", "Ammo Slider", &AmmoCountSettings::slider, GetWidgetTransformSchema(), DefaultFieldOptions{}),
-            MakeStructField("label", "Ammo Text", &AmmoCountSettings::label, GetWidgetTransformSchema(), DefaultFieldOptions{}),
-            MakeStructField("fillImage", "Fill Image", &AmmoCountSettings::fillImage, GetWidgetTransformSchema(), DefaultFieldOptions{}),
-            MakeStructField("backgroundImage", "Background Image", &AmmoCountSettings::backgroundImage, GetWidgetTransformSchema(), DefaultFieldOptions{})
+            MakeStructField("circleGauge", "Circle Gauge", &AmmoCountSettings::circleGauge, GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("weaponIcon", "Weapon Icon", &AmmoCountSettings::weaponIcon, GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("currentText", "Current Ammo Text", &AmmoCountSettings::currentText, GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("capacityText", "Capacity Text", &AmmoCountSettings::capacityText, GetWidgetTransformSchema(), DefaultFieldOptions{})
+        };
+        return schema;
+    }
+    inline const auto& GetRemainingLifeSchema() {
+        static const auto schema = FieldSchema{
+            MakeStructField("placement", "Group Placement", &RemainingLifeSettings::placement, GetGroupPlacementSchema(), DefaultFieldOptions{}),
+            MakeStructField("gauge", "Life Gauge", &RemainingLifeSettings::gauge, GetWidgetTransformSchema(), DefaultFieldOptions{})
         };
         return schema;
     }
@@ -105,7 +126,8 @@ namespace PlayerUiSettings {
         static const auto schema = FieldSchema{
             MakeStructField("perspective", "HUD Perspective", &Data::perspective, GetPerspectiveSchema(), DefaultFieldOptions{}),
             MakeStructField("healthBar", "Health Bar", &Data::healthBar, GetHealthBarSchema(), DefaultFieldOptions{}),
-            MakeStructField("ammoCount", "Ammo Count", &Data::ammoCount, GetAmmoCountSchema(), DefaultFieldOptions{})
+            MakeStructField("ammoCount", "Ammo Count", &Data::ammoCount, GetAmmoCountSchema(), DefaultFieldOptions{}),
+            MakeStructField("remainingLife", "Remaining Life", &Data::remainingLife, GetRemainingLifeSchema(), DefaultFieldOptions{})
         };
         return schema;
     }
@@ -130,8 +152,10 @@ namespace PlayerUiSettings {
             && std::isfinite(p.maxTiltDegrees) && p.maxTiltDegrees >= 0 && p.maxTiltDegrees <= 45
             && std::isfinite(p.cameraDistance) && p.cameraDistance >= 100
             && IsValid(d.healthBar.placement) && IsValid(d.healthBar.slider) && IsValid(d.healthBar.label)
-            && IsValid(d.ammoCount.placement) && IsValid(d.ammoCount.slider) && IsValid(d.ammoCount.label)
-            && IsValid(d.ammoCount.fillImage) && IsValid(d.ammoCount.backgroundImage);
+            && IsValid(d.healthBar.recoveryGauge)
+            && IsValid(d.ammoCount.placement) && IsValid(d.ammoCount.circleGauge) && IsValid(d.ammoCount.weaponIcon)
+            && IsValid(d.ammoCount.currentText) && IsValid(d.ammoCount.capacityText)
+            && IsValid(d.remainingLife.placement) && IsValid(d.remainingLife.gauge);
     }
 }
 

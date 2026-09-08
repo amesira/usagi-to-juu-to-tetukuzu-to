@@ -14,6 +14,10 @@
 #include "Engine/Component/image_component.h"
 #include "Game/Factory/ui_factory.h"
 #include "External/ImGui/imgui.h"
+#include "Engine/Component/slider_component.h"
+#include <algorithm>
+#include <cmath>
+#include <string>
 
 void PlayerUiBehavior::Start()
 {
@@ -35,6 +39,7 @@ void PlayerUiBehavior::Update()
         || m_lastScreenSize.y != Direct3D_GetBackBufferHeight())) {
         ApplyLayoutSettings();
     }
+    if (m_widgetsCreated) UpdateHealthMarkers();
     m_presentation.Update(m_context, FPS_GetUnscaledDeltaTime());
 }
 
@@ -44,7 +49,7 @@ void PlayerUiBehavior::DrawComponentInspector()
         ImGui::TextUnformatted("Player UI is created when play starts.");
         return;
     }
-    const char* labels[] = { "None", "Health", "Ammo", "Crosshair" };
+    const char* labels[] = { "None", "Health", "Ammo", "Crosshair", "Remaining Life" };
     for (size_t i = 1; i < static_cast<size_t>(PlayerUi::WidgetGroupID::Max); ++i) {
         ImGui::PushID(static_cast<int>(i));
         ImGui::TextUnformatted(labels[i]);
@@ -84,42 +89,56 @@ void PlayerUiBehavior::CreateTestWidgets()
     const auto& settings = m_context.settingsAsset ? m_context.settingsAsset->GetData() : defaults;
     const XMFLOAT4 background = { 0.08f, 0.1f, 0.14f, 1.0f };
 
-    RegisterWidget(WidgetGroupID::HealthBar,
-        UiFactory::CreateUiSliderHandle(m_context.scene, background, {0.2f, 0.9f, 0.4f, 1.0f}, 0.75f),
-        settings.healthBar.slider.position, settings.healthBar.slider.size, "PlayerUi.HealthBar.Test", 100);
-    auto healthLabel = UiFactory::CreateUiTextHandle(m_context.scene, u8"HP 75 / 100");
-    if (auto* text = healthLabel.GetText()) {
-        text->SetFontSize(22);
-        text->SetColor({1, 1, 1, 1});
-        text->SetCenter(false);
-    }
-    RegisterWidget(WidgetGroupID::HealthBar, healthLabel, settings.healthBar.label.position, settings.healthBar.label.size, "PlayerUi.HealthLabel.Test", 101);
+    const auto addText = [&](WidgetGroupID group, const PlayerUiSettings::WidgetTransform& t,
+        const char* name, const char8_t* value) {
+        auto handle = UiFactory::CreateUiTextHandle(m_context.scene, value);
+        if (auto* text = handle.GetText()) {
+            text->SetFontSize(22);
+            text->SetColor({1, 1, 1, 1});
+            text->SetCenter(true);
+        }
+        RegisterWidget(group, handle, t.position, t.size, name, 104);
+    };
+    const auto addImage = [&](WidgetGroupID group, const PlayerUiSettings::WidgetTransform& t,
+        const wchar_t* path, const char* name, float layer, ImageComponent::FillMethod fill) {
+        auto handle = UiFactory::CreateUiImageHandle(m_context.scene, path);
+        if (auto* image = handle.GetImage()) {
+            image->SetFillMethod(fill);
+            image->SetFillAmount(1);
+            image->SetColor({1, 1, 1, 1});
+        }
+        RegisterWidget(group, handle, t.position, t.size, name, layer);
 
-    RegisterWidget(WidgetGroupID::AmmoCount,
-        UiFactory::CreateUiSliderHandle(m_context.scene, background, {0.3f, 0.7f, 1.0f, 1.0f}, 0.6f),
-        settings.ammoCount.slider.position, settings.ammoCount.slider.size, "PlayerUi.AmmoBar.Test", 103);
-    auto ammoLabel = UiFactory::CreateUiTextHandle(m_context.scene, u8"AMMO 18 / 30");
-    if (auto* text = ammoLabel.GetText()) {
-        text->SetFontSize(22);
-        text->SetColor({1, 1, 1, 1});
-        text->SetCenter(false);
+        return handle;
+    };
+    using Fill = ImageComponent::FillMethod;
+    // Health slots: slider, text, recovery, left marker, right marker, fill marker.
+    RegisterWidget(WidgetGroupID::HealthBar,
+        UiFactory::CreateUiSliderHandle(m_context.scene, background, {0.2f, 0.9f, 0.4f, 1}, 1),
+        settings.healthBar.slider.position, settings.healthBar.slider.size, "PlayerUi.HealthBar", 100);
+    addText(WidgetGroupID::HealthBar, settings.healthBar.label, "PlayerUi.HealthText", u8"1000/1000");
+    if (auto* text = m_context.widgetGroups[static_cast<size_t>(WidgetGroupID::HealthBar)].widgets[1].GetText()) text->SetCenter(false);
+    addImage(WidgetGroupID::HealthBar, settings.healthBar.recoveryGauge,
+        L"asset/Texture/Ui/recovery_gauge.png", "PlayerUi.RecoveryGauge", 100, Fill::Horizontal);
+    for (const char* name : {"PlayerUi.HealthLeft", "PlayerUi.HealthRight", "PlayerUi.HealthFill"}) {
+        addImage(WidgetGroupID::HealthBar, {}, L"asset/Texture/white.bmp", name, 103, Fill::None);
     }
-    RegisterWidget(WidgetGroupID::AmmoCount, ammoLabel, settings.ammoCount.label.position, settings.ammoCount.label.size, "PlayerUi.AmmoLabel.Test", 103);
-    auto ammoBar = UiFactory::CreateUiImageHandle(m_context.scene, L"asset/Texture/ammo_slider.png");
-    RegisterWidget(WidgetGroupID::AmmoCount, ammoBar,
-        settings.ammoCount.fillImage.position, settings.ammoCount.fillImage.size, "PlayerUi.AmmoBar2.Test", 102);
-    if (auto* image = ammoBar.GetImage()) {
-        image->SetFillMethod(ImageComponent::FillMethod::Horizontal);
-        image->SetFillReverse(false);
-        image->SetFillAmount(0.6f);
-        image->SetColor({ 0.3f, 0.7f, 1.0f, 1.0f });
-    }
-    auto ammoBgBar = UiFactory::CreateUiImageHandle(m_context.scene, L"asset/Texture/ammo_slider.png");
-    RegisterWidget(WidgetGroupID::AmmoCount, ammoBgBar,
-        settings.ammoCount.backgroundImage.position, settings.ammoCount.backgroundImage.size, "PlayerUi.AmmoBarBg.Test", 101);
-    if (auto* image = ammoBgBar.GetImage()) {
-        image->SetColor({ 0.08f, 0.1f, 0.14f, 1.0f });
-    }
+    // Ammo slots: background ring, fill ring, icon, current text, capacity text.
+    UiHandle circleGauge = addImage(WidgetGroupID::AmmoCount, settings.ammoCount.circleGauge,
+        L"asset/Texture/Ui/circle_gauge_thin.png", "PlayerUi.AmmoBackground", 100, Fill::RoundFill);
+    circleGauge.GetImage()->SetFillAmount(0.75f);
+    circleGauge.SetAlpha(0.5f);
+    circleGauge = addImage(WidgetGroupID::AmmoCount, settings.ammoCount.circleGauge,
+        L"asset/Texture/Ui/circle_gauge.png", "PlayerUi.AmmoFill", 101, Fill::RoundFill);
+    circleGauge.GetImage()->SetFillAmount(0.75f);
+    circleGauge.GetImage()->SetColor({ 0.9f, 0.9f, 0.2f, 1 });
+
+    addImage(WidgetGroupID::AmmoCount, settings.ammoCount.weaponIcon,
+        L"asset/Texture/Ui/dual_pistols_icon.png", "PlayerUi.WeaponIcon", 102, Fill::None);
+    addText(WidgetGroupID::AmmoCount, settings.ammoCount.currentText, "PlayerUi.AmmoCurrent", u8"20");
+    addText(WidgetGroupID::AmmoCount, settings.ammoCount.capacityText, "PlayerUi.AmmoCapacity", u8"/20");
+    addImage(WidgetGroupID::RemainingLife, settings.remainingLife.gauge,
+        L"asset/Texture/Ui/player_remaining_life_gauge.png", "PlayerUi.RemainingLife", 100, Fill::Horizontal);
 
     // 既存の白テクスチャを使い、専用アセットなしで十字照準を構成する。
     const XMFLOAT2 offsets[] = { {-10, 0}, {10, 0}, {0, -10}, {0, 10} };
@@ -134,6 +153,7 @@ void PlayerUiBehavior::CreateTestWidgets()
     m_view.SetWidgetGroupPosition(m_context, WidgetGroupID::Crosshair, {width * 0.5f, height * 0.5f});
     m_widgetsCreated = true;
     ApplyLayoutSettings();
+    UpdateDisplayValues();
 }
 
 void PlayerUiBehavior::DestroyWidgets()
@@ -176,11 +196,77 @@ void PlayerUiBehavior::ApplyLayoutSettings()
         m_view.SetWidgetGroupPosition(m_context, id, PlayerUiSettings::ResolveGroupPosition(placement, screenSize));
     };
     applyGroup(PlayerUi::WidgetGroupID::HealthBar, settings.healthBar.placement,
-        {&settings.healthBar.slider, &settings.healthBar.label});
+        {&settings.healthBar.slider, &settings.healthBar.label, &settings.healthBar.recoveryGauge});
     applyGroup(PlayerUi::WidgetGroupID::AmmoCount, settings.ammoCount.placement,
-        {&settings.ammoCount.slider, &settings.ammoCount.label,
-         &settings.ammoCount.fillImage, &settings.ammoCount.backgroundImage});
+        {&settings.ammoCount.circleGauge, &settings.ammoCount.circleGauge,
+         &settings.ammoCount.weaponIcon, &settings.ammoCount.currentText, &settings.ammoCount.capacityText});
+    applyGroup(PlayerUi::WidgetGroupID::RemainingLife, settings.remainingLife.placement,
+        {&settings.remainingLife.gauge});
+    UpdateHealthMarkers();
     m_lastScreenSize = screenSize;
     m_lastSettingsRevision = m_context.settingsAsset ? m_context.settingsAsset->GetRevision() : 0;
     m_layoutDirty = false;
+}
+
+
+// All display setters also work before widget creation.
+void PlayerUiBehavior::SetHealth(float current, float maximum)
+{
+    m_maxHealth = std::isfinite(maximum) ? (std::max)(maximum, 0.0f) : 0;
+    m_health = std::isfinite(current) ? std::clamp(current, 0.0f, m_maxHealth) : 0;
+    UpdateDisplayValues();
+}
+void PlayerUiBehavior::SetAmmoCount(int current)
+{
+    m_ammoCount = std::clamp(current, 0, 20);
+    UpdateDisplayValues();
+}
+void PlayerUiBehavior::SetRecoveryGauge(float amount)
+{
+    m_recovery = std::isfinite(amount) ? std::clamp(amount, 0.0f, 1.0f) : 0;
+    UpdateDisplayValues();
+}
+void PlayerUiBehavior::SetRemainingLife(int current, int maximum)
+{
+    m_remainingLife = maximum > 0 ? std::clamp(static_cast<float>(current) / maximum, 0.0f, 1.0f) : 0;
+    UpdateDisplayValues();
+}
+void PlayerUiBehavior::UpdateDisplayValues()
+{
+    if (!m_widgetsCreated) return;
+    auto& hp = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::HealthBar)].widgets;
+    auto& ammo = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::AmmoCount)].widgets;
+    auto& life = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::RemainingLife)].widgets;
+    if (auto* slider = hp[0].GetSlider()) slider->SetValue(m_maxHealth > 0 ? m_health / m_maxHealth : 0);
+    if (auto* text = hp[1].GetText()) text->SetText(std::to_string(static_cast<int>(std::ceil(m_health))));
+    if (auto* image = hp[2].GetImage()) image->SetFillAmount(m_recovery);
+    if (auto* image = ammo[1].GetImage()) image->SetFillAmount(static_cast<float>(m_ammoCount) / 20 * 0.75f);
+    if (auto* text = ammo[3].GetText()) text->SetText(std::to_string(m_ammoCount));
+    if (auto* image = life[0].GetImage()) image->SetFillAmount(m_remainingLife);
+    UpdateHealthMarkers();
+}
+void PlayerUiBehavior::UpdateHealthMarkers()
+{
+    auto& group = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::HealthBar)];
+    if (group.widgets.size() < 6) return;
+    auto* rect = group.widgets[0].GetRectTransform();
+    auto* slider = group.widgets[0].GetSlider();
+    if (!rect || !slider) return;
+    const auto size = rect->GetScaling();
+    const float angle = rect->GetRotation().z;
+    const PlayerUiSettings::WidgetTransform bar = {
+        group.offsetPositions[0], {size.x, size.y}, XMConvertToDegrees(angle)};
+    const float fractions[] = {0, 1, slider->GetValue()};
+    for (size_t i = 0; i < 3; ++i) {
+        const auto transform = PlayerUiSettings::MakeHealthMarker(bar, fractions[i]);
+        const auto offset = transform.position;
+        group.offsetPositions[i + 3] = offset;
+        auto& marker = group.widgets[i + 3];
+        marker.SetSize(transform.size.x, transform.size.y);
+        marker.SetPosition(group.currentCenterPosition.x + offset.x, group.currentCenterPosition.y + offset.y);
+        if (auto* markerRect = marker.GetRectTransform()) {
+            markerRect->SetRotation({0, 0, angle});
+            markerRect->SetPresentationTransform(rect->GetPresentationTransform());
+        }
+    }
 }
