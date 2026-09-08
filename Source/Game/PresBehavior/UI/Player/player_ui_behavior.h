@@ -51,6 +51,7 @@ private:
     void ApplyLayoutSettings();
     void UpdateDisplayValues();
     void UpdateHealthMarkers();
+    void UpdateAmmoMarkers();
     void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
         const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
         const char* name, float orderInLayer);

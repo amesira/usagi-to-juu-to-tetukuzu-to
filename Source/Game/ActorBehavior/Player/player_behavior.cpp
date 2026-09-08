@@ -105,7 +105,17 @@ void PlayerBehavior::Start()
 void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
-    m_input = UpdateInput();
+
+    if (Keyboard_IsKeyDownTrigger(KK_F1)) {
+        m_isInputEnabled = !m_isInputEnabled;
+    }
+
+    if (m_isInputEnabled) {
+        m_input = UpdateInput();
+    }
+    else {
+        m_input = {};
+    }
     m_context.animationController->BeginFrame();
 
     m_context.conditionMachine->Update(m_context, m_input);

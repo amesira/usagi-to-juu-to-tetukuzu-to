@@ -33,6 +33,8 @@ private:
     PlayerContext m_context;
     PlayerInput m_input;
 
+    bool m_isInputEnabled = true;
+
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
     PlayerConditionMachine m_conditionMachine;

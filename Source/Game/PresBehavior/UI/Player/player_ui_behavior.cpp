@@ -39,7 +39,10 @@ void PlayerUiBehavior::Update()
         || m_lastScreenSize.y != Direct3D_GetBackBufferHeight())) {
         ApplyLayoutSettings();
     }
-    if (m_widgetsCreated) UpdateHealthMarkers();
+    if (m_widgetsCreated) {
+        UpdateHealthMarkers();
+        UpdateAmmoMarkers();
+    }
     m_presentation.Update(m_context, FPS_GetUnscaledDeltaTime());
 }
 
@@ -49,6 +52,35 @@ void PlayerUiBehavior::DrawComponentInspector()
         ImGui::TextUnformatted("Player UI is created when play starts.");
         return;
     }
+    ImGui::PushID(this);
+    if (ImGui::CollapsingHeader("Gauge Preview", ImGuiTreeNodeFlags_DefaultOpen)) {
+        float maximum = m_maxHealth;
+        if (ImGui::DragFloat("Max HP", &maximum, 1.0f, 0.0f, 100000.0f,
+            "%.0f", ImGuiSliderFlags_AlwaysClamp)) {
+            SetHealth(m_health, maximum);
+        }
+        float health = m_health;
+        if (ImGui::SliderFloat("HP", &health, 0.0f, m_maxHealth,
+            "%.0f", ImGuiSliderFlags_AlwaysClamp)) {
+            // HPテキストとスライダー、Fill位置の白線をまとめて更新する。
+            SetHealth(health, m_maxHealth);
+        }
+        float recovery = m_recovery;
+        if (ImGui::SliderFloat("Recovery", &recovery, 0.0f, 1.0f,
+            "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
+            SetRecoveryGauge(recovery);
+        }
+        int ammo = m_ammoCount;
+        if (ImGui::SliderInt("Ammo / 20", &ammo, 0, 20,
+            "%d", ImGuiSliderFlags_AlwaysClamp)) {
+            SetAmmoCount(ammo);
+        }
+        if (ImGui::SliderFloat("Remaining Life Fill", &m_remainingLife, 0.0f, 1.0f,
+            "%.3f", ImGuiSliderFlags_AlwaysClamp)) {
+            UpdateDisplayValues();
+        }
+    }
+    ImGui::Separator();
     const char* labels[] = { "None", "Health", "Ammo", "Crosshair", "Remaining Life" };
     for (size_t i = 1; i < static_cast<size_t>(PlayerUi::WidgetGroupID::Max); ++i) {
         ImGui::PushID(static_cast<int>(i));
@@ -61,6 +93,7 @@ void PlayerUiBehavior::DrawComponentInspector()
         if (ImGui::Button("Fade in")) m_presentation.FadeWidgetGroup(m_context, id, 1.0f, 0.3f);
         ImGui::PopID();
     }
+    ImGui::PopID();
 }
 
 void PlayerUiBehavior::RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
@@ -137,6 +170,11 @@ void PlayerUiBehavior::CreateTestWidgets()
         L"asset/Texture/Ui/dual_pistols_icon.png", "PlayerUi.WeaponIcon", 102, Fill::None);
     addText(WidgetGroupID::AmmoCount, settings.ammoCount.currentText, "PlayerUi.AmmoCurrent", u8"20");
     addText(WidgetGroupID::AmmoCount, settings.ammoCount.capacityText, "PlayerUi.AmmoCapacity", u8"/20");
+    // Ammo slots 5-7: start, end of the background arc, current fill edge.
+    for (const char* name : {"PlayerUi.AmmoStart", "PlayerUi.AmmoEnd", "PlayerUi.AmmoFillEdge"}) {
+        addImage(WidgetGroupID::AmmoCount, settings.ammoCount.circleGauge,
+            L"asset/Texture/Ui/circle_gause_line.png", name, 103, Fill::None);
+    }
     addImage(WidgetGroupID::RemainingLife, settings.remainingLife.gauge,
         L"asset/Texture/Ui/player_remaining_life_gauge.png", "PlayerUi.RemainingLife", 100, Fill::Horizontal);
 
@@ -203,6 +241,7 @@ void PlayerUiBehavior::ApplyLayoutSettings()
     applyGroup(PlayerUi::WidgetGroupID::RemainingLife, settings.remainingLife.placement,
         {&settings.remainingLife.gauge});
     UpdateHealthMarkers();
+    UpdateAmmoMarkers();
     m_lastScreenSize = screenSize;
     m_lastSettingsRevision = m_context.settingsAsset ? m_context.settingsAsset->GetRevision() : 0;
     m_layoutDirty = false;
@@ -238,12 +277,13 @@ void PlayerUiBehavior::UpdateDisplayValues()
     auto& ammo = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::AmmoCount)].widgets;
     auto& life = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::RemainingLife)].widgets;
     if (auto* slider = hp[0].GetSlider()) slider->SetValue(m_maxHealth > 0 ? m_health / m_maxHealth : 0);
-    if (auto* text = hp[1].GetText()) text->SetText(std::to_string(static_cast<int>(std::ceil(m_health))));
+    if (auto* text = hp[1].GetText()) text->SetText(std::to_string(static_cast<int>(std::ceil(m_health))) + " / " + std::to_string(static_cast<int>(std::ceil(m_maxHealth))));
     if (auto* image = hp[2].GetImage()) image->SetFillAmount(m_recovery);
     if (auto* image = ammo[1].GetImage()) image->SetFillAmount(static_cast<float>(m_ammoCount) / 20 * 0.75f);
     if (auto* text = ammo[3].GetText()) text->SetText(std::to_string(m_ammoCount));
     if (auto* image = life[0].GetImage()) image->SetFillAmount(m_remainingLife);
     UpdateHealthMarkers();
+    UpdateAmmoMarkers();
 }
 void PlayerUiBehavior::UpdateHealthMarkers()
 {
@@ -264,6 +304,34 @@ void PlayerUiBehavior::UpdateHealthMarkers()
         auto& marker = group.widgets[i + 3];
         marker.SetSize(transform.size.x, transform.size.y);
         marker.SetPosition(group.currentCenterPosition.x + offset.x, group.currentCenterPosition.y + offset.y);
+        if (auto* markerRect = marker.GetRectTransform()) {
+            markerRect->SetRotation({0, 0, angle});
+            markerRect->SetPresentationTransform(rect->GetPresentationTransform());
+        }
+    }
+}
+
+
+void PlayerUiBehavior::UpdateAmmoMarkers()
+{
+    auto& group = m_context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::AmmoCount)];
+    if (group.widgets.size() < 8 || group.offsetPositions.size() < 8) return;
+    for (size_t i = 0; i < 3; ++i) {
+        // Fixed boundaries follow the full background arc; the moving line follows the fill.
+        const size_t sourceIndex = i == 2 ? 1 : 0;
+        auto* rect = group.widgets[sourceIndex].GetRectTransform();
+        auto* image = group.widgets[sourceIndex].GetImage();
+        if (!rect || !image) continue;
+        const float fraction = i == 0 ? 0.0f : image->GetFillAmount();
+        const float direction = image->GetFillReverse() ? -1.0f : 1.0f;
+        const float angle = rect->GetRotation().z + XMConvertToRadians(
+            image->GetFillStartAngleDegrees() + direction * fraction * 360.0f);
+        auto& marker = group.widgets[i + 5];
+        group.offsetPositions[i + 5] = group.offsetPositions[sourceIndex];
+        const auto position = rect->GetPosition();
+        const auto size = rect->GetScaling();
+        marker.SetPosition(position.x, position.y);
+        marker.SetSize(size.x, size.y);
         if (auto* markerRect = marker.GetRectTransform()) {
             markerRect->SetRotation({0, 0, angle});
             markerRect->SetPresentationTransform(rect->GetPresentationTransform());
