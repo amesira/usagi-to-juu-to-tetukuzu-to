@@ -1,0 +1,28 @@
+#pragma once
+#include "player_ui_context.h"
+#include "player_ui_settings_asset.h"
+#include "Engine/Core/game_object.h"
+#include "Engine/Component/rect_transform_component.h"
+
+// Named element with its registration slot for group-wide presentation.
+struct PlayerUiWidgetElement {
+    UiHandle handle;
+    size_t slot = 0;
+
+    void Register(PlayerUi::WidgetGroup& group, UiHandle value, const char* name, float layer) {
+        handle = value;
+        slot = group.widgets.size();
+        group.widgets.push_back(value);
+        group.offsetPositions.push_back({});
+        if (auto* object = handle.GetGameObject()) object->SetName(name);
+        if (auto* rect = handle.GetRectTransform()) rect->SetPosition({0, 0, layer});
+    }
+    void ApplyLayout(PlayerUi::WidgetGroup& group, const PlayerUiSettings::WidgetTransform& layout) {
+        group.offsetPositions[slot] = layout.position;
+        handle.SetSize(layout.size.x, layout.size.y);
+        handle.SetPosition(group.currentCenterPosition.x + layout.position.x,
+            group.currentCenterPosition.y + layout.position.y);
+        if (auto* rect = handle.GetRectTransform())
+            rect->SetRotation({0, 0, DirectX::XMConvertToRadians(layout.rotationDegrees)});
+    }
+};

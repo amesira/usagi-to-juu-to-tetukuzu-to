@@ -1002,4 +1002,11 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_perspective.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_settings_asset.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_widget_element.h" />
+  </ItemGroup>
 </Project>

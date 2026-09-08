@@ -13,6 +13,8 @@
 #include "player_ui_presentation.h"
 #include "player_ui_view.h"
 #include <cstdint>
+#include "player_ui_health_bar.h"
+#include "player_ui_ammo_count.h"
 
 class PlayerUiSettingsAsset;
 
@@ -23,9 +25,9 @@ private:
     PlayerUiView m_view;
     PlayerUiPresentation m_presentation;
     bool m_widgetsCreated = false;
-    float m_health = 100, m_maxHealth = 100;
-    float m_recovery = 1, m_remainingLife = 1;
-    int m_ammoCount = 20;
+    PlayerUiHealthBar m_healthBar;
+    PlayerUiAmmoCount m_ammoCount;
+    float m_remainingLife = 1;
 
     std::uint64_t m_lastSettingsRevision = 0;
     DirectX::XMFLOAT2 m_lastScreenSize = {};
@@ -50,8 +52,6 @@ private:
     void CreateTestWidgets();
     void ApplyLayoutSettings();
     void UpdateDisplayValues();
-    void UpdateHealthMarkers();
-    void UpdateAmmoMarkers();
     void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
         const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
         const char* name, float orderInLayer);
