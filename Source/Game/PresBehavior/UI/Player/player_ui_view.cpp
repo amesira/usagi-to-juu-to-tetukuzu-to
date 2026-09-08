@@ -68,12 +68,36 @@ void PlayerUiView::ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::
             static_cast<float>(Direct3D_GetBackBufferHeight())
         });
     
+    DirectX::XMFLOAT2 screenAnchor = {0.5f, 0.5f};
+    switch (static_cast<WidgetGroupID>(&group - context.widgetGroups)) {
+        case WidgetGroupID::HealthBar:
+            screenAnchor = settings.healthBar.placement.screenAnchor;
+            break;
+        case WidgetGroupID::AmmoCount:
+            screenAnchor = settings.ammoCount.placement.screenAnchor;
+            break;
+        case WidgetGroupID::RemainingLife:
+            screenAnchor = settings.remainingLife.placement.screenAnchor;
+            break;
+        default: break;
+    }
+
+    const UiChromaticEcho echo = PlayerUiSettings::ResolveChromaticEcho(
+        settings.chromaticEcho,
+        perspective.vanishingPoint,
+        screenAnchor,
+        {
+            static_cast<float>(Direct3D_GetBackBufferWidth()), 
+            static_cast<float>(Direct3D_GetBackBufferHeight())
+        });
+
     // === 適用 ===
     // 配置未登録のウィジェットは移動させない
     const size_t count = (std::min)(group.widgets.size(), group.offsetPositions.size());
     for (size_t i = 0; i < count; ++i) {
         if (auto* rect = group.widgets[i].GetRectTransform()) {
             rect->SetPresentationTransform(transform);
+            rect->SetChromaticEcho(echo);
         }
         group.widgets[i].SetPosition(
             group.currentCenterPosition.x + group.offsetPositions[i].x,

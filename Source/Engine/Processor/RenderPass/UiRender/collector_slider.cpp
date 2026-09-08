@@ -5,6 +5,7 @@
 // Date  ：2025/11/27
 //===================================================
 #include "collector_slider.h"
+#include "ui_chromatic_echo_utility.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
@@ -64,8 +65,6 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCom
 
         batch.instances.push_back(instance);
 
-        // Magicalでは、ここに遅延塗りつぶしを描画している
-
         // 塗りつぶし描画コマンド
         float value = slider->GetValue();
         {
@@ -86,7 +85,7 @@ void CollectorSlider::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawCom
 
         batch.instances.push_back(instance);
 
-        outBatches.push_back(batch);
+        UiChromaticEchoUtility::Append(outBatches, std::move(batch), rect->GetChromaticEcho());
     }
 }
 

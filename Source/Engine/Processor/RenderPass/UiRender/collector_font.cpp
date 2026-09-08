@@ -8,6 +8,7 @@
 //===================================================
 #define NOMINMAX
 #include "collector_font.h"
+#include "ui_chromatic_echo_utility.h"
 #include "Engine/Graphics/font_repository.h"
 #include "Engine/Component/text_component.h"
 
@@ -151,7 +152,7 @@ void CollectorFont::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComma
 		}
 
 		// バッチ追加
-		outBatches.push_back(batch);
+		UiChromaticEchoUtility::Append(outBatches, std::move(batch), rect->GetChromaticEcho());
     }
 }
 

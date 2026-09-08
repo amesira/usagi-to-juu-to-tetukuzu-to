@@ -96,5 +96,21 @@ int main() {
     Data oldLoaded;
     assert(FieldSerialization::DeserializeFields(oldTheme, oldLoaded, GetSchema()));
     assert(oldLoaded.color2.x == 1);
+    ChromaticEchoSettings echoSettings;
+    echoSettings.offsetDistance = 10;
+    for (const auto anchor : {XMFLOAT2{0, 0}, XMFLOAT2{0, 1}, XMFLOAT2{1, 1}}) {
+        const auto echo = ResolveChromaticEcho(echoSettings, anchor, {1920, 1080});
+        assert(NearlyEqual(std::hypot(echo.offset.x, echo.offset.y), 10));
+        assert((echo.offset.x < 0) == (anchor.x < 0.5f));
+        assert((echo.offset.y < 0) == (anchor.y < 0.5f));
+    }
+    const auto centered = ResolveChromaticEcho(echoSettings, {0.5f, 0.5f}, {1920, 1080});
+    assert(centered.offset.x == 0 && centered.offset.y == 0);
+    echoSettings.offsetDistance = -10;
+    const auto inward = ResolveChromaticEcho(echoSettings, {1, 0.5f}, {1280, 720});
+    assert(inward.offset.x == -10 && inward.offset.y == 0);
+    restored = defaults;
+    restored.chromaticEcho.offsetDistance = std::numeric_limits<float>::infinity();
+    assert(!IsValid(restored));
     std::cout << "Player UI settings tests passed\n";
 }

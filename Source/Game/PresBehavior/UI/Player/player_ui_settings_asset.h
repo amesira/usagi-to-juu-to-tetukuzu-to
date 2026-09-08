@@ -2,6 +2,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <cmath>
+#include "Engine/Component/ui_chromatic_echo.h"
 #include "Engine/Asset/Schema/field_master.h"
 #include "Engine/Asset/DataAsset/data_asset.h"
 #include "Engine/Asset/DataAsset/data_asset_type_id.h"
@@ -48,7 +49,44 @@ namespace PlayerUiSettings {
         float maxTiltDegrees = 20.0f;
         float cameraDistance = 1200.0f;
     };
+    struct ChromaticEchoSettings {
+        bool enabled = false;
+        DirectX::XMFLOAT2 center = {0.5f, 0.5f};
+        float offsetDistance = 0; // pixels; negative moves toward the center
+        float scale = 1.003f;
+        DirectX::XMFLOAT3 color = {1, 0, 0};
+        float opacity = 0.2f;
+        int orderInLayerOffset = -10;
+    };
+
+    /// @brief ChromaticEchoSettingsからUiChromaticEchoを計算する関数
+    inline UiChromaticEcho ResolveChromaticEcho(
+        const ChromaticEchoSettings& settings,
+        DirectX::XMFLOAT2 vanishingPoint,
+        DirectX::XMFLOAT2 screenAnchor, 
+        DirectX::XMFLOAT2 screenSize) 
+    {
+        UiChromaticEcho echo;
+        echo.enabled = settings.enabled;
+        echo.center = {settings.center.x * screenSize.x, settings.center.y * screenSize.y};
+        echo.scale = settings.scale;
+        echo.color = settings.color;
+        echo.opacity = settings.opacity;
+        echo.orderInLayerOffset = settings.orderInLayerOffset;
+
+        // 消失点からの方向にオフセットを計算する
+        const float x = screenAnchor.x - vanishingPoint.x;
+        const float y = screenAnchor.y - vanishingPoint.y;
+
+        const float length = std::sqrt(x * x + y * y);
+        if (length > 0 && std::isfinite(length) && std::isfinite(settings.offsetDistance)) {
+            echo.offset = {x / length * settings.offsetDistance, y / length * settings.offsetDistance};
+        }
+        return echo;
+    }
+
     struct Data {
+        ChromaticEchoSettings chromaticEcho;
         DirectX::XMFLOAT3 color1 = {0.9f, 0.9f, 0.2f};
         DirectX::XMFLOAT3 color2 = {1, 1, 1};
         PerspectiveSettings perspective;
@@ -124,8 +162,21 @@ namespace PlayerUiSettings {
         };
         return schema;
     }
+    inline const auto& GetEchoSchema() {
+        static const auto schema = FieldSchema{
+            MakeField("enabled", "Enabled", &ChromaticEchoSettings::enabled, DefaultFieldOptions{}),
+            MakeField("center", "Center (0-1)", &ChromaticEchoSettings::center, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=1}),
+            MakeField("offsetDistance", "Offset Distance (px)", &ChromaticEchoSettings::offsetDistance, DragFieldOptions{.dragSpeed=0.1f, .minValue=-1000, .maxValue=1000}),
+            MakeField("scale", "Scale", &ChromaticEchoSettings::scale, DragFieldOptions{.dragSpeed=0.001f, .minValue=0.01f, .maxValue=3}),
+            MakeField("color", "Color", &ChromaticEchoSettings::color, ColorFieldOptions{}),
+            MakeField("opacity", "Opacity", &ChromaticEchoSettings::opacity, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=1}),
+            MakeField("orderInLayerOffset", "Order In Layer Offset", &ChromaticEchoSettings::orderInLayerOffset, DragFieldOptions{.dragSpeed=1, .minValue=-10000, .maxValue=10000})
+        };
+        return schema;
+    }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            MakeStructField("chromaticEcho", "Chromatic Echo", &Data::chromaticEcho, GetEchoSchema(), DefaultFieldOptions{}),
             MakeField("color1", "Color 1", &Data::color1, ColorFieldOptions{}),
             MakeField("color2", "Color 2", &Data::color2, ColorFieldOptions{}),
             MakeStructField("perspective", "HUD Perspective", &Data::perspective, GetPerspectiveSchema(), DefaultFieldOptions{}),
@@ -153,20 +204,6 @@ namespace PlayerUiSettings {
             && std::isfinite(c.y) && c.y >= 0 && c.y <= 1
             && std::isfinite(c.z) && c.z >= 0 && c.z <= 1;
     }
-    inline bool IsValid(const Data& d) {
-        const auto& p = d.perspective;
-        return IsValidColor(d.color1) && IsValidColor(d.color2)
-            && std::isfinite(p.vanishingPoint.x) && p.vanishingPoint.x >= 0 && p.vanishingPoint.x <= 1
-            && std::isfinite(p.vanishingPoint.y) && p.vanishingPoint.y >= 0 && p.vanishingPoint.y <= 1
-            && std::isfinite(p.tiltDegrees) && p.tiltDegrees >= 0 && p.tiltDegrees <= 45
-            && std::isfinite(p.maxTiltDegrees) && p.maxTiltDegrees >= 0 && p.maxTiltDegrees <= 45
-            && std::isfinite(p.cameraDistance) && p.cameraDistance >= 100
-            && IsValid(d.healthBar.placement) && IsValid(d.healthBar.slider) && IsValid(d.healthBar.label)
-            && IsValid(d.healthBar.recoveryGauge)
-            && IsValid(d.ammoCount.placement) && IsValid(d.ammoCount.circleGauge) && IsValid(d.ammoCount.weaponIcon)
-            && IsValid(d.ammoCount.currentText) && IsValid(d.ammoCount.capacityText)
-            && IsValid(d.remainingLife.placement) && IsValid(d.remainingLife.gauge);
-    }
 }
 
 class PlayerUiSettingsAsset : public DataAsset {
@@ -182,8 +219,7 @@ public:
     }
     bool DeserializeDataToApply(const nlohmann::json& jsonData) override {
         auto loaded = m_data;
-        if (!FieldSerialization::DeserializeFields(jsonData, loaded, PlayerUiSettings::GetSchema())
-            || !PlayerUiSettings::IsValid(loaded)) return false;
+        if (!FieldSerialization::DeserializeFields(jsonData, loaded, PlayerUiSettings::GetSchema())) return false;
         m_data = loaded;
         return true;
     }

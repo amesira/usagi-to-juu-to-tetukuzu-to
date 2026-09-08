@@ -5,6 +5,7 @@
 // Date  ：2025/11/18
 //===================================================
 #include "collector_image.h"
+#include "ui_chromatic_echo_utility.h"
 #include "image_fill_utility.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
@@ -64,7 +65,7 @@ void CollectorImage::CollectDrawBatches2D(IScene* pScene, std::vector<UiDrawComm
 
         batch.instances.push_back(instance);
 
-        outBatches.push_back(batch);
+        UiChromaticEchoUtility::Append(outBatches, std::move(batch), rect->GetChromaticEcho());
     }
 }
 

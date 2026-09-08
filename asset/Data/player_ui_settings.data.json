@@ -56,6 +56,22 @@
                 ]
             }
         },
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                0.0,
+                0.11914896965026855,
+                1.0
+            ],
+            "enabled": true,
+            "offsetDistance": 2.0,
+            "opacity": 0.5,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
         "color1": [
             0.0,
             1.0,
@@ -117,8 +133,8 @@
             "maxTiltDegrees": 30.0,
             "tiltDegrees": 20.0,
             "vanishingPoint": [
-                0.5,
-                0.5
+                0.6000000238418579,
+                0.6000000238418579
             ]
         },
         "remainingLife": {

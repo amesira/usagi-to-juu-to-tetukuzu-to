@@ -1,3 +1,4 @@
+#include "Source/Engine/Processor/RenderPass/UiRender/ui_chromatic_echo_utility.h"
 #include "Engine/Processor/RenderPass/UiRender/image_fill_utility.h"
 #include <cassert>
 #include <limits>
@@ -92,5 +93,35 @@ int main()
     assert(ImageFillUtility::Apply(image, d) && d.roundFill.x == 0);
     image.SetFillStartAngleDegrees(std::numeric_limits<float>::infinity());
     assert(image.GetFillStartAngleDegrees() == 0);
+    UiDrawCommand::DrawBatch2D original;
+    original.orderInLayer = 100;
+    UiDrawCommand::DrawCommand2DInstance echoSource = {};
+    echoSource.color = {0, 1, 0, 0.5f};
+    echoSource.uvRect = atlas;
+    echoSource.roundFill = {1, 0.4f, 0, 1};
+    original.instances.push_back(echoSource);
+    UiChromaticEcho echo;
+    std::vector<UiDrawCommand::DrawBatch2D> output;
+    UiChromaticEchoUtility::Append(output, original, echo);
+    assert(output.size() == 1);
+    echo.enabled = true; echo.center = {100, 100}; echo.scale = 2; echo.offset = {3, 4};
+    for (int orderOffset : {-10, 0, 10}) {
+        output.clear(); echo.orderInLayerOffset = orderOffset;
+        UiChromaticEchoUtility::Append(output, original, echo);
+        assert(output.size() == 2 && output[0].orderInLayer == 100 + orderOffset);
+        const auto& copy = output[0].instances[0];
+        assert(copy.color.x == 1 && copy.color.y == 0 && Near(copy.color.w, 0.1f));
+        assert(copy.roundFill.y == echoSource.roundFill.y && copy.uvRect.x == atlas.x);
+        assert(output[1].instances[0].color.y == 1);
+        DirectX::XMFLOAT3 projected;
+        DirectX::XMStoreFloat3(&projected, DirectX::XMVector3TransformCoord(
+            DirectX::XMVectorSet(110, 120, 0, 1), DirectX::XMLoadFloat4x4(&copy.presentationTransform)));
+        assert(Near(projected.x, 123) && Near(projected.y, 144));
+        std::stable_sort(output.begin(), output.end(), [](const auto& a, const auto& b) { return a.orderInLayer < b.orderInLayer; });
+        assert(output.front().instances[0].color.x == (orderOffset <= 0 ? 1 : 0));
+    }
+    output.clear(); echo.opacity = 0;
+    UiChromaticEchoUtility::Append(output, original, echo);
+    assert(output.size() == 1);
     std::cout << "Image Fill: four directions, 0/partial/full, rotated fixed edges, 3D offsets, atlas/mirrored UVs and clamping passed.\n";
 }

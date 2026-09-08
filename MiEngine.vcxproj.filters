@@ -1015,4 +1015,8 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.h" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Component\ui_chromatic_echo.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_chromatic_echo_utility.h" />
+  </ItemGroup>
 </Project>
