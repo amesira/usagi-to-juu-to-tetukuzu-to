@@ -96,3 +96,11 @@ void PlayerUiHealthBar::Destroy()
     m_group = nullptr;
     m_slider = {}; m_label = {}; m_recoveryGauge = {}; m_markers = {};
 }
+
+void PlayerUiHealthBar::ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2)
+{
+    if (!m_group) return;
+    for (auto& widget : m_group->widgets) PlayerUiColor::Apply(widget, color2);
+    if (auto* slider = m_slider.handle.GetSlider())
+        slider->SetFillColor(PlayerUiColor::WithRgb(slider->GetFillColor(), color1));
+}

@@ -49,6 +49,8 @@ namespace PlayerUiSettings {
         float cameraDistance = 1200.0f;
     };
     struct Data {
+        DirectX::XMFLOAT3 color1 = {0.9f, 0.9f, 0.2f};
+        DirectX::XMFLOAT3 color2 = {1, 1, 1};
         PerspectiveSettings perspective;
         HealthBarSettings healthBar;
         AmmoCountSettings ammoCount;
@@ -124,6 +126,8 @@ namespace PlayerUiSettings {
     }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            MakeField("color1", "Color 1", &Data::color1, ColorFieldOptions{}),
+            MakeField("color2", "Color 2", &Data::color2, ColorFieldOptions{}),
             MakeStructField("perspective", "HUD Perspective", &Data::perspective, GetPerspectiveSchema(), DefaultFieldOptions{}),
             MakeStructField("healthBar", "Health Bar", &Data::healthBar, GetHealthBarSchema(), DefaultFieldOptions{}),
             MakeStructField("ammoCount", "Ammo Count", &Data::ammoCount, GetAmmoCountSchema(), DefaultFieldOptions{}),
@@ -144,9 +148,15 @@ namespace PlayerUiSettings {
             && p.screenAnchor.x >= 0 && p.screenAnchor.x <= 1
             && p.screenAnchor.y >= 0 && p.screenAnchor.y <= 1;
     }
+    inline bool IsValidColor(const DirectX::XMFLOAT3& c) {
+        return std::isfinite(c.x) && c.x >= 0 && c.x <= 1
+            && std::isfinite(c.y) && c.y >= 0 && c.y <= 1
+            && std::isfinite(c.z) && c.z >= 0 && c.z <= 1;
+    }
     inline bool IsValid(const Data& d) {
         const auto& p = d.perspective;
-        return std::isfinite(p.vanishingPoint.x) && p.vanishingPoint.x >= 0 && p.vanishingPoint.x <= 1
+        return IsValidColor(d.color1) && IsValidColor(d.color2)
+            && std::isfinite(p.vanishingPoint.x) && p.vanishingPoint.x >= 0 && p.vanishingPoint.x <= 1
             && std::isfinite(p.vanishingPoint.y) && p.vanishingPoint.y >= 0 && p.vanishingPoint.y <= 1
             && std::isfinite(p.tiltDegrees) && p.tiltDegrees >= 0 && p.tiltDegrees <= 45
             && std::isfinite(p.maxTiltDegrees) && p.maxTiltDegrees >= 0 && p.maxTiltDegrees <= 45

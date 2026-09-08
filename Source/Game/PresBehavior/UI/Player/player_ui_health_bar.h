@@ -4,6 +4,7 @@
 
 class PlayerUiHealthBar {
 public:
+    void ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2);
     void Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
         const PlayerUiSettings::HealthBarSettings& settings);
     void ApplyLayout(const PlayerUiSettings::HealthBarSettings& settings);

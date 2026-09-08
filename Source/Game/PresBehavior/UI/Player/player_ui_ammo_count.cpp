@@ -97,3 +97,11 @@ void PlayerUiAmmoCount::Destroy()
     m_group = nullptr;
     m_background = {}; m_fill = {}; m_icon = {}; m_currentText = {}; m_capacityText = {}; m_markers = {};
 }
+
+void PlayerUiAmmoCount::ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2)
+{
+    if (!m_group) return;
+    for (auto& widget : m_group->widgets) PlayerUiColor::Apply(widget, color2);
+    PlayerUiColor::Apply(m_fill.handle, color1);
+    PlayerUiColor::Apply(m_currentText.handle, color1);
+}

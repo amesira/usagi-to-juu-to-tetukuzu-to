@@ -45,3 +45,9 @@ void PlayerUiRemainingLife::Destroy()
     m_group = nullptr;
     m_gauge = {};
 }
+
+void PlayerUiRemainingLife::ApplyColors(const DirectX::XMFLOAT3& color2)
+{
+    if (!m_group) return;
+    for (auto& widget : m_group->widgets) PlayerUiColor::Apply(widget, color2);
+}

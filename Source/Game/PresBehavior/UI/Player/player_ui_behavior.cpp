@@ -107,6 +107,10 @@ void PlayerUiBehavior::ApplyLayoutSettings()
     const auto& settings = m_context.settingsAsset ? m_context.settingsAsset->GetData() : defaults;
     const XMFLOAT2 screenSize = {static_cast<float>(Direct3D_GetBackBufferWidth()),
         static_cast<float>(Direct3D_GetBackBufferHeight())};
+    m_healthBar.ApplyColors(settings.color1, settings.color2);
+    m_ammoCount.ApplyColors(settings.color1, settings.color2);
+    m_remainingLife.ApplyColors(settings.color2);
+    m_crosshair.ApplyColors(settings.color2);
     m_healthBar.ApplyLayout(settings.healthBar);
     m_ammoCount.ApplyLayout(settings.ammoCount);
     m_remainingLife.ApplyLayout(settings.remainingLife);

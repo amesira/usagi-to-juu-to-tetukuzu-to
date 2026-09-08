@@ -28,3 +28,9 @@ void PlayerUiCrosshair::Destroy()
     m_group = nullptr;
     m_lines = {};
 }
+
+void PlayerUiCrosshair::ApplyColors(const DirectX::XMFLOAT3& color2)
+{
+    if (!m_group) return;
+    for (auto& widget : m_group->widgets) PlayerUiColor::Apply(widget, color2);
+}

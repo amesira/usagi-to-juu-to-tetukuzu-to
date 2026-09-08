@@ -3,6 +3,7 @@
 
 class PlayerUiRemainingLife {
 public:
+    void ApplyColors(const DirectX::XMFLOAT3& color2);
     void Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
         const PlayerUiSettings::RemainingLifeSettings& settings);
     void ApplyLayout(const PlayerUiSettings::RemainingLifeSettings& settings);

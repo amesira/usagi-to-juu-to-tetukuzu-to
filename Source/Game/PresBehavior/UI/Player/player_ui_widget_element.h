@@ -5,6 +5,9 @@
 #include "player_ui_settings_asset.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/image_component.h"
+#include "Engine/Component/text_component.h"
+#include "Engine/Component/slider_component.h"
 
 // Named element with its registration slot for group-wide presentation.
 struct PlayerUiWidgetElement {
@@ -28,3 +31,19 @@ struct PlayerUiWidgetElement {
             rect->SetRotation({0, 0, DirectX::XMConvertToRadians(layout.rotationDegrees)});
     }
 };
+
+
+// RGB-only theme updates preserve fade and per-element opacity.
+namespace PlayerUiColor {
+    inline DirectX::XMFLOAT4 WithRgb(DirectX::XMFLOAT4 current, const DirectX::XMFLOAT3& rgb) {
+        return {rgb.x, rgb.y, rgb.z, current.w};
+    }
+    inline void Apply(UiHandle handle, const DirectX::XMFLOAT3& rgb) {
+        if (auto* image = handle.GetImage()) image->SetColor(WithRgb(image->GetColor(), rgb));
+        if (auto* text = handle.GetText()) text->SetColor(WithRgb(text->GetColor(), rgb));
+        if (auto* slider = handle.GetSlider()) {
+            slider->SetBgColor(WithRgb(slider->GetBgColor(), rgb));
+            slider->SetFillColor(WithRgb(slider->GetFillColor(), rgb));
+        }
+    }
+}

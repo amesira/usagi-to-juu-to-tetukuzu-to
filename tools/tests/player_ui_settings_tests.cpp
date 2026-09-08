@@ -83,5 +83,18 @@ int main() {
     restored = defaults;
     restored.remainingLife.gauge.size.x = -1;
     assert(!IsValid(restored));
+    restored = defaults;
+    restored.color1 = {0.1f, 0.3f, 0.8f};
+    const auto themed = FieldSerialization::SerializeFields(restored, GetSchema());
+    Data themeLoaded;
+    assert(FieldSerialization::DeserializeFields(themed, themeLoaded, GetSchema()));
+    assert(themeLoaded.color1.z == 0.8f);
+    themeLoaded.color2.x = -1;
+    assert(!IsValid(themeLoaded));
+    auto oldTheme = themed;
+    oldTheme.erase("color1"); oldTheme.erase("color2");
+    Data oldLoaded;
+    assert(FieldSerialization::DeserializeFields(oldTheme, oldLoaded, GetSchema()));
+    assert(oldLoaded.color2.x == 1);
     std::cout << "Player UI settings tests passed\n";
 }
