@@ -16,6 +16,7 @@ using namespace DirectX;
         float    angleZ;
         XMFLOAT4 color;
         XMFLOAT4 uvRect;
+        XMFLOAT4 roundFill = {}; // enabled, amount, start radians, direction (+1 clockwise)
     };
 
     // 2D描画コマンドのバッチ情報
@@ -37,6 +38,7 @@ using namespace DirectX;
         XMFLOAT3 scale = { 1.0f, 1.0f, 1.0f };
         XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
         XMFLOAT4 uvRect = { 0.0f, 0.0f, 1.0f, 1.0f };
+        XMFLOAT4 roundFill = {};
     };
 
     struct DrawBatch3D {

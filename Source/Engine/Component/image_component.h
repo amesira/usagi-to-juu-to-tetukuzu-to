@@ -21,6 +21,7 @@ public:
         None,
         Horizontal, // 左から右（Reverseで右から左）
         Vertical,   // 下から上（Reverseで上から下）
+        RoundFill,  // 中心から扇形。開始角度0度は上、通常は時計回り
     };
     enum class WorldSpaceType {
         None,       // 通常表示
@@ -37,6 +38,7 @@ private:
     FillMethod m_fillMethod = FillMethod::None;
     float m_fillAmount = 1.0f;
     bool m_fillReverse = false;
+    float m_fillStartAngleDegrees = 0.0f;
 
 public:
     void    SetTextureResource(TextureResource* resource) { m_pTextureResource = resource; }
@@ -47,6 +49,11 @@ public:
         m_fillAmount = std::isfinite(amount) ? std::clamp(amount, 0.0f, 1.0f) : 0.0f;
     }
     void SetFillReverse(bool reverse) { m_fillReverse = reverse; }
+    void SetFillStartAngleDegrees(float degrees) {
+        m_fillStartAngleDegrees = std::isfinite(degrees) ? std::fmod(degrees, 360.0f) : 0.0f;
+        if (m_fillStartAngleDegrees < 0) m_fillStartAngleDegrees += 360.0f;
+    }
+    float GetFillStartAngleDegrees() const { return m_fillStartAngleDegrees; }
     FillMethod GetFillMethod() const { return m_fillMethod; }
     float GetFillAmount() const { return m_fillAmount; }
     bool GetFillReverse() const { return m_fillReverse; }

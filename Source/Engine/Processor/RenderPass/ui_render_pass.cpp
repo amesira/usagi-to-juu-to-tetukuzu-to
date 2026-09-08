@@ -38,6 +38,7 @@ namespace {
                     data[i].world = makeWorld(command);
                     data[i].color = command.color;
                     data[i].uvRect = command.uvRect;
+                    data[i].roundFill = command.roundFill;
                 }
                 context->Unmap(instances, 0);
                 context->DrawInstanced(4, count, 0, 0);

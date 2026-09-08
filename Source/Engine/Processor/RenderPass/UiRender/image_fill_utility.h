@@ -4,6 +4,13 @@
 #include <cmath>
 
 namespace ImageFillUtility {
+    inline DirectX::XMFLOAT4 GetRoundFill(const ImageComponent& image) {
+        if (image.GetFillMethod() != ImageComponent::FillMethod::RoundFill) return {};
+        return {1.0f, image.GetFillAmount(),
+            DirectX::XMConvertToRadians(image.GetFillStartAngleDegrees()),
+            image.GetFillReverse() ? -1.0f : 1.0f};
+    }
+
     // 元のImage/Transformを変更せず、切り抜き後のサイズ・UV・中心差分を計算する。
     // UIローカル座標はX右向き、Y下向き。
     inline bool Calculate(const ImageComponent& image, DirectX::XMFLOAT2& size,
@@ -32,6 +39,7 @@ namespace ImageFillUtility {
 
     inline bool Apply(const ImageComponent& image, UiDrawCommand::DrawCommand2DInstance& instance)
     {
+        instance.roundFill = GetRoundFill(image);
         DirectX::XMFLOAT2 offset;
         if (!Calculate(image, instance.size, instance.uvRect, offset)) return false;
         const float cosine = std::cos(instance.angleZ);
@@ -44,6 +52,7 @@ namespace ImageFillUtility {
     inline bool Apply(const ImageComponent& image, UiDrawCommand::DrawCommand3DInstance& instance)
     {
         DirectX::XMFLOAT2 size = { instance.scale.x, instance.scale.y };
+        instance.roundFill = GetRoundFill(image);
         DirectX::XMFLOAT2 offset;
         if (!Calculate(image, size, instance.uvRect, offset)) return false;
         instance.scale.x = size.x;

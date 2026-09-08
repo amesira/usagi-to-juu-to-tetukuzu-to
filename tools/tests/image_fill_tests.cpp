@@ -65,5 +65,32 @@ int main()
     d.uvRect={0.8f,0.3f,-0.4f,0.6f};
     assert(ImageFillUtility::Apply(image,d));
     assert(Near(d.uvRect.x,0.6f) && Near(d.uvRect.z,-0.2f));
+    image.SetFillMethod(ImageComponent::FillMethod::RoundFill);
+    image.SetFillStartAngleDegrees(-90);
+    assert(Near(image.GetFillStartAngleDegrees(), 270));
+    for (bool reverse : {false, true}) {
+        image.SetFillReverse(reverse);
+        for (float amount : {0.0f, 0.25f, 0.5f, 1.0f}) {
+            image.SetFillAmount(amount);
+            UiDrawCommand::DrawCommand2DInstance round = {};
+            round.size = {200, 80}; round.uvRect = atlas; round.position = {10, 20};
+            UiDrawCommand::DrawCommand3DInstance world;
+            world.scale = {2, 3, 1}; world.uvRect = atlas; world.offset = {4, 5};
+            assert(ImageFillUtility::Apply(image, round) == (amount > 0));
+            assert(ImageFillUtility::Apply(image, world) == (amount > 0));
+            assert(round.size.x == 200 && round.size.y == 80);
+            assert(round.position.x == 10 && round.position.y == 20);
+            assert(Near(round.uvRect.x, atlas.x) && Near(round.uvRect.z, atlas.z));
+            assert(world.scale.x == 2 && world.offset.x == 4);
+            assert(round.roundFill.x == 1 && round.roundFill.y == amount);
+            assert(Near(round.roundFill.z, DirectX::XMConvertToRadians(270)));
+            assert(round.roundFill.w == (reverse ? -1 : 1));
+            assert(world.roundFill.y == round.roundFill.y);
+        }
+    }
+    image.SetFillMethod(ImageComponent::FillMethod::None);
+    assert(ImageFillUtility::Apply(image, d) && d.roundFill.x == 0);
+    image.SetFillStartAngleDegrees(std::numeric_limits<float>::infinity());
+    assert(image.GetFillStartAngleDegrees() == 0);
     std::cout << "Image Fill: four directions, 0/partial/full, rotated fixed edges, 3D offsets, atlas/mirrored UVs and clamping passed.\n";
 }

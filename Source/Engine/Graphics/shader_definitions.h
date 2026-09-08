@@ -75,6 +75,7 @@ namespace ShaderDefinitions {
         XMMATRIX world;
         XMFLOAT4 color;
         XMFLOAT4 uvRect;
+        XMFLOAT4 roundFill;
     };
 #pragma endregion
 

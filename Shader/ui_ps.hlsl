@@ -12,11 +12,28 @@ struct PS_INPUT
     float4 posH     : SV_Position;  // 変換済み頂点座標
     float4 color    : COLOR0;       // 頂点カラー
     float2 texcoord : TEXCOORD0;    // テクスチャ座標
+    float2 localUv : TEXCOORD1;
+    nointerpolation float4 roundFill : TEXCOORD2;
 };
 
 // main関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
+    if (ps_in.roundFill.x > 0.5f) {
+        const float amount = ps_in.roundFill.y;
+        if (amount <= 0.0f) discard;
+        if (amount < 1.0f) {
+            const float tau = 6.28318530718f;
+            float2 direction = ps_in.localUv - 0.5f;
+            
+            if (dot(direction, direction) > 0.0f) {
+                float angle = atan2(direction.x, -direction.y);
+                float progress = frac((angle - ps_in.roundFill.z) * ps_in.roundFill.w / tau);
+                if (progress > amount) discard;
+            }
+        }
+    }
+    
     // 頂点カラーを初期値とする
     float4 col = ps_in.color;
     
