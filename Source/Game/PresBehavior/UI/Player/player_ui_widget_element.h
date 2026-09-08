@@ -1,3 +1,5 @@
+// player_ui_widget_element.h
+// ・UiHandleを内包した構造体で、ウィジェットの登録とレイアウト適用を行う
 #pragma once
 #include "player_ui_context.h"
 #include "player_ui_settings_asset.h"

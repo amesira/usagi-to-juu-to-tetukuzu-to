@@ -15,6 +15,8 @@
 #include <cstdint>
 #include "player_ui_health_bar.h"
 #include "player_ui_ammo_count.h"
+#include "player_ui_crosshair.h"
+#include "player_ui_remaining_life.h"
 
 class PlayerUiSettingsAsset;
 
@@ -27,7 +29,8 @@ private:
     bool m_widgetsCreated = false;
     PlayerUiHealthBar m_healthBar;
     PlayerUiAmmoCount m_ammoCount;
-    float m_remainingLife = 1;
+    PlayerUiCrosshair m_crosshair;
+    PlayerUiRemainingLife m_remainingLife;
 
     std::uint64_t m_lastSettingsRevision = 0;
     DirectX::XMFLOAT2 m_lastScreenSize = {};
@@ -49,11 +52,7 @@ public:
 
 
 private:
-    void CreateTestWidgets();
+    void CreateWidgets();
     void ApplyLayoutSettings();
-    void UpdateDisplayValues();
-    void RegisterWidget(PlayerUi::WidgetGroupID groupID, UiHandle widget,
-        const DirectX::XMFLOAT2& offset, const DirectX::XMFLOAT2& size,
-        const char* name, float orderInLayer);
 
 };

@@ -1036,4 +1036,10 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.cpp" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_widget_element.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.cpp" />
+  </ItemGroup>
 </Project>
