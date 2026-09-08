@@ -1,13 +1,22 @@
+//===================================================
+// File  ：_/UI/Player/player_ui_health_bar.cpp
+// Date  ：2026/09/08
+// Author：Miu Kitamura
+//===================================================
 #include "player_ui_health_bar.h"
+
 #include "Game/Factory/ui_factory.h"
 #include "Engine/Component/image_component.h"
 #include "Engine/Component/text_component.h"
 #include "Engine/Component/slider_component.h"
+
 #include "External/ImGui/imgui.h"
 #include <algorithm>
 #include <cmath>
 #include <string>
+
 using namespace DirectX;
+
 void PlayerUiHealthBar::Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
     const PlayerUiSettings::HealthBarSettings& settings)
 {

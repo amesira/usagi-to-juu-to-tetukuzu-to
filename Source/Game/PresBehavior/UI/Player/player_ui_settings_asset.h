@@ -1,4 +1,8 @@
-// player_ui_settings_asset.h
+//---------------------------------------------------
+// File  ：_/UI/Player/player_ui_settings_asset.h
+// Date  ：2026/09/08
+// Author：Miu Kitamura
+//---------------------------------------------------
 #pragma once
 #include <DirectXMath.h>
 #include <cmath>

@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/UI/Player/player_ui_remaining_life.cpp
+// Date  ：2026/09/08
+// Author：Miu Kitamura
+//===================================================
 #include "player_ui_remaining_life.h"
 #include "Game/Factory/ui_factory.h"
 #include "Engine/Component/image_component.h"

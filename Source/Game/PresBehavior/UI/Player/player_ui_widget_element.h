@@ -1,4 +1,5 @@
 // player_ui_widget_element.h
+// 2026/09/08
 // ・UiHandleを内包した構造体で、ウィジェットの登録とレイアウト適用を行う
 #pragma once
 #include "player_ui_context.h"
@@ -9,7 +10,7 @@
 #include "Engine/Component/text_component.h"
 #include "Engine/Component/slider_component.h"
 
-// Named element with its registration slot for group-wide presentation.
+// ウィジェットの登録とレイアウト適用を行う構造体
 struct PlayerUiWidgetElement {
     UiHandle handle;
     size_t slot = 0;
