@@ -68,19 +68,18 @@ bool NavigationSystem::GridToWorld(EnemyAiWorld::GridCoord coord, DirectX::XMFLO
         return false;
     }
 
+    outPosition = {
+        m_buildSettings.origin().x + (coord.x + 0.5f) * m_buildSettings.cellSize,
+        0.0f,
+        m_buildSettings.origin().y + (coord.z + 0.5f) * m_buildSettings.cellSize
+    };
+
     GridCell cell = m_cells[coord.z * m_buildSettings.cellCountX + coord.x];
     if (cell.type == CellType::NoGround || cell.type == CellType::Unknown) {
-        outPosition.x = m_buildSettings.origin().x + (coord.x + 0.5f) * m_buildSettings.cellSize;
-        outPosition.y = 0.0f;
-        outPosition.z = m_buildSettings.origin().y + (coord.z + 0.5f) * m_buildSettings.cellSize;
         return true;
     }
 
-    outPosition = {
-        m_buildSettings.origin().x + (coord.x + 0.5f) * m_buildSettings.cellSize,
-        cell.height,
-        m_buildSettings.origin().y + (coord.z + 0.5f) * m_buildSettings.cellSize
-    };
+    outPosition.y = cell.height;
     return true;
 }
 
@@ -92,7 +91,7 @@ const EnemyAiWorld::GridCell* NavigationSystem::GetCell(EnemyAiWorld::GridCoord 
         return nullptr;
     }
 
-    return &m_cells[coord.z * m_buildSettings.cellCountX + coord.x];
+    return &m_cells[coord.x * m_buildSettings.cellCountZ + coord.z];
 }
 #pragma endregion
 
@@ -146,7 +145,7 @@ EnemyAiWorld::GridCell NavigationSystem::SampleCell(
 
     // SphereCastで地面を確認（半径は0.1程度としておく）
     XMFLOAT3 rayOrigin = { samplePosition.x, settings.rayTopPosition, samplePosition.y };
-    XMFLOAT3 rayDirection = { 0.0f, 1.0f, 0.0f };
+    XMFLOAT3 rayDirection = { 0.0f, -1.0f, 0.0f };
     float rayLength = settings.rayTopPosition - settings.rayBottomPosition;
 
     RaycastHit outHit;

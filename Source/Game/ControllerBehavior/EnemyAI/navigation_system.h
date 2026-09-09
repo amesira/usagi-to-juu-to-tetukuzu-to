@@ -16,12 +16,12 @@ namespace EnemyAiAgent { struct NavigationAgentSettings; }
 // ナビゲーショングリッドの生成・経路探索を担当する
 class NavigationSystem {
 private:
-    static constexpr CollisionLayerMask SAMPLE_LAYER_MASK = static_cast<CollisionLayerMask>(CollisionLayer::Field);
+    static constexpr CollisionLayerMask SAMPLE_LAYER_MASK = CollisionLayerToMask(CollisionLayer::Field);
 
     EnemyAiWorld::NavigationGridSettings m_buildSettings;
     bool m_isBuilt = false;
 
-    // index = z * cellCountX + x
+    // index = x * cellCountZ + z
     std::vector<EnemyAiWorld::GridCell> m_cells;
 
 public:
