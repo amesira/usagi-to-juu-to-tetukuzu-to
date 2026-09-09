@@ -24,21 +24,11 @@ namespace EnemyAiWorld {
             return { center.x - (cellCountX * cellSize) / 2.0f, center.y - (cellCountZ * cellSize) / 2.0f };
         }
     };
-
-    /// @brief ナビゲーションエージェントの設定
-    // 固有の設定じゃない？
-    struct NavigationAgentSettings {
-        float radius = 0.5f;
-        float maxStepHeight = 0.5f;
-        float maxSlopeDegrees = 45.0f;
-    };
-
 }
 
 namespace EnemyAiWorldSettings {
     struct Data {
         EnemyAiWorld::NavigationGridSettings navigationGrid;
-        EnemyAiWorld::NavigationAgentSettings defaultAgent;
     };
 
     inline const auto& GetNavigationGridSchema() {
@@ -54,21 +44,9 @@ namespace EnemyAiWorldSettings {
         return schema;
     }
 
-    inline const auto& GetNavigationAgentSchema() {
-        using Agent = EnemyAiWorld::NavigationAgentSettings;
-        static const auto schema = FieldSchema{
-            MakeField("radius", "Radius", &Agent::radius, DragFieldOptions{.dragSpeed=0.01f, .minValue=0.01f, .maxValue=100}),
-            
-            MakeField("maxStepHeight", "Max Step Height", &Agent::maxStepHeight, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=100}),
-            MakeField("maxSlopeDegrees", "Max Slope (degrees)", &Agent::maxSlopeDegrees, DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=89})
-        };
-        return schema;
-    }
-
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
-            MakeStructField("navigationGrid", "Navigation Grid", &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{}),
-            MakeStructField("defaultAgent", "Default Navigation Agent", &Data::defaultAgent, GetNavigationAgentSchema(), DefaultFieldOptions{})
+            MakeStructField("navigationGrid", "Navigation Grid", &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{})
         };
         return schema;
     }
