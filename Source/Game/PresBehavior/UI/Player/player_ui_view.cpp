@@ -80,6 +80,7 @@ void PlayerUiView::ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::
 
     const UiChromaticEcho echo = PlayerUiSettings::ResolveChromaticEcho(
         settings.chromaticEcho,
+        perspective.vanishingPoint,
         screenAnchor,
         context.runtimeState.screenSize);
 

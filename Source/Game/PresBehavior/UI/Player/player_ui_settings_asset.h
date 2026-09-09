@@ -59,6 +59,7 @@ namespace PlayerUiSettings {
     /// @brief ChromaticEchoSettingsからUiChromaticEchoを計算する関数
     inline UiChromaticEcho ResolveChromaticEcho(
         const ChromaticEchoSettings& settings,
+        DirectX::XMFLOAT2 vanishingPoint,
         DirectX::XMFLOAT2 screenAnchor, 
         DirectX::XMFLOAT2 screenSize) 
     {
@@ -71,8 +72,8 @@ namespace PlayerUiSettings {
         echo.orderInLayerOffset = settings.orderInLayerOffset;
 
         // 画面中心からScreenAnchorへ向かう方向にオフセットを計算する
-        const float x = screenAnchor.x - 0.5f;
-        const float y = screenAnchor.y - 0.5f;
+        const float x = screenAnchor.x - vanishingPoint.x;
+        const float y = screenAnchor.y - vanishingPoint.y;
 
         const float length = std::sqrt(x * x + y * y);
         if (length > 0 && std::isfinite(length) && std::isfinite(settings.offsetDistance)) {
