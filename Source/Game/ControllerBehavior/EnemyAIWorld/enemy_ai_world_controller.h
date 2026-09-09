@@ -1,5 +1,5 @@
 //---------------------------------------------------
-// File  ：_/ControllerBehavior/EnemyAI/enemy_ai_controller.h
+// File  ：_/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h
 // Date  ：2026/09/09
 // Author：Miu Kitamura
 // 
@@ -10,14 +10,14 @@
 #define ENEMY_AI_CONTROLLER_H
 #include "Engine/Component/behavior_component.h"
 
-#include "enemy_ai_context.h"
+#include "enemy_ai_world_context.h"
 #include "meta_ai.h"
 #include "navigation_system.h"
 #include "tactical_query_system.h"
 
 class EnemyAIController : public BehaviorComponent {
 private:
-    EnemyAIContext m_context;
+    EnemyAIWorldContext m_context;
 
     MetaAI m_metaAI;
     NavigationSystem m_navigation;

@@ -5,17 +5,17 @@
 //===================================================
 #include "tactical_query_system.h"
 
-void TacticalQuerySystem::Initialize(const EnemyAIContext& context)
+void TacticalQuerySystem::Initialize(const EnemyAIWorldContext& context)
 {
     // 初期化処理
 }
 
-void TacticalQuerySystem::Update(EnemyAIContext& context, float deltaTime)
+void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
 {
     // 更新処理
 }
 
-void TacticalQuerySystem::Finalize(const EnemyAIContext& context)
+void TacticalQuerySystem::Finalize(const EnemyAIWorldContext& context)
 {
     // 終了処理
 }

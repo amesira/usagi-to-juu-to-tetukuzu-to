@@ -7,7 +7,7 @@
 //---------------------------------------------------
 #ifndef NAVIGATION_SYSTEM_H
 #define NAVIGATION_SYSTEM_H
-#include "enemy_ai_context.h"
+#include "enemy_ai_world_context.h"
 
 class IScene;
 
@@ -16,8 +16,8 @@ class NavigationSystem {
 private:
 
 public:
-    void Initialize(const EnemyAIContext& context);
-    void Finalize(const EnemyAIContext& context);
+    void Initialize(const EnemyAIWorldContext& context);
+    void Finalize(const EnemyAIWorldContext& context);
 
     // Grid生成・経路探索APIは、セルとPathの型を定義する段階で追加する。
 };

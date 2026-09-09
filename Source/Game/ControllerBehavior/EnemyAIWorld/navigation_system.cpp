@@ -5,11 +5,11 @@
 //===================================================
 #include "navigation_system.h"
 
-void NavigationSystem::Initialize(const EnemyAIContext& context)
+void NavigationSystem::Initialize(const EnemyAIWorldContext& context)
 {
 
 }
 
-void NavigationSystem::Finalize(const EnemyAIContext& context)
+void NavigationSystem::Finalize(const EnemyAIWorldContext& context)
 {
 }

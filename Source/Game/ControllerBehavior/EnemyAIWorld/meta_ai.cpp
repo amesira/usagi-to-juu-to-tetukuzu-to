@@ -5,17 +5,17 @@
 //===================================================
 #include "meta_ai.h"
 
-void MetaAI::Initialize(const EnemyAIContext& context)
+void MetaAI::Initialize(const EnemyAIWorldContext& context)
 {
     
 }
 
-void MetaAI::Update(EnemyAIContext& context, float deltaTime)
+void MetaAI::Update(EnemyAIWorldContext& context, float deltaTime)
 {
 
 }
 
-void MetaAI::Finalize(const EnemyAIContext& context)
+void MetaAI::Finalize(const EnemyAIWorldContext& context)
 {
     
 }

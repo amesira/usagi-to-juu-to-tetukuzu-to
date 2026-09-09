@@ -7,16 +7,16 @@
 //---------------------------------------------------
 #ifndef META_AI_H
 #define META_AI_H
-#include "enemy_ai_context.h"
+#include "enemy_ai_world_context.h"
 
 // シーン内のプレイヤー・敵・戦況情報を共有する。
 class MetaAI {
 private:
     
 public:
-    void Initialize(const EnemyAIContext& context);
-    void Update(EnemyAIContext& context, float deltaTime);
-    void Finalize(const EnemyAIContext& context);
+    void Initialize(const EnemyAIWorldContext& context);
+    void Update(EnemyAIWorldContext& context, float deltaTime);
+    void Finalize(const EnemyAIWorldContext& context);
 
 };
 

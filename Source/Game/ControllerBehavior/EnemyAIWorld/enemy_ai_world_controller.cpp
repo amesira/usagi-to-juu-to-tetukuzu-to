@@ -3,7 +3,7 @@
 // Date  ：2026/09/09
 // Author：Miu Kitamura
 //===================================================
-#include "enemy_ai_controller.h"
+#include "enemy_ai_world_controller.h"
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
@@ -47,8 +47,8 @@ void EnemyAIController::Start()
     m_context.navigation = &m_navigation;
     m_context.tacticalQuery = &m_tacticalQuery;
 
-    m_context.settingsAsset = Engine::DataLoader()->GetAsset<EnemyAiSettingsAsset>(
-        "asset/Data/enemy_ai_settings.data.json", true);
+    m_context.settingsAsset = Engine::DataLoader()->GetAsset<EnemyAiWorldSettingsAsset>(
+        "asset/Data/enemy_ai_world_settings.data.json", true);
 
     m_metaAI.Initialize(m_context);
     m_navigation.Initialize(m_context);
