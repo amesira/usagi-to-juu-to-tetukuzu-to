@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include <limits>
+#include <DirectXMath.h>
 
 class UiHandle {
 private:
@@ -23,6 +24,7 @@ public:
     void SetActive(bool active);
     void Destroy();
 
+    void SetColor(const DirectX::XMFLOAT3& color);
     void SetAlpha(float alpha);
 
     // RectTransformの位置とサイズを設定するための関数

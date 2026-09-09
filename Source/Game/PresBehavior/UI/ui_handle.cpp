@@ -14,6 +14,8 @@
 #include "Engine/Component/image_component.h"
 #include "Engine/Component/slider_component.h"
 
+using namespace DirectX;
+
 UiHandle::UiHandle(GameObject* gameObject)
 {
     if (gameObject) {
@@ -44,6 +46,25 @@ void UiHandle::Destroy()
     GameObject* gameObject = m_scene->GetGameObjectByID(m_gameObjectID);
     if (gameObject) {
         gameObject->Destroy();
+    }
+}
+
+void UiHandle::SetColor(const DirectX::XMFLOAT3& color)
+{
+    if (!IsValid()) return;
+    if (ImageComponent* image = GetImage()) {
+        XMFLOAT4 newColor = {color.x, color.y, color.z, image->GetColor().w};
+        image->SetColor(newColor);
+    }
+    if (TextComponent* text = GetText()) {
+        XMFLOAT4 newColor = {color.x, color.y, color.z, text->GetColor().w};
+        text->SetColor(newColor);
+    }
+    if (SliderComponent* slider = GetSlider()) { // 背景色もFill色も同じRGBにする
+        XMFLOAT4 bgColor = { color.x, color.y, color.z, slider->GetBgColor().w };
+        slider->SetBgColor(bgColor);
+        XMFLOAT4 fillColor = {color.x, color.y, color.z, slider->GetFillColor().w};
+        slider->SetFillColor(fillColor);
     }
 }
 

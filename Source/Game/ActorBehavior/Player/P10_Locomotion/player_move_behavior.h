@@ -15,6 +15,11 @@ class PlayerMoveBehavior : public BehaviorComponent {
 private:
     PlayerMoveContext m_context;
 
+    bool m_requestJumpAnimation = false; // ジャンプアニメーション再生要求フラグ
+
+    DirectX::XMFLOAT2 m_vanishOffset = { 0.0f, 0.0f }; // UIの消失点のオフセット値
+    DirectX::XMFLOAT2 m_vanishOffsetVelocity = { 0.0f, 0.0f }; // UIの消失点のオフセット値の速度
+
 public:
     PlayerMoveBehavior() = default;
     ~PlayerMoveBehavior() = default;
@@ -47,6 +52,10 @@ private:
     void ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime);
     /// @brief 物理速度を適用する
     void ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime);
+
+    // === アニメーション・UIの更新処理 ===
+    void UpdateAnimation(PlayerContext& context, const PlayerMoveIntent& moveIntent, float deltaTime);
+    void UpdateUi(PlayerContext& context, const PlayerMoveIntent& moveIntent, float deltaTime);
 
 };
 

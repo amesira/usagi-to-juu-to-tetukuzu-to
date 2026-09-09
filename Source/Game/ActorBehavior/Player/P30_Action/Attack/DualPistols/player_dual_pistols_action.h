@@ -30,4 +30,9 @@ public:
 private:
     void UpdateMuzzleStates();
     void ChangePhase(PlayerDualPistolsRuntimeState::Phase newPhase);
+
+    // === アニメーション・UIの更新処理（未実装） ===
+    void UpdateAnimation(PlayerContext& context, float deltaTime) {}
+    void UpdateUi(PlayerContext& context, float deltaTime) {}
+
 };

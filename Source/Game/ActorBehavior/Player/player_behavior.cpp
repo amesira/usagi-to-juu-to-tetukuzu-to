@@ -25,6 +25,7 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 
 #include "Utility/mi_math.h"
 
@@ -45,6 +46,8 @@ void PlayerBehavior::Start()
     m_context.weaponController = &m_weaponController;
 
     m_context.animationController = &m_animationController;
+
+    m_context.uiBehavior = owner->GetComponent<PlayerUiBehavior>();
 
     IScene* scene = owner->GetScene();
     if (!scene) return;

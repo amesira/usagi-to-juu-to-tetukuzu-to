@@ -33,4 +33,8 @@ private:
     void UpdateMuzzleState();
     void ChangePhase(PlayerShotgunRuntimeState::Phase newPhase);
 
+    // === アニメーション・UIの更新処理（未実装） ===
+    void UpdateAnimation(PlayerContext& context, float deltaTime) {}
+    void UpdateUi(PlayerContext& context, float deltaTime) {}
+
 };

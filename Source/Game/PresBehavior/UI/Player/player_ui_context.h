@@ -3,6 +3,7 @@
 #include <vector>
 #include <DirectXMath.h>
 #include "Game/PresBehavior/UI/ui_handle.h"
+#include "player_ui_settings_asset.h"
 
 namespace PlayerUi 
 {
@@ -17,17 +18,20 @@ namespace PlayerUi
     /// @brief ウィジェットのグループを表す構造体
     struct WidgetGroup {
         std::vector<UiHandle> widgets;
+
         DirectX::XMFLOAT2 originalCenterPosition = {}; // 演出前の基準位置
         DirectX::XMFLOAT2 currentCenterPosition = {};  // 演出反映後の位置
         DirectX::XMFLOAT2 shakeOffset = {};
         float currentAlpha = 1.0f;
         std::vector<DirectX::XMFLOAT2> offsetPositions;
+
+        bool applyPerspective = true; // 奥行き変換を適用するかどうか
     };
 }
 
 struct PlayerUiRuntimeState {
     DirectX::XMFLOAT2 screenSize = {};
-    PlayerUiSettings::PerspectiveSettings perspectiveSettings;
+    PlayerUiSettings::PerspectiveSettings runningPerspective;
 };
 
 struct PlayerUiContext {

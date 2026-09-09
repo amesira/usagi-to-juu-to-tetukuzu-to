@@ -60,12 +60,15 @@ public:
 
     void SetPerspectiveVanishingPointOffset(const DirectX::XMFLOAT2& offset) {
         m_perspectiveVanishingPointOffset = offset;
+        m_layoutDirty = true;
     }
     void SetPerspectiveCameraDistanceMultiplier(float multiplier) {
         m_perspectiveCameraDistanceMultiplier = multiplier;
+        m_layoutDirty = true;
     }
 
 private:
+    void UpdateRuntimeState();
     void CreateWidgets();
     void ApplyLayoutSettings();
 

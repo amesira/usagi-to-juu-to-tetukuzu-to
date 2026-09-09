@@ -52,9 +52,8 @@ void PlayerUiView::ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::
     static const PlayerUiSettings::Data defaults;
     const auto& settings = context.settingsAsset ? context.settingsAsset->GetData() : defaults;
 
-    PlayerUiSettings::PerspectiveSettings perspective = settings.perspective;
-    if (&group == &context.widgetGroups[static_cast<size_t>(PlayerUi::WidgetGroupID::Crosshair)]) {
-        // Crosshairは奥行き変換を無効化する
+    PlayerUiSettings::PerspectiveSettings perspective = context.runtimeState.runningPerspective;
+    if (!group.applyPerspective) { // Perspectiveを適用しないグループは無効化する
         perspective.enabled = false;
     }
 
@@ -63,10 +62,7 @@ void PlayerUiView::ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::
         perspective,
         group.originalCenterPosition, 
         group.currentCenterPosition,
-        {
-            static_cast<float>(Direct3D_GetBackBufferWidth()), 
-            static_cast<float>(Direct3D_GetBackBufferHeight())
-        });
+        context.runtimeState.screenSize);
     
     DirectX::XMFLOAT2 screenAnchor = {0.5f, 0.5f};
     switch (static_cast<WidgetGroupID>(&group - context.widgetGroups)) {
@@ -84,12 +80,8 @@ void PlayerUiView::ApplyWidgetGroupPosition(PlayerUiContext& context, PlayerUi::
 
     const UiChromaticEcho echo = PlayerUiSettings::ResolveChromaticEcho(
         settings.chromaticEcho,
-        perspective.vanishingPoint,
         screenAnchor,
-        {
-            static_cast<float>(Direct3D_GetBackBufferWidth()), 
-            static_cast<float>(Direct3D_GetBackBufferHeight())
-        });
+        context.runtimeState.screenSize);
 
     // === 適用 ===
     // 配置未登録のウィジェットは移動させない

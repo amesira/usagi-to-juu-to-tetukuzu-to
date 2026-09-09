@@ -11,6 +11,8 @@ void PlayerUiCrosshair::Initialize(IScene* scene, PlayerUi::WidgetGroup& group)
     if (m_group || !scene) return;
 
     m_group = &group;
+    m_group->applyPerspective = false; // Crosshairは奥行き変換を無効化する
+
     const char* names[] = {
         "PlayerUi.Crosshair.Left.Test", "PlayerUi.Crosshair.Right.Test",
         "PlayerUi.Crosshair.Top.Test", "PlayerUi.Crosshair.Bottom.Test"
@@ -52,6 +54,6 @@ void PlayerUiCrosshair::ApplyColors(const DirectX::XMFLOAT3& color2)
     if (!m_group) return;
 
     for (auto& widget : m_group->widgets) {
-        PlayerUiColor::Apply(widget, color2);
+        widget.SetColor(color2);
     }
 }

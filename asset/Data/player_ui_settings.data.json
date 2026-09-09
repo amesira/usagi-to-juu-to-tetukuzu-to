@@ -67,8 +67,8 @@
                 0.0
             ],
             "enabled": true,
-            "offsetDistance": 1.0,
-            "opacity": 0.5,
+            "offsetDistance": 5.0,
+            "opacity": 0.30000001192092896,
             "orderInLayerOffset": -10,
             "scale": 1.0049999952316284
         },
@@ -128,10 +128,10 @@
             }
         },
         "perspective": {
-            "cameraDistance": 1200.0,
+            "cameraDistance": 2000.0,
             "enabled": true,
             "maxTiltDegrees": 30.0,
-            "tiltDegrees": 20.0,
+            "tiltDegrees": 12.0,
             "vanishingPoint": [
                 0.6000000238418579,
                 0.6000000238418579

@@ -16,6 +16,8 @@ struct PlayerRuntimeState {
 
     /// @brief プレイヤーの右方向をX、前方向をYとした移動入力
     DirectX::XMFLOAT2 localMoveParameter{ 0.0f, 0.0f };
+    /// @brief カメラの右方向をX、前方向をYとした移動入力
+    DirectX::XMFLOAT2 cameraBaseMoveParameter{ 0.0f, 0.0f };
 };
 
 /// @brief プレイヤーの状態や設定を管理するコンテキストクラス
@@ -34,6 +36,8 @@ public:
     class PlayerAnimationController* animationController = nullptr;
 
     class PlayerMoveBehavior* moveBehavior = nullptr;
+
+    class PlayerUiBehavior* uiBehavior = nullptr;
 
     class CameraComponent* mainCamera = nullptr;
     TransformComponent* mainCameraTransform = nullptr;

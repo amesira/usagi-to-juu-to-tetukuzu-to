@@ -21,6 +21,7 @@ void PlayerUiHealthBar::Initialize(IScene* scene, PlayerUi::WidgetGroup& group, 
 {
     if (m_group || !scene) return;
     m_group = &group;
+    m_group->applyPerspective = true;
 
     m_slider.Register(group, UiFactory::CreateUiSliderHandle(scene,
         {0.08f, 0.1f, 0.14f, 1}, {0.2f, 0.9f, 0.4f, 1}, 1), "PlayerUi.HealthBar", 100);
@@ -125,10 +126,10 @@ void PlayerUiHealthBar::ApplyColors(const DirectX::XMFLOAT3& color1, const Direc
 {
     if (!m_group) return;
     for (auto& widget : m_group->widgets) {
-        PlayerUiColor::Apply(widget, color2);
+        widget.SetColor(color2);
     }
     if (auto* slider = m_slider.handle.GetSlider()){
-        slider->SetFillColor(PlayerUiColor::WithRgb(slider->GetFillColor(), color1));
+        slider->SetFillColor({color1.x, color1.y, color1.z, slider->GetFillColor().w});
     }
 }
 

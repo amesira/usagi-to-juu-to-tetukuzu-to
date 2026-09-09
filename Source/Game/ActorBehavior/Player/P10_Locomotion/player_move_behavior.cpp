@@ -27,6 +27,8 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
+
 #include <cmath>
 
 void PlayerMoveBehavior::Start() {}
@@ -62,6 +64,7 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
     m_context.collider = player->GetComponent<BoxColliderComponent>();
 
     m_context.animationController = playerContext.animationController;
+    m_context.uiBehavior = playerContext.uiBehavior;
 
     m_context.moveMotor = {};
     m_context.moveRotate = {};
@@ -92,8 +95,8 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
         m_context.runtimeState.m_physicsVelocity.y = m_context.settings().jumpForce * moveIntent.jumpPowerMultiplier;
         m_context.runtimeState.m_isGrounded = false;
 
-        m_context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
         m_context.moveEffects.PlayEffects(m_context, PlayerMoveEffects::EffectsType::Jump);
+        m_requestJumpAnimation = true;
     }
 
     // === 移動処理 ===
@@ -121,17 +124,6 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
     // === エフェクト処理 ===
     m_context.moveEffects.UpdateEffects(m_context, deltaTime);
 
-    // === アニメーション要求 ===
-    if (!m_context.runtimeState.m_isGrounded) {
-        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Falling);
-    }
-    else {
-        context.animationController->PlayAnimation(
-            MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
-            ? PlayerAnimationController::Animation::Running
-            : PlayerAnimationController::Animation::Idle);
-    }
-
     // 他のプレイヤー機能から参照する汎用ランタイム状態を更新する。
     context.runtimeState.m_controlVelocity = m_context.runtimeState.m_controlVelocity;
     context.runtimeState.m_physicsVelocity = m_context.runtimeState.m_physicsVelocity;
@@ -150,9 +142,16 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
         MiMath::Dot(moveIntent.moveDirection, playerRight) * moveIntent.moveInputMagnitude,
         MiMath::Dot(moveIntent.moveDirection, playerForward) * moveIntent.moveInputMagnitude,
     };
+    context.runtimeState.cameraBaseMoveParameter = {
+        MiMath::Dot(moveIntent.moveDirection, context.mainCamera->GetRight()) * moveIntent.moveInputMagnitude,
+        MiMath::Dot(moveIntent.moveDirection, context.mainCamera->GetForward()) * moveIntent.moveInputMagnitude,
+    };
 
+    UpdateAnimation(context, moveIntent, deltaTime);
+    UpdateUi(context, moveIntent, deltaTime);
 }
 
+#pragma region 速度計算
 /// @brief 下向きのSphereCastで接地状態を判定する
 bool PlayerMoveBehavior::CheckGrounded()
 {
@@ -210,4 +209,49 @@ void PlayerMoveBehavior::ApplyControlVelocity(XMFLOAT3& outPosition, float delta
 void PlayerMoveBehavior::ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime)
 {
     outPosition = MiMath::Add(outPosition, MiMath::Multiply(m_context.runtimeState.m_physicsVelocity, deltaTime));
+}
+#pragma endregion
+
+void PlayerMoveBehavior::UpdateAnimation(PlayerContext& context, const PlayerMoveIntent& moveIntent, float deltaTime)
+{
+    if (m_requestJumpAnimation) {
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Jump);
+        m_requestJumpAnimation = false;
+    }
+
+    if (!m_context.runtimeState.m_isGrounded) {
+        context.animationController->PlayAnimation(PlayerAnimationController::Animation::Falling);
+    }
+    else {
+        context.animationController->PlayAnimation(
+            MiMath::Length(m_context.runtimeState.m_controlVelocity) > 0.01f
+            ? PlayerAnimationController::Animation::Running
+            : PlayerAnimationController::Animation::Idle);
+    }
+}
+
+void PlayerMoveBehavior::UpdateUi(PlayerContext& context, const PlayerMoveIntent& moveIntent, float deltaTime)
+{
+    if (m_context.uiBehavior) {
+        // プレイヤーの移動によって、消失点を少しずらす
+        XMFLOAT2 targetOffset = { 0.0f, 0.0f };
+        if (moveIntent.moveInputMagnitude > 0.01f) {
+            targetOffset.x = context.runtimeState.cameraBaseMoveParameter.x * 0.1f;
+        }
+
+        if (!m_context.runtimeState.m_isGrounded) {
+            if (m_context.runtimeState.m_controlVelocity.y > 0.01f) {
+                targetOffset.y = -0.1f;
+            }
+            else if (m_context.runtimeState.m_controlVelocity.y < -0.01f) {
+                targetOffset.y = 0.1f;
+            }
+        }
+
+        // オフセット値をスムーズに補間する
+        m_vanishOffset.x = MiMath::SmoothDamp(m_vanishOffset.x, targetOffset.x, m_vanishOffsetVelocity.x, 0.1f, deltaTime);
+        m_vanishOffset.y = MiMath::SmoothDamp(m_vanishOffset.y, targetOffset.y, m_vanishOffsetVelocity.y, 0.1f, deltaTime);
+
+        m_context.uiBehavior->SetPerspectiveVanishingPointOffset(m_vanishOffset);
+    }
 }

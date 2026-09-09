@@ -22,6 +22,7 @@ void PlayerUiBehavior::Start()
     m_context.view = &m_view;
     m_context.presentation = &m_presentation;
     m_presentation.Initialize();
+    UpdateRuntimeState();
     CreateWidgets();
 }
 
@@ -29,23 +30,15 @@ void PlayerUiBehavior::Update()
 {
     if (!m_widgetsCreated) return;
 
+    UpdateRuntimeState();
+
     // DataAssetが更新されたか、画面サイズが変わったか、レイアウトが変更されたかをチェックして、必要ならレイアウトを再適用する
     const auto revision = m_context.settingsAsset ? m_context.settingsAsset->GetRevision() : 0;
     if (m_layoutDirty || revision != m_lastSettingsRevision
-        || m_lastScreenSize.x != Direct3D_GetBackBufferWidth()
-        || m_lastScreenSize.y != Direct3D_GetBackBufferHeight()) {
+        || m_lastScreenSize.x != m_context.runtimeState.screenSize.x
+        || m_lastScreenSize.y != m_context.runtimeState.screenSize.y) {
         ApplyLayoutSettings();
     }
-
-    // RuntimeStateの更新
-    m_context.runtimeState.screenSize = {
-        static_cast<float>(Direct3D_GetBackBufferWidth()),
-        static_cast<float>(Direct3D_GetBackBufferHeight())
-    };
-    m_context.runtimeState.perspectiveSettings = m_context.settings() ? m_context.settings()->perspective : PlayerUiSettings::PerspectiveSettings{};
-    m_context.runtimeState.perspectiveSettings.vanishingPoint.x += m_perspectiveVanishingPointOffset.x;
-    m_context.runtimeState.perspectiveSettings.vanishingPoint.y += m_perspectiveVanishingPointOffset.y;
-    m_context.runtimeState.perspectiveSettings.cameraDistance *= m_perspectiveCameraDistanceMultiplier;
 
     // マーカーを毎フレーム更新
     m_healthBar.UpdateMarkers();
@@ -53,6 +46,21 @@ void PlayerUiBehavior::Update()
 
     // 演出の更新
     m_presentation.Update(m_context, FPS_GetUnscaledDeltaTime());
+}
+
+void PlayerUiBehavior::UpdateRuntimeState()
+{
+    auto& runtime = m_context.runtimeState;
+    runtime.screenSize = {
+        static_cast<float>(Direct3D_GetBackBufferWidth()),
+        static_cast<float>(Direct3D_GetBackBufferHeight())
+    };
+    runtime.runningPerspective = m_context.settings()
+        ? m_context.settings()->perspective
+        : PlayerUiSettings::PerspectiveSettings{};
+    runtime.runningPerspective.vanishingPoint.x += m_perspectiveVanishingPointOffset.x;
+    runtime.runningPerspective.vanishingPoint.y += m_perspectiveVanishingPointOffset.y;
+    runtime.runningPerspective.cameraDistance *= m_perspectiveCameraDistanceMultiplier;
 }
 
 void PlayerUiBehavior::DrawComponentInspector()
@@ -121,6 +129,7 @@ void PlayerUiBehavior::Setup(const PlayerUiSettingsAsset* settingsAsset)
 {
     m_context.settingsAsset = settingsAsset;
     m_layoutDirty = true;
+    UpdateRuntimeState();
     if (m_widgetsCreated) ApplyLayoutSettings();
 }
 
@@ -128,10 +137,7 @@ void PlayerUiBehavior::ApplyLayoutSettings()
 {
     static const PlayerUiSettings::Data defaults;
     const auto& settings = m_context.settings() ? *m_context.settings() : defaults;
-    const XMFLOAT2 screenSize = {
-        static_cast<float>(Direct3D_GetBackBufferWidth()),
-        static_cast<float>(Direct3D_GetBackBufferHeight())
-    };
+    const XMFLOAT2 screenSize = m_context.runtimeState.screenSize;
 
     m_healthBar.ApplyColors(settings.color1, settings.color2);
     m_ammoCount.ApplyColors(settings.color1, settings.color2);

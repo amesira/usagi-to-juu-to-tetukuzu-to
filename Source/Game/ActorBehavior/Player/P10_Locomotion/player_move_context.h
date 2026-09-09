@@ -45,6 +45,8 @@ struct PlayerMoveContext
 
     class PlayerAnimationController* animationController = nullptr;
 
+    class PlayerUiBehavior* uiBehavior = nullptr;
+
     PlayerMoveMotor moveMotor;
     PlayerMoveRotate moveRotate;
     PlayerMoveEffects moveEffects;

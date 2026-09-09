@@ -23,6 +23,8 @@ void PlayerUiAmmoCount::Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
     if (m_group || !scene) return;
 
     m_group = &group;
+    m_group->applyPerspective = true;
+
     m_background.Register(group, UiFactory::CreateUiImageHandle(scene,
         L"asset/Texture/Ui/circle_gauge_thin.png"), "PlayerUi.AmmoBackground", 100);
     m_fill.Register(group, UiFactory::CreateUiImageHandle(scene,
@@ -145,8 +147,9 @@ void PlayerUiAmmoCount::ApplyColors(const DirectX::XMFLOAT3& color1, const Direc
     if (!m_group) return;
 
     for (auto& widget : m_group->widgets) {
-        PlayerUiColor::Apply(widget, color2);
+        widget.SetColor(color2);
     }
-    PlayerUiColor::Apply(m_fill.handle, color1);
-    PlayerUiColor::Apply(m_currentText.handle, color1);
+
+    m_fill.handle.SetColor(color1);
+    m_currentText.handle.SetColor(color1);
 }
