@@ -131,10 +131,10 @@
             "cameraDistance": 2000.0,
             "enabled": true,
             "maxTiltDegrees": 30.0,
-            "tiltDegrees": 12.0,
+            "tiltDegrees": 5.0,
             "vanishingPoint": [
-                0.6000000238418579,
-                0.6000000238418579
+                0.5,
+                0.0
             ]
         },
         "remainingLife": {

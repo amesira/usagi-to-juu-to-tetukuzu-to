@@ -240,17 +240,17 @@ void PlayerMoveBehavior::UpdateUi(PlayerContext& context, const PlayerMoveIntent
         }
 
         if (!m_context.runtimeState.m_isGrounded) {
-            if (m_context.runtimeState.m_controlVelocity.y > 0.01f) {
-                targetOffset.y = -0.1f;
+            if (m_context.runtimeState.m_physicsVelocity.y > 0.01f) {
+                targetOffset.y = -0.3f;
             }
-            else if (m_context.runtimeState.m_controlVelocity.y < -0.01f) {
-                targetOffset.y = 0.1f;
+            else if (m_context.runtimeState.m_physicsVelocity.y < -0.01f) {
+                targetOffset.y = 0.3f;
             }
         }
 
         // オフセット値をスムーズに補間する
         m_vanishOffset.x = MiMath::SmoothDamp(m_vanishOffset.x, targetOffset.x, m_vanishOffsetVelocity.x, 0.1f, deltaTime);
-        m_vanishOffset.y = MiMath::SmoothDamp(m_vanishOffset.y, targetOffset.y, m_vanishOffsetVelocity.y, 0.1f, deltaTime);
+        m_vanishOffset.y = MiMath::SmoothDamp(m_vanishOffset.y, targetOffset.y, m_vanishOffsetVelocity.y, 0.5f, deltaTime);
 
         m_context.uiBehavior->SetPerspectiveVanishingPointOffset(m_vanishOffset);
     }
