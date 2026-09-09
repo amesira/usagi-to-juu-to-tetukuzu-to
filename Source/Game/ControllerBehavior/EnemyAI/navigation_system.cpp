@@ -74,7 +74,7 @@ bool NavigationSystem::GridToWorld(EnemyAiWorld::GridCoord coord, DirectX::XMFLO
         m_buildSettings.origin().y + (coord.z + 0.5f) * m_buildSettings.cellSize
     };
 
-    GridCell cell = m_cells[coord.z * m_buildSettings.cellCountX + coord.x];
+    GridCell cell = m_cells[coord.x * m_buildSettings.cellCountZ + coord.z];
     if (cell.type == CellType::NoGround || cell.type == CellType::Unknown) {
         return true;
     }
@@ -193,7 +193,7 @@ void NavigationSystem::DrawDebugGrid() const
                 default: color = { 1.0f, 1.0f, 1.0f, 1.0f }; break; // 白
             }
 
-            // グリッドセルの中心位置に小さな立方体を描画する（デバッグ用）
+            // グリッドセルの斜め線を描画する
             float halfSize = m_buildSettings.cellSize * 0.5f;
             XMFLOAT3 minPos = { worldPos.x - halfSize, worldPos.y - halfSize * 0.1f, worldPos.z - halfSize };
             XMFLOAT3 maxPos = { worldPos.x + halfSize, worldPos.y + halfSize * 0.1f, worldPos.z + halfSize };
