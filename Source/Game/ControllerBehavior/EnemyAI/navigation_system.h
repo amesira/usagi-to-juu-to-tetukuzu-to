@@ -16,33 +16,29 @@ namespace EnemyAiAgent { struct NavigationAgentSettings; }
 // ナビゲーショングリッドの生成・経路探索を担当する
 class NavigationSystem {
 private:
+    static constexpr CollisionLayerMask SAMPLE_LAYER_MASK = static_cast<CollisionLayerMask>(CollisionLayer::Field);
+
     EnemyAiWorld::NavigationGridSettings m_buildSettings;
     bool m_isBuilt = false;
 
     // index = z * cellCountX + x
     std::vector<EnemyAiWorld::GridCell> m_cells;
 
-    const CollisionLayerMask m_sampleLayerMask = static_cast<CollisionLayerMask>(CollisionLayer::Field);
-
 public:
     void Initialize(EnemyAIWorldContext& context);
-    void Update(EnemyAIWorldContext& context, float deltaTime);
     void Finalize(EnemyAIWorldContext& context);
 
     /// @brief NavigationGridを生成する
     bool BuildGrid(EnemyAIWorldContext& context);
-    void ClearGrid(EnemyAIWorldContext& context) {
+    void ClearGrid() {
         m_cells.clear();
         m_isBuilt = false;
     }
 
     // === NavigationCell変換・取得 ===
-    bool WorldToGrid(const EnemyAIWorldContext& context,
-        const DirectX::XMFLOAT3& position, EnemyAiWorld::GridCoord& outCoord) const;
-    bool GridToWorld(const EnemyAIWorldContext& context,
-        EnemyAiWorld::GridCoord coord, DirectX::XMFLOAT3& outPosition) const;
-    const EnemyAiWorld::GridCell* GetCell(const EnemyAIWorldContext& context,
-        EnemyAiWorld::GridCoord coord) const;
+    bool WorldToGrid(const DirectX::XMFLOAT3& position, EnemyAiWorld::GridCoord& outCoord) const;
+    bool GridToWorld(EnemyAiWorld::GridCoord coord, DirectX::XMFLOAT3& outPosition) const;
+    const EnemyAiWorld::GridCell* GetCell(EnemyAiWorld::GridCoord coord) const;
 
     // 地面・傾斜・半径分の余白を、このAgentの条件で判定する。
     bool IsWalkable(const EnemyAIWorldContext& context, EnemyAiWorld::GridCoord coord,
@@ -61,7 +57,7 @@ public:
         const EnemyAiAgent::NavigationAgentSettings& agent, EnemyAiWorld::NavigationPath& path) const;
 
     // === Debug用 ===
-    void DrawDebugGrid(const EnemyAIWorldContext& context) const;
+    void DrawDebugGrid() const;
 
 private:
     // 1セルの地形を取得。地面なしはNoGround、Agent別の傾斜判定は行わない。

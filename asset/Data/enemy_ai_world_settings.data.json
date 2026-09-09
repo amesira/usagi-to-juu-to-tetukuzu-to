@@ -1,0 +1,18 @@
+{
+    "data": {
+        "navigationGrid": {
+            "cellCountX": 50,
+            "cellCountZ": 50,
+            "cellSize": 5.0,
+            "center": [
+                0.0,
+                0.0
+            ],
+            "rayBottomPosition": -20.0,
+            "rayTopPosition": 10.0
+        }
+    },
+    "formatVersion": 0,
+    "name": "enemy_ai_world_settings.data",
+    "type": "EnemyAiWorldSettingsAsset"
+}

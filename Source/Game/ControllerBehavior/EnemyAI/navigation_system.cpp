@@ -21,18 +21,9 @@ void NavigationSystem::Initialize(EnemyAIWorldContext& context)
     BuildGrid(context);
 }
 
-void NavigationSystem::Update(EnemyAIWorldContext& context, float deltaTime)
-{
-    if (!m_isBuilt) {
-        BuildGrid(context);
-    }
-
-    DrawDebugGrid(context);
-}
-
 void NavigationSystem::Finalize(EnemyAIWorldContext& context)
 {
-    ClearGrid(context);
+    ClearGrid();
 }
 
 /// @brief ナビゲーショングリッドを生成する
@@ -55,10 +46,7 @@ bool NavigationSystem::BuildGrid(EnemyAIWorldContext& context)
 
 #pragma region NavigationCell変換
 /// @brief World座標XZをセル座標へ変換する。範囲外・未生成ならfalse
-bool NavigationSystem::WorldToGrid(
-    const EnemyAIWorldContext& context,
-    const DirectX::XMFLOAT3& position, 
-    EnemyAiWorld::GridCoord& outChoord) const
+bool NavigationSystem::WorldToGrid(const DirectX::XMFLOAT3& position, EnemyAiWorld::GridCoord& outChoord) const
 {
     if (!m_isBuilt) return false;
 
@@ -72,10 +60,7 @@ bool NavigationSystem::WorldToGrid(
 }
 
 /// @brief セル中心XZと保存された地面高さYを返す。地面なし等はfalse
-bool NavigationSystem::GridToWorld(
-    const EnemyAIWorldContext& context,
-    EnemyAiWorld::GridCoord coord, 
-    DirectX::XMFLOAT3& outPosition) const
+bool NavigationSystem::GridToWorld(EnemyAiWorld::GridCoord coord, DirectX::XMFLOAT3& outPosition) const
 {
     if (!m_isBuilt) return false;
     if (coord.x < 0 || coord.x >= m_buildSettings.cellCountX ||
@@ -85,7 +70,10 @@ bool NavigationSystem::GridToWorld(
 
     GridCell cell = m_cells[coord.z * m_buildSettings.cellCountX + coord.x];
     if (cell.type == CellType::NoGround || cell.type == CellType::Unknown) {
-        return false;
+        outPosition.x = m_buildSettings.origin().x + (coord.x + 0.5f) * m_buildSettings.cellSize;
+        outPosition.y = 0.0f;
+        outPosition.z = m_buildSettings.origin().y + (coord.z + 0.5f) * m_buildSettings.cellSize;
+        return true;
     }
 
     outPosition = {
@@ -96,9 +84,7 @@ bool NavigationSystem::GridToWorld(
     return true;
 }
 
-const EnemyAiWorld::GridCell* NavigationSystem::GetCell(
-    const EnemyAIWorldContext& context,
-    EnemyAiWorld::GridCoord coord) const
+const EnemyAiWorld::GridCell* NavigationSystem::GetCell(EnemyAiWorld::GridCoord coord) const
 {
     if (!m_isBuilt) return nullptr;
     if (coord.x < 0 || coord.x >= m_buildSettings.cellCountX || 
@@ -160,11 +146,11 @@ EnemyAiWorld::GridCell NavigationSystem::SampleCell(
 
     // SphereCastで地面を確認（半径は0.1程度としておく）
     XMFLOAT3 rayOrigin = { samplePosition.x, settings.rayTopPosition, samplePosition.y };
-    XMFLOAT3 rayDirection = { 0.0f, -1.0f, 0.0f };
+    XMFLOAT3 rayDirection = { 0.0f, 1.0f, 0.0f };
     float rayLength = settings.rayTopPosition - settings.rayBottomPosition;
 
     RaycastHit outHit;
-    if (CollisionQuery::SphereCast(context.scene, outHit, rayOrigin, rayDirection, 0.1f, rayLength, m_sampleLayerMask)) {
+    if (CollisionQuery::SphereCast(context.scene, outHit, rayOrigin, rayDirection, 0.1f, rayLength, SAMPLE_LAYER_MASK)) {
         cell.type = EnemyAiWorld::CellType::Ground;
         cell.height = outHit.hitPoint.y;
         cell.normal = outHit.hitNormal;
@@ -186,17 +172,17 @@ bool NavigationSystem::CanMoveDirectly(
 }
 
 /// @brief デバッグ用にグリッドを描画する
-void NavigationSystem::DrawDebugGrid(const EnemyAIWorldContext& context) const
+void NavigationSystem::DrawDebugGrid() const
 {
     if (!m_isBuilt) return;
 
     for (int x = 0; x < m_buildSettings.cellCountX; x++) {
         for (int z = 0; z < m_buildSettings.cellCountZ; z++) {
             GridCoord coord{ x, z };
-            const GridCell* cell = GetCell(context, coord);
+            const GridCell* cell = GetCell(coord);
             if (!cell) continue;
             XMFLOAT3 worldPos;
-            if (!GridToWorld(context, coord, worldPos)) continue;
+            if (!GridToWorld(coord, worldPos)) continue;
 
             // デバッグ描画の色をセルタイプに応じて設定
             XMFLOAT4 color;
@@ -212,7 +198,7 @@ void NavigationSystem::DrawDebugGrid(const EnemyAIWorldContext& context) const
             float halfSize = m_buildSettings.cellSize * 0.5f;
             XMFLOAT3 minPos = { worldPos.x - halfSize, worldPos.y - halfSize * 0.1f, worldPos.z - halfSize };
             XMFLOAT3 maxPos = { worldPos.x + halfSize, worldPos.y + halfSize * 0.1f, worldPos.z + halfSize };
-            DebugRenderer_DrawLine({ minPos.x, minPos.y, minPos.z }, { maxPos.x, minPos.y, minPos.z }, color);
+            DebugRenderer_DrawLine({ minPos.x, minPos.y, minPos.z }, { maxPos.x, maxPos.y, maxPos.z }, color);
         }
     }
 }
