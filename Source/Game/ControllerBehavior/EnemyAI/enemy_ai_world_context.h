@@ -36,21 +36,7 @@ namespace EnemyAiWorld {
         float radius = 0.0f;
     };
 
-    struct EnemyInfo {
-        EntityInfo entity;
-    };
-
-    struct PlayerInfo {
-        EntityInfo entity;
-    };
-
     // === Navigation情報 ===
-    struct NavigationGrid {
-        NavigationGridSettings settings;
-        std::vector<GridCell> cells; // index = z * cellCountX + x
-        bool isBuilt = false;
-    };
-
     enum class PathQueryStatus {
         NotReady,
         Success,
@@ -98,27 +84,10 @@ namespace EnemyAiWorld {
         DirectX::XMFLOAT3 position = {}; // found == trueのときのみ有効
         float score = 0.0f; // 大きいほど高評価。found == trueのときのみ有効
     };
-
-    // === RuntimeState ===
-    struct NavigationRuntimeState {
-        NavigationGrid grid;
-    };
-
-    struct MetaWorldRuntimeState {
-        PlayerInfo player;
-        std::vector<EnemyInfo> enemies;
-    };
-
-    struct TacticalRuntimeState {
-        // NavigationGridと同じセル順。グリッド再生成時に作り直す。
-        //std::vector<TacticalCellInfo> cells;
-    };
 }
 
 struct EnemyAIWorldRuntimeState {
-    EnemyAiWorld::NavigationRuntimeState navigation;
-    EnemyAiWorld::MetaWorldRuntimeState metaWorld;
-    EnemyAiWorld::TacticalRuntimeState tactical;
+
 };
 
 struct EnemyAIWorldContext {
