@@ -430,6 +430,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_context.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
     <ClInclude Include="Source\Game\PresBehavior\attached_effect_handle.h" />
     <ClInclude Include="Source\Game\PresBehavior\effect_transform.h" />
@@ -460,6 +461,7 @@
     <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_controller.h" />
+
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.h" />

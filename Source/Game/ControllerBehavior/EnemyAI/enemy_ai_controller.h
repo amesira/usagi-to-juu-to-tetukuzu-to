@@ -42,6 +42,7 @@ public:
     const NavigationSystem& GetNavigationSystem() const { return m_navigation; }
     TacticalQuerySystem& GetTacticalQuerySystem() { return m_tacticalQuery; }
     const TacticalQuerySystem& GetTacticalQuerySystem() const { return m_tacticalQuery; }
+
 };
 
 #endif // ENEMY_AI_CONTROLLER_H

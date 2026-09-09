@@ -390,7 +390,7 @@ void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* me
     {
         vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
         if (mesh->mTextureCoords[0] != nullptr) {
-        vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
+            vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
         }
         else {
             vertices[v].texCoord = XMFLOAT2(0.0f, 0.0f);
@@ -449,7 +449,6 @@ void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* me
             v0.binormal = MiMath::Add(v0.binormal, biTangent);
             v1.binormal = MiMath::Add(v1.binormal, biTangent);
             v2.binormal = MiMath::Add(v2.binormal, biTangent);
-
         }
     }
 

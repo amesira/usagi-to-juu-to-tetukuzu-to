@@ -40,8 +40,10 @@ struct PlayerUiContext {
 
     PlayerUiRuntimeState runtimeState;
 
-    const class PlayerUiSettingsAsset* settingsAsset = nullptr;
-    const PlayerUiSettings::Data* settings() { return settingsAsset ? &settingsAsset->GetData() : nullptr; }
+    const PlayerUiSettingsAsset* settingsAsset = nullptr;
+    const PlayerUiSettings::Data* settings() { 
+        return settingsAsset ? &settingsAsset->GetData() : nullptr;
+    }
 
     class TransformComponent* cameraTransform = nullptr;
     class CameraComponent* cameraComponent = nullptr;

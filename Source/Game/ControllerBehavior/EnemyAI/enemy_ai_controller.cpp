@@ -5,11 +5,14 @@
 //===================================================
 #include "enemy_ai_controller.h"
 
-#include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
 #include "Engine/Editor/LevelEditor/behavior_detail_view.h"
+
 #include "Utility/debug_ostream.h"
+
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Engine/engine_service_locator.h"
 
 EnemyAIController::~EnemyAIController()
 {
@@ -38,6 +41,15 @@ void EnemyAIController::Start()
     GameControllerLocator::s_enemyAIController = this;
 
     // AIシステムの初期化
+    m_context.scene = GetOwner()->GetScene();
+    m_context.controller = this;
+    m_context.metaAI = &m_metaAI;
+    m_context.navigation = &m_navigation;
+    m_context.tacticalQuery = &m_tacticalQuery;
+
+    m_context.settingsAsset = Engine::DataLoader()->GetAsset<EnemyAiSettingsAsset>(
+        "asset/Data/enemy_ai_settings.data.json", true);
+
     m_metaAI.Initialize(m_context);
     m_navigation.Initialize(m_context);
     m_tacticalQuery.Initialize(m_context);
