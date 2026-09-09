@@ -19,6 +19,8 @@ namespace EnemyAiWorld {
         float rayTopPosition = 20.0f;
         float rayBottomPosition = -20.0f;
 
+        float slopeThreshold = 15.0f; // 斜面と判定する角度（度数法）
+
         // グリッドの左上座標（x,z）を返す
         const DirectX::XMFLOAT2 origin() const {
             return { center.x - (cellCountX * cellSize) / 2.0f, center.y - (cellCountZ * cellSize) / 2.0f };
@@ -39,7 +41,8 @@ namespace EnemyAiWorldSettings {
             MakeField("cellCountZ", "Cell Count Z (0: Unconfigured)", &Grid::cellCountZ, DragFieldOptions{.dragSpeed=1, .minValue=0, .maxValue=4096}),
             MakeField("cellSize", "Cell Size", &Grid::cellSize, DragFieldOptions{.dragSpeed=0.1f, .minValue=0.01f, .maxValue=100}),
             MakeField("rayTopPosition", "Ray Top Position", &Grid::rayTopPosition, DragFieldOptions{.dragSpeed=0.1f, .minValue=-10000, .maxValue=10000}),
-            MakeField("rayBottomPosition", "Ray Bottom Position", &Grid::rayBottomPosition, DragFieldOptions{.dragSpeed=0.1f, .minValue=-10000, .maxValue=10000})
+            MakeField("rayBottomPosition", "Ray Bottom Position", &Grid::rayBottomPosition, DragFieldOptions{.dragSpeed=0.1f, .minValue=-10000, .maxValue=10000}),
+            MakeField("slopeThreshold", "Slope Threshold (degrees)", &Grid::slopeThreshold, DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0, .maxValue = 90}),
         };
         return schema;
     }

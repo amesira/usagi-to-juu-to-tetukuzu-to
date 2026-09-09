@@ -24,6 +24,13 @@ private:
     // index = x * cellCountZ + z
     std::vector<EnemyAiWorld::GridCell> m_cells;
 
+    /// @brief A*探索用のノード情報
+    struct SearchNode {
+        float gCost = std::numeric_limits<float>::infinity();
+        int parentIndex = -1;
+        bool closed = false; // 探索済み
+    };
+
 public:
     void Initialize(EnemyAIWorldContext& context);
     void Finalize(EnemyAIWorldContext& context);
@@ -40,33 +47,38 @@ public:
     bool GridToWorld(EnemyAiWorld::GridCoord coord, DirectX::XMFLOAT3& outPosition) const;
     const EnemyAiWorld::GridCell* GetCell(EnemyAiWorld::GridCoord coord) const;
 
-    // 地面・傾斜・半径分の余白を、このAgentの条件で判定する。
-    bool IsWalkable(const EnemyAIWorldContext& context, EnemyAiWorld::GridCoord coord,
+    // === NavigationPath探索 ===
+    bool IsWalkable(EnemyAiWorld::GridCoord coord,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
-    // 隣接セルへの移動可否。段差と斜め移動の角抜けも判定する。
-    bool CanTraverse(const EnemyAIWorldContext& context,
-        EnemyAiWorld::GridCoord from, EnemyAiWorld::GridCoord to,
+    bool CanTraverse(EnemyAiWorld::GridCoord from, 
+        EnemyAiWorld::GridCoord to,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
 
-    // 8方向A*でWorld座標の経由点を返す。探索作業データは呼び出しごとに保持。
-    EnemyAiWorld::PathQueryResult FindPath(const EnemyAIWorldContext& context,
-        const DirectX::XMFLOAT3& start, const DirectX::XMFLOAT3& goal,
+    EnemyAiWorld::PathQueryResult FindPath(
+        EnemyAIWorldContext& context,
+        const DirectX::XMFLOAT3& start, 
+        const DirectX::XMFLOAT3& goal,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
-    // 地面・傾斜・段差・半径の条件を満たす区間だけ中間点を省く。
-    void SmoothPath(const EnemyAIWorldContext& context,
-        const EnemyAiAgent::NavigationAgentSettings& agent, EnemyAiWorld::NavigationPath& path) const;
+    void SmoothPath(
+        const EnemyAIWorldContext& context,
+        const EnemyAiAgent::NavigationAgentSettings& agent, 
+        EnemyAiWorld::NavigationPath& path) const;
 
     // === Debug用 ===
     void DrawDebugGrid() const;
 
 private:
-    // 1セルの地形を取得。地面なしはNoGround、Agent別の傾斜判定は行わない。
-    EnemyAiWorld::GridCell SampleCell(const EnemyAIWorldContext& context,
-        const EnemyAiWorld::NavigationGridSettings& settings, EnemyAiWorld::GridCoord coord) const;
-    // 平滑化用の区間判定。Rayの見通しだけでなく途中の地形と余白も確認する。
-    bool CanMoveDirectly(const EnemyAIWorldContext& context,
-        const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to,
-        const EnemyAiAgent::NavigationAgentSettings& agent) const;
+    /// @brief 1セルの地形を取得する
+    EnemyAiWorld::GridCell SampleCell(
+        class IScene* scene,
+        const EnemyAiWorld::NavigationGridSettings& settings,
+        EnemyAiWorld::GridCoord coord) const;
+
+    /// @brief セル座標が有効かどうかを判定する
+    bool ValidateCellCoord(EnemyAiWorld::GridCoord coord) const {
+        return coord.x >= 0 && coord.x < m_buildSettings.cellCountX &&
+            coord.z >= 0 && coord.z < m_buildSettings.cellCountZ;
+    }
 
 };
 
