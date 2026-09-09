@@ -128,10 +128,10 @@
             }
         },
         "perspective": {
-            "cameraDistance": 2000.0,
+            "cameraDistance": 500.0,
             "enabled": true,
             "maxTiltDegrees": 30.0,
-            "tiltDegrees": 5.0,
+            "tiltDegrees": 3.0,
             "vanishingPoint": [
                 0.5,
                 0.5
