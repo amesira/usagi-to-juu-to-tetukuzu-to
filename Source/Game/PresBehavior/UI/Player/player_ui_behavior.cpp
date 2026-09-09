@@ -11,6 +11,8 @@
 #include "Engine/Device/mi_fps.h"
 #include "External/ImGui/imgui.h"
 
+using namespace PlayerUi;
+
 void PlayerUiBehavior::Start()
 {
     if (!GetOwner() || m_widgetsCreated) return;
@@ -25,16 +27,31 @@ void PlayerUiBehavior::Start()
 
 void PlayerUiBehavior::Update()
 {
+    if (!m_widgetsCreated) return;
+
+    // DataAssetが更新されたか、画面サイズが変わったか、レイアウトが変更されたかをチェックして、必要ならレイアウトを再適用する
     const auto revision = m_context.settingsAsset ? m_context.settingsAsset->GetRevision() : 0;
-    if (m_widgetsCreated && (m_layoutDirty || revision != m_lastSettingsRevision
+    if (m_layoutDirty || revision != m_lastSettingsRevision
         || m_lastScreenSize.x != Direct3D_GetBackBufferWidth()
-        || m_lastScreenSize.y != Direct3D_GetBackBufferHeight())) {
+        || m_lastScreenSize.y != Direct3D_GetBackBufferHeight()) {
         ApplyLayoutSettings();
     }
-    if (m_widgetsCreated) {
-        m_healthBar.UpdateMarkers();
-        m_ammoCount.UpdateMarkers();
-    }
+
+    // RuntimeStateの更新
+    m_context.runtimeState.screenSize = {
+        static_cast<float>(Direct3D_GetBackBufferWidth()),
+        static_cast<float>(Direct3D_GetBackBufferHeight())
+    };
+    m_context.runtimeState.perspectiveSettings = m_context.settings() ? m_context.settings()->perspective : PlayerUiSettings::PerspectiveSettings{};
+    m_context.runtimeState.perspectiveSettings.vanishingPoint.x += m_perspectiveVanishingPointOffset.x;
+    m_context.runtimeState.perspectiveSettings.vanishingPoint.y += m_perspectiveVanishingPointOffset.y;
+    m_context.runtimeState.perspectiveSettings.cameraDistance *= m_perspectiveCameraDistanceMultiplier;
+
+    // マーカーを毎フレーム更新
+    m_healthBar.UpdateMarkers();
+    m_ammoCount.UpdateMarkers();
+
+    // 演出の更新
     m_presentation.Update(m_context, FPS_GetUnscaledDeltaTime());
 }
 
@@ -66,12 +83,16 @@ void PlayerUiBehavior::DrawComponentInspector()
     ImGui::PopID();
 }
 
+/// @brief Widgetを生成
 void PlayerUiBehavior::CreateWidgets()
 {
     if (!m_context.scene || m_widgetsCreated) return;
-    using PlayerUi::WidgetGroupID;
+
+    // デフォルト設定
     static const PlayerUiSettings::Data defaults;
-    const auto& settings = m_context.settingsAsset ? m_context.settingsAsset->GetData() : defaults;
+    const auto& settings = m_context.settings() ? *m_context.settings() : defaults;
+
+    // ウィジェットの初期化
     m_healthBar.Initialize(m_context.scene,
         m_context.widgetGroups[static_cast<size_t>(WidgetGroupID::HealthBar)], settings.healthBar);
     m_ammoCount.Initialize(m_context.scene,
@@ -81,6 +102,8 @@ void PlayerUiBehavior::CreateWidgets()
     m_crosshair.Initialize(m_context.scene,
         m_context.widgetGroups[static_cast<size_t>(WidgetGroupID::Crosshair)]);
     m_widgetsCreated = true;
+
+    // レイアウトを適用
     ApplyLayoutSettings();
 }
 
@@ -104,34 +127,40 @@ void PlayerUiBehavior::Setup(const PlayerUiSettingsAsset* settingsAsset)
 void PlayerUiBehavior::ApplyLayoutSettings()
 {
     static const PlayerUiSettings::Data defaults;
-    const auto& settings = m_context.settingsAsset ? m_context.settingsAsset->GetData() : defaults;
-    const XMFLOAT2 screenSize = {static_cast<float>(Direct3D_GetBackBufferWidth()),
-        static_cast<float>(Direct3D_GetBackBufferHeight())};
+    const auto& settings = m_context.settings() ? *m_context.settings() : defaults;
+    const XMFLOAT2 screenSize = {
+        static_cast<float>(Direct3D_GetBackBufferWidth()),
+        static_cast<float>(Direct3D_GetBackBufferHeight())
+    };
+
     m_healthBar.ApplyColors(settings.color1, settings.color2);
     m_ammoCount.ApplyColors(settings.color1, settings.color2);
     m_remainingLife.ApplyColors(settings.color2);
     m_crosshair.ApplyColors(settings.color2);
+
     m_healthBar.ApplyLayout(settings.healthBar);
     m_ammoCount.ApplyLayout(settings.ammoCount);
     m_remainingLife.ApplyLayout(settings.remainingLife);
     m_crosshair.ApplyLayout();
+
     m_view.SetWidgetGroupPosition(m_context, PlayerUi::WidgetGroupID::HealthBar,
         PlayerUiSettings::ResolveGroupPosition(settings.healthBar.placement, screenSize));
     m_view.SetWidgetGroupPosition(m_context, PlayerUi::WidgetGroupID::AmmoCount,
         PlayerUiSettings::ResolveGroupPosition(settings.ammoCount.placement, screenSize));
     m_view.SetWidgetGroupPosition(m_context, PlayerUi::WidgetGroupID::RemainingLife,
         PlayerUiSettings::ResolveGroupPosition(settings.remainingLife.placement, screenSize));
+
+    // クロスヘアは画面中央に固定
     m_view.SetWidgetGroupPosition(m_context, PlayerUi::WidgetGroupID::Crosshair,
         {screenSize.x * 0.5f, screenSize.y * 0.5f});
-    m_healthBar.UpdateMarkers();
-    m_ammoCount.UpdateMarkers();
+
     m_lastScreenSize = screenSize;
+
     m_lastSettingsRevision = m_context.settingsAsset ? m_context.settingsAsset->GetRevision() : 0;
     m_layoutDirty = false;
 }
 
-
-// All display setters also work before widget creation.
+#pragma region 外部からのUI更新関数
 void PlayerUiBehavior::SetHealth(float current, float maximum)
 {
     m_healthBar.SetHealth(current, maximum);
@@ -148,3 +177,4 @@ void PlayerUiBehavior::SetRemainingLife(int current, int maximum)
 {
     m_remainingLife.SetRemainingLife(current, maximum);
 }
+#pragma endregion

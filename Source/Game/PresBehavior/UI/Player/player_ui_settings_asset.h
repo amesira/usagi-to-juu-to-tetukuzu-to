@@ -18,13 +18,6 @@ namespace PlayerUiSettings {
         DirectX::XMFLOAT2 size = {1, 1}; // 画像・バーはピクセル、文字はXY倍率
         float rotationDegrees = 0.0f;
     };
-    // Marker is derived from the bar, so it has no independent editor fields.
-    inline WidgetTransform MakeHealthMarker(const WidgetTransform& bar, float fraction) {
-        const float angle = DirectX::XMConvertToRadians(bar.rotationDegrees);
-        const float x = bar.size.x * (fraction - 0.5f);
-        return {{bar.position.x + x * std::cos(angle), bar.position.y + x * std::sin(angle)},
-            {2, bar.size.y + 8}, bar.rotationDegrees};
-    }
     struct GroupPlacement {
         DirectX::XMFLOAT2 screenAnchor = {}; // 左上(0,0)、右下(1,1)
         DirectX::XMFLOAT2 position = {};

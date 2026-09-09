@@ -43,7 +43,7 @@ void PlayerUiAmmoCount::Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
     m_icon.Register(group, UiFactory::CreateUiImageHandle(scene,
         L"asset/Texture/Ui/dual_pistols_icon.png"), "PlayerUi.WeaponIcon", 102);
     m_currentText.Register(group, UiFactory::CreateUiTextHandle(scene, u8""), "PlayerUi.AmmoCurrent", 104);
-    m_capacityText.Register(group, UiFactory::CreateUiTextHandle(scene, u8"/20"), "PlayerUi.AmmoCapacity", 104);
+    m_capacityText.Register(group, UiFactory::CreateUiTextHandle(scene, u8"/ 20"), "PlayerUi.AmmoCapacity", 104);
 
     for (auto* element : {&m_currentText, &m_capacityText}) {
         if (auto* text = element->handle.GetText()) {
@@ -62,6 +62,7 @@ void PlayerUiAmmoCount::Initialize(IScene* scene, PlayerUi::WidgetGroup& group,
     ApplyLayout(settings);
     UpdateDisplay();
 }
+
 void PlayerUiAmmoCount::ApplyLayout(const PlayerUiSettings::AmmoCountSettings& settings)
 {
     if (!m_group) return;
@@ -73,11 +74,13 @@ void PlayerUiAmmoCount::ApplyLayout(const PlayerUiSettings::AmmoCountSettings& s
     m_capacityText.ApplyLayout(*m_group, settings.capacityText);
     UpdateMarkers();
 }
+
 void PlayerUiAmmoCount::SetAmmoCount(int current)
 {
     m_ammoCount = std::clamp(current, 0, 20);
     UpdateDisplay();
 }
+
 void PlayerUiAmmoCount::UpdateDisplay()
 {
     if (!m_group) return;
@@ -90,6 +93,7 @@ void PlayerUiAmmoCount::UpdateDisplay()
     }
     UpdateMarkers();
 }
+
 void PlayerUiAmmoCount::UpdateMarkers()
 {
     if (!m_group) return;
@@ -109,6 +113,7 @@ void PlayerUiAmmoCount::UpdateMarkers()
         }
     }
 }
+
 void PlayerUiAmmoCount::DrawInspector()
 {
     ImGui::PushID(this);
@@ -116,6 +121,7 @@ void PlayerUiAmmoCount::DrawInspector()
     if (ImGui::SliderInt("Ammo / 20", &ammo, 0, 20, "%d", ImGuiSliderFlags_AlwaysClamp)) SetAmmoCount(ammo);
     ImGui::PopID();
 }
+
 void PlayerUiAmmoCount::Destroy()
 {
     if (!m_group) return;

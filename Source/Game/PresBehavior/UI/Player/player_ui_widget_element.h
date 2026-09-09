@@ -33,8 +33,6 @@ struct PlayerUiWidgetElement {
     }
 };
 
-
-// RGB-only theme updates preserve fade and per-element opacity.
 namespace PlayerUiColor {
     inline DirectX::XMFLOAT4 WithRgb(DirectX::XMFLOAT4 current, const DirectX::XMFLOAT3& rgb) {
         return {rgb.x, rgb.y, rgb.z, current.w};

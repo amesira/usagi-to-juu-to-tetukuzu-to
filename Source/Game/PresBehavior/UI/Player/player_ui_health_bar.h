@@ -16,6 +16,7 @@ private:
     PlayerUiWidgetElement m_label;
     PlayerUiWidgetElement m_recoveryGauge;
     std::array<PlayerUiWidgetElement, 3> m_markers;
+
     float m_health = 100;
     float m_maxHealth = 100;
     float m_recovery = 1;
@@ -35,5 +36,6 @@ public:
 
 private:
     void UpdateDisplay();
+    PlayerUiSettings::WidgetTransform MakeHealthMarker(const PlayerUiSettings::WidgetTransform& bar, float fraction);
     
 };

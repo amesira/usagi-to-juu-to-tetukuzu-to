@@ -26,6 +26,7 @@ private:
 
     PlayerUiView m_view;
     PlayerUiPresentation m_presentation;
+
     bool m_widgetsCreated = false;
     PlayerUiHealthBar m_healthBar;
     PlayerUiAmmoCount m_ammoCount;
@@ -36,20 +37,33 @@ private:
     DirectX::XMFLOAT2 m_lastScreenSize = {};
     bool m_layoutDirty = true;
 
+    DirectX::XMFLOAT2 m_perspectiveVanishingPointOffset = {};
+    float m_perspectiveCameraDistanceMultiplier = 1.0f;
+
 public:
     PlayerUiBehavior() = default;
     ~PlayerUiBehavior() = default;
+
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
+
     // シーン全体の破棄はシーンが担当。個別にUIを終了するときに呼ぶ。
     void DestroyWidgets();
+
+    // === 外部からのUI更新関数 ===
     void Setup(const PlayerUiSettingsAsset* settingsAsset);
     void SetHealth(float current, float maximum);
     void SetAmmoCount(int current);
     void SetRecoveryGauge(float amount);
     void SetRemainingLife(int current, int maximum);
 
+    void SetPerspectiveVanishingPointOffset(const DirectX::XMFLOAT2& offset) {
+        m_perspectiveVanishingPointOffset = offset;
+    }
+    void SetPerspectiveCameraDistanceMultiplier(float multiplier) {
+        m_perspectiveCameraDistanceMultiplier = multiplier;
+    }
 
 private:
     void CreateWidgets();
