@@ -66,7 +66,7 @@ void EnemyAIController::Update()
     m_metaAI.Update(m_context, deltaTime);
     m_tacticalQuery.Update(m_context, deltaTime);
 
-    m_navigation.DrawDebugGrid();
+    //m_navigation.DrawDebugGrid();
 }
 
 void EnemyAIController::DrawComponentInspector()

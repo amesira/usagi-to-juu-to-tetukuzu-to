@@ -238,6 +238,7 @@ void LevelEditorWindow::DrawLevelInspector()
         else if (data->collider.type == LevelColliderType::Sphere)
             changed |= FieldEditor::DrawFields(data->collider, LevelSchema::GetSphereColliderSchema());
     }
+    ImGui::EndChild();
 
     if (changed)
     {

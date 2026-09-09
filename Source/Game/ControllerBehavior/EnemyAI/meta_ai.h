@@ -32,6 +32,7 @@ public:
     void Finalize(const EnemyAIWorldContext& context);
 
     const DirectX::XMFLOAT3& GetPlayerPosition() const { return m_player.entityInfo.position; }
+    bool HasPlayer() const { return m_player.transform != nullptr; }
 
 };
 

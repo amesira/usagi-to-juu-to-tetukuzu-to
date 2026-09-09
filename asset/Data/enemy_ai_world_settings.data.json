@@ -1,15 +1,16 @@
 {
     "data": {
         "navigationGrid": {
-            "cellCountX": 50,
-            "cellCountZ": 50,
-            "cellSize": 2.0,
+            "cellCountX": 200,
+            "cellCountZ": 200,
+            "cellSize": 1.0,
             "center": [
                 0.0,
                 0.0
             ],
             "rayBottomPosition": -20.0,
-            "rayTopPosition": 20.0
+            "rayTopPosition": 20.0,
+            "slopeThreshold": 10.0
         }
     },
     "formatVersion": 0,

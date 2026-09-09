@@ -1,0 +1,12 @@
+{
+    "data": {
+        "navigationAgent": {
+            "maxSlopeDegrees": 45.0,
+            "maxStepHeight": 0.5,
+            "radius": 3.0
+        }
+    },
+    "formatVersion": 0,
+    "name": "training_dummy_ai_agent_settings.data",
+    "type": "EnemyAiAgentSettingsAsset"
+}

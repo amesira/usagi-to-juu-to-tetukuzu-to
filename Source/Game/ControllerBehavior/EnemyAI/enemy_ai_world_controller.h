@@ -35,6 +35,15 @@ public:
 
     bool IsInitialized() const { return m_isInitialized; }
 
+    // 個体側へWorldContextを公開せず、経路探索の窓口を提供する
+    EnemyAiWorld::PathQueryResult FindPath(
+        const DirectX::XMFLOAT3& start,
+        const DirectX::XMFLOAT3& goal, 
+        const EnemyAiAgent::NavigationAgentSettings& agent) {
+        if (!m_isInitialized) return {};
+        return m_navigation.FindPath(m_context, start, goal, agent);
+    }
+
     // === AIシステムの参照取得 ===
     MetaAI& GetMetaAI() { return m_metaAI; }
     const MetaAI& GetMetaAI() const { return m_metaAI; }

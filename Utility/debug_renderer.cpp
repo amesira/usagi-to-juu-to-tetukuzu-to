@@ -12,7 +12,7 @@
 static ID3D11Device* g_pDevice = nullptr;
 static ID3D11DeviceContext* g_pContext = nullptr;
 
-static constexpr int NUM_VERTEX = 10000 * 2; // 最大頂点数（ライン10000本分）
+static constexpr int NUM_VERTEX = 30000 * 2;
 static ID3D11Buffer* g_pLineVertexBuffer = nullptr;
 static std::vector<ShaderDefinitions::DebugLineVertex> g_LineVertices;
 

@@ -12,13 +12,16 @@
 
 void MetaAI::Initialize(const EnemyAIWorldContext& context)
 {
+    m_player = PlayerInfo();
     IScene* scene = context.scene;
+    if (!scene) return;
 
     // プレイヤーの取得
     m_player.gameObject = scene->GetGameObjectByName("Player");
     if (m_player.gameObject) {
         m_player.transform = m_player.gameObject->GetComponent<TransformComponent>();
         m_player.entityInfo.gameObjectID = m_player.gameObject->GetID();
+        if (m_player.transform) m_player.entityInfo.position = m_player.transform->GetPosition();
     }
 }
 

@@ -139,6 +139,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_ai.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_locomotion.cpp" />
     <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
     <ClCompile Include="Source\Engine\Asset\LevelAsset\level_asset_loader.cpp" />
@@ -290,6 +292,8 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_ai.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_locomotion.h" />
     <ClInclude Include="External\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="External\nlohmann\byte_container_with_subtype.hpp" />
     <ClInclude Include="External\nlohmann\detail\abi_macros.hpp" />

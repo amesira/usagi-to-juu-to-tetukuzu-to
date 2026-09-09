@@ -38,7 +38,8 @@ void TrainingDummyBehavior::Start()
             });
     }
 
-    m_rigidbody->SetIsKinematic(true);
+    m_locomotion.Initialize(GetOwner());
+    m_ai.Initialize(GetOwner());
 
     m_effects.Initialize(GetOwner());
     m_motions.Initialize(GetOwner());
@@ -51,7 +52,9 @@ void TrainingDummyBehavior::Update()
     m_effects.Update(deltaTime);
     m_motions.Update(deltaTime);
 
-    // 練習用のかかしの振る舞いをここに実装する
+    if (m_healthBehavior && m_healthBehavior->IsDead()) m_ai.Stop();
+    else m_ai.Update(deltaTime);
+    m_locomotion.Move(m_ai.GetDesiredVelocity());
 
     // ダメージを受けてから一定時間経過で回復
 
@@ -62,6 +65,7 @@ void TrainingDummyBehavior::DrawComponentInspector()
     if (BehaviorDetailView::BeginSection(this, "TrainingDummyBehavior"))
     {
         ImGui::Text("This is a training dummy behavior.");
+        m_ai.DrawInspector();
     }
 
     BehaviorDetailView::EndSection();
