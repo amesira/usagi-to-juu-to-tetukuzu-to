@@ -316,6 +316,10 @@
       <Filter>Sources\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
@@ -681,6 +685,10 @@
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />

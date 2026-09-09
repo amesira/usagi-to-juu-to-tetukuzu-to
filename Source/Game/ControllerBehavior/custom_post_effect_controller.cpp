@@ -17,35 +17,25 @@
 #include "game_controller_locator.h"
 #include "Utility/debug_ostream.h"
 
-CustomPostEffectController::CustomPostEffectController()
-{
-    s_instanceCount++;
-
-    if (s_instanceCount > 1) {
-        hal::dout << "Warning: CustomPostEffectController has multiple instances. Only one instance is expected." << std::endl;
-        this->SetEnable(false);
-    }
-    else {
-        GameControllerLocator::s_customPostEffectController = this;
-    }
-
-    m_state.Reset();
-    m_state.radialBlur.sampleCount = 4; // デフォルトのサンプル数を設定
-    m_state.monoMask.monoColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f); // デフォルトのモノクロ色を設定
-}
-
 CustomPostEffectController::~CustomPostEffectController()
 {
     if (GameControllerLocator::s_customPostEffectController == this) {
         GameControllerLocator::s_customPostEffectController = nullptr;
     }
-
-    s_instanceCount--;
 }
 
 void CustomPostEffectController::Start()
 {
+    auto* current = GameControllerLocator::s_customPostEffectController;
+    if (current && current != this && current->GetEnable()) {
+        SetEnable(false);
+        return;
+    }
+    GameControllerLocator::s_customPostEffectController = this;
 
+    m_state.Reset();
+    m_state.radialBlur.sampleCount = 4; // デフォルトのサンプル数を設定
+    m_state.monoMask.monoColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f); // デフォルトのモノクロ色を設定
 }
 
 void CustomPostEffectController::Update()

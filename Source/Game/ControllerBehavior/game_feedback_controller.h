@@ -15,13 +15,11 @@ class CameraControlBehavior;
 
 class GameFeedbackController : public BehaviorComponent {
 private:
-    static inline int s_instanceCount = 0;
-
     // カメラコントロールビヘイビアへの参照
     CameraControlBehavior* m_cameraControl = nullptr;
 
 public:
-    GameFeedbackController();
+    GameFeedbackController() = default;
     ~GameFeedbackController();
 
     void Start() override;

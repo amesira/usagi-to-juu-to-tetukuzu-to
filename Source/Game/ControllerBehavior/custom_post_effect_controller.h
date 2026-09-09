@@ -21,8 +21,6 @@ enum class CustomPostEffectType {
 
 class CustomPostEffectController : public BehaviorComponent {
 private:
-    static inline int s_instanceCount = 0;
-
     // ポストエフェクトの状態
     CustomPostEffectState m_state = {};
 
@@ -30,7 +28,7 @@ private:
     FloatTweenTask m_changeIntensityTask[static_cast<int>(CustomPostEffectType::MAX)];
 
 public:
-    CustomPostEffectController();
+    CustomPostEffectController() = default;
     ~CustomPostEffectController();
 
     void Start() override;

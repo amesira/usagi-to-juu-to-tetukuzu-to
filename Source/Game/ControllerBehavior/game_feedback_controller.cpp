@@ -20,42 +20,32 @@
 
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
-GameFeedbackController::GameFeedbackController()
-{
-    s_instanceCount++;
-
-    if (s_instanceCount > 1) {
-        hal::dout << "警告: GameEffectControllerのインスタンスが複数存在しています。ゲーム全体で1つだけ存在することを想定しています。" << std::endl;
-        this->SetEnable(false);
-    }
-    else {
-        GameControllerLocator::s_gameEffectController = this;
-    }
-
-    // タスクの初期化
-    m_changeTimeScaleTask.Reset();
-}
-
 GameFeedbackController::~GameFeedbackController()
 {
     if (GameControllerLocator::s_gameEffectController == this) {
         GameControllerLocator::s_gameEffectController = nullptr;
     }
-
-    s_instanceCount--;
 }
 
 void GameFeedbackController::Start()
 {
+    auto* current = GameControllerLocator::s_gameEffectController;
+    if (current && current != this && current->GetEnable()) {
+        SetEnable(false);
+        return;
+    }
+    GameControllerLocator::s_gameEffectController = this;
+
     IScene* scene = GetOwner()->GetScene();
 
     // カメラコントロールビヘイビアへの参照取得
-    {
-        GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
-        if (mainCamera) {
-            m_cameraControl = mainCamera->GetComponent<CameraControlBehavior>();
-        }
+    GameObject* mainCamera = scene->GetGameObjectByName("MainCamera");
+    if (mainCamera) {
+        m_cameraControl = mainCamera->GetComponent<CameraControlBehavior>();
     }
+
+    // タスクの初期化
+    m_changeTimeScaleTask.Reset();
 }
 
 void GameFeedbackController::Update()

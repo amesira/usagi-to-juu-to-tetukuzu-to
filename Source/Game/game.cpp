@@ -33,6 +33,7 @@
 
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_controller.h"
 
 // ゲームシーン初期化処理
 void GameScene::Initialize()
@@ -56,6 +57,7 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<TransformComponent>();
     gameControllerObj->AddComponent<GameFeedbackController>();
     gameControllerObj->AddComponent<CustomPostEffectController>();
+    gameControllerObj->AddComponent<EnemyAIController>();
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });

@@ -150,7 +150,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
     case EffectsType::Fire: {
         m_chargeEffect.Stop();
         m_muzzleFlashEffect.Play();
-        Game::GameFeedback()->PlayCameraShake(0.1f, 0.5f);
+        Game::GameFeedback()->PlayCameraShake(0.2f, 1.0f);
         break;
     }
     default: break;

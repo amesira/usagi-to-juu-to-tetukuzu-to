@@ -3,7 +3,7 @@
         "compositionCameraLocalOffset": [
             0.0,
             4.0,
-            0.0
+            -1.0
         ],
         "compositionWorldOffset": [
             0.0,
@@ -13,7 +13,7 @@
         "followAnchorDownwardSmoothTime": 0.20000000298023224,
         "followAnchorPlanarSmoothTime": 0.05000000074505806,
         "followAnchorUpwardSmoothTime": 0.699999988079071,
-        "followDistance": 8.0,
+        "followDistance": 6.0,
         "fov": 70.0,
         "initialPitch": 0.6981316804885864,
         "initialYaw": 0.0,

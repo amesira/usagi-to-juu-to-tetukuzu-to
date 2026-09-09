@@ -118,10 +118,12 @@ void PlayerDualPistolsEffects::PlayEffects(PlayerDualPistolsContext& context, Ef
     switch (effectType) {
         case EffectsType::FireLeft: {
             PlayMuzzleFlashEffect(context, 0);
+            Game::GameFeedback()->PlayCameraShake(0.1f, 0.1f);
             break;
         }
         case EffectsType::FireRight: {
             PlayMuzzleFlashEffect(context, 1);
+            Game::GameFeedback()->PlayCameraShake(0.1f, 0.1f);
             break;
         }
         case EffectsType::SlashBurst1: {
