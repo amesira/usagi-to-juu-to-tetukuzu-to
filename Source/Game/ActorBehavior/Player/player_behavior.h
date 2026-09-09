@@ -15,6 +15,7 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_locomotion_controller.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 
@@ -37,6 +38,7 @@ private:
 
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
+    PlayerMoveBehavior m_moveBehavior;
     PlayerConditionMachine m_conditionMachine;
     PlayerActionMachine m_actionMachine;
     PlayerWeaponController m_weaponController;

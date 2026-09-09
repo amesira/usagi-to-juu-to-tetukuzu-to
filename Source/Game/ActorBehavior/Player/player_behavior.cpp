@@ -39,7 +39,7 @@ void PlayerBehavior::Start()
     m_context.owner = this;
     m_context.transform = owner->GetComponent<TransformComponent>();
     m_context.locomotionController = &m_locomotionController;
-    m_context.moveBehavior = owner->GetComponent<PlayerMoveBehavior>();
+    m_context.moveBehavior = &m_moveBehavior;
 
     m_context.conditionMachine = &m_conditionMachine;
     m_context.actionMachine = &m_actionMachine;
@@ -134,6 +134,7 @@ void PlayerBehavior::Update()
 void PlayerBehavior::DrawComponentInspector()
 {
     if (BehaviorDetailView::BeginSection(this, "Player Behavior")) {
+        m_moveBehavior.DrawInspector();
     }
     BehaviorDetailView::EndSection();
 }

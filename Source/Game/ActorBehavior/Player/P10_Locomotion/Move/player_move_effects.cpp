@@ -25,7 +25,7 @@ void PlayerMoveEffects::Initialize(PlayerMoveContext& context)
 {
     if (!context.owner || !context.transform || !context.settingsAsset) return;
 
-    GameObject* player = context.owner->GetOwner();
+    GameObject* player = context.owner;
     if (!player || !player->GetScene()) return;
 
     const auto& settings = context.settings().runDustEffect;

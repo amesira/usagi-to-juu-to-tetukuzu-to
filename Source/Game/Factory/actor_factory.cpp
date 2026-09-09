@@ -66,6 +66,5 @@ GameObject* ActorFactory::CreatePlayer(
     // behavior生成・登録
     player->AddComponent<PlayerBehavior>();
     player->AddComponent<PlayerUiBehavior>();
-    player->AddComponent<PlayerMoveBehavior>();
     return player;
 }

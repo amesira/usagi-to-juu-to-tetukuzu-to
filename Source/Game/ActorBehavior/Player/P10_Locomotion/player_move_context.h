@@ -30,7 +30,7 @@ struct PlayerMoveRuntimeState
 /// @brief PlayerMoveBehaviorのコンテキストを保持する構造体
 struct PlayerMoveContext
 {
-    class PlayerMoveBehavior* owner = nullptr;
+    class GameObject* owner = nullptr;
     class IScene* scene = nullptr;
 
     PlayerMoveRuntimeState runtimeState;

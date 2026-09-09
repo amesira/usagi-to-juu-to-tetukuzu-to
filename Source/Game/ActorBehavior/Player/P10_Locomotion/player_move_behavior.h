@@ -6,12 +6,10 @@
 //---------------------------------------------------
 #ifndef PLAYER_MOVE_BEHAVIOR_H
 #define PLAYER_MOVE_BEHAVIOR_H
-#include "Engine/Component/behavior_component.h"
-
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_context.h"
 
-class PlayerMoveBehavior : public BehaviorComponent {
+class PlayerMoveBehavior {
 private:
     PlayerMoveContext m_context;
 
@@ -23,9 +21,7 @@ private:
 public:
     PlayerMoveBehavior() = default;
     ~PlayerMoveBehavior() = default;
-    void Start() override;
-    void Update() override;
-    void DrawComponentInspector() override;
+    void DrawInspector();
 
     /// @brief PlayerMoveBehaviorの初期化処理
     void Initialize(const class PlayerContext& playerContext, class PlayerMoveSettingsAsset* settings);

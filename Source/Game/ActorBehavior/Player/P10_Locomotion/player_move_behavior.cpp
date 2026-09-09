@@ -10,8 +10,8 @@
 
 #include "Utility/mi_math.h"
 
-#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 #include "Engine/engine_service_locator.h"
+#include "External/ImGui/imgui.h"
 
 // === Component ===
 #include "Engine/Component/transform_component.h"
@@ -31,22 +31,13 @@
 
 #include <cmath>
 
-void PlayerMoveBehavior::Start() {}
-
-void PlayerMoveBehavior::Update() {}
-
-void PlayerMoveBehavior::DrawComponentInspector()
+void PlayerMoveBehavior::DrawInspector()
 {
-    if (BehaviorDetailView::BeginSection(this, "Player Move Behavior"))
-    {
-        ImGui::Text("=== Runtime State ===");
-        ImGui::Text("Control Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_controlVelocity.x, m_context.runtimeState.m_controlVelocity.y, m_context.runtimeState.m_controlVelocity.z);
-        ImGui::Text("Physics Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_physicsVelocity.x, m_context.runtimeState.m_physicsVelocity.y, m_context.runtimeState.m_physicsVelocity.z);
-        ImGui::Text("Desired Position: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_desiredPosition.x, m_context.runtimeState.m_desiredPosition.y, m_context.runtimeState.m_desiredPosition.z);
-        ImGui::Text("Grounded: %s", m_context.runtimeState.m_isGrounded ? "true" : "false");
-    }
-
-    BehaviorDetailView::EndSection();
+    ImGui::Text("=== Move Runtime State ===");
+    ImGui::Text("Control Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_controlVelocity.x, m_context.runtimeState.m_controlVelocity.y, m_context.runtimeState.m_controlVelocity.z);
+    ImGui::Text("Physics Velocity: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_physicsVelocity.x, m_context.runtimeState.m_physicsVelocity.y, m_context.runtimeState.m_physicsVelocity.z);
+    ImGui::Text("Desired Position: (%.2f, %.2f, %.2f)", m_context.runtimeState.m_desiredPosition.x, m_context.runtimeState.m_desiredPosition.y, m_context.runtimeState.m_desiredPosition.z);
+    ImGui::Text("Grounded: %s", m_context.runtimeState.m_isGrounded ? "true" : "false");
 }
 
 // -----------------------------------------------
@@ -54,9 +45,8 @@ void PlayerMoveBehavior::DrawComponentInspector()
 /// @brief PlayerMoveBehaviorのコンテキストを設定する
 void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMoveSettingsAsset* settings)
 {
-    m_context.owner = this;
-
     GameObject* player = playerContext.owner->GetOwner();
+    m_context.owner = player;
     m_context.scene = playerContext.scene;
 
     m_context.transform = playerContext.transform;
@@ -155,7 +145,7 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
 /// @brief 下向きのSphereCastで接地状態を判定する
 bool PlayerMoveBehavior::CheckGrounded()
 {
-    if (!m_context.transform || !m_context.collider || !GetOwner()->GetScene()) {
+    if (!m_context.transform || !m_context.collider || !m_context.scene) {
         return false;
     }
 
@@ -188,7 +178,7 @@ bool PlayerMoveBehavior::CheckGrounded()
 
     RaycastHit hit;
     const bool hasHit = CollisionQuery::SphereCast(
-        GetOwner()->GetScene(),
+        m_context.scene,
         /*out*/ hit,
         castOrigin,
         { 0.0f, -1.0f, 0.0f },
@@ -236,21 +226,24 @@ void PlayerMoveBehavior::UpdateUi(PlayerContext& context, const PlayerMoveIntent
         // プレイヤーの移動によって、消失点を少しずらす
         XMFLOAT2 targetOffset = { 0.0f, 0.0f };
         if (moveIntent.moveInputMagnitude > 0.01f) {
-            targetOffset.x = context.runtimeState.cameraBaseMoveParameter.x * 0.1f;
+            targetOffset.x = context.runtimeState.cameraBaseMoveParameter.x
+                * m_context.settings().uiVanishingPointOffset.x;
         }
 
         if (!m_context.runtimeState.m_isGrounded) {
             if (m_context.runtimeState.m_physicsVelocity.y > 0.01f) {
-                targetOffset.y = -0.3f;
+                targetOffset.y = -m_context.settings().uiVanishingPointOffset.y;
             }
             else if (m_context.runtimeState.m_physicsVelocity.y < -0.01f) {
-                targetOffset.y = 0.3f;
+                targetOffset.y = m_context.settings().uiVanishingPointOffset.y;
             }
         }
 
         // オフセット値をスムーズに補間する
-        m_vanishOffset.x = MiMath::SmoothDamp(m_vanishOffset.x, targetOffset.x, m_vanishOffsetVelocity.x, 0.1f, deltaTime);
-        m_vanishOffset.y = MiMath::SmoothDamp(m_vanishOffset.y, targetOffset.y, m_vanishOffsetVelocity.y, 0.5f, deltaTime);
+        m_vanishOffset.x = MiMath::SmoothDamp(m_vanishOffset.x, targetOffset.x,
+            m_vanishOffsetVelocity.x, m_context.settings().uiVanishingPointSmoothTime.x, deltaTime);
+        m_vanishOffset.y = MiMath::SmoothDamp(m_vanishOffset.y, targetOffset.y,
+            m_vanishOffsetVelocity.y, m_context.settings().uiVanishingPointSmoothTime.y, deltaTime);
 
         m_context.uiBehavior->SetPerspectiveVanishingPointOffset(m_vanishOffset);
     }

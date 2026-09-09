@@ -58,6 +58,10 @@ namespace PlayerMoveSettings {
         float   stopSmoothTime = 0.05f;     // 停止時の平滑化の時間（秒）
         float   stopAirSmoothTime = 0.1f;   // 空中での停止時の平滑化の時間（秒）
 
+        // === UI演出設定 ===
+        DirectX::XMFLOAT2 uiVanishingPointOffset = { 0.1f, 0.3f };
+        DirectX::XMFLOAT2 uiVanishingPointSmoothTime = { 0.1f, 0.5f };
+
         // === 重力設定 ===
         MiCurve::FloatCurve gravityScale = {
             .keys = {
@@ -168,6 +172,25 @@ namespace PlayerMoveSettings {
                 "stopAirSmoothTime",
                 "Stop Air Smooth Time",
                 &MoveSettings::stopAirSmoothTime,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
+
+            // === UI演出設定 ===
+            MakeHeaderField("UI Settings"),
+            MakeField(
+                "uiVanishingPointOffset",
+                "Vanishing Point Offset (X/Y)",
+                &MoveSettings::uiVanishingPointOffset,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.0f,
+                    .maxValue = 1.0f }),
+            MakeField(
+                "uiVanishingPointSmoothTime",
+                "Vanishing Point Smooth Time (X/Y)",
+                &MoveSettings::uiVanishingPointSmoothTime,
                 DragFieldOptions{
                     .dragSpeed = 0.01f,
                     .minValue = 0.01f,
