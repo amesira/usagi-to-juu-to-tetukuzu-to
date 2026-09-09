@@ -1,10 +1,9 @@
 // enemy_ai_world_context.h
 // 2026/09/09
 #pragma once
-
-#include "enemy_ai_world_settings_asset.h"
 #include <limits>
 #include <vector>
+#include "enemy_ai_world_settings_asset.h"
 
 namespace EnemyAiWorld {
     // === グリッド情報 ===
@@ -52,25 +51,25 @@ namespace EnemyAiWorld {
         bool isBuilt = false;
     };
 
+    enum class PathQueryStatus {
+        NotReady,
+        Success,
+        Unreachable,
+        InvalidStart,
+        InvalidGoal,
+    };
+
+    struct NavigationPath {
+        // World座標。追従中のインデックスは敵個体側で保持する。
+        std::vector<DirectX::XMFLOAT3> waypoints;
+    };
+
+    struct PathQueryResult {
+        PathQueryStatus status = PathQueryStatus::NotReady;
+        NavigationPath path;
+    };
+
     // === Tactical情報 ===
-    //enum class PathQueryStatus {
-    //    NotReady,
-    //    Success,
-    //    Unreachable,
-    //    InvalidStart,
-    //    InvalidGoal,
-    //};
-
-    //struct NavigationPath {
-    //    // World座標。追従中のインデックスは敵個体側で保持する。
-    //    std::vector<DirectX::XMFLOAT3> waypoints;
-    //};
-
-    //struct PathQueryResult {
-    //    PathQueryStatus status = PathQueryStatus::NotReady;
-    //    NavigationPath path;
-    //};
-
     //struct TacticalCellInfo {
     //    
     //};

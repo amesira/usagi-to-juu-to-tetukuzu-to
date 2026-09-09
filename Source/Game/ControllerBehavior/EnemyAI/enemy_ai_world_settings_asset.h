@@ -20,7 +20,7 @@ namespace EnemyAiWorld {
         float rayBottomPosition = -20.0f;
 
         // グリッドの左上座標（x,z）を返す
-        DirectX::XMFLOAT2 origin() {
+        const DirectX::XMFLOAT2 origin() const {
             return { center.x - (cellCountX * cellSize) / 2.0f, center.y - (cellCountZ * cellSize) / 2.0f };
         }
     };

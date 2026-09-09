@@ -1,4 +1,4 @@
-// enemy_ai_settings_asset.h
+// enemy_ai_agent_settings_asset.h
 // 2026/09/09
 #pragma once
 #include <DirectXMath.h>
@@ -40,14 +40,15 @@ namespace EnemyAiAgentSettings {
     }
 }
 
-class EnemyAiSettingsAsset : public DataAsset {
+class EnemyAiAgentSettingsAsset : public DataAsset {
 private:
-        EnemyAiAgentSettings::Data m_data;
+    EnemyAiAgentSettings::Data m_data;
+
 public:
-    EnemyAiSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<EnemyAiSettingsAsset>(), "EnemyAiAgentSettingsAsset", 0) {}
+    EnemyAiAgentSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<EnemyAiAgentSettingsAsset>(), "EnemyAiAgentSettingsAsset", 0) {}
     const EnemyAiAgentSettings::Data& GetData() const { return m_data; }
     std::unique_ptr<DataAsset> CreateDefaultInstance() const override {
-        return std::make_unique<EnemyAiSettingsAsset>();
+        return std::make_unique<EnemyAiAgentSettingsAsset>();
     }
     nlohmann::json SerializeData() const override {
         return FieldSerialization::SerializeFields(m_data, EnemyAiAgentSettings::GetSchema());
@@ -61,4 +62,4 @@ public:
     bool DrawDataOnEditor() override {
         return FieldEditor::DrawFields(m_data, EnemyAiAgentSettings::GetSchema());
     }
-}
+};
