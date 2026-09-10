@@ -10,7 +10,11 @@ class TransformComponent;
 class BoxColliderComponent;
 class SphereColliderComponent;
 
+class CapsuleColliderComponent;
 namespace RaycastTest {
+    void CheckRayCapsule(RaycastHit& hit, const DirectX::XMFLOAT3& origin,
+        const DirectX::XMFLOAT3& direction, float length,
+        TransformComponent* transform, CapsuleColliderComponent* collider);
     // Ray - Box
     void CheckRayOBB(
         /*out*/ RaycastHit& outHitInfo,

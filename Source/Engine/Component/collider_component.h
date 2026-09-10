@@ -180,4 +180,18 @@ public:
 
 };
 
+// Local Y axis; height includes both hemispheres. Transform scale is not applied.
+class CapsuleColliderComponent : public ColliderComponent {
+    float m_radius = 0.5f;
+    float m_height = 2.0f;
+public:
+    void SetRadius(float radius) {
+        m_radius = radius > 0.0f ? radius : 0.0f;
+        if (m_height < 2.0f * m_radius) m_height = 2.0f * m_radius;
+    }
+    float GetRadius() const { return m_radius; }
+    void SetHeight(float height) { m_height = height >= 2.0f * m_radius ? height : 2.0f * m_radius; }
+    float GetHeight() const { return m_height; }
+};
+
 #endif

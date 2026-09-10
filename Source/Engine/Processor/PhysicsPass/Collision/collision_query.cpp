@@ -7,6 +7,8 @@
 //===================================================
 #include "collision_query.h"
 #include "collision_utility.h"
+#include "collision_shape.h"
+#include "overlap_test.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
@@ -27,11 +29,13 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
     const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance, CollisionLayerMask layerMask)
 {
     raycastHit = RaycastHit{};
+    if (!scene) return false;
 
     auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
     auto* transformPool = scene->GetComponentPool<TransformComponent>();
 
+    if (!transformPool) return false;
     float closestHitDistance = maxDistance;
 
     if (boxColliderPools) {
@@ -88,6 +92,22 @@ bool CollisionQuery::Raycast(IScene* scene, RaycastHit& raycastHit,
         }
     }
 
+    if (auto* capsules = scene->GetComponentPool<CapsuleColliderComponent>()) {
+        for (auto& capsule : capsules->GetList()) {
+            if (!capsule.GetEnable() || !capsule.GetOwner()) continue;
+            if (!IsCollisionLayerInMask(capsule.GetLayer(),layerMask)) continue;
+            auto* t = transformPool->GetByGameObjectID(capsule.GetOwner()->GetID());
+            if (!t || !t->GetEnable()) continue;
+            RaycastHit tempHit;
+            CollisionUtility::CheckRayCapsule(tempHit,origin,direction,maxDistance,t,&capsule);
+            if (tempHit.hit && (!raycastHit.hit || tempHit.hitDistance < closestHitDistance)) {
+                tempHit.hitObject = capsule.GetOwner();
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
     return raycastHit.hit;
 }
 
@@ -96,11 +116,13 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
     const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance, CollisionLayerMask layerMask)
 {
     raycastHit = RaycastHit{};
+    if (!scene) return false;
 
     auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
     auto* transformPool = scene->GetComponentPool<TransformComponent>();
 
+    if (!transformPool) return false;
     float closestHitDistance = maxDistance;
 
     if (boxColliderPools) {
@@ -169,6 +191,26 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
         }
     }
 
+    if (auto* capsules = scene->GetComponentPool<CapsuleColliderComponent>()) {
+        for (auto& capsule : capsules->GetList()) {
+            if (!capsule.GetEnable() || !capsule.GetOwner()) continue;
+            if (!IsCollisionLayerInMask(capsule.GetLayer(),layerMask)) continue;
+            auto* t = transformPool->GetByGameObjectID(capsule.GetOwner()->GetID());
+            if (!t || !t->GetEnable()) continue;
+            RaycastHit tempHit;
+            CapsuleColliderComponent expanded = capsule;
+            // Preserve the segment length while expanding the radius.
+            expanded.SetRadius(capsule.GetRadius()+radius);
+            expanded.SetHeight(capsule.GetHeight()+2.0f*radius);
+            CollisionUtility::CheckRayCapsule(tempHit,origin,direction,maxDistance,t,&expanded);
+            if (tempHit.hit && (!raycastHit.hit || tempHit.hitDistance < closestHitDistance)) {
+                tempHit.hitObject = capsule.GetOwner();
+                closestHitDistance = tempHit.hitDistance;
+                raycastHit = tempHit;
+            }
+        }
+    }
+
     return raycastHit.hit;
 }
 
@@ -176,135 +218,64 @@ bool CollisionQuery::SphereCast(IScene* scene, RaycastHit& raycastHit,
 // Overlapクエリ―
 //===================================================
 // OverlapBoxクエリー
-bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& outObjects, 
-    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& rotation,
-    CollisionLayerMask layerMask)
+bool CollisionQuery::OverlapBox(IScene* scene, std::vector<ColliderComponent*>& outObjects,
+    const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& rotation, CollisionLayerMask layerMask)
 {
-    auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
-    auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
-    auto* transformPool = scene->GetComponentPool<TransformComponent>();
-
-    // 判定用の一時Componentを作成
-    TransformComponent tempTransform;
-    BoxColliderComponent tempBoxCollider;
-    {
-        tempTransform.SetPosition(center);
-        tempTransform.SetRotation(rotation);
-        tempBoxCollider.SetScale(scale);
-    }
-
-    if (boxColliderPools) {
-        auto& boxColliders = boxColliderPools->GetList();
-
-        for (BoxColliderComponent& boxCollider : boxColliders) {
-            if (!boxCollider.GetEnable()) continue;
-            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
-            
-            TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
-            
-            if (t == nullptr) continue;
-            
+    if (!scene) return !outObjects.empty();
+    auto* transforms = scene->GetComponentPool<TransformComponent>();
+    if (!transforms) return !outObjects.empty();
+    const CollisionBoxShape query{center,scale,rotation};
+    auto visit = [&](auto* pool, auto test) {
+        if (!pool) return;
+        for (auto& collider : pool->GetList()) {
+            if (!collider.GetEnable() || !collider.GetOwner()) continue;
+            if (!IsCollisionLayerInMask(collider.GetLayer(),layerMask)) continue;
+            auto* t = transforms->GetByGameObjectID(collider.GetOwner()->GetID());
+            if (!t || !t->GetEnable()) continue;
             CollisionResult result;
-            CollisionUtility::CheckOBB(
-                /*out*/ result,
-                t, &boxCollider,
-                &tempTransform, &tempBoxCollider
-            );
-
-            if (result.isCollision) {
-                outObjects.push_back(&boxCollider);
-            }
+            test(result,t,&collider);
+            if (result.isCollision) outObjects.push_back(&collider);
         }
-    }
-
-    if (sphereColliderPools) {
-        auto& sphereColliders = sphereColliderPools->GetList();
-    
-        for (SphereColliderComponent& sphereCollider : sphereColliders) {
-            if (!sphereCollider.GetEnable()) continue;
-            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
-    
-            TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
-    
-            if (t == nullptr) continue;
-    
-            CollisionResult result;
-            CollisionUtility::CheckOBBSphere(
-                /*out*/ result,
-                &tempTransform, &tempBoxCollider,
-                t, &sphereCollider
-            );
-    
-            if (result.isCollision) {
-                outObjects.push_back(&sphereCollider);
-            }
-        }
-    }
-
+    };
+    visit(scene->GetComponentPool<BoxColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckOBB(result,query,CollisionShape::CreateBox(t,c,t->GetPosition()));
+    });
+    visit(scene->GetComponentPool<SphereColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckOBBSphere(result,query,CollisionShape::CreateSphere(t,c,t->GetPosition()));
+    });
+    visit(scene->GetComponentPool<CapsuleColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckCapsuleOBB(result,CollisionShape::CreateCapsule(t,c,t->GetPosition()),query);
+    });
     return !outObjects.empty();
 }
 
-// OverlapSphereクエリー
-bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*>& outObjects, 
+bool CollisionQuery::OverlapSphere(IScene* scene, std::vector<ColliderComponent*>& outObjects,
     const XMFLOAT3& center, float radius, CollisionLayerMask layerMask)
 {
-    auto* boxColliderPools = scene->GetComponentPool<BoxColliderComponent>();
-    auto* sphereColliderPools = scene->GetComponentPool<SphereColliderComponent>();
-    auto* transformPool = scene->GetComponentPool<TransformComponent>();
-
-    // 判定用の一時Componentを作成
-    TransformComponent tempTransform;
-    SphereColliderComponent tempSphereCollider;
-    {
-        tempTransform.SetPosition(center);
-        tempSphereCollider.SetRadius(radius);
-    }
-
-    if (boxColliderPools) {
-        auto& boxColliders = boxColliderPools->GetList();
-        for (BoxColliderComponent& boxCollider : boxColliders) {
-            if (!boxCollider.GetEnable()) continue;
-            if (!IsCollisionLayerInMask(boxCollider.GetLayer(), layerMask)) continue;
-            
-            TransformComponent* t = transformPool->GetByGameObjectID(boxCollider.GetOwner()->GetID());
-            
-            if (t == nullptr) continue;
-            
+    if (!scene) return !outObjects.empty();
+    auto* transforms = scene->GetComponentPool<TransformComponent>();
+    if (!transforms) return !outObjects.empty();
+    const CollisionSphereShape query{center,radius};
+    auto visit = [&](auto* pool, auto test) {
+        if (!pool) return;
+        for (auto& collider : pool->GetList()) {
+            if (!collider.GetEnable() || !collider.GetOwner()) continue;
+            if (!IsCollisionLayerInMask(collider.GetLayer(),layerMask)) continue;
+            auto* t = transforms->GetByGameObjectID(collider.GetOwner()->GetID());
+            if (!t || !t->GetEnable()) continue;
             CollisionResult result;
-            CollisionUtility::CheckOBBSphere(
-                /*out*/ result,
-                t, &boxCollider,
-                &tempTransform, &tempSphereCollider
-            );
-
-            if (result.isCollision) {
-                outObjects.push_back(&boxCollider);
-            }
+            test(result,t,&collider);
+            if (result.isCollision) outObjects.push_back(&collider);
         }
-    }
-
-    if (sphereColliderPools) {
-        auto& sphereColliders = sphereColliderPools->GetList();
-        for (SphereColliderComponent& sphereCollider : sphereColliders) {
-            if (!sphereCollider.GetEnable()) continue;
-            if (!IsCollisionLayerInMask(sphereCollider.GetLayer(), layerMask)) continue;
-            
-            TransformComponent* t = transformPool->GetByGameObjectID(sphereCollider.GetOwner()->GetID());
-            
-            if (t == nullptr) continue;
-            
-            CollisionResult result;
-            CollisionUtility::CheckSphere(
-                /*out*/ result,
-                t, &sphereCollider,
-                &tempTransform, &tempSphereCollider
-            );
-
-            if (result.isCollision) {
-                outObjects.push_back(&sphereCollider);
-            }
-        }
-    }
-
+    };
+    visit(scene->GetComponentPool<BoxColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckOBBSphere(result,CollisionShape::CreateBox(t,c,t->GetPosition()),query);
+    });
+    visit(scene->GetComponentPool<SphereColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckSphere(result,query,CollisionShape::CreateSphere(t,c,t->GetPosition()));
+    });
+    visit(scene->GetComponentPool<CapsuleColliderComponent>(), [&](auto& result, auto* t, auto* c) {
+        OverlapTest::CheckCapsuleSphere(result,CollisionShape::CreateCapsule(t,c,t->GetPosition()),query);
+    });
     return !outObjects.empty();
 }

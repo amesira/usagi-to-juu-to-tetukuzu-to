@@ -51,7 +51,7 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
 
     m_context.transform = playerContext.transform;
     m_context.rigidbody = player->GetComponent<RigidbodyComponent>();
-    m_context.collider = player->GetComponent<BoxColliderComponent>();
+    m_context.collider = player->GetComponent<CapsuleColliderComponent>();
 
     m_context.animationController = playerContext.animationController;
     m_context.uiBehavior = playerContext.uiBehavior;
@@ -155,7 +155,11 @@ bool PlayerMoveBehavior::CheckGrounded()
     }
 
     const PlayerMoveSettings::Data& settings = m_context.settings();
-    const XMFLOAT3 colliderScale = m_context.collider->GetScale();
+    const XMFLOAT3 colliderScale = {
+        m_context.collider->GetRadius() * 2.0f,
+        m_context.collider->GetHeight(),
+        m_context.collider->GetRadius() * 2.0f
+    };
     const XMFLOAT3 colliderCenter = m_context.collider->GetCenter();
     const XMFLOAT4 playerRotation = m_context.transform->GetRotation();
 

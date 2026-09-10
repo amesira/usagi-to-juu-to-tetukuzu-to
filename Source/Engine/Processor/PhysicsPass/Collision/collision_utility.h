@@ -10,6 +10,8 @@
 
 #include "collision_types.h"
 
+class CapsuleColliderComponent;
+class ColliderComponent;
 class TransformComponent;
 class BoxColliderComponent;
 class SphereColliderComponent;
@@ -37,6 +39,13 @@ private:
     // 当たり判定の本格チェック
     // ・コライダーの種類別に当たり判定を行う関数群
     //----------------------------------------------------
+    static void CheckCapsule(CollisionResult& result,
+        TransformComponent* transformA, CapsuleColliderComponent* colliderA,
+        TransformComponent* transformB, ColliderComponent* colliderB);
+    static Bounds ConvertToBounds(TransformComponent* transform, CapsuleColliderComponent* collider);
+    static void CheckRayCapsule(RaycastHit& hit, const DirectX::XMFLOAT3& origin,
+        const DirectX::XMFLOAT3& direction, float length,
+        TransformComponent* transform, CapsuleColliderComponent* collider);
     // Box - Box
     static void CheckOBB(
         /*out*/ CollisionResult& result,

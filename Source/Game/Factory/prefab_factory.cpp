@@ -116,7 +116,7 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     dummy->SetRenderLayer(RenderLayer::Enemy);
 
     TransformComponent* transform = dummy->AddComponent<TransformComponent>();
-    BoxColliderComponent* collider = dummy->AddComponent<BoxColliderComponent>();
+    CapsuleColliderComponent* collider = dummy->AddComponent<CapsuleColliderComponent>();
     RigidbodyComponent* rigidbody = dummy->AddComponent<RigidbodyComponent>();
     ModelComponent* model = dummy->AddComponent<ModelComponent>();
     AnimationComponent* animation = dummy->AddComponent<AnimationComponent>();
@@ -129,7 +129,8 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     transform->SetPosition(position);
     transform->SetScaling(settings.scaling);
 
-    collider->SetScale(settings.colliderScale);
+    collider->SetRadius(settings.colliderRadius);
+    collider->SetHeight(settings.colliderHeight);
     collider->SetCenter(settings.colliderCenter);
 
     rigidbody->SetMass(settings.mass);

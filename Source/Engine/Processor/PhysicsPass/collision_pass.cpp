@@ -18,6 +18,7 @@
 #include "Utility/mi_math.h"
 
 #include "./Collision/collision_utility.h"
+#include "./Collision/collision_shape.h"
 
 using namespace DirectX;
 
@@ -43,6 +44,8 @@ namespace
         if (auto* sphere = dynamic_cast<SphereColliderComponent*>(collider)) {
             return sphere->GetRadius() * 2.0f;
         }
+
+        if (auto* capsule = dynamic_cast<CapsuleColliderComponent*>(collider)) return capsule->GetRadius() * 2.0f;
 
         return 1.0f;
     }
@@ -114,9 +117,22 @@ void CollisionPass::Process(IScene* pScene)
     auto* rigidbodyPool = pScene->GetComponentPool<RigidbodyComponent>();
     auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
-    if (transformPool == nullptr || (boxColliderPool == nullptr && sphereColliderPool == nullptr)) {
+    auto* capsuleColliderPool = pScene->GetComponentPool<CapsuleColliderComponent>();
+    if (transformPool == nullptr || (!boxColliderPool && !sphereColliderPool && !capsuleColliderPool)) {
         return;
     }
+
+    auto registerContact = [&](ColliderComponent* a, ColliderComponent* b, const CollisionResult& result) {
+        auto* slotA = ColliderComponent::Internal::RegisterCollisionData(a,b);
+        auto* slotB = ColliderComponent::Internal::RegisterCollisionData(b,a);
+        auto* rbA = rigidbodyPool ? rigidbodyPool->GetByGameObjectID(a->GetOwner()->GetID()) : nullptr;
+        auto* rbB = rigidbodyPool ? rigidbodyPool->GetByGameObjectID(b->GetOwner()->GetID()) : nullptr;
+        float rateA = CreateCorrectionRate(a,rbA), rateB = CreateCorrectionRate(b,rbB);
+        const float total = rateA+rateB;
+        if (total > 0.0f) { rateA /= total; rateB /= total; }
+        if (slotA) { slotA->m_mtv = result.mtv; slotA->m_correction = MiMath::Multiply(result.mtv,rateA); }
+        if (slotB) { slotB->m_mtv = MiMath::Multiply(result.mtv,-1.0f); slotB->m_correction = MiMath::Multiply(slotB->m_mtv,rateB); }
+    };
 
     //----------------------------------------------------
     // CCBステップ数の更新
@@ -171,36 +187,7 @@ void CollisionPass::Process(IScene* pScene)
                 CollisionUtility::CheckOBB(outResult, transformA, colliderA,transformB, colliderB);
 
                 // 衝突している場合
-                if (outResult.isCollision) {
-                    // 衝突情報の登録
-                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
-                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
-
-                    // Correctionの作成
-                    float correctionRateA = 0.0f;
-                    float correctionRateB = 0.0f;
-
-                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
-                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
-                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
-
-                    float totalRate = correctionRateA + correctionRateB;
-                    if (totalRate > 0.0f) {
-                        correctionRateA /= totalRate;
-                        correctionRateB /= totalRate;
-                    }
-
-                    if (slotA) {
-                        slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
-                    }
-                    if (slotB) {
-                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
-                    }
-                }
+                if (outResult.isCollision) registerContact(colliderA, colliderB, outResult);
             }
         }
     }
@@ -232,36 +219,7 @@ void CollisionPass::Process(IScene* pScene)
                 CollisionUtility::CheckSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合
-                if (outResult.isCollision) {
-                    // 衝突情報の登録
-                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
-                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
-
-                    // Correctionの作成
-                    float correctionRateA = 0.0f;
-                    float correctionRateB = 0.0f;
-
-                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
-                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
-                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
-
-                    float totalRate = correctionRateA + correctionRateB;
-                    if (totalRate > 0.0f) {
-                        correctionRateA /= totalRate;
-                        correctionRateB /= totalRate;
-                    }
-
-                    if (slotA) {
-                        slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
-                    }
-                    if (slotB) {
-                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
-                    }
-                }
+                if (outResult.isCollision) registerContact(colliderA, colliderB, outResult);
             }
         }
     }
@@ -290,37 +248,29 @@ void CollisionPass::Process(IScene* pScene)
                 CollisionUtility::CheckOBBSphere(outResult, transformA, colliderA, transformB, colliderB);
 
                 // 衝突している場合
-                if (outResult.isCollision) {
-                    // 衝突情報の登録
-                    auto slotA = ColliderComponent::Internal::RegisterCollisionData(colliderA, colliderB);
-                    auto slotB = ColliderComponent::Internal::RegisterCollisionData(colliderB, colliderA);
-
-                    // Correctionの作成
-                    float correctionRateA = 0.0f;
-                    float correctionRateB = 0.0f;
-
-                    RigidbodyComponent* rbA = rigidbodyPool->GetByGameObjectID(colliderA->GetOwner()->GetID());
-                    RigidbodyComponent* rbB = rigidbodyPool->GetByGameObjectID(colliderB->GetOwner()->GetID());
-
-                    correctionRateA = CreateCorrectionRate(colliderA, rbA);
-                    correctionRateB = CreateCorrectionRate(colliderB, rbB);
-
-                    float totalRate = correctionRateA + correctionRateB;
-                    if (totalRate > 0.0f) {
-                        correctionRateA /= totalRate;
-                        correctionRateB /= totalRate;
-                    }
-
-                    if (slotA) {
-                        slotA->m_mtv = outResult.mtv;
-                        slotA->m_correction = MiMath::Multiply(slotA->m_mtv, correctionRateA);
-                    }
-                    if (slotB) {
-                        slotB->m_mtv = MiMath::Multiply(outResult.mtv, -1.0f);
-                        slotB->m_correction = MiMath::Multiply(slotB->m_mtv, correctionRateB);
-                    }
-                }
+                if (outResult.isCollision) registerContact(colliderA, colliderB, outResult);
             }
+        }
+    }
+
+    if (capsuleColliderPool) {
+        auto& capsules = capsuleColliderPool->GetList();
+        for (auto& c : capsules) ColliderComponent::Internal::UpdateCollisionData(&c);
+        auto checkPair = [&](CapsuleColliderComponent* a, ColliderComponent* b) {
+            if (!a->GetEnable() || !b->GetEnable() || !a->GetOwner() || !b->GetOwner()) return;
+            if (a->GetOwner() == b->GetOwner()) return;
+            auto* ta = transformPool->GetByGameObjectID(a->GetOwner()->GetID());
+            auto* tb = transformPool->GetByGameObjectID(b->GetOwner()->GetID());
+            if (!ta || !tb || !ta->GetEnable() || !tb->GetEnable()) return;
+            if (CollisionUtility::IsIgnoreLayerPair(static_cast<int>(a->GetLayer()),static_cast<int>(b->GetLayer()))) return;
+            CollisionResult result;
+            CollisionUtility::CheckCapsule(result,ta,a,tb,b);
+            if (result.isCollision) registerContact(a,b,result);
+        };
+        for (size_t i = 0; i < capsules.size(); ++i) {
+            if (boxColliderPool) for (auto& b : boxColliderPool->GetList()) checkPair(&capsules[i],&b);
+            if (sphereColliderPool) for (auto& b : sphereColliderPool->GetList()) checkPair(&capsules[i],&b);
+            for (size_t j = i+1; j < capsules.size(); ++j) checkPair(&capsules[i],&capsules[j]);
         }
     }
 
@@ -333,6 +283,15 @@ void CollisionPass::CollectDebugDraw(IScene* pScene)
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
     auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
+
+    if (!transformPool) return;
+    if (auto* capsules = pScene->GetComponentPool<CapsuleColliderComponent>()) {
+        for (auto& c : capsules->GetList()) {
+            if (!c.GetEnable() || !c.GetOwner()) continue;
+            auto* t = transformPool->GetByGameObjectID(c.GetOwner()->GetID());
+            if (t && t->GetEnable()) DrawDebug_ColliderLine(t,&c);
+        }
+    }
 
     if (boxColliderPool) {
         auto& boxColliderList = boxColliderPool->GetList();
@@ -458,3 +417,39 @@ void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, Sphere
     }
 }
 #pragma endregion
+
+
+void CollisionPass::DrawDebug_ColliderLine(TransformComponent* transform, CapsuleColliderComponent* collider)
+{
+    const auto shape = CollisionShape::CreateCapsule(transform,collider,transform->GetPosition());
+    const auto rotation = transform->GetRotation();
+    const XMFLOAT4 color{0,1,0,1};
+    constexpr int segments = 24;
+    const float r = shape.radius;
+    auto point = [&](const XMFLOAT3& center, const XMFLOAT3& local) {
+        return MiMath::Add(center,MiMath::RotateVector(rotation,local));
+    };
+    for (int i = 0; i < segments; ++i) {
+        const float a = XM_2PI*i/segments, b = XM_2PI*(i+1)/segments;
+        for (const auto& center : {shape.pointA,shape.pointB})
+            DebugRenderer_DrawLine(point(center,{r*cosf(a),0,r*sinf(a)}),point(center,{r*cosf(b),0,r*sinf(b)}),color);
+    }
+    for (int plane = 0; plane < 2; ++plane) {
+        for (int cap = 0; cap < 2; ++cap) {
+            const auto center = cap == 0 ? shape.pointA : shape.pointB;
+            const float sign = cap == 0 ? -1.0f : 1.0f;
+            for (int i = 0; i < segments/2; ++i) {
+                auto arc = [&](int index) {
+                    const float angle = XM_PI*index/(segments/2);
+                    return point(center,plane == 0 ? XMFLOAT3{r*cosf(angle),sign*r*sinf(angle),0}
+                        : XMFLOAT3{0,sign*r*sinf(angle),r*cosf(angle)});
+                };
+                DebugRenderer_DrawLine(arc(i),arc(i+1),color);
+            }
+        }
+        for (float sign : {-1.0f,1.0f}) {
+            const XMFLOAT3 offset = plane == 0 ? XMFLOAT3{sign*r,0,0} : XMFLOAT3{0,0,sign*r};
+            DebugRenderer_DrawLine(point(shape.pointA,offset),point(shape.pointB,offset),color);
+        }
+    }
+}

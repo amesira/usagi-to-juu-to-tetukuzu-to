@@ -101,3 +101,21 @@ Bounds CollisionShape::ConvertToBounds(
     return bounds;
 }
 #pragma endregion
+
+
+CollisionCapsuleShape CollisionShape::CreateCapsule(
+    TransformComponent* transform, CapsuleColliderComponent* collider, const XMFLOAT3& position)
+{
+    const auto center = MiMath::Add(position, MiMath::RotateVector(transform->GetRotation(), collider->GetCenter()));
+    const auto offset = MiMath::RotateVector(transform->GetRotation(),
+        XMFLOAT3{0.0f, collider->GetHeight() * 0.5f - collider->GetRadius(), 0.0f});
+    return {MiMath::Subtract(center, offset), MiMath::Add(center, offset), collider->GetRadius()};
+}
+
+Bounds CollisionShape::ConvertToBounds(TransformComponent* transform, CapsuleColliderComponent* collider)
+{
+    const auto s = CreateCapsule(transform, collider, transform->GetPosition());
+    return {fminf(s.pointA.x, s.pointB.x) - s.radius, fmaxf(s.pointA.x, s.pointB.x) + s.radius,
+            fminf(s.pointA.y, s.pointB.y) - s.radius, fmaxf(s.pointA.y, s.pointB.y) + s.radius,
+            fminf(s.pointA.z, s.pointB.z) - s.radius, fmaxf(s.pointA.z, s.pointB.z) + s.radius};
+}

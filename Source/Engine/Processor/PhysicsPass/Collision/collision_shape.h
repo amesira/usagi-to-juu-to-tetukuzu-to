@@ -23,7 +23,17 @@ struct CollisionSphereShape {
     float radius = 0.5f;
 };
 
+class CapsuleColliderComponent;
+struct CollisionCapsuleShape {
+    DirectX::XMFLOAT3 pointA = {};
+    DirectX::XMFLOAT3 pointB = {};
+    float radius = 0.5f;
+};
+
 namespace CollisionShape {
+    CollisionCapsuleShape CreateCapsule(TransformComponent* transform,
+        CapsuleColliderComponent* collider, const DirectX::XMFLOAT3& transformPosition);
+    Bounds ConvertToBounds(TransformComponent* transform, CapsuleColliderComponent* collider);
     // OBB判定用形状の作成
     CollisionBoxShape CreateBox(
         TransformComponent* transform, BoxColliderComponent* collider,

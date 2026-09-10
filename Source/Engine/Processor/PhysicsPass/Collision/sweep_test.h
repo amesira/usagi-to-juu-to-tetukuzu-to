@@ -10,7 +10,12 @@ class TransformComponent;
 class BoxColliderComponent;
 class SphereColliderComponent;
 
+class CapsuleColliderComponent;
+class ColliderComponent;
 namespace SweepTest {
+    void CheckCapsule(CollisionResult& result,
+        TransformComponent* transformA, CapsuleColliderComponent* colliderA,
+        TransformComponent* transformB, ColliderComponent* colliderB);
     // Box - Box
     void CheckOBB(
         /*out*/ CollisionResult& result,

@@ -5,6 +5,7 @@
 
 #include "Utility/mi_math.h"
 
+#include <cfloat>
 #include <algorithm>
 #include <cmath>
 
@@ -198,4 +199,137 @@ void OverlapTest::CheckSphere(
         -direction.y * overlap,
         -direction.z * overlap
     };
+}
+
+
+namespace {
+    constexpr float CAPSULE_EPSILON = 1.0e-6f;
+    XMFLOAT3 ClosestOnSegment(const XMFLOAT3& p, const XMFLOAT3& a, const XMFLOAT3& b) {
+        const auto d = MiMath::Subtract(b, a);
+        const float lengthSq = MiMath::Dot(d, d);
+        const float t = lengthSq > CAPSULE_EPSILON * CAPSULE_EPSILON
+            ? MiMath::Clamp(MiMath::Dot(MiMath::Subtract(p, a), d) / lengthSq, 0.0f, 1.0f) : 0.0f;
+        return MiMath::Add(a, MiMath::Multiply(d, t));
+    }
+    XMFLOAT3 Perpendicular(const XMFLOAT3& axis) {
+        if (MiMath::Length(axis) < CAPSULE_EPSILON) return {1, 0, 0};
+        const auto n = MiMath::Normalize(axis);
+        return MiMath::Normalize(MiMath::Cross(n, fabsf(n.x) < 0.8f ? XMFLOAT3{1,0,0} : XMFLOAT3{0,1,0}));
+    }
+    void CapsuleContact(CollisionResult& result, const XMFLOAT3& a, const XMFLOAT3& b,
+        float radius, const XMFLOAT3& fallback) {
+        result = {};
+        const auto delta = MiMath::Subtract(a, b);
+        const float distance = MiMath::Length(delta);
+        if (distance > radius) return;
+        result.isCollision = true;
+        const auto normal = distance > CAPSULE_EPSILON ? MiMath::Multiply(delta, 1.0f / distance) : fallback;
+        result.mtv = MiMath::Multiply(normal, radius - distance);
+    }
+}
+
+void OverlapTest::CheckCapsuleSphere(CollisionResult& result,
+    const CollisionCapsuleShape& capsule, const CollisionSphereShape& sphere)
+{
+    CapsuleContact(result, ClosestOnSegment(sphere.center, capsule.pointA, capsule.pointB), sphere.center,
+        capsule.radius + sphere.radius, Perpendicular(MiMath::Subtract(capsule.pointB, capsule.pointA)));
+}
+
+void OverlapTest::CheckCapsule(CollisionResult& result,
+    const CollisionCapsuleShape& a, const CollisionCapsuleShape& b)
+{
+    const auto u = MiMath::Subtract(a.pointB, a.pointA);
+    const auto v = MiMath::Subtract(b.pointB, b.pointA);
+    const auto w = MiMath::Subtract(a.pointA, b.pointA);
+    const float aa = MiMath::Dot(u,u), bb = MiMath::Dot(u,v), cc = MiMath::Dot(v,v);
+    const float dd = MiMath::Dot(u,w), ee = MiMath::Dot(v,w);
+    constexpr float epsSq = CAPSULE_EPSILON * CAPSULE_EPSILON;
+    float s = 0.0f, t = 0.0f;
+    if (aa <= epsSq) {
+        if (cc > epsSq) t = MiMath::Clamp(ee / cc, 0.0f, 1.0f);
+    } else if (cc <= epsSq) {
+        s = MiMath::Clamp(-dd / aa, 0.0f, 1.0f);
+    } else {
+        const float denominator = aa * cc - bb * bb;
+        if (denominator > epsSq * aa * cc) s = MiMath::Clamp((bb * ee - cc * dd) / denominator, 0.0f, 1.0f);
+        t = (bb * s + ee) / cc;
+        if (t < 0.0f) { t = 0.0f; s = MiMath::Clamp(-dd / aa, 0.0f, 1.0f); }
+        else if (t > 1.0f) { t = 1.0f; s = MiMath::Clamp((bb - dd) / aa, 0.0f, 1.0f); }
+    }
+    auto fallback = MiMath::Cross(u, v);
+    if (MiMath::Length(fallback) > CAPSULE_EPSILON) fallback = MiMath::Normalize(fallback);
+    else fallback = Perpendicular(aa > cc ? u : v);
+    CapsuleContact(result, MiMath::Add(a.pointA, MiMath::Multiply(u,s)),
+        MiMath::Add(b.pointA, MiMath::Multiply(v,t)), a.radius + b.radius, fallback);
+}
+
+void OverlapTest::CheckCapsuleOBB(CollisionResult& result,
+    const CollisionCapsuleShape& capsule, const CollisionBoxShape& box)
+{
+    result = {};
+    const XMFLOAT4 inverse{-box.rotation.x, -box.rotation.y, -box.rotation.z, box.rotation.w};
+    const auto a = MiMath::RotateVector(inverse, MiMath::Subtract(capsule.pointA, box.center));
+    const auto b = MiMath::RotateVector(inverse, MiMath::Subtract(capsule.pointB, box.center));
+    const auto d = MiMath::Subtract(b, a);
+    const float start[3]{a.x,a.y,a.z}, delta[3]{d.x,d.y,d.z};
+    const float extent[3]{fabsf(box.scale.x)*0.5f, fabsf(box.scale.y)*0.5f, fabsf(box.scale.z)*0.5f};
+    // Squared segment/AABB distance is piecewise quadratic. Split at slab crossings
+    // and evaluate the exact minimum in every interval (including its endpoints).
+    float cuts[8]{0.0f,1.0f};
+    int count = 2;
+    for (int axis = 0; axis < 3; ++axis) {
+        if (fabsf(delta[axis]) <= CAPSULE_EPSILON) continue;
+        for (float sign : {-1.0f, 1.0f}) {
+            const float t = (sign * extent[axis] - start[axis]) / delta[axis];
+            if (t > 0.0f && t < 1.0f) cuts[count++] = t;
+        }
+    }
+    std::sort(cuts, cuts + count);
+    float bestSq = FLT_MAX;
+    XMFLOAT3 closestSegment{}, closestBox{};
+    auto evaluate = [&](float t) {
+        const auto p = MiMath::Add(a, MiMath::Multiply(d,t));
+        const XMFLOAT3 q{MiMath::Clamp(p.x,-extent[0],extent[0]),
+            MiMath::Clamp(p.y,-extent[1],extent[1]), MiMath::Clamp(p.z,-extent[2],extent[2])};
+        const auto diff = MiMath::Subtract(p,q);
+        const float distSq = MiMath::Dot(diff,diff);
+        if (distSq < bestSq) { bestSq = distSq; closestSegment = p; closestBox = q; }
+    };
+    for (int i = 0; i + 1 < count; ++i) {
+        evaluate(cuts[i]); evaluate(cuts[i+1]);
+        const float mid = (cuts[i]+cuts[i+1])*0.5f;
+        float quadratic = 0.0f, linear = 0.0f;
+        for (int axis = 0; axis < 3; ++axis) {
+            const float value = start[axis] + delta[axis]*mid;
+            if (value >= -extent[axis] && value <= extent[axis]) continue;
+            const float boundary = value < 0.0f ? -extent[axis] : extent[axis];
+            quadratic += delta[axis]*delta[axis];
+            linear += delta[axis]*(start[axis]-boundary);
+        }
+        if (quadratic > 0.0f) evaluate(MiMath::Clamp(-linear/quadratic,cuts[i],cuts[i+1]));
+    }
+    if (bestSq > capsule.radius*capsule.radius) return;
+    result.isCollision = true;
+    XMFLOAT3 localMtv{};
+    if (bestSq > CAPSULE_EPSILON*CAPSULE_EPSILON) {
+        const float distance = sqrtf(bestSq);
+        localMtv = MiMath::Multiply(MiMath::Subtract(closestSegment,closestBox), (capsule.radius-distance)/distance);
+    } else {
+        // Deep intersection: conservative separation along the cheapest box face.
+        // Include the whole segment, not just the closest point inside the box.
+        float best = FLT_MAX;
+        for (int axis = 0; axis < 3; ++axis) {
+            const float end = start[axis]+delta[axis];
+            const float positive = extent[axis]+capsule.radius-(std::min)(start[axis],end);
+            const float negative = (std::max)(start[axis],end)+extent[axis]+capsule.radius;
+            const float depth = (std::min)(positive,negative);
+            if (depth < best) {
+                best = depth;
+                float values[3]{};
+                values[axis] = positive <= negative ? positive : -negative;
+                localMtv = {values[0],values[1],values[2]};
+            }
+        }
+    }
+    result.mtv = MiMath::RotateVector(box.rotation,localMtv);
 }

@@ -98,3 +98,21 @@ void CollisionUtility::CheckRayAABB(
 {
     RaycastTest::CheckRayAABB(hitInfo, rayOrigin, rayDirection, rayLength, bounds);
 }
+
+
+void CollisionUtility::CheckCapsule(CollisionResult& result,
+    TransformComponent* tA, CapsuleColliderComponent* cA, TransformComponent* tB, ColliderComponent* cB)
+{ 
+    SweepTest::CheckCapsule(result,tA,cA,tB,cB);
+}
+
+Bounds CollisionUtility::ConvertToBounds(TransformComponent* t, CapsuleColliderComponent* c)
+{ 
+    return CollisionShape::ConvertToBounds(t,c);
+}
+
+void CollisionUtility::CheckRayCapsule(RaycastHit& hit, const DirectX::XMFLOAT3& origin,
+    const DirectX::XMFLOAT3& direction, float length, TransformComponent* t, CapsuleColliderComponent* c)
+{ 
+    RaycastTest::CheckRayCapsule(hit,origin,direction,length,t,c); 
+}

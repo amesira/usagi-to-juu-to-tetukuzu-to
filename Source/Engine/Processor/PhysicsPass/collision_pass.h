@@ -20,6 +20,7 @@ class RigidbodyComponent;
 
 // コライダーの種類
 class BoxColliderComponent;
+class CapsuleColliderComponent;
 class SphereColliderComponent;
 
 class CollisionPass : public Pass {
@@ -31,6 +32,7 @@ public:
     void    CollectDebugDraw(IScene* pScene);
 
 private:
+    void DrawDebug_ColliderLine(TransformComponent* transform, CapsuleColliderComponent* collider);
     // デバッグ用コライダー描画
     void    DrawDebug_ColliderLine(TransformComponent* transform, BoxColliderComponent* boxCollider);
     void    DrawDebug_ColliderLine(TransformComponent* transform, SphereColliderComponent* sphereCollider);

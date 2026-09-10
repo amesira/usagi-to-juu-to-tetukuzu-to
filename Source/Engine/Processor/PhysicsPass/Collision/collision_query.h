@@ -29,20 +29,20 @@ public:
         /*out*/ RaycastHit& raycastHit,
         const XMFLOAT3& origin, const XMFLOAT3& direction, float maxDistance,
         CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
-    // SphereCastクエリー
+    // SphereCastクエリー (hitPoint is the moving sphere center at impact)
     static bool SphereCast(
         IScene* scene,
         /*out*/ RaycastHit& raycastHit,
         const XMFLOAT3& origin, const XMFLOAT3& direction, float radius, float maxDistance,
         CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
 
-    // OverlapBoxクエリー
+    // OverlapBoxクエリー (current position only; appends to outObjects)
     static bool OverlapBox(
         IScene* scene,
         /*out*/ std::vector<ColliderComponent*>& outObjects,
         const XMFLOAT3& center, const XMFLOAT3& scale, const XMFLOAT4& orientation,
         CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
-    // OverlapSphereクエリー
+    // OverlapSphereクエリー (current position only; appends to outObjects)
     static bool OverlapSphere(
         IScene* scene,
         /*out*/ std::vector<ColliderComponent*>& outObjects,

@@ -39,53 +39,21 @@ void ResolvePass::Process(IScene* pScene)
 
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* rigidbodyPool = pScene->GetComponentPool<RigidbodyComponent>();
-    auto* boxColliderPool = pScene->GetComponentPool<BoxColliderComponent>();
-    auto* sphereColliderPool = pScene->GetComponentPool<SphereColliderComponent>();
-    if (transformPool == nullptr || rigidbodyPool == nullptr)return;
-
-    if(boxColliderPool){
-        auto& boxColliderList = boxColliderPool->GetList();
-
-        for (BoxColliderComponent& c : boxColliderList) {
-            BoxColliderComponent* collider = &c;
-            RigidbodyComponent* rigidbody = rigidbodyPool->GetByGameObjectID(collider->GetOwner()->GetID());
-            TransformComponent* transform = transformPool->GetByGameObjectID(collider->GetOwner()->GetID());
-
-            // コンポーネントが無効ならスキップ
-            if (!transform || !collider || !rigidbody)continue;
-            if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
-
-            if (rigidbody->GetIsKinematic()) {
-                rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
-                continue;
-            }
-
-            // 物理演算補正適用
-            ApplyResolve(transform, collider, rigidbody, deltaTime);
+    if (!transformPool || !rigidbodyPool) return;
+    auto resolvePool = [&](auto* pool) {
+        if (!pool) return;
+        for (auto& collider : pool->GetList()) {
+            if (!collider.GetEnable() || !collider.GetOwner()) continue;
+            auto* rigidbody = rigidbodyPool->GetByGameObjectID(collider.GetOwner()->GetID());
+            auto* transform = transformPool->GetByGameObjectID(collider.GetOwner()->GetID());
+            if (!rigidbody || !transform || !rigidbody->GetEnable() || !transform->GetEnable()) continue;
+            if (rigidbody->GetIsKinematic()) { rigidbody->SetVelocity({0,0,0}); continue; }
+            ApplyResolve(transform,&collider,rigidbody,deltaTime);
         }
-    }
-
-    if(sphereColliderPool){
-        auto& sphereColliderList = sphereColliderPool->GetList();
-
-        for(SphereColliderComponent& c : sphereColliderList) {
-            SphereColliderComponent* collider = &c;
-            RigidbodyComponent* rigidbody = rigidbodyPool->GetByGameObjectID(collider->GetOwner()->GetID());
-            TransformComponent* transform = transformPool->GetByGameObjectID(collider->GetOwner()->GetID());
-
-            // コンポーネントが無効ならスキップ
-            if (!transform || !collider || !rigidbody)continue;
-            if (!transform->GetEnable() || !collider->GetEnable() || !rigidbody->GetEnable())continue;
-
-            if (rigidbody->GetIsKinematic()) {
-                rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
-                continue;
-            }
-
-            // 物理演算補正適用
-            ApplyResolve(transform, collider, rigidbody, deltaTime);
-        }
-    }
+    };
+    resolvePool(pScene->GetComponentPool<BoxColliderComponent>());
+    resolvePool(pScene->GetComponentPool<SphereColliderComponent>());
+    resolvePool(pScene->GetComponentPool<CapsuleColliderComponent>());
 }
 
 void ResolvePass::ApplyResolve(

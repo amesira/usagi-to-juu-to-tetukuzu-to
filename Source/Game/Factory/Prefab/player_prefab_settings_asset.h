@@ -13,38 +13,34 @@ namespace PlayerPrefabSettings {
     /// @brief プレイヤーのプレハブ設定を表す構造体
     struct Data {
         XMFLOAT3 scaling = { 1.0f, 1.0f, 1.0f };
-
-        XMFLOAT3 colliderScale = { 1.0f, 1.0f, 1.0f };
-        XMFLOAT3 colliderCenter = { 0.0f, 0.0f, 0.0f };
+        XMFLOAT3 colliderCenter = { 0.0f, 1.0f, 0.0f };
+        float colliderRadius = 0.5f;
+        float colliderHeight = 2.0f;
     };
 
     /// @brief AttachedEffectSettingsのFieldSchema
     inline static const auto& GetSchema() 
     {
         static const auto& schema = FieldSchema{
-            MakeField(
-                "scaling",
-                "Scaling",
-                &Data::scaling,
+            MakeField("scaling", "Scaling", &Data::scaling,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = 0.1f,
                     .maxValue = 10.0f }),
-            MakeField(
-                "colliderScale",
-                "Collider Scale",
-                &Data::colliderScale,
+            MakeField("colliderCenter", "Collider Center", &Data::colliderCenter,
                 DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = 0.1f,
-                    .maxValue = 10.0f }),
-            MakeField(
-                "colliderCenter",
-                "Collider Center",
-                &Data::colliderCenter,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
+                    .dragSpeed = 0.01f,
                     .minValue = -10.0f,
+                    .maxValue = 10.0f }),
+            MakeField("colliderRadius", "Collider Radius", &Data::colliderRadius,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
+            MakeField("colliderHeight", "Collider Height", &Data::colliderHeight,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
                     .maxValue = 10.0f })
         };
 

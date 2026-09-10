@@ -41,7 +41,7 @@ struct PlayerMoveContext
 
     class TransformComponent* transform = nullptr;
     class RigidbodyComponent* rigidbody = nullptr;
-    class BoxColliderComponent* collider = nullptr;
+    class CapsuleColliderComponent* collider = nullptr;
 
     class PlayerAnimationController* animationController = nullptr;
 

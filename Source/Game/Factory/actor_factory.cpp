@@ -42,8 +42,9 @@ GameObject* ActorFactory::CreatePlayer(
 
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();
-    BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
+   // BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
+    CapsuleColliderComponent* collider = player->AddComponent<CapsuleColliderComponent>();
 
     ModelComponent* model = player->AddComponent<ModelComponent>();
     AnimationComponent* animation = player->AddComponent<AnimationComponent>();
@@ -55,7 +56,8 @@ GameObject* ActorFactory::CreatePlayer(
     rigidbody->SetMass(1.0f);
     rigidbody->SetFriction({ 1.0f, 1.0f, 1.0f });
 
-    collider->SetScale(settings.colliderScale);
+    collider->SetRadius(settings.colliderRadius);
+    collider->SetHeight(settings.colliderHeight);
     collider->SetCenter(settings.colliderCenter);
 
     ModelResource* modelResource = MODEL_REPOSITORY->GetModel("asset/Model/player_model.fbx");

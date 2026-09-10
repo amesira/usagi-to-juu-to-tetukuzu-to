@@ -7,6 +7,7 @@
 #include "Engine/Component/collider_component.h"
 #include "Utility/mi_math.h"
 
+#include "collision_shape.h"
 #include <algorithm>
 #include <cmath>
 
@@ -179,3 +180,55 @@ void RaycastTest::CheckRayAABB(
     outHitInfo.hitNormal = hitNormal;
 }
 #pragma endregion
+
+
+void RaycastTest::CheckRayCapsule(RaycastHit& hit, const XMFLOAT3& origin,
+    const XMFLOAT3& direction, float length, TransformComponent* transform, CapsuleColliderComponent* collider)
+{
+    hit = {};
+    const float dirLength = MiMath::Length(direction);
+    if (dirLength <= 1.0e-6f || length < 0.0f) return;
+    const auto dir = MiMath::Multiply(direction,1.0f/dirLength);
+    const auto capsule = CollisionShape::CreateCapsule(transform,collider,transform->GetPosition());
+    const auto axisVector = MiMath::Subtract(capsule.pointB,capsule.pointA);
+    const float axisLength = MiMath::Length(axisVector);
+    const auto axis = axisLength > 1.0e-6f ? MiMath::Multiply(axisVector,1.0f/axisLength) : XMFLOAT3{0,1,0};
+    const auto offset = MiMath::Subtract(origin,capsule.pointA);
+    const float axialOrigin = MiMath::Dot(offset,axis), axialDirection = MiMath::Dot(dir,axis);
+    auto accept = [&](float t, const XMFLOAT3& center) {
+        if (t < 0.0f || t > length || (hit.hit && t >= hit.hitDistance)) return;
+        hit.hit = true; hit.hitDistance = t;
+        hit.hitPoint = MiMath::Add(origin,MiMath::Multiply(dir,t));
+        const auto normal = MiMath::Subtract(hit.hitPoint,center);
+        hit.hitNormal = MiMath::Length(normal) > 1.0e-6f ? MiMath::Normalize(normal) : MiMath::Multiply(dir,-1.0f);
+    };
+    // Cylinder surface, restricted to the interval between cap centers.
+    if (axisLength > 1.0e-6f) {
+        const auto radialDir = MiMath::Subtract(dir,MiMath::Multiply(axis,axialDirection));
+        const auto radialOrigin = MiMath::Subtract(offset,MiMath::Multiply(axis,axialOrigin));
+        const float a = MiMath::Dot(radialDir,radialDir), b = MiMath::Dot(radialOrigin,radialDir);
+        const float c = MiMath::Dot(radialOrigin,radialOrigin)-capsule.radius*capsule.radius;
+        const float discriminant = b*b-a*c;
+        if (a > 1.0e-12f && discriminant >= 0.0f) {
+            for (float sign : {-1.0f,1.0f}) {
+                const float t = (-b+sign*sqrtf(discriminant))/a;
+                const float y = axialOrigin+t*axialDirection;
+                if (y >= 0.0f && y <= axisLength)
+                    accept(t,MiMath::Add(capsule.pointA,MiMath::Multiply(axis,y)));
+            }
+        }
+    }
+    // Only accept the exterior hemisphere of each cap, not internal sphere surfaces.
+    for (int cap = 0; cap < 2; ++cap) {
+        const auto center = cap == 0 ? capsule.pointA : capsule.pointB;
+        const auto oc = MiMath::Subtract(origin,center);
+        const float b = MiMath::Dot(oc,dir), c = MiMath::Dot(oc,oc)-capsule.radius*capsule.radius;
+        const float discriminant = b*b-c;
+        if (discriminant < 0.0f) continue;
+        for (float sign : {-1.0f,1.0f}) {
+            const float t = -b+sign*sqrtf(discriminant);
+            const float y = axialOrigin+t*axialDirection;
+            if (axisLength <= 1.0e-6f || (cap == 0 ? y <= 0.0f : y >= axisLength)) accept(t,center);
+        }
+    }
+}

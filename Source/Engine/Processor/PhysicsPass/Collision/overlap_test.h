@@ -7,6 +7,11 @@
 #include "collision_shape.h"
 
 namespace OverlapTest {
+    // MTV always moves the first shape out of the second shape.
+    void CheckCapsuleSphere(CollisionResult& result, const CollisionCapsuleShape& capsule, const CollisionSphereShape& sphere);
+    void CheckCapsule(CollisionResult& result, const CollisionCapsuleShape& a, const CollisionCapsuleShape& b);
+    void CheckCapsuleOBB(CollisionResult& result, const CollisionCapsuleShape& capsule, const CollisionBoxShape& box);
+
     // AABB同士の衝突判定
     void CheckAABB(/*out*/ CollisionResult& result, Bounds a, Bounds b);
 

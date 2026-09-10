@@ -14,8 +14,9 @@ namespace TrainingDummyPrefabSettings
         std::string modelAssetPath = "asset/Model/kakashi.fbx";
 
         DirectX::XMFLOAT3 scaling = { 1.0f, 1.0f, 1.0f };
-        DirectX::XMFLOAT3 colliderScale = { 1.0f, 2.0f, 1.0f };
         DirectX::XMFLOAT3 colliderCenter = { 0.0f, 1.0f, 0.0f };
+        float colliderRadius = 0.5f;
+        float colliderHeight = 2.0f;
 
         float maxHealth = 100.0f;
         float mass = 1.0f;
@@ -40,24 +41,25 @@ namespace TrainingDummyPrefabSettings
                     .minValue = 0.1f,
                     .maxValue = 10.0f }),
 
+            // === Collider Settings ===
             MakeHeaderField("Collider Settings"),
-            MakeField(
-                "colliderScale",
-                "Collider Scale",
-                &Data::colliderScale,
-                DragFieldOptions{
-                    .dragSpeed = 0.1f,
-                    .minValue = 0.1f,
-                    .maxValue = 10.0f }),
-            MakeField(
-                "colliderCenter",
-                "Collider Center",
-                &Data::colliderCenter,
+            MakeField("colliderCenter", "Collider Center", &Data::colliderCenter,
                 DragFieldOptions{
                     .dragSpeed = 0.1f,
                     .minValue = -10.0f,
                     .maxValue = 10.0f }),
+            MakeField("colliderRadius", "Collider Radius", &Data::colliderRadius,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
+            MakeField("colliderHeight", "Collider Height", &Data::colliderHeight,
+                DragFieldOptions{
+                    .dragSpeed = 0.01f,
+                    .minValue = 0.01f,
+                    .maxValue = 10.0f }),
 
+            // === Health Settings ===
             MakeHeaderField("Health Settings"),
             MakeField(
                 "maxHealth",

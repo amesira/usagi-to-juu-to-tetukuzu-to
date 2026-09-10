@@ -122,3 +122,34 @@ void SweepTest::CheckSphere(
         if (result.isCollision) return;
     }
 }
+
+
+void SweepTest::CheckCapsule(CollisionResult& result,
+    TransformComponent* tA, CapsuleColliderComponent* cA,
+    TransformComponent* tB, ColliderComponent* cB)
+{
+    result = {};
+    const auto prevA = tA->GetPrevPosition(), currA = tA->GetPosition();
+    const auto prevB = tB->GetPrevPosition(), currB = tB->GetPosition();
+    const int steps = (std::max)(1, (std::max)(cA->GetCCBStep(),cB->GetCCBStep()));
+    for (int i = 0; i <= steps; ++i) {
+        const float t = static_cast<float>(i)/steps;
+        const auto posA = MiMath::Lerp(prevA,currA,t), posB = MiMath::Lerp(prevB,currB,t);
+        const auto capsule = CollisionShape::CreateCapsule(tA,cA,posA);
+        if (auto* box = dynamic_cast<BoxColliderComponent*>(cB))
+            OverlapTest::CheckCapsuleOBB(result,capsule,CollisionShape::CreateBox(tB,box,posB));
+        else if (auto* sphere = dynamic_cast<SphereColliderComponent*>(cB))
+            OverlapTest::CheckCapsuleSphere(result,capsule,CollisionShape::CreateSphere(tB,sphere,posB));
+        else if (auto* other = dynamic_cast<CapsuleColliderComponent*>(cB))
+            OverlapTest::CheckCapsule(result,capsule,CollisionShape::CreateCapsule(tB,other,posB));
+        if (!result.isCollision) continue;
+        const float depth = MiMath::Length(result.mtv);
+        if (depth <= 1.0e-6f) continue; // A touching sample has no usable MTV normal.
+        const auto normal = MiMath::Multiply(result.mtv,1.0f/depth);
+        const auto remaining = MiMath::Subtract(MiMath::Subtract(currA,posA),MiMath::Subtract(currB,posB));
+        const float correction = depth - MiMath::Dot(remaining,normal);
+        if (correction <= 0.0f) { result = {}; continue; }
+        result.mtv = MiMath::Multiply(normal,correction);
+        return;
+    }
+}
