@@ -17,7 +17,9 @@ class EnemyApproachCombat : public EnemyCombatBase {
     float m_attackDistance = 2.0f;
 
 public:
+    EnemyApproachCombat() : EnemyCombatBase(10, true) {}
     bool CanStart(const EnemyContext& context) const override;
+    bool CanContinue(const EnemyContext& context) const override;
     void Start(EnemyContext& context) override;
     EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
     void Finish(EnemyContext& context) override;

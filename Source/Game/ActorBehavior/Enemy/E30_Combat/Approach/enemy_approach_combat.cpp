@@ -23,6 +23,14 @@ bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
     return std::hypot(target.x - position.x, target.z - position.z) > m_attackDistance;
 }
 
+bool EnemyApproachCombat::CanContinue(const EnemyContext& context) const
+{
+    if (!context.runtimeState.hasCombatTarget || !context.transform) return false;
+    const auto position = context.transform->GetPosition();
+    const auto target = context.runtimeState.combatTargetPosition;
+    return std::hypot(target.x - position.x, target.z - position.z) > m_attackDistance;
+}
+
 void EnemyApproachCombat::Start(EnemyContext& context)
 {
     if (context.pathFollower) context.pathFollower->ClearPath();
@@ -40,7 +48,6 @@ void EnemyApproachCombat::Start(EnemyContext& context)
 
 EnemyCombatStatus EnemyApproachCombat::Update(EnemyContext& context, float deltaTime)
 {
-    if (!CanStart(context)) return EnemyCombatStatus::Success;
     if (!context.aiWorld || !context.aiWorld->IsInitialized()) return EnemyCombatStatus::Failure;
 
     m_repathTimer -= deltaTime;

@@ -20,6 +20,15 @@ bool EnemyAttackCombat::CanStart(const EnemyContext& context) const
     return std::hypot(target.x - position.x, target.z - position.z) <= m_attackDistance;
 }
 
+bool EnemyAttackCombat::CanContinue(const EnemyContext& context) const
+{
+    // 攻撃本体の実装時には、射程ではなく予備動作・攻撃・後隙の状態で判断する。
+    if (!context.runtimeState.hasCombatTarget || !context.transform) return false;
+    const auto position = context.transform->GetPosition();
+    const auto target = context.runtimeState.combatTargetPosition;
+    return std::hypot(target.x - position.x, target.z - position.z) <= m_attackDistance;
+}
+
 void EnemyAttackCombat::Start(EnemyContext& context)
 {
     EnemyLocomotionController::LocomotionRequest request;
@@ -34,8 +43,6 @@ void EnemyAttackCombat::Start(EnemyContext& context)
 
 EnemyCombatStatus EnemyAttackCombat::Update(EnemyContext& context, float deltaTime)
 {
-    if (!CanStart(context)) return EnemyCombatStatus::Success;
-
     if (context.locomotionController) {
         EnemyLocomotionController::LocomotionRequest request;
         request.priority = 20;

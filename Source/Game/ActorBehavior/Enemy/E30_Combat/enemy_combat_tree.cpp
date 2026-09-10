@@ -5,7 +5,7 @@
 //===================================================
 #include "enemy_combat_tree.h"
 
-#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include <algorithm>
 
 void EnemyCombatTree::Initialize(EnemyContext& context)
 {
@@ -19,6 +19,8 @@ void EnemyCombatTree::Finalize(EnemyContext& context)
 
 void EnemyCombatTree::RegisterBehavior(EnemyCombatBase& behavior)
 {
+    if (std::find(m_combatBehaviors.begin(), m_combatBehaviors.end(), &behavior)
+        != m_combatBehaviors.end()) return;
     m_combatBehaviors.push_back(&behavior);
 }
 
@@ -31,16 +33,24 @@ void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 /// @brief 現在のCombat行動を更新する
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
-    // 登録順で最初に開始条件を満たすものを選ぶ。
+    // 継続条件は開始条件と独立し、割り込み禁止より優先する。
+    if (m_activeBehavior && !m_activeBehavior->CanContinue(context)) {
+        Cancel(context);
+    }
+
+    // 割り込み可能な場合だけ、新しい行動の開始条件を評価する。
+    // 同優先度では実行中の行動を維持し、非実行中なら登録順を使う。
     EnemyCombatBase* selected = nullptr;
-    for (EnemyCombatBase* behavior : m_combatBehaviors) {
-        if (behavior && behavior->CanStart(context)) {
-            selected = behavior;
-            break;
+    if (!m_activeBehavior || m_activeBehavior->IsInterruptible(context)) {
+        for (EnemyCombatBase* behavior : m_combatBehaviors) {
+            if (!behavior || behavior == m_activeBehavior) continue;
+            if (m_activeBehavior && behavior->GetPriority() <= m_activeBehavior->GetPriority()) continue;
+            if (selected && behavior->GetPriority() <= selected->GetPriority()) continue;
+            if (behavior->CanStart(context)) selected = behavior;
         }
     }
 
-    if (selected != m_activeBehavior) {
+    if (selected) {
         Cancel(context);
         m_activeBehavior = selected;
         if (m_activeBehavior) m_activeBehavior->Start(context);

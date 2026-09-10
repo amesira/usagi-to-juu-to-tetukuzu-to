@@ -3,7 +3,7 @@
 // Date  ：2026/09/10
 // Author：Miu Kitamura
 // 
-// ・敵の戦闘行動を管理するBehaviorTree。登録順を優先度として、一つのCombatだけを実行する。
+// ・敵の戦闘行動を管理するBehaviorTree。継続条件、割り込み可否、優先度で選択する。
 // ・プレイヤーのActionMachineと似ているが、こちらは排他的に制御する
 //---------------------------------------------------
 #pragma once
@@ -12,7 +12,7 @@
 
 class EnemyContext;
 
-/// @brief 登録順を優先度として、一つのCombatだけを実行する簡易BehaviorTree。
+/// @brief 数値の優先度で一つのCombatを実行する。同優先度の開始候補は登録順。
 class EnemyCombatTree {
     std::vector<EnemyCombatBase*> m_combatBehaviors;
     EnemyCombatBase* m_activeBehavior = nullptr;
@@ -25,6 +25,7 @@ public:
     void ClearBehaviors(EnemyContext& context);
 
     void Update(EnemyContext& context, float deltaTime);
+    /// @brief Stun・Deadなどによる強制終了。割り込み可否に関係なくキャンセルする。
     void Cancel(EnemyContext& context);
 
     const EnemyCombatBase* GetActiveBehavior() const { return m_activeBehavior; }
