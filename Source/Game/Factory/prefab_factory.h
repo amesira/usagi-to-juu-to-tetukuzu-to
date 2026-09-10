@@ -11,20 +11,24 @@ namespace PrefabFactory
     struct PlayerPrefab {
         GameObject* player = nullptr;
     };
-
     struct TrainingDummyPrefab {
         GameObject* dummy = nullptr;
     };
+    struct EnemyPrefab {
+        GameObject* enemy = nullptr;
+    };
 
     /// @brief PlayerPrefabを生成する関数
-    /// @param position 生成位置
     PlayerPrefab CreatePlayerPrefab(
         IScene* scene, 
         const XMFLOAT3& position);
 
     /// @brief TrainingDummyPrefabを生成する関数
-    /// @param position 生成位置
     TrainingDummyPrefab CreateTrainingDummyPrefab(
+        IScene* scene,
+        const XMFLOAT3& position);
+
+    EnemyPrefab CreateEnemyPrefab(
         IScene* scene,
         const XMFLOAT3& position);
 }

@@ -23,6 +23,8 @@
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
 
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+
 #include "actor_factory.h"
 
 #include <filesystem>
@@ -146,4 +148,39 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
 
     prefab.dummy = dummy;
     return prefab;
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const XMFLOAT3& position)
+{
+    GameObject* enemy = scene->CreateGameObject();
+
+    enemy->SetName("Enemy");
+    enemy->SetTag("Enemy");
+    enemy->SetCollisionLayer(CollisionLayer::Enemy);
+    enemy->SetRenderLayer(RenderLayer::Enemy);
+
+    auto* transform = enemy->AddComponent<TransformComponent>();
+    auto* collider = enemy->AddComponent<CapsuleColliderComponent>();
+    auto* rigidbody = enemy->AddComponent<RigidbodyComponent>();
+
+    auto* model = enemy->AddComponent<ModelComponent>();
+    model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_model_a.fbx"));
+    enemy->AddComponent<AnimationComponent>();
+    enemy->AddComponent<HitReceiverBehavior>();
+    enemy->AddComponent<BlinkerBehavior>();
+
+    auto* health = enemy->AddComponent<HealthBehavior>();
+    auto* behavior = enemy->AddComponent<EnemyBehavior>();
+
+    transform->SetPosition(position);
+    collider->SetRadius(1.0f);
+    collider->SetHeight(1.0f);
+    collider->SetCenter({ 0.0f, 0.5f, 0.0f });
+
+    behavior->SetupAiAgentSettings(
+        DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
+            "asset/Data/enemy_ai_agent_settings.data.json",
+            true));
+
+    return { enemy };
 }

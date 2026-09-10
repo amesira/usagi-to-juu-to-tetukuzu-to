@@ -147,6 +147,14 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P10_Locomotion\enemy_locomotion_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P10_Locomotion\enemy_move_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P20_Condition\enemy_condition_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_approach_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_combat_tree.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_ai.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_locomotion.cpp" />
     <ClCompile Include="Source\Engine\Processor\camera_processor.cpp">
@@ -977,6 +985,17 @@
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_reaction.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P00_Core\enemy_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P10_Locomotion\enemy_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P10_Locomotion\enemy_move_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P10_Locomotion\enemy_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P20_Condition\enemy_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_approach_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_combat_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\P30_Combat\enemy_combat_tree.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset.h" />
     <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_data.h" />
