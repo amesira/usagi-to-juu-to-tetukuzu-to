@@ -24,7 +24,7 @@ void EnemyAttackCombat::Start(EnemyContext& context)
 {
     EnemyLocomotionController::LocomotionRequest request;
     request.priority = 20;
-    request.canMove = false;
+    request.movementMode = EnemyMovementMode::StopHorizontal;
     request.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
     request.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
     m_locomotionRequestHandle = context.locomotionController
@@ -39,7 +39,7 @@ EnemyCombatStatus EnemyAttackCombat::Update(EnemyContext& context, float deltaTi
     if (context.locomotionController) {
         EnemyLocomotionController::LocomotionRequest request;
         request.priority = 20;
-        request.canMove = false;
+        request.movementMode = EnemyMovementMode::StopHorizontal;
         request.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
         request.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
         context.locomotionController->UpdateRequest(m_locomotionRequestHandle, request);

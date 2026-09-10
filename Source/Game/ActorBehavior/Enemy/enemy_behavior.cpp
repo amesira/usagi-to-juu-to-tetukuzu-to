@@ -35,7 +35,7 @@ void EnemyBehavior::Start()
     m_context.animationController = &m_animationController;
 
     m_locomotionController.Initialize();
-    m_moveBehavior.Initialize(m_context);
+    m_moveBehavior.Initialize(m_context, m_moveSettings);
     m_combatTree.Initialize(m_context);
 
     m_combatTree.RegisterBehavior(m_attackCombat);

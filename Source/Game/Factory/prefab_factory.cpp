@@ -24,6 +24,7 @@
 #include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
 
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move_settings_asset.h"
 
 #include "actor_factory.h"
 
@@ -164,7 +165,7 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
     auto* rigidbody = enemy->AddComponent<RigidbodyComponent>();
 
     auto* model = enemy->AddComponent<ModelComponent>();
-    model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_model_a.fbx"));
+    model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_a_model.fbx"));
     enemy->AddComponent<AnimationComponent>();
     enemy->AddComponent<HitReceiverBehavior>();
     enemy->AddComponent<BlinkerBehavior>();
@@ -180,6 +181,10 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
     behavior->SetupAiAgentSettings(
         DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
             "asset/Data/enemy_ai_agent_settings.data.json",
+            true));
+    behavior->SetupMoveSettings(
+        DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
+            "asset/Data/enemy_move_settings.data.json",
             true));
 
     return { enemy };

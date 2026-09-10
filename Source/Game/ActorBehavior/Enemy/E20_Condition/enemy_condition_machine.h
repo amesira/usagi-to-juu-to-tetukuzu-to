@@ -20,6 +20,7 @@ enum class EnemyCondition {
 class EnemyConditionMachine {
     EnemyCondition m_currentCondition = EnemyCondition::Idle;
     float m_stunRemainingTime = 0.0f;
+    int m_locomotionRequestHandle = -1;
 
 public:
     void Initialize(EnemyContext& context);

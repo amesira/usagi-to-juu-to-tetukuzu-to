@@ -37,9 +37,9 @@ public:
         int priority = 0;
         DirectionSourceInfo moveDirection;
         DirectionSourceInfo rotateDirection;
-        float moveSpeed = 0.0f;
-        float rotationSpeed = 10.0f;
-        bool canMove = true;
+        float moveSpeedMultiplier = 1.0f;
+        float rotationSpeedMultiplier = 1.0f;
+        EnemyMovementMode movementMode = EnemyMovementMode::ControlVelocity;
         bool canRotate = true;
     };
 

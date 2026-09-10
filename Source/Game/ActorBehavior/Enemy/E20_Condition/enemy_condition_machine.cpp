@@ -8,11 +8,13 @@
 #include <algorithm>
 
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 
 void EnemyConditionMachine::Initialize(EnemyContext& context)
 {
     m_stunRemainingTime = 0.0f;
+    m_locomotionRequestHandle = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
     m_currentCondition = EvaluateCondition(context);
 
     EnterCondition(context, m_currentCondition);
@@ -65,13 +67,33 @@ EnemyCondition EnemyConditionMachine::EvaluateCondition(const EnemyContext& cont
 }
 
 /// @brief 状態に入った
-void EnemyConditionMachine::EnterCondition(EnemyContext&, EnemyCondition)
+void EnemyConditionMachine::EnterCondition(EnemyContext& context, EnemyCondition condition)
 {
-    
+    if (!context.locomotionController) return;
+
+    EnemyLocomotionController::LocomotionRequest request;
+    request.priority = 100;
+    request.canRotate = false;
+
+    if (condition == EnemyCondition::Stun) {
+        // 被弾側がRigidbodyへ与えたノックバック速度を維持する。
+        request.movementMode = EnemyMovementMode::KeepRigidbodyVelocity;
+    }
+    else if (condition == EnemyCondition::Dead) {
+        request.movementMode = EnemyMovementMode::StopHorizontal;
+    }
+    else {
+        return;
+    }
+
+    m_locomotionRequestHandle = context.locomotionController->AddRequest(request);
 }
 
 /// @brief 状態から出た
-void EnemyConditionMachine::ExitCondition(EnemyContext&, EnemyCondition)
+void EnemyConditionMachine::ExitCondition(EnemyContext& context, EnemyCondition)
 {
-
+    if (context.locomotionController) {
+        context.locomotionController->RemoveRequest(m_locomotionRequestHandle);
+    }
+    m_locomotionRequestHandle = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
 }

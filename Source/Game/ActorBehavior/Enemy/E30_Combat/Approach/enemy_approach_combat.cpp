@@ -6,14 +6,13 @@
 #include "enemy_approach_combat.h"
 
 #include <cmath>
+#include <cstddef>
 #include <utility>
 
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
-
-#include "Game/ControllerBehavior/EnemyAI/enemy_ai_agent_settings_asset.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/Move/enemy_path_follower.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
-
 #include "Engine/Component/transform_component.h"
 
 bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
@@ -26,12 +25,12 @@ bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
 
 void EnemyApproachCombat::Start(EnemyContext& context)
 {
-    ClearPath();
+    if (context.pathFollower) context.pathFollower->ClearPath();
     m_repathTimer = 0.0f;
 
     EnemyLocomotionController::LocomotionRequest request;
     request.priority = 10;
-    request.moveSpeed = m_moveSpeed;
+    request.movementMode = EnemyMovementMode::ControlVelocity;
     request.moveDirection.source = EnemyLocomotionController::DirectionSource::FixedDirection;
     request.rotateDirection.source = EnemyLocomotionController::DirectionSource::FixedDirection;
     m_locomotionRequestHandle = context.locomotionController
@@ -64,63 +63,46 @@ void EnemyApproachCombat::Cancel(EnemyContext& context)
         context.locomotionController->RemoveRequest(m_locomotionRequestHandle);
     }
     m_locomotionRequestHandle = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
-    ClearPath();
+    if (context.pathFollower) context.pathFollower->ClearPath();
 }
 
 void EnemyApproachCombat::UpdatePath(EnemyContext& context)
 {
-    if (!context.transform || !context.aiWorld) return;
+    if (!context.transform || !context.aiWorld || !context.pathFollower) return;
 
-    static const EnemyAiAgentSettings::Data defaultSettings;
-    const auto& settings = context.aiAgentSettingsAsset
-        ? context.aiAgentSettingsAsset->GetData()
-        : defaultSettings;
     auto result = context.aiWorld->FindPath(
         context.transform->GetPosition(),
         context.runtimeState.combatTargetPosition,
-        settings.navigationAgent);
+        context.aiAgentSettings().navigationAgent);
 
-    ClearPath();
+    context.pathFollower->ClearPath();
     if (result.status != EnemyAiWorld::PathQueryStatus::Success) return;
-    m_path = std::move(result.path);
-    // FindPathの先頭は実座標と始点セル中心。現在セル中心への引き返しを避ける。
-    m_waypointIndex = m_path.waypoints.size() > 2 ? 2 : 0;
+
+    // 現在のFindPathは [start, 始点セル中心, ... , goal] を返す。
+    const size_t firstWaypoint = result.path.waypoints.size() > 2 ? 2 : 0;
+    context.pathFollower->SetPath(std::move(result.path), firstWaypoint);
 }
 
 void EnemyApproachCombat::UpdateLocomotionRequest(EnemyContext& context)
 {
-    if (!context.transform || !context.locomotionController) return;
+    if (!context.transform || !context.locomotionController || !context.pathFollower) return;
 
-    const auto position = context.transform->GetPosition();
-    while (m_waypointIndex < m_path.waypoints.size()) {
-        const auto waypoint = m_path.waypoints[m_waypointIndex];
-        const float dx = waypoint.x - position.x;
-        const float dz = waypoint.z - position.z;
-        if (std::hypot(dx, dz) <= m_reachDistance) {
-            ++m_waypointIndex;
-            continue;
-        }
+    context.pathFollower->Update(context.transform->GetPosition());
 
-        EnemyLocomotionController::LocomotionRequest request;
-        request.priority = 10;
-        request.moveSpeed = m_moveSpeed;
+    EnemyLocomotionController::LocomotionRequest request;
+    request.priority = 10;
+    request.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    request.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
+
+    const auto& moveDirection = context.pathFollower->GetMoveDirection();
+    if (std::hypot(moveDirection.x, moveDirection.z) > 0.001f) {
+        request.movementMode = EnemyMovementMode::ControlVelocity;
         request.moveDirection.source = EnemyLocomotionController::DirectionSource::FixedDirection;
-        request.moveDirection.fixedDirection = { dx, 0.0f, dz };
-        request.rotateDirection = request.moveDirection;
-        context.locomotionController->UpdateRequest(m_locomotionRequestHandle, request);
-        return;
+        request.moveDirection.fixedDirection = moveDirection;
+    }
+    else {
+        request.movementMode = EnemyMovementMode::StopHorizontal;
     }
 
-    EnemyLocomotionController::LocomotionRequest stopRequest;
-    stopRequest.priority = 10;
-    stopRequest.canMove = false;
-    stopRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
-    stopRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
-    context.locomotionController->UpdateRequest(m_locomotionRequestHandle, stopRequest);
-}
-
-void EnemyApproachCombat::ClearPath()
-{
-    m_path.waypoints.clear();
-    m_waypointIndex = 0;
+    context.locomotionController->UpdateRequest(m_locomotionRequestHandle, request);
 }

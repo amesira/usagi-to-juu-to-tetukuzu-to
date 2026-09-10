@@ -143,6 +143,9 @@
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.cpp" />
@@ -304,8 +307,13 @@
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E00_Core\enemy_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.h" />

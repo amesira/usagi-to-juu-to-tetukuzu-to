@@ -19,6 +19,7 @@
 #include "enemy_animation_controller.h"
 
 class EnemyAiAgentSettingsAsset;
+class EnemyMoveSettingsAsset;
 
 /// @brief 敵個体の状態判断、戦闘、移動、アニメーションを更新する司令塔。
 class EnemyBehavior : public BehaviorComponent {
@@ -34,6 +35,7 @@ class EnemyBehavior : public BehaviorComponent {
     EnemyApproachCombat m_approachCombat;
 
     const EnemyAiAgentSettingsAsset* m_aiAgentSettings = nullptr;
+    const EnemyMoveSettingsAsset* m_moveSettings = nullptr;
 
 public:
     EnemyBehavior() = default;
@@ -46,6 +48,9 @@ public:
     // === SettingsAssetの設定 ===
     void SetupAiAgentSettings(const EnemyAiAgentSettingsAsset* settings) {
         m_aiAgentSettings = settings;
+    }
+    void SetupMoveSettings(const EnemyMoveSettingsAsset* settings) {
+        m_moveSettings = settings;
     }
 
     // === Enemyへのアクセス ===

@@ -64,9 +64,9 @@ EnemyMoveIntent EnemyLocomotionController::BuildIntent(const EnemyContext& conte
 
     intent.moveDirection = CalculateDirection(selected->moveDirection, context);
     intent.rotateDirection = CalculateDirection(selected->rotateDirection, context);
-    intent.moveSpeed = selected->moveSpeed;
-    intent.rotationSpeed = selected->rotationSpeed;
-    intent.canMove = selected->canMove;
+    intent.moveSpeedMultiplier = selected->moveSpeedMultiplier;
+    intent.rotationSpeedMultiplier = selected->rotationSpeedMultiplier;
+    intent.movementMode = selected->movementMode;
     intent.canRotate = selected->canRotate;
     return intent;
 }

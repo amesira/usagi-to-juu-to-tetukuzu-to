@@ -8,6 +8,7 @@ class EnemyBehavior;
 class EnemyAIWorldController;
 class EnemyLocomotionController;
 class EnemyMove;
+class EnemyPathFollower;
 class EnemyConditionMachine;
 class EnemyCombatTree;
 class EnemyAnimationController;
@@ -39,6 +40,7 @@ public:
 
     EnemyLocomotionController* locomotionController = nullptr;
     EnemyMove* moveBehavior = nullptr;
+    EnemyPathFollower* pathFollower = nullptr;
     EnemyConditionMachine* conditionMachine = nullptr;
     EnemyCombatTree* combatTree = nullptr;
     EnemyAnimationController* animationController = nullptr;
