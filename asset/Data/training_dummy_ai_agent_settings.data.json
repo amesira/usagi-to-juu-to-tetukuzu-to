@@ -3,7 +3,7 @@
         "navigationAgent": {
             "maxSlopeDegrees": 45.0,
             "maxStepHeight": 0.5,
-            "radius": 3.0
+            "radius": 1.0
         }
     },
     "formatVersion": 0,

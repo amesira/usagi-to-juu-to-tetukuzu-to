@@ -94,21 +94,51 @@ const EnemyAiWorld::GridCell* NavigationSystem::GetCell(EnemyAiWorld::GridCoord 
 bool NavigationSystem::IsWalkable(EnemyAiWorld::GridCoord coord, 
     const EnemyAiAgent::NavigationAgentSettings& agent) const
 {
-    // FIX: 敵の半径なども考慮して、隣接セルの高さ差や斜面角度を判定する必要がある
-
     if (!m_isBuilt) return false;
     if (!ValidateCellCoord(coord)) return false;
 
     GridCell cell = m_cells[coord.x * m_buildSettings.cellCountZ + coord.z];
-    if (cell.type == CellType::Ground) {
-        return true;
-    }
-    else if (cell.type == CellType::SteepSlope) {
-        float minUpDot = cosf(XMConvertToRadians(agent.maxSlopeDegrees));
-        return cell.normal.y >= minUpDot;
+    if (cell.type == CellType::Unknown || cell.type == CellType::NoGround || cell.type == CellType::Obstacle) {
+        return false;
     }
 
-    return false;
+    float minUpDot = std::cos(XMConvertToRadians(agent.maxSlopeDegrees));
+
+    // 敵の半径に応じて、隣接セルまでの範囲を確認する
+    int range = static_cast<int>(std::ceil(agent.radius / m_buildSettings.cellSize));
+    float cellSize = m_buildSettings.cellSize;
+    float halfSize = cellSize * 0.5f;
+
+    for (int dx = -range; dx <= range; dx++) {
+        for (int dz = -range; dz <= range; dz++) {
+            // 敵の中心から、調査対象セルの矩形までの最短距離
+            float nearestX = (std::max)(std::abs(dx) * cellSize - halfSize, 0.0f);
+            float nearestZ = (std::max)(std::abs(dz) * cellSize - halfSize, 0.0f);
+
+            // 中心セルは必ず確認。それ以外は円と重ならなければ対象外
+            if ((dx != 0 || dz != 0) && 
+                nearestX * nearestX + nearestZ * nearestZ >= agent.radius * agent.radius) {
+                continue;
+            }
+
+            GridCoord neighborCoord{ coord.x + dx, coord.z + dz };
+            if (!ValidateCellCoord(neighborCoord)) return false;
+
+            GridCell neighborCell = m_cells[neighborCoord.x * m_buildSettings.cellCountZ + neighborCoord.z];
+            if (neighborCell.type == CellType::Unknown || neighborCell.type == CellType::NoGround || neighborCell.type == CellType::Obstacle) {
+                return false; // 隣接セルに地面なしまたは障害物がある場合、歩行不可
+            }
+            
+            // 段差が許容範囲内か、斜面の角度が許容範囲内かを確認する
+            bool heightAllowed = std::abs(neighborCell.height - cell.height) <= agent.maxStepHeight;
+            bool slopeAllowed = neighborCell.normal.y >= minUpDot;
+            if (!heightAllowed || !slopeAllowed) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 /// @brief 隣接セルへの移動可否を判定する。段差と斜め移動の角抜けも確認する
