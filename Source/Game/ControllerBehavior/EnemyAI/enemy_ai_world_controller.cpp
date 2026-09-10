@@ -74,6 +74,10 @@ void EnemyAIController::DrawComponentInspector()
     if (BehaviorDetailView::BeginSection(this, "Enemy AI Controller")) {
         ImGui::Text("Initialized: %s", m_isInitialized ? "Yes" : "No");
         ImGui::TextUnformatted("MetaAI / NavigationSystem / TacticalQuerySystem");
+        const auto& stats = m_navigation.GetLastSearchStats();
+        ImGui::Text("Last Search: %.3f ms / %zu nodes", stats.milliseconds, stats.expandedNodes);
+        ImGui::Text("Walkable: %zu evaluations / %zu cache hits",
+            stats.walkableEvaluations, stats.walkableCacheHits);
     }
     BehaviorDetailView::EndSection();
 }

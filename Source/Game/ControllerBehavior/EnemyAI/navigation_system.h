@@ -15,6 +15,7 @@ namespace EnemyAiAgent { struct NavigationAgentSettings; }
 
 // ナビゲーショングリッドの生成・経路探索を担当する
 class NavigationSystem {
+    friend struct NavigationOptimizationTestAccess;
 private:
     static constexpr CollisionLayerMask SAMPLE_LAYER_MASK = CollisionLayerToMask(CollisionLayer::Field);
 
@@ -32,6 +33,13 @@ private:
     };
 
 public:
+    struct SearchStats {
+        double milliseconds = 0;
+        size_t expandedNodes = 0;
+        size_t walkableEvaluations = 0;
+        size_t walkableCacheHits = 0;
+    };
+    const SearchStats& GetLastSearchStats() const { return m_lastSearchStats; }
     void Initialize(EnemyAIWorldContext& context);
     void Finalize(EnemyAIWorldContext& context);
 
@@ -68,6 +76,13 @@ public:
     void DrawDebugGrid() const;
 
 private:
+    mutable SearchStats m_lastSearchStats;
+    bool CachedIsWalkable(EnemyAiWorld::GridCoord coord,
+        const EnemyAiAgent::NavigationAgentSettings& agent,
+        std::vector<signed char>* cache, SearchStats* stats) const;
+    bool CanTraverseImpl(EnemyAiWorld::GridCoord from, EnemyAiWorld::GridCoord to,
+        const EnemyAiAgent::NavigationAgentSettings& agent,
+        std::vector<signed char>* cache, SearchStats* stats) const;
     /// @brief 1セルの地形を取得する
     EnemyAiWorld::GridCell SampleCell(
         class IScene* scene,

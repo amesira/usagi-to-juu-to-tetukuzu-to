@@ -1,3 +1,5 @@
+#include <queue>
+#include <chrono>
 //===================================================
 // File  ：_/EnemyAI/navigation_system.cpp
 // Date  ：2026/09/09
@@ -142,10 +144,37 @@ bool NavigationSystem::IsWalkable(EnemyAiWorld::GridCoord coord,
 }
 
 /// @brief 隣接セルへの移動可否を判定する。段差と斜め移動の角抜けも確認する
-bool NavigationSystem::CanTraverse(
+bool NavigationSystem::CachedIsWalkable(GridCoord coord,
+    const EnemyAiAgent::NavigationAgentSettings& agent,
+    std::vector<signed char>* cache, SearchStats* stats) const
+{
+    if (!m_isBuilt || !ValidateCellCoord(coord)) return false;
+
+    const size_t index = static_cast<size_t>(coord.x) * m_buildSettings.cellCountZ + coord.z;
+    if (cache && (*cache)[index] != -1) {
+        if (stats) ++stats->walkableCacheHits;
+        return (*cache)[index] != 0;
+    }
+
+    if (stats) stats->walkableEvaluations++;
+
+    const bool result = IsWalkable(coord, agent);
+    if (cache) {
+        (*cache)[index] = result ? 1 : 0;
+    }
+    return result;
+}
+
+bool NavigationSystem::CanTraverse(GridCoord from, GridCoord to,
+    const EnemyAiAgent::NavigationAgentSettings& agent) const
+{
+    return CanTraverseImpl(from, to, agent, nullptr, nullptr);
+}
+
+bool NavigationSystem::CanTraverseImpl(
     EnemyAiWorld::GridCoord from, 
     EnemyAiWorld::GridCoord to,
-    const EnemyAiAgent::NavigationAgentSettings& agent) const
+    const EnemyAiAgent::NavigationAgentSettings& agent, std::vector<signed char>* cache, SearchStats* stats) const
 {
     if (!m_isBuilt) return false;
     if (!ValidateCellCoord(from) || !ValidateCellCoord(to)) return false;
@@ -155,7 +184,7 @@ bool NavigationSystem::CanTraverse(
     if (abs(dx) > 1 || abs(dz) > 1 || (dx == 0 && dz == 0)) {
         return false; // 隣接セルではない
     }
-    if (!IsWalkable(from, agent) || !IsWalkable(to, agent)) {
+    if (!CachedIsWalkable(from, agent, cache, stats) || !CachedIsWalkable(to, agent, cache, stats)) {
         return false; // どちらかのセルが歩行不可
     }
 
@@ -168,11 +197,10 @@ bool NavigationSystem::CanTraverse(
         GridCoord adj2 = { from.x, from.z + dz };
 
         // 直線的に隣接する2つのセルを、再帰的に確認する
-        bool canAdjTraverse = CanTraverse(from, adj1, agent);
-        canAdjTraverse &= CanTraverse(from, adj2, agent);
-        canAdjTraverse &= CanTraverse(adj1, to, agent);
-        canAdjTraverse &= CanTraverse(adj2, to, agent);
-        return canAdjTraverse;
+        return CanTraverseImpl(from, adj1, agent, cache, stats)
+            && CanTraverseImpl(from, adj2, agent, cache, stats)
+            && CanTraverseImpl(adj1, to, agent, cache, stats)
+            && CanTraverseImpl(adj2, to, agent, cache, stats);
     }
     // === 直線移動の場合 ===
     else {
@@ -207,37 +235,62 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
 {
     // TODO: TacticalQuerySystemからの情報も使って、経路探索のコストを調整する予定
 
+    // 計測とキャッシュは1回の探索単位。地形・Agent変更後へ持ち越さない
+    m_lastSearchStats = {};
+    struct SearchTimer {
+        SearchStats& stats;
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+        ~SearchTimer() {
+            stats.milliseconds = std::chrono::duration<double, std::milli>(
+                std::chrono::steady_clock::now() - begin).count();
+        }
+    } timer{m_lastSearchStats};
+    std::vector<signed char> walkableCache(m_cells.size(), -1);
+
     GridCoord startCoord, goalCoord;
     if (!WorldToGrid(start, startCoord) || !WorldToGrid(goal, goalCoord)) {
         return { EnemyAiWorld::PathQueryStatus::InvalidStart, {} };
     }
-    if (!IsWalkable(startCoord, agent) || !IsWalkable(goalCoord, agent)) {
+    if (!CachedIsWalkable(startCoord, agent, &walkableCache, &m_lastSearchStats) || !CachedIsWalkable(goalCoord, agent, &walkableCache, &m_lastSearchStats)) {
         return { EnemyAiWorld::PathQueryStatus::InvalidStart, {} };
     }
 
     // 調査ノードを生成し、探索を開始する
     std::vector<SearchNode> nodes(m_cells.size());
-    std::vector<int> openList;
+    // コスト改善時は再登録し、古い候補は取り出し時に破棄する。
+    struct OpenNode {
+        int index;
+        float gCost;
+        float hCost;
+        bool operator<(const OpenNode& other) const {
+            const float f = gCost + hCost, otherF = other.gCost + other.hCost;
+            if (f != otherF) return f > otherF;
+            if (hCost != other.hCost) return hCost > other.hCost;
+            return index > other.index;
+        }
+    };
+    std::priority_queue<OpenNode> openList;
+    const auto estimateCost = [&](GridCoord coord) {
+        const int dx = std::abs(coord.x - goalCoord.x);
+        const int dz = std::abs(coord.z - goalCoord.z);
+        return static_cast<float>((std::max)(dx, dz))
+            + 0.414f * static_cast<float>((std::min)(dx, dz));
+    };
 
     int startIndex = startCoord.x * m_buildSettings.cellCountZ + startCoord.z;
     int goalIndex = goalCoord.x * m_buildSettings.cellCountZ + goalCoord.z;
 
     nodes[startIndex].gCost = 0.0f;
     nodes[startIndex].parentIndex = -1;
-    openList.push_back(startIndex);
+    openList.push({startIndex, 0.0f, estimateCost(startCoord)});
 
     // === 探索ループ ===
     while (openList.size() > 0) {
-        int currentIndex = -1;
-
-        // 最小コストのノードを選択する
-        float minFCost = std::numeric_limits<float>::infinity();
-        for (int idx : openList) {
-            if (nodes[idx].gCost < minFCost) {
-                minFCost = nodes[idx].gCost;
-                currentIndex = idx;
-            }
-        }
+        const OpenNode entry = openList.top();
+        openList.pop();
+        const int currentIndex = entry.index;
+        if (nodes[currentIndex].closed || entry.gCost > nodes[currentIndex].gCost) continue;
+        m_lastSearchStats.expandedNodes++;
 
         // ゴールに到達すれば経路を復元して探索を終了する
         if (currentIndex == goalIndex) {
@@ -262,7 +315,7 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
 
         // === 探索を行う ===
         // 周囲8方向のセルを調査する（openListからは削除し、closedにする）
-        openList.erase(std::remove(openList.begin(), openList.end(), currentIndex), openList.end());
+
         nodes[currentIndex].closed = true;
 
         GridCoord currentCoord{ currentIndex / m_buildSettings.cellCountZ, currentIndex % m_buildSettings.cellCountZ };
@@ -276,19 +329,16 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
                 // 隣接セルをチェック
                 int neighborIndex = neighborCoord.x * m_buildSettings.cellCountZ + neighborCoord.z;
                 if (nodes[neighborIndex].closed) continue;
-                if (!CanTraverse(currentCoord, neighborCoord, agent)) continue;
+                if (!CanTraverseImpl(currentCoord, neighborCoord, agent, &walkableCache, &m_lastSearchStats)) continue;
                 
                 // 隣接セルのコストを計算する（斜め移動は1.414倍とする）
                 float tentativeGCost = nodes[currentIndex].gCost + ((dx != 0 && dz != 0) ? 1.414f : 1.0f);
                 
                 // コストが現在のものより小さい場合は更新する
-                bool inOpenList = std::find(openList.begin(), openList.end(), neighborIndex) != openList.end();
                 if (tentativeGCost < nodes[neighborIndex].gCost) {
                     nodes[neighborIndex].gCost = tentativeGCost;
                     nodes[neighborIndex].parentIndex = currentIndex;
-                    if (!inOpenList) {
-                        openList.push_back(neighborIndex);
-                    }
+                    openList.push({neighborIndex, tentativeGCost, estimateCost(neighborCoord)});
                 }
             }
         }
