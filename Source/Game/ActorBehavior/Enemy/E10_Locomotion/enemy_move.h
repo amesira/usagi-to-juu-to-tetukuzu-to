@@ -32,4 +32,10 @@ public:
     EnemyPathFollower& GetPathFollower() { return m_pathFollower; }
     const EnemyPathFollower& GetPathFollower() const { return m_pathFollower; }
 
+private:
+    bool CheckGrounded();
+
+    void ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime);
+    void ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime);
+
 };
