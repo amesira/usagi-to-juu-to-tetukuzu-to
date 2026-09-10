@@ -32,6 +32,19 @@ private:
         bool closed = false; // 探索済み
     };
 
+    /// @brief A*探索用のオープンリストのノード情報
+    struct OpenNode {
+        int index;
+        float gCost;
+        float hCost;
+        bool operator<(const OpenNode& other) const {
+            const float f = gCost + hCost, otherF = other.gCost + other.hCost;
+            if (f != otherF) return f > otherF;
+            if (hCost != other.hCost) return hCost > other.hCost;
+            return index > other.index;
+        }
+    };
+
 public:
     struct SearchStats {
         double milliseconds = 0;
@@ -58,9 +71,6 @@ public:
     // === NavigationPath探索 ===
     bool IsWalkable(EnemyAiWorld::GridCoord coord,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
-    bool CanTraverse(EnemyAiWorld::GridCoord from, 
-        EnemyAiWorld::GridCoord to,
-        const EnemyAiAgent::NavigationAgentSettings& agent) const;
 
     EnemyAiWorld::PathQueryResult FindPath(
         EnemyAIWorldContext& context,
@@ -77,12 +87,14 @@ public:
 
 private:
     mutable SearchStats m_lastSearchStats;
+
     bool CachedIsWalkable(EnemyAiWorld::GridCoord coord,
         const EnemyAiAgent::NavigationAgentSettings& agent,
         std::vector<signed char>* cache, SearchStats* stats) const;
     bool CanTraverseImpl(EnemyAiWorld::GridCoord from, EnemyAiWorld::GridCoord to,
         const EnemyAiAgent::NavigationAgentSettings& agent,
         std::vector<signed char>* cache, SearchStats* stats) const;
+
     /// @brief 1セルの地形を取得する
     EnemyAiWorld::GridCell SampleCell(
         class IScene* scene,

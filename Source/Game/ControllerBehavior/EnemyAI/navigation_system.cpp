@@ -143,38 +143,36 @@ bool NavigationSystem::IsWalkable(EnemyAiWorld::GridCoord coord,
     return true;
 }
 
-/// @brief 隣接セルへの移動可否を判定する。段差と斜め移動の角抜けも確認する
+/// @brief IsWalkableの結果をキャッシュして返す。キャッシュがあれば、同じセルの判定は1回だけ行う
+/// -1 : 未評価, 0 : 歩行不可, 1 : 歩行可能
 bool NavigationSystem::CachedIsWalkable(GridCoord coord,
     const EnemyAiAgent::NavigationAgentSettings& agent,
     std::vector<signed char>* cache, SearchStats* stats) const
 {
     if (!m_isBuilt || !ValidateCellCoord(coord)) return false;
 
-    const size_t index = static_cast<size_t>(coord.x) * m_buildSettings.cellCountZ + coord.z;
+    // 未評価出ないなら結果を返す
+    const int index = coord.x * m_buildSettings.cellCountZ + coord.z;
     if (cache && (*cache)[index] != -1) {
         if (stats) ++stats->walkableCacheHits;
         return (*cache)[index] != 0;
     }
 
+    // 評価して結果をキャッシュする
     if (stats) stats->walkableEvaluations++;
-
     const bool result = IsWalkable(coord, agent);
     if (cache) {
         (*cache)[index] = result ? 1 : 0;
     }
-    return result;
-}
 
-bool NavigationSystem::CanTraverse(GridCoord from, GridCoord to,
-    const EnemyAiAgent::NavigationAgentSettings& agent) const
-{
-    return CanTraverseImpl(from, to, agent, nullptr, nullptr);
+    return result;
 }
 
 bool NavigationSystem::CanTraverseImpl(
     EnemyAiWorld::GridCoord from, 
     EnemyAiWorld::GridCoord to,
-    const EnemyAiAgent::NavigationAgentSettings& agent, std::vector<signed char>* cache, SearchStats* stats) const
+    const EnemyAiAgent::NavigationAgentSettings& agent, 
+    std::vector<signed char>* cache, SearchStats* stats) const
 {
     if (!m_isBuilt) return false;
     if (!ValidateCellCoord(from) || !ValidateCellCoord(to)) return false;
@@ -257,19 +255,13 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
 
     // 調査ノードを生成し、探索を開始する
     std::vector<SearchNode> nodes(m_cells.size());
-    // コスト改善時は再登録し、古い候補は取り出し時に破棄する。
-    struct OpenNode {
-        int index;
-        float gCost;
-        float hCost;
-        bool operator<(const OpenNode& other) const {
-            const float f = gCost + hCost, otherF = other.gCost + other.hCost;
-            if (f != otherF) return f > otherF;
-            if (hCost != other.hCost) return hCost > other.hCost;
-            return index > other.index;
-        }
-    };
+
+    // コスト改善時は再登録し、古い候補は取り出し時に破棄する
     std::priority_queue<OpenNode> openList;
+
+    // ゴールまでの推定コストを計算する。斜め移動は1.414倍とする
+    // この値が小さい→ゴールに近いと判断される
+    // （gCost + hCost）が小さい順に探索される
     const auto estimateCost = [&](GridCoord coord) {
         const int dx = std::abs(coord.x - goalCoord.x);
         const int dz = std::abs(coord.z - goalCoord.z);
@@ -315,7 +307,6 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
 
         // === 探索を行う ===
         // 周囲8方向のセルを調査する（openListからは削除し、closedにする）
-
         nodes[currentIndex].closed = true;
 
         GridCoord currentCoord{ currentIndex / m_buildSettings.cellCountZ, currentIndex % m_buildSettings.cellCountZ };
