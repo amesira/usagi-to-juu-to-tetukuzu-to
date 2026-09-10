@@ -6,28 +6,30 @@
 // ・ターゲットまでの再探索を要求し、PathFollowerの方向をLocomotionへ渡す。
 //---------------------------------------------------
 #pragma once
-
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
+#include "enemy_approach_context.h"
 
 class EnemyApproachCombat : public EnemyCombatBase {
-    float m_repathTimer = 0.0f;
-    int m_locomotionRequestHandle = -1;
-
-    float m_repathInterval = 0.5f;
-    float m_attackDistance = 2.0f;
+    EnemyApproachContext m_context;
+    float m_restartCooldown = 0.0f;
 
 public:
     EnemyApproachCombat() : EnemyCombatBase(10, true) {}
+
+    void Initialize(const EnemyContext& context, const EnemyApproachSettingsAsset* settings);
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
+    
+    void UpdateBackground(EnemyContext& context, float deltaTime) override;
+    
     void Start(EnemyContext& context) override;
     EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
     void Finish(EnemyContext& context) override;
     void Cancel(EnemyContext& context) override;
 
-    void SetAttackDistance(float value) { m_attackDistance = value; }
+    float GetStopDistance() const { return m_context.settings().stopDistance; }
+    const EnemyApproachContext& GetContext() const { return m_context; }
 
 private:
-    void UpdatePath(EnemyContext& context);
-    void UpdateLocomotionRequest(EnemyContext& context);
+
 };

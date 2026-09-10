@@ -25,6 +25,7 @@
 
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move_settings_asset.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/Approach/enemy_approach_settings_asset.h"
 
 #include "actor_factory.h"
 
@@ -182,6 +183,9 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
         DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
             "asset/Data/enemy_ai_agent_settings.data.json",
             true));
+    behavior->SetupApproachSettings(
+        DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(
+            "asset/Data/enemy_approach_settings.data.json", true));
     behavior->SetupMoveSettings(
         DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
             "asset/Data/enemy_move_settings.data.json",

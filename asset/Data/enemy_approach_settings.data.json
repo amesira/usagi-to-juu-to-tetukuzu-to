@@ -1,0 +1,18 @@
+{
+    "type": "EnemyApproachSettingsAsset",
+    "formatVersion": 0,
+    "name": "enemy_approach_settings.data",
+    "data": {
+        "stopDistance": 2.0,
+        "restartDistanceMargin": 0.3,
+        "moveSpeedMultiplier": 1.0,
+        "facingMode": "Target",
+        "repathInterval": 0.5,
+        "targetMoveThreshold": 0.5,
+        "minRepathInterval": 0.1,
+        "pathRetryInterval": 1.0,
+        "maxPathFailures": 3,
+        "stuckCheckInterval": 1.0,
+        "minProgressDistance": 0.1
+    }
+}

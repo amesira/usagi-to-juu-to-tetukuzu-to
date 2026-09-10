@@ -10,9 +10,11 @@ struct TestCombat : EnemyCombatBase {
     bool continuable = true;
     bool interruptible = true;
     int starts = 0, updates = 0, finishes = 0, cancels = 0;
+    float cooldown = 0.0f;
     EnemyCombatStatus result = EnemyCombatStatus::Running;
     explicit TestCombat(int priority) : EnemyCombatBase(priority) {}
-    bool CanStart(const EnemyContext&) const override { return startable; }
+    bool CanStart(const EnemyContext&) const override { return startable && cooldown <= 0.0f; }
+    void UpdateBackground(EnemyContext&, float deltaTime) override { cooldown -= deltaTime; }
     bool CanContinue(const EnemyContext&) const override { return continuable; }
     bool IsInterruptible(const EnemyContext&) const override { return interruptible; }
     void Start(EnemyContext&) override { ++starts; }
@@ -66,5 +68,30 @@ int main()
     assert(high.cancels == 2 && !tree.GetActiveBehavior());
     tree.Update(context, 0.016f);
     assert(!tree.GetActiveBehavior());
+    // 到達フレームは正常終了を優先し、次フレームからAttackへ渡す。
+    TestCombat approach(10), attack(20);
+    EnemyCombatTree arrivalTree;
+    arrivalTree.RegisterBehavior(approach);
+    arrivalTree.RegisterBehavior(attack);
+    attack.startable = false;
+    arrivalTree.Update(context, 0.1f);
+    approach.interruptible = false;
+    approach.result = EnemyCombatStatus::Success;
+    attack.startable = true;
+    arrivalTree.Update(context, 0.1f);
+    assert(approach.finishes == 1 && approach.cancels == 0 && attack.starts == 0);
+    arrivalTree.Update(context, 0.1f);
+    assert(attack.starts == 1);
+    arrivalTree.Finalize(context);
+
+    EnemyCombatTree retryTree;
+    TestCombat retry(10);
+    retry.cooldown = 1.0f;
+    retryTree.RegisterBehavior(retry);
+    retryTree.Update(context, 0.5f);
+    assert(retry.starts == 0);
+    retryTree.Update(context, 0.5f);
+    assert(retry.starts == 1); // 非実行中もクールダウンが進む
+    retryTree.Finalize(context);
     std::cout << "Enemy combat transition tests passed\n";
 }

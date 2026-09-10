@@ -33,6 +33,9 @@ void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 /// @brief 現在のCombat行動を更新する
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
+    for (auto* behavior : m_combatBehaviors) {
+        if (behavior) behavior->UpdateBackground(context, deltaTime);
+    }
     // 継続条件は開始条件と独立し、割り込み禁止より優先する。
     if (m_activeBehavior && !m_activeBehavior->CanContinue(context)) {
         Cancel(context);

@@ -16,3 +16,12 @@ command = 'call "' + str(vcvars) + '" >nul && ' + subprocess.list2cmdline(args)
 env = {key.upper(): value for key, value in os.environ.items()}
 subprocess.run('cmd.exe /d /s /c "' + command + '"', cwd=output, env=env, check=True)
 subprocess.run([str(output / 'enemy_combat_tests.exe')], cwd=root, env=env, check=True)
+
+# ApproachのJSON設定と入力値の補正も実装ヘッダーを使って検証する。
+settings_args = ['cl', '/nologo', '/std:c++20', '/EHsc', '/utf-8',
+                 '/I' + str(root / 'Source'), '/I' + str(root / 'External'), '/I' + str(root),
+                 str(root / 'tools/enemy_approach_settings_tests.cpp'),
+                 '/Fe:' + str(output / 'enemy_approach_settings_tests.exe')]
+settings_command = 'call "' + str(vcvars) + '" >nul && ' + subprocess.list2cmdline(settings_args)
+subprocess.run('cmd.exe /d /s /c "' + settings_command + '"', cwd=output, env=env, check=True)
+subprocess.run([str(output / 'enemy_approach_settings_tests.exe')], cwd=root, env=env, check=True)

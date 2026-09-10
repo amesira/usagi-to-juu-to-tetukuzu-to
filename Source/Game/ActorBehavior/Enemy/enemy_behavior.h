@@ -36,6 +36,7 @@ class EnemyBehavior : public BehaviorComponent {
 
     const EnemyAiAgentSettingsAsset* m_aiAgentSettings = nullptr;
     const EnemyMoveSettingsAsset* m_moveSettings = nullptr;
+    const EnemyApproachSettingsAsset* m_approachSettings = nullptr;
 
 public:
     EnemyBehavior() = default;
@@ -51,6 +52,9 @@ public:
     }
     void SetupMoveSettings(const EnemyMoveSettingsAsset* settings) {
         m_moveSettings = settings;
+    }
+    void SetupApproachSettings(const EnemyApproachSettingsAsset* settings) {
+        m_approachSettings = settings;
     }
 
     // === Enemyへのアクセス ===

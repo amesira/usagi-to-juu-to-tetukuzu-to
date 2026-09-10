@@ -24,6 +24,8 @@ public:
 
     /// @brief 非実行中の行動を開始できるか。
     virtual bool CanStart(const EnemyContext& context) const = 0;
+    /// @brief 非実行中も呼ぶ。再開始クールダウンなどを更新する。
+    virtual void UpdateBackground(EnemyContext&, float) {}
     /// @brief 実行中の行動を継続できるか。falseなら割り込み禁止でもCancelする。
     virtual bool CanContinue(const EnemyContext& context) const = 0;
     /// @brief より高優先度の行動に置き換えられるか。攻撃段階に応じてoverrideできる。
