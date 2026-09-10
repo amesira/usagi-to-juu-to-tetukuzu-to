@@ -77,6 +77,10 @@ public:
         const DirectX::XMFLOAT3& start, 
         const DirectX::XMFLOAT3& goal,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
+
+    /// @brief グリッド上で線分と敵の占有範囲が通行可能か確認する。
+    bool CanMoveDirectly(const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to,
+        const EnemyAiAgent::NavigationAgentSettings& agent) const;
     void SmoothPath(
         const EnemyAIWorldContext& context,
         const EnemyAiAgent::NavigationAgentSettings& agent, 

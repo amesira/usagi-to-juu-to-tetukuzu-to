@@ -36,12 +36,16 @@ public:
     bool IsInitialized() const { return m_isInitialized; }
 
     // 個体側へWorldContextを公開せず、経路探索の窓口を提供する
+    // ここでSmoothPathまで行なってしまう
     EnemyAiWorld::PathQueryResult FindPath(
         const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& goal, 
         const EnemyAiAgent::NavigationAgentSettings& agent) {
         if (!m_isInitialized) return {};
-        return m_navigation.FindPath(m_context, start, goal, agent);
+
+        EnemyAiWorld::PathQueryResult result = m_navigation.FindPath(m_context, start, goal, agent);
+        m_navigation.SmoothPath(m_context, agent, result.path);
+        return result;
     }
 
     // === AIシステムの参照取得 ===

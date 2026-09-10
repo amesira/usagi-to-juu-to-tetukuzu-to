@@ -1,10 +1,11 @@
-#include <queue>
-#include <chrono>
 //===================================================
 // File  ：_/EnemyAI/navigation_system.cpp
 // Date  ：2026/09/09
 // Author：Miu Kitamura
 //===================================================
+#include <queue>
+#include <chrono>
+
 #include "navigation_system.h"
 #include "enemy_ai_agent_settings_asset.h"
 
@@ -339,14 +340,128 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
     return { EnemyAiWorld::PathQueryStatus::Unreachable, {} };
 }
 
+bool NavigationSystem::CanMoveDirectly(
+    const XMFLOAT3& from, const XMFLOAT3& to,
+    const NavigationAgentSettings& agent) const
+{
+    if (!m_isBuilt) return false;
+
+    const double size = m_buildSettings.cellSize;
+    const auto origin = m_buildSettings.origin();
+    const double ax = (from.x - origin.x) / size, az = (from.z - origin.y) / size;
+    const double bx = (to.x - origin.x) / size, bz = (to.z - origin.y) / size;
+    const double radius = agent.radius / size;
+
+    // WorldToGridの負数の整数切り捨てに依存せず、占有範囲ごと境界を確認する。
+    if ((std::min)(ax, bx) - radius < 0 || (std::min)(az, bz) - radius < 0
+        || (std::max)(ax, bx) + radius >= m_buildSettings.cellCountX
+        || (std::max)(az, bz) + radius >= m_buildSettings.cellCountZ) return false;
+
+    const double dx = bx - ax, dz = bz - az;
+    std::vector<double> cuts{0.0, 1.0};
+    const auto addCuts = [&](double a, double b) {
+        if (a == b) return;
+        for (int boundary = static_cast<int>(std::floor((std::min)(a, b))) + 1;
+            boundary < (std::max)(a, b); ++boundary) {
+            cuts.push_back((boundary - a) / (b - a));
+        }
+    };
+    addCuts(ax, bx);
+    addCuts(az, bz);
+    std::sort(cuts.begin(), cuts.end());
+    cuts.erase(std::unique(cuts.begin(), cuts.end()), cuts.end());
+    std::vector<signed char> cache(m_cells.size(), -1);
+
+    // 境界上は両側、角上は4セルを確認する（supercover）。
+    const auto cellsAt = [&](double t) {
+        const double x = ax + dx * t, z = az + dz * t;
+        constexpr double epsilon = 1e-9;
+        std::vector<GridCoord> cells;
+        for (int ix = static_cast<int>(std::floor(x - epsilon)); ix <= static_cast<int>(std::floor(x + epsilon)); ++ix) {
+            for (int iz = static_cast<int>(std::floor(z - epsilon)); iz <= static_cast<int>(std::floor(z + epsilon)); ++iz) {
+                cells.push_back({ix, iz});
+            }
+        }
+        return cells;
+    };
+    std::vector<GridCoord> previous;
+    const auto checkCenter = [&](double t) {
+        auto cells = cellsAt(t);
+        for (auto cell : cells) {
+            if (!CachedIsWalkable(cell, agent, &cache, nullptr)) return false;
+            for (auto other : cells) {
+                if ((cell.x != other.x || cell.z != other.z)
+                    && !CanTraverseImpl(other, cell, agent, &cache, nullptr)) return false;
+            }
+            for (auto other : previous) {
+                if ((cell.x != other.x || cell.z != other.z)
+                    && !CanTraverseImpl(other, cell, agent, &cache, nullptr)) return false;
+            }
+        }
+        previous = std::move(cells);
+        return true;
+    };
+
+    if (!checkCenter(0.0)) return false;
+    
+    const float minUpDot = std::cos(XMConvertToRadians(agent.maxSlopeDegrees));
+    for (size_t i = 1; i < cuts.size(); ++i) {
+        const double t0 = cuts[i - 1], t1 = cuts[i], mid = (t0 + t1) * 0.5;
+        if (!checkCenter(mid)) return false;
+
+        const auto* center = GetCell({static_cast<int>(std::floor(ax + dx * mid)),
+            static_cast<int>(std::floor(az + dz * mid))});
+        const double x0 = ax + dx * t0, z0 = az + dz * t0;
+        const double x1 = ax + dx * t1, z1 = az + dz * t1;
+
+        // 円を内包する正方形の掃引で保守的に判定する。角付近は余裕を多めに取る。
+        for (int x = static_cast<int>(std::floor((std::min)(x0, x1) - radius));
+            x <= static_cast<int>(std::floor((std::max)(x0, x1) + radius)); ++x) {
+            for (int z = static_cast<int>(std::floor((std::min)(z0, z1) - radius));
+                z <= static_cast<int>(std::floor((std::max)(z0, z1) + radius)); ++z) {
+                double enter = 0.0, leave = 1.0;
+                const auto clipAxis = [&](double a, double delta, double low, double high) {
+                    if (delta == 0.0) return a >= low && a <= high;
+                    double first = (low - a) / delta, last = (high - a) / delta;
+                    if (first > last) std::swap(first, last);
+                    enter = (std::max)(enter, first);
+                    leave = (std::min)(leave, last);
+                    return enter <= leave;
+                };
+                if (!clipAxis(x0, x1 - x0, x - radius, x + 1.0 + radius)
+                    || !clipAxis(z0, z1 - z0, z - radius, z + 1.0 + radius)) continue;
+                const auto* cell = GetCell({x, z});
+                if (!cell || cell->type == CellType::Unknown || cell->type == CellType::NoGround
+                    || cell->type == CellType::Obstacle || cell->normal.y < minUpDot
+                    || std::abs(cell->height - center->height) > agent.maxStepHeight) return false;
+            }
+        }
+        if (!checkCenter(t1)) return false;
+    }
+    return true;
+}
+
 void NavigationSystem::SmoothPath(
     const EnemyAIWorldContext& context,
     const EnemyAiAgent::NavigationAgentSettings& agent, 
     EnemyAiWorld::NavigationPath& path) const
 {
-    // TODO: CanMoveDirectlyで移動可能な区間の中間点だけを省く。
+    if (!m_isBuilt || path.waypoints.size() <= 2) return;
 
-    // グリッドで考えたほうが良さそう？
+    std::vector<XMFLOAT3> smoothed;
+    smoothed.reserve(path.waypoints.size());
+    size_t anchor = 0;
+    smoothed.push_back(path.waypoints.front());
+    while (anchor + 1 < path.waypoints.size()) {
+        size_t next = path.waypoints.size() - 1;
+        while (next > anchor + 1 && !CanMoveDirectly(path.waypoints[anchor], path.waypoints[next], agent)) {
+            --next;
+        }
+        // 短縮できない場合は元の隣接区間を保持する。無効な経路の修復は行わない。
+        smoothed.push_back(path.waypoints[next]);
+        anchor = next;
+    }
+    path.waypoints = std::move(smoothed);
 }
 
 #pragma endregion

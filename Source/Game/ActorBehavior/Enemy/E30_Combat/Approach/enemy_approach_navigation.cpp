@@ -114,8 +114,7 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
         }
         else {
             // FindPathの[start, 始点セル中心, ..., goal]の先頭をスキップする。
-            const size_t firstWaypoint = result.path.waypoints.size() > 2 ? 2 : 0;
-            context.pathFollower->SetPath(std::move(result.path), firstWaypoint);
+            context.pathFollower->SetPath(std::move(result.path), 0);
             context.pathFollower->Update(position);
 
             // 投影先が現在位置の場合など、経路終端でも接近できていないケース
