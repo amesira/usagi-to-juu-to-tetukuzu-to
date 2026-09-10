@@ -1,8 +1,14 @@
+//---------------------------------------------------
+// File  ：_/E30_Combat/Approach/enemy_approach_combat.h
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+// 
+// ・敵全体のステートマシン
+//---------------------------------------------------
 #pragma once
-
 #include <cstddef>
+#include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
 
-#include "enemy_combat_base.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_context.h"
 
 class EnemyApproachCombat : public EnemyCombatBase {
@@ -21,7 +27,7 @@ public:
     void Start(EnemyContext& context) override;
     EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
     void Finish(EnemyContext& context) override;
-    void Abort(EnemyContext& context) override;
+    void Cancel(EnemyContext& context) override;
 
     void SetMoveSpeed(float value) { m_moveSpeed = value; }
     void SetAttackDistance(float value) { m_attackDistance = value; }

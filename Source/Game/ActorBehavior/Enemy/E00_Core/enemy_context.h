@@ -1,15 +1,16 @@
+// enemy_context.h
+// 2026/09/10
 #pragma once
-
 #include <DirectXMath.h>
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_agent_settings_asset.h"
 
 class EnemyBehavior;
-class EnemyAIController;
+class EnemyAIWorldController;
 class EnemyLocomotionController;
-class EnemyMoveBehavior;
+class EnemyMove;
 class EnemyConditionMachine;
 class EnemyCombatTree;
 class EnemyAnimationController;
-class EnemyAiAgentSettingsAsset;
 class HealthBehavior;
 class IScene;
 class RigidbodyComponent;
@@ -29,17 +30,21 @@ class EnemyContext {
 public:
     EnemyBehavior* owner = nullptr;
     IScene* scene = nullptr;
+
     TransformComponent* transform = nullptr;
     RigidbodyComponent* rigidbody = nullptr;
+
     HealthBehavior* health = nullptr;
-    EnemyAIController* aiWorld = nullptr;
+    EnemyAIWorldController* aiWorld = nullptr;
 
     EnemyLocomotionController* locomotionController = nullptr;
-    EnemyMoveBehavior* moveBehavior = nullptr;
+    EnemyMove* moveBehavior = nullptr;
     EnemyConditionMachine* conditionMachine = nullptr;
     EnemyCombatTree* combatTree = nullptr;
     EnemyAnimationController* animationController = nullptr;
 
-    const EnemyAiAgentSettingsAsset* aiAgentSettings = nullptr;
+    const EnemyAiAgentSettingsAsset* aiAgentSettingsAsset = nullptr;
+    const auto& aiAgentSettings() const { return aiAgentSettingsAsset->GetData(); }
+
     EnemyRuntimeState runtimeState;
 };

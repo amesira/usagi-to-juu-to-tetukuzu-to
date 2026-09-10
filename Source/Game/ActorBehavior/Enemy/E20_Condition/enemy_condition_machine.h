@@ -1,3 +1,10 @@
+//---------------------------------------------------
+// File  ：_/E20_Condition/enemy_condition_machine.h
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+// 
+// ・敵全体のステートマシン
+//---------------------------------------------------
 #pragma once
 
 class EnemyContext;
@@ -29,4 +36,5 @@ private:
     EnemyCondition EvaluateCondition(const EnemyContext& context) const;
     void EnterCondition(EnemyContext& context, EnemyCondition condition);
     void ExitCondition(EnemyContext& context, EnemyCondition condition);
+
 };

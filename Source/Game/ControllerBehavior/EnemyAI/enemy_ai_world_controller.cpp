@@ -14,7 +14,7 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Engine/engine_service_locator.h"
 
-EnemyAIController::~EnemyAIController()
+EnemyAIWorldController::~EnemyAIWorldController()
 {
     m_tacticalQuery.Finalize(m_context);
     m_navigation.Finalize(m_context);
@@ -25,7 +25,7 @@ EnemyAIController::~EnemyAIController()
     }
 }
 
-void EnemyAIController::Start()
+void EnemyAIWorldController::Start()
 {
     if (m_isInitialized) return;
     if (!GetOwner() || !GetOwner()->GetScene()) return;
@@ -57,7 +57,7 @@ void EnemyAIController::Start()
     m_isInitialized = true;
 }
 
-void EnemyAIController::Update()
+void EnemyAIWorldController::Update()
 {
     if (!m_isInitialized || GameControllerLocator::s_enemyAIController != this) return;
 
@@ -69,7 +69,7 @@ void EnemyAIController::Update()
     //m_navigation.DrawDebugGrid();
 }
 
-void EnemyAIController::DrawComponentInspector()
+void EnemyAIWorldController::DrawComponentInspector()
 {
     if (BehaviorDetailView::BeginSection(this, "Enemy AI Controller")) {
         ImGui::Text("Initialized: %s", m_isInitialized ? "Yes" : "No");

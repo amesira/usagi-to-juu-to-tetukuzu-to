@@ -35,11 +35,8 @@ private:
     std::unordered_map<std::string, ActionRestriction> m_actionRestrictions;      // アクションIDごとの禁止アクション
 
 public:
-    /// @brief 初期化処理
     void Initialize(const PlayerContext& context, const PlayerInput& input);
-    /// @brief PlayerBehaviorが所有するActionを登録する
     void RegisterAction(PlayerActionBase& action);
-    /// @brief 更新処理
     void Update(PlayerContext& context, const PlayerInput& input);
 
 private:

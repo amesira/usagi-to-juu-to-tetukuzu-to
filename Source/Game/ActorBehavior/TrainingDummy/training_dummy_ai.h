@@ -23,6 +23,6 @@ public:
     void DrawInspector();
     const DirectX::XMFLOAT3& GetDesiredVelocity() const { return m_desiredVelocity; }
 private:
-    void UpdatePath(class EnemyAIController& controller, const DirectX::XMFLOAT3& goal);
+    void UpdatePath(class EnemyAIWorldController& controller, const DirectX::XMFLOAT3& goal);
     void FollowPath(float deltaTime);
 };

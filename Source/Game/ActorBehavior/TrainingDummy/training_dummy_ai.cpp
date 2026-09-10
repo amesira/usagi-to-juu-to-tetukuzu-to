@@ -31,7 +31,7 @@ void TrainingDummyAI::Stop()
 void TrainingDummyAI::Update(float deltaTime)
 {
     m_desiredVelocity = {};
-    auto* controller = Game::EnemyAI();
+    auto* controller = Game::EnemyAIWorld();
     if (!m_enabled || !m_transform || !controller || !controller->GetEnable()
         || !controller->IsInitialized() || !controller->GetMetaAI().HasPlayer()) {
         Stop();
@@ -52,7 +52,7 @@ void TrainingDummyAI::Update(float deltaTime)
     FollowPath(deltaTime);
 }
 
-void TrainingDummyAI::UpdatePath(EnemyAIController& controller, const DirectX::XMFLOAT3& goal)
+void TrainingDummyAI::UpdatePath(EnemyAIWorldController& controller, const DirectX::XMFLOAT3& goal)
 {
     static const EnemyAiAgentSettings::Data defaults;
     const auto& settings = m_settingsAsset ? m_settingsAsset->GetData() : defaults;

@@ -57,7 +57,7 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<TransformComponent>();
     gameControllerObj->AddComponent<GameFeedbackController>();
     gameControllerObj->AddComponent<CustomPostEffectController>();
-    gameControllerObj->AddComponent<EnemyAIController>();
+    gameControllerObj->AddComponent<EnemyAIWorldController>();
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });

@@ -1,6 +1,12 @@
+//---------------------------------------------------
+// File  ：_/E30_Combat/Approach/enemy_attack_combat.h
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+// 
+// ・敵全体のステートマシン
+//---------------------------------------------------
 #pragma once
-
-#include "enemy_combat_base.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
 
 /// @brief 射程内で攻撃を担当するCombat。攻撃内容は敵種ごとに後から実装する。
 class EnemyAttackCombat : public EnemyCombatBase {
@@ -12,7 +18,7 @@ public:
     void Start(EnemyContext& context) override;
     EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
     void Finish(EnemyContext& context) override;
-    void Abort(EnemyContext& context) override;
+    void Cancel(EnemyContext& context) override;
 
     void SetAttackDistance(float value) { m_attackDistance = value; }
 

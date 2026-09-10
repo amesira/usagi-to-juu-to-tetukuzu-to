@@ -1,12 +1,19 @@
+//===================================================
+// File  ：_/E30_Combat/Approach/enemy_approach_combat.cpp
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_approach_combat.h"
 
 #include <cmath>
 #include <utility>
 
-#include "Game/ActorBehavior/Enemy/P00_Core/enemy_context.h"
-#include "Game/ActorBehavior/Enemy/P10_Locomotion/enemy_locomotion_controller.h"
+#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
+
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_agent_settings_asset.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+
 #include "Engine/Component/transform_component.h"
 
 bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
@@ -48,10 +55,10 @@ EnemyCombatStatus EnemyApproachCombat::Update(EnemyContext& context, float delta
 
 void EnemyApproachCombat::Finish(EnemyContext& context)
 {
-    Abort(context);
+    Cancel(context);
 }
 
-void EnemyApproachCombat::Abort(EnemyContext& context)
+void EnemyApproachCombat::Cancel(EnemyContext& context)
 {
     if (context.locomotionController) {
         context.locomotionController->RemoveRequest(m_locomotionRequestHandle);
@@ -65,8 +72,8 @@ void EnemyApproachCombat::UpdatePath(EnemyContext& context)
     if (!context.transform || !context.aiWorld) return;
 
     static const EnemyAiAgentSettings::Data defaultSettings;
-    const auto& settings = context.aiAgentSettings
-        ? context.aiAgentSettings->GetData()
+    const auto& settings = context.aiAgentSettingsAsset
+        ? context.aiAgentSettingsAsset->GetData()
         : defaultSettings;
     auto result = context.aiWorld->FindPath(
         context.transform->GetPosition(),

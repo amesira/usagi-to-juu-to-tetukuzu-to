@@ -1,14 +1,20 @@
+//===================================================
+// File  ：_/E30_Combat/Approach/enemy_attack_combat.cpp
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_attack_combat.h"
-
 #include <cmath>
 
-#include "Game/ActorBehavior/Enemy/P00_Core/enemy_context.h"
-#include "Game/ActorBehavior/Enemy/P10_Locomotion/enemy_locomotion_controller.h"
+#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
+
 #include "Engine/Component/transform_component.h"
 
 bool EnemyAttackCombat::CanStart(const EnemyContext& context) const
 {
     if (!context.runtimeState.hasCombatTarget || !context.transform) return false;
+    
     const auto position = context.transform->GetPosition();
     const auto target = context.runtimeState.combatTargetPosition;
     return std::hypot(target.x - position.x, target.z - position.z) <= m_attackDistance;
@@ -45,10 +51,10 @@ EnemyCombatStatus EnemyAttackCombat::Update(EnemyContext& context, float deltaTi
 
 void EnemyAttackCombat::Finish(EnemyContext& context)
 {
-    Abort(context);
+    Cancel(context);
 }
 
-void EnemyAttackCombat::Abort(EnemyContext& context)
+void EnemyAttackCombat::Cancel(EnemyContext& context)
 {
     if (context.locomotionController) {
         context.locomotionController->RemoveRequest(m_locomotionRequestHandle);

@@ -15,7 +15,7 @@
 #include "navigation_system.h"
 #include "tactical_query_system.h"
 
-class EnemyAIController : public BehaviorComponent {
+class EnemyAIWorldController : public BehaviorComponent {
 private:
     EnemyAIWorldContext m_context;
 
@@ -26,8 +26,8 @@ private:
     bool m_isInitialized = false;
 
 public:
-    EnemyAIController() = default;
-    ~EnemyAIController() override;
+    EnemyAIWorldController() = default;
+    ~EnemyAIWorldController() override;
 
     void Start() override;
     void Update() override;

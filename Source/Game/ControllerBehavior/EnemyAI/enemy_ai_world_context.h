@@ -92,7 +92,7 @@ struct EnemyAIWorldRuntimeState {
 
 struct EnemyAIWorldContext {
     class IScene* scene = nullptr;
-    class EnemyAIController* controller = nullptr;
+    class EnemyAIWorldController* controller = nullptr;
 
     class MetaAI* metaAI = nullptr;
     class NavigationSystem* navigation = nullptr;

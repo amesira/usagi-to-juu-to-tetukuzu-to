@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/Enemy/enemy_behavior.cpp
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_behavior.h"
 
 #include "Engine/Core/game_object.h"
@@ -20,8 +25,8 @@ void EnemyBehavior::Start()
     m_context.transform = owner->GetComponent<TransformComponent>();
     m_context.rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_context.health = owner->GetComponent<HealthBehavior>();
-    m_context.aiWorld = Game::EnemyAI();
-    m_context.aiAgentSettings = m_aiAgentSettings;
+    m_context.aiWorld = Game::EnemyAIWorld();
+    m_context.aiAgentSettingsAsset = m_aiAgentSettings;
 
     m_context.locomotionController = &m_locomotionController;
     m_context.moveBehavior = &m_moveBehavior;
@@ -32,9 +37,10 @@ void EnemyBehavior::Start()
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context);
     m_combatTree.Initialize(m_context);
-    // 登録順が優先度。射程内ではAttack、射程外ではApproachを選ぶ。
+
     m_combatTree.RegisterBehavior(m_attackCombat);
     m_combatTree.RegisterBehavior(m_approachCombat);
+
     m_animationController.Initialize(m_context);
 
     UpdateTargetState();
@@ -46,19 +52,23 @@ void EnemyBehavior::Update()
     const float deltaTime = FPS_GetDeltaTime();
     m_animationController.BeginFrame();
 
+    // ターゲットの確認、状態の更新
     UpdateTargetState();
     m_conditionMachine.Update(m_context, deltaTime);
 
+    // Combat状態の時のみCombatTreeを更新する
     if (m_conditionMachine.IsCombat()) {
         m_combatTree.Update(m_context, deltaTime);
     }
     else {
-        // Stun、Dead、Idleへ移った時点でCombatの移動要求も破棄する。
-        m_combatTree.Abort(m_context);
+        m_combatTree.Cancel(m_context);
     }
 
+    // 移動の更新
     const EnemyMoveIntent intent = m_locomotionController.BuildIntent(m_context);
     m_moveBehavior.UpdateMove(m_context, intent, deltaTime);
+
+    // アニメーションの更新
     m_animationController.Update(m_context);
 }
 
@@ -75,9 +85,10 @@ void EnemyBehavior::DrawComponentInspector()
     BehaviorDetailView::EndSection();
 }
 
+/// @brief 敵のターゲット状態を更新する
 void EnemyBehavior::UpdateTargetState()
 {
-    m_context.aiWorld = Game::EnemyAI();
+    m_context.aiWorld = Game::EnemyAIWorld();
     const bool hasTarget = m_context.aiWorld
         && m_context.aiWorld->GetEnable()
         && m_context.aiWorld->IsInitialized()

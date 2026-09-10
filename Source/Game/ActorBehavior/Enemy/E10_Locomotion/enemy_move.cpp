@@ -1,20 +1,27 @@
-#include "enemy_move_behavior.h"
+//===================================================
+// File  ：_/E10_Locomotion/enemy_move.cpp
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+//===================================================
+#include "enemy_move.h"
+#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 
-#include "Game/ActorBehavior/Enemy/P00_Core/enemy_context.h"
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/transform_component.h"
+
 #include "Utility/mi_math.h"
 
-void EnemyMoveBehavior::Initialize(EnemyContext& context)
+void EnemyMove::Initialize(EnemyContext& context)
 {
     if (context.rigidbody) context.rigidbody->SetIsKinematic(false);
 }
 
-void EnemyMoveBehavior::Finalize()
+void EnemyMove::Finalize()
 {
+
 }
 
-void EnemyMoveBehavior::UpdateMove(
+void EnemyMove::UpdateMove(
     EnemyContext& context,
     const EnemyMoveIntent& intent,
     float deltaTime)

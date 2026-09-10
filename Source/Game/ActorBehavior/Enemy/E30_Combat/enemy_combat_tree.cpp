@@ -1,10 +1,15 @@
+//===================================================
+// File  ：_/E30_Combat/enemy_combat_tree.cpp
+// Date  ：2026/09/10
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_combat_tree.h"
 
-#include "Game/ActorBehavior/Enemy/P00_Core/enemy_context.h"
+#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 
 void EnemyCombatTree::Initialize(EnemyContext& context)
 {
-    Abort(context);
+    Cancel(context);
 }
 
 void EnemyCombatTree::Finalize(EnemyContext& context)
@@ -19,10 +24,11 @@ void EnemyCombatTree::RegisterBehavior(EnemyCombatBase& behavior)
 
 void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 {
-    Abort(context);
+    Cancel(context);
     m_combatBehaviors.clear();
 }
 
+/// @brief 現在のCombat行動を更新する
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
     // 登録順で最初に開始条件を満たすものを選ぶ。
@@ -35,7 +41,7 @@ void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
     }
 
     if (selected != m_activeBehavior) {
-        Abort(context);
+        Cancel(context);
         m_activeBehavior = selected;
         if (m_activeBehavior) m_activeBehavior->Start(context);
     }
@@ -48,9 +54,9 @@ void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
     }
 }
 
-void EnemyCombatTree::Abort(EnemyContext& context)
+void EnemyCombatTree::Cancel(EnemyContext& context)
 {
     if (!m_activeBehavior) return;
-    m_activeBehavior->Abort(context);
+    m_activeBehavior->Cancel(context);
     m_activeBehavior = nullptr;
 }

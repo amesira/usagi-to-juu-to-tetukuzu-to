@@ -1,3 +1,5 @@
+// enemy_move_intent.h
+// 2026/09/10
 #pragma once
 
 #include <DirectXMath.h>
@@ -6,8 +8,10 @@
 struct EnemyMoveIntent {
     DirectX::XMFLOAT3 moveDirection = {};
     DirectX::XMFLOAT3 rotateDirection = { 0.0f, 0.0f, 1.0f };
+
     float moveSpeed = 0.0f;
     float rotationSpeed = 10.0f;
+
     bool canMove = true;
     bool canRotate = true;
 };
