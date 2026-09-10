@@ -46,6 +46,9 @@ void EnemyBehavior::Start()
 
     UpdateTargetState();
     m_conditionMachine.Initialize(m_context);
+
+    // 敵個体をMetaAIに登録する
+    Game::EnemyAIWorld()->GetMetaAI().RegisterEnemy(owner);
 }
 
 void EnemyBehavior::Update()

@@ -7,14 +7,19 @@
 //---------------------------------------------------
 #ifndef TACTICAL_QUERY_SYSTEM_H
 #define TACTICAL_QUERY_SYSTEM_H
+#include <vector>
 #include "enemy_ai_world_context.h"
 
 // 共有情報と経路情報を使い、移動先の候補を評価する。
 class TacticalQuerySystem {
+private:
+    std::vector<EnemyAiWorld::TacticalCellInfo> m_tacticalCells;
+
 public:
     void Initialize(const EnemyAIWorldContext& context);
     void Update(EnemyAIWorldContext& context, float deltaTime);
     void Finalize(const EnemyAIWorldContext& context);
+
 };
 
 #endif // TACTICAL_QUERY_SYSTEM_H

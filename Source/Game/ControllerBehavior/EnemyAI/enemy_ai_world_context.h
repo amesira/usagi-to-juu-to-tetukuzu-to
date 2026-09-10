@@ -56,9 +56,10 @@ namespace EnemyAiWorld {
     };
 
     // === Tactical情報 ===
-    //struct TacticalCellInfo {
-    //    
-    //};
+    struct TacticalCellInfo {
+        float enemyDensityCost = 0.0f;  // 敵の密度が高いほどコストが増える
+        float reservationCost = 0.0f;   // 他の敵が予約しているセルはコストが増える
+    };
 
     //struct TacticalQueryWeights {
     //    float targetDistance = 1.0f;

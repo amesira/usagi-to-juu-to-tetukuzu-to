@@ -27,6 +27,8 @@
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+
 #include "Utility/mi_math.h"
 
 using namespace DirectX;
@@ -102,6 +104,9 @@ void PlayerBehavior::Start()
 
     m_context.actionMachine->RegisterAction(m_dualPistolsAction);
     m_context.actionMachine->RegisterAction(m_shotgunAction);
+
+    // EnemyAIWorldにプレイヤーを登録する
+    Game::EnemyAIWorld()->GetMetaAI().RegisterPlayer(owner);
 
 }
 

@@ -21,6 +21,8 @@ private:
     };
     struct EnemyInfo {
         EnemyAiWorld::EntityInfo entityInfo;
+        class GameObject* gameObject = nullptr;
+        class TransformComponent* transform = nullptr;
     };
 
     PlayerInfo m_player;
@@ -31,8 +33,13 @@ public:
     void Update(EnemyAIWorldContext& context, float deltaTime);
     void Finalize(const EnemyAIWorldContext& context);
 
+    void RegisterPlayer(class GameObject* playerGameObject);
+    void RegisterEnemy(class GameObject* enemyGameObject);
+
     const DirectX::XMFLOAT3& GetPlayerPosition() const { return m_player.entityInfo.position; }
     bool HasPlayer() const { return m_player.transform != nullptr; }
+
+    const std::vector<EnemyInfo>& GetEnemies() const { return m_enemies; }
 
 };
 
