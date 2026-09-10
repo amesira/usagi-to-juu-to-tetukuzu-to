@@ -2,8 +2,10 @@
     "data": {
         "acceleration": 20.0,
         "deceleration": 30.0,
+        "groundCheckDistance": 0.15000000596046448,
+        "groundCheckRadius": 0.3499999940395355,
         "moveSpeed": 6.0,
-        "rotationSpeed": 10.0,
+        "rotationSpeed": 25.0,
         "runEffect": {
             "particleAssetPath": "asset/Particle/run_dust.particle.json",
             "positionOffset": [
@@ -13,6 +15,8 @@
             ]
         },
         "runEffectMinSpeed": 0.10000000149011612,
+        "smoothTime": 0.20000000298023224,
+        "stopSmoothTime": 0.05000000074505806,
         "this_is_header_field": null,
         "waypointReachDistance": 0.20000000298023224
     },

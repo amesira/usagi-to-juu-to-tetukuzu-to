@@ -20,7 +20,11 @@ namespace EnemyMoveSettings {
         float moveSpeed = 6.0f;
         float acceleration = 20.0f;
         float deceleration = 30.0f;
+        float groundCheckRadius = 0.35f;
+        float groundCheckDistance = 0.15f;
         float rotationSpeed = 10.0f;
+        float smoothTime = 0.1f;
+        float stopSmoothTime = 0.05f;
         float waypointReachDistance = 0.2f;
         float runEffectMinSpeed = 0.1f;
         AttachedEffectSettings runEffect;
@@ -48,8 +52,20 @@ namespace EnemyMoveSettings {
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("deceleration", "Deceleration", &Settings::deceleration,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeHeaderField("Ground Check Settings"),
+            MakeField("groundCheckRadius", "Ground Check Radius", &Settings::groundCheckRadius,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
+            MakeField("groundCheckDistance", "Ground Check Distance", &Settings::groundCheckDistance,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeHeaderField("Rotation Settings"),
             MakeField("rotationSpeed", "Rotation Speed", &Settings::rotationSpeed,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeHeaderField("Smoothing Settings"),
+            MakeField("smoothTime", "Smooth Time", &Settings::smoothTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
+            MakeField("stopSmoothTime", "Stop Smooth Time", &Settings::stopSmoothTime,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
+            MakeHeaderField("Path Following"),
             MakeField("waypointReachDistance", "Waypoint Reach Distance", &Settings::waypointReachDistance,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
             MakeHeaderField("Effects"),

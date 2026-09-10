@@ -80,6 +80,10 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
     }
 
     // === 回転処理 ===
+    if (intent.canRotate && MiMath::Length(intent.rotateDirection) > 0.01f) {
+        XMFLOAT4 targetRot = MiMath::LookRotation(intent.rotateDirection, { 0.0f, 1.0f, 0.0f });
+        context.transform->SetRotation(targetRot);
+    }
 
     // === エフェクト処理 ===
     m_context.moveEffects->UpdateEffects(m_context, deltaTime);
