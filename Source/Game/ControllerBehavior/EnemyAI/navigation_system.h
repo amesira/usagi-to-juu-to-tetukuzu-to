@@ -82,10 +82,13 @@ public:
     /// @brief グリッド上で線分と敵の占有範囲が通行可能か確認する。
     bool CanMoveDirectly(const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to,
         const EnemyAiAgent::NavigationAgentSettings& agent) const;
+    /// @brief XZの区間長にTacticalコストを積分する。範囲外は無限大。
+    double CalculateSegmentCost(const EnemyAIWorldContext& context,
+        const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to, int enemyId = -1) const;
     void SmoothPath(
         const EnemyAIWorldContext& context,
         const EnemyAiAgent::NavigationAgentSettings& agent, 
-        EnemyAiWorld::NavigationPath& path) const;
+        EnemyAiWorld::NavigationPath& path, int enemyId = -1) const;
 
     /// @brief セル座標が有効かどうかを判定する
     bool ValidateCellCoord(EnemyAiWorld::GridCoord coord) const {

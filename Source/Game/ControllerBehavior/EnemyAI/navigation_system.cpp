@@ -324,10 +324,10 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
                 if (!CanTraverseImpl(currentCoord, neighborCoord, agent, &walkableCache, &m_lastSearchStats)) continue;
                 
                 // 隣接セルのコストを計算する（斜め移動は1.414倍とする）
-                float tentativeGCost = nodes[currentIndex].gCost + ((dx != 0 && dz != 0) ? 1.414f : 1.0f);
-                if (enemyId >= 0) {
-                    context.tacticalQuery->GetTacticalCost(context, neighborCoord, enemyId);
-                }
+                const float tacticalCost = context.tacticalQuery
+                    ? (std::max)(0.0f, context.tacticalQuery->GetTacticalCost(context, neighborCoord, enemyId)) : 0.0f;
+                float tentativeGCost = nodes[currentIndex].gCost
+                    + ((dx != 0 && dz != 0) ? 1.414f : 1.0f) * (1.0f + tacticalCost);
                 
                 // コストが現在のものより小さい場合は更新する
                 if (tentativeGCost < nodes[neighborIndex].gCost) {
@@ -444,12 +444,75 @@ bool NavigationSystem::CanMoveDirectly(
     return true;
 }
 
+double NavigationSystem::CalculateSegmentCost(const EnemyAIWorldContext& context,
+    const XMFLOAT3& from, const XMFLOAT3& to, int enemyId) const
+{
+    const double invalid = std::numeric_limits<double>::infinity();
+    if (!m_isBuilt || !std::isfinite(m_buildSettings.cellSize) || m_buildSettings.cellSize <= 0) return invalid;
+    for (float value : {from.x, from.y, from.z, to.x, to.y, to.z}) {
+        if (!std::isfinite(value)) return invalid;
+    }
+    const auto origin = m_buildSettings.origin();
+    const double size = m_buildSettings.cellSize;
+    const double ax = (from.x - origin.x) / size, az = (from.z - origin.y) / size;
+    const double bx = (to.x - origin.x) / size, bz = (to.z - origin.y) / size;
+    if ((std::min)(ax, bx) < 0 || (std::min)(az, bz) < 0
+        || (std::max)(ax, bx) >= m_buildSettings.cellCountX
+        || (std::max)(az, bz) >= m_buildSettings.cellCountZ) return invalid;
+
+    const double dx = bx - ax, dz = bz - az;
+    const double length = std::hypot(dx, dz) * size;
+    if (length == 0) return 0;
+    std::vector<double> cuts{0.0, 1.0};
+    const auto addCuts = [&](double a, double b) {
+        if (a == b) return;
+        for (int boundary = static_cast<int>(std::floor((std::min)(a, b))) + 1;
+            boundary < (std::max)(a, b); ++boundary) {
+            cuts.push_back((boundary - a) / (b - a));
+        }
+    };
+    addCuts(ax, bx);
+    addCuts(az, bz);
+    std::sort(cuts.begin(), cuts.end());
+    cuts.erase(std::unique(cuts.begin(), cuts.end()), cuts.end());
+    double cost = 0;
+    for (size_t i = 1; i < cuts.size(); ++i) {
+        const double mid = (cuts[i - 1] + cuts[i]) * 0.5;
+        const double x = ax + dx * mid, z = az + dz * mid;
+        double tacticalCost = 0;
+        // 境界上を進む区間は両側の最大値。距離を二重計上しない。
+        constexpr double epsilon = 1e-9;
+        const int minX = static_cast<int>(std::floor(x - (dx == 0 ? epsilon : 0)));
+        const int minZ = static_cast<int>(std::floor(z - (dz == 0 ? epsilon : 0)));
+        for (int ix = minX; ix <= static_cast<int>(std::floor(x)); ++ix) {
+            for (int iz = minZ; iz <= static_cast<int>(std::floor(z)); ++iz) {
+                GridCoord coord{ix, iz};
+                if (!ValidateCellCoord(coord)) return invalid;
+                const double value = context.tacticalQuery
+                    ? context.tacticalQuery->GetTacticalCost(context, coord, enemyId) : 0.0;
+                if (!std::isfinite(value)) return invalid;
+                tacticalCost = (std::max)(tacticalCost, value);
+            }
+        }
+        cost += length * (cuts[i] - cuts[i - 1]) * (1.0 + tacticalCost);
+    }
+    return cost;
+}
+
 void NavigationSystem::SmoothPath(
     const EnemyAIWorldContext& context,
     const EnemyAiAgent::NavigationAgentSettings& agent, 
-    EnemyAiWorld::NavigationPath& path) const
+    EnemyAiWorld::NavigationPath& path, int enemyId) const
 {
     if (!m_isBuilt || path.waypoints.size() <= 2) return;
+
+    // 同じマップ・敵ID・区間評価で元経路と短縮候補を比較する。
+    std::vector<double> prefixCost(path.waypoints.size(), 0.0);
+    for (size_t i = 1; i < path.waypoints.size(); ++i) {
+        const double cost = CalculateSegmentCost(context, path.waypoints[i - 1], path.waypoints[i], enemyId);
+        if (!std::isfinite(cost)) return;
+        prefixCost[i] = prefixCost[i - 1] + cost;
+    }
 
     std::vector<XMFLOAT3> smoothed;
     smoothed.reserve(path.waypoints.size());
@@ -457,7 +520,13 @@ void NavigationSystem::SmoothPath(
     smoothed.push_back(path.waypoints.front());
     while (anchor + 1 < path.waypoints.size()) {
         size_t next = path.waypoints.size() - 1;
-        while (next > anchor + 1 && !CanMoveDirectly(path.waypoints[anchor], path.waypoints[next], agent)) {
+        while (next > anchor + 1) {
+            if (CanMoveDirectly(path.waypoints[anchor], path.waypoints[next], agent)) {
+                const double shortcutCost = CalculateSegmentCost(context, path.waypoints[anchor], path.waypoints[next], enemyId);
+                const double originalCost = prefixCost[next] - prefixCost[anchor];
+                const double epsilon = 1e-6 * (std::max)(1.0, originalCost);
+                if (std::isfinite(shortcutCost) && shortcutCost <= originalCost + epsilon) break;
+            }
             --next;
         }
         // 短縮できない場合は元の隣接区間を保持する。無効な経路の修復は行わない。

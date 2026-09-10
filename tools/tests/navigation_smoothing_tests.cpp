@@ -2,11 +2,18 @@
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_agent_settings_asset.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_types.h"
+#include "Game/ControllerBehavior/EnemyAI/tactical_query_system.h"
 #include <cassert>
+#include <cmath>
 #include <iostream>
 
 bool CollisionQuery::SphereCast(IScene*, RaycastHit&, const XMFLOAT3&, const XMFLOAT3&, float, float, CollisionLayerMask) { return false; }
 void DebugRenderer_DrawLine(XMFLOAT3, XMFLOAT3, XMFLOAT4) {}
+// 制御したコストマップでNavigationの積分・ID受け渡しを検証する。
+static bool useDensity = false;
+float TacticalQuerySystem::GetTacticalCost(const EnemyAIWorldContext&, const EnemyAiWorld::GridCoord& coord, int enemyId) {
+    return useDensity && enemyId != 42 && coord.x == 4 ? 10.0f : 0.0f;
+}
 struct NavigationOptimizationTestAccess {
     static void Build(NavigationSystem& nav) {
         nav.ClearGrid();
@@ -69,5 +76,30 @@ int main() {
     assert(result.path.waypoints.size()>2 && result.path.waypoints.size()<count);
     for(size_t i=1;i<result.path.waypoints.size();++i)
         assert(nav.CanMoveDirectly(result.path.waypoints[i-1],result.path.waypoints[i],agent));
+    Access::Build(nav);
+    TacticalQuerySystem tactical;
+    context.tacticalQuery = &tactical;
+    useDensity = true;
+    const XMFLOAT3 a{2.5f,0,4.5f}, b{6.5f,0,4.5f};
+    assert(std::abs(nav.CalculateSegmentCost(context,a,b)-14.0)<1e-6);
+    assert(std::abs(nav.CalculateSegmentCost(context,b,a)-14.0)<1e-6);
+    assert(std::abs(nav.CalculateSegmentCost(context,a,b,42)-4.0)<1e-6);
+    // セル境界の両側の最大値を使う。距離2を二重に数えない。
+    assert(std::abs(nav.CalculateSegmentCost(context,{4,0,2},{4,0,4})-22.0)<1e-6);
+    assert(nav.CalculateSegmentCost(context,a,a)==0);
+    assert(!std::isfinite(nav.CalculateSegmentCost(context,{-1,0,2},a)));
+    // 高コスト列を横切る長さを短く保つ回り道。
+    path.waypoints={{2.5f,0,2.5f},{3.5f,0,6.5f},{5.5f,0,6.5f},{6.5f,0,7.5f}};
+    auto original=path;
+    double originalCost=0;
+    for(size_t i=1;i<path.waypoints.size();++i)
+        originalCost+=nav.CalculateSegmentCost(context,path.waypoints[i-1],path.waypoints[i]);
+    nav.SmoothPath(context,agent,path);
+    double smoothedCost=0;
+    for(size_t i=1;i<path.waypoints.size();++i)
+        smoothedCost+=nav.CalculateSegmentCost(context,path.waypoints[i-1],path.waypoints[i]);
+    assert(path.waypoints.size()>2 && smoothedCost<=originalCost+1e-5);
+    nav.SmoothPath(context,agent,original,42);
+    assert(original.waypoints.size()==2);
     std::cout << "Navigation smoothing tests passed\n";
 }

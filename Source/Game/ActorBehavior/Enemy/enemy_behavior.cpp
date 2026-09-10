@@ -48,12 +48,27 @@ void EnemyBehavior::Start()
     m_conditionMachine.Initialize(m_context);
 
     // 敵個体をMetaAIに登録する
-    Game::EnemyAIWorld()->GetMetaAI().RegisterEnemy(owner);
+    auto* aiWorld = Game::EnemyAIWorld();
+    if (aiWorld && aiWorld->GetEnable() && aiWorld->IsInitialized()) {
+        aiWorld->GetMetaAI().RegisterEnemy(owner);
+        m_registeredEntityToMetaAI = true;
+    }
+    else {
+        m_registeredEntityToMetaAI = false;
+    }
 }
 
 void EnemyBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
+
+    if (!m_registeredEntityToMetaAI) {
+        auto* aiWorld = Game::EnemyAIWorld();
+        if (aiWorld && aiWorld->GetEnable() && aiWorld->IsInitialized()) {
+            aiWorld->GetMetaAI().RegisterEnemy(GetOwner());
+            m_registeredEntityToMetaAI = true;
+        }
+    }
 
     // ターゲットの確認、状態の更新
     UpdateTargetState();

@@ -35,6 +35,7 @@ private:
     PlayerInput m_input;
 
     bool m_isInputEnabled = true;
+    bool m_registeredEntityToMetaAI = false;
 
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;

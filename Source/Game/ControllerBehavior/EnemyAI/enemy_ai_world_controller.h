@@ -45,7 +45,9 @@ public:
         if (!m_isInitialized) return {};
 
         EnemyAiWorld::PathQueryResult result = m_navigation.FindPath(m_context, start, goal, agent, enemyId);
-        // m_navigation.SmoothPath(m_context, agent, result.path);
+        if (result.status == EnemyAiWorld::PathQueryStatus::Success) {
+            m_navigation.SmoothPath(m_context, agent, result.path, enemyId);
+        }
         return result;
     }
 

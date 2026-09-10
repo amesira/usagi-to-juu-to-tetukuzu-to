@@ -23,6 +23,9 @@ class EnemyMoveSettingsAsset;
 
 /// @brief 敵個体の状態判断、戦闘、移動、アニメーションを更新する司令塔。
 class EnemyBehavior : public BehaviorComponent {
+private:
+    bool m_registeredEntityToMetaAI = false;
+
     EnemyContext m_context;
 
     EnemyLocomotionController m_locomotionController;

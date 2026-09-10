@@ -106,13 +106,27 @@ void PlayerBehavior::Start()
     m_context.actionMachine->RegisterAction(m_shotgunAction);
 
     // EnemyAIWorldにプレイヤーを登録する
-    Game::EnemyAIWorld()->GetMetaAI().RegisterPlayer(owner);
-
+    auto* enemyAIWorld = Game::EnemyAIWorld();
+    if (enemyAIWorld && enemyAIWorld->GetEnable() && enemyAIWorld->IsInitialized()) {
+        enemyAIWorld->GetMetaAI().RegisterPlayer(owner);
+        m_registeredEntityToMetaAI = true;
+    }
+    else {
+        m_registeredEntityToMetaAI = false;
+    }
 }
 
 void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
+
+    if (!m_registeredEntityToMetaAI) {
+        auto* enemyAIWorld = Game::EnemyAIWorld();
+        if (enemyAIWorld) {
+            enemyAIWorld->GetMetaAI().RegisterPlayer(GetOwner());
+            m_registeredEntityToMetaAI = true;
+        }
+    }
 
     if (Keyboard_IsKeyDownTrigger(KK_F1)) {
         m_isInputEnabled = !m_isInputEnabled;

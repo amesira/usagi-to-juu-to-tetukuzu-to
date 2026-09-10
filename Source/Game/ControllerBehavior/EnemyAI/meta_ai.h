@@ -16,13 +16,13 @@ class MetaAI {
 private:
     struct PlayerInfo {
         EnemyAiWorld::EntityInfo entityInfo;
-        class GameObject* gameObject = nullptr;
-        class TransformComponent* transform = nullptr;
+        const class GameObject* gameObject = nullptr;
+        const class TransformComponent* transform = nullptr;
     };
     struct EnemyInfo {
         EnemyAiWorld::EntityInfo entityInfo;
-        class GameObject* gameObject = nullptr;
-        class TransformComponent* transform = nullptr;
+        const class GameObject* gameObject = nullptr;
+        const class TransformComponent* transform = nullptr;
     };
 
     PlayerInfo m_player;
