@@ -51,7 +51,6 @@ void EnemyBehavior::Start()
 void EnemyBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
-    m_animationController.BeginFrame();
 
     // ターゲットの確認、状態の更新
     UpdateTargetState();
