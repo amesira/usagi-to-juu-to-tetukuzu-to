@@ -50,7 +50,7 @@ void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
     for (const auto& enemy : enemies) {
         GridCoord coord;
         if (!context.navigation->WorldToGrid(enemy.entityInfo.position, coord)) continue;
-        float radius = enemy.entityInfo.radius * 1.5f; // 敵の影響範囲を半径1.5倍に設定
+        float radius = enemy.entityInfo.radius * 5.0f; // 敵の影響範囲を半径1.5倍に設定
 
         // 敵の密度源情報を更新
         m_densitySources[enemy.entityInfo.gameObjectID] = { 
