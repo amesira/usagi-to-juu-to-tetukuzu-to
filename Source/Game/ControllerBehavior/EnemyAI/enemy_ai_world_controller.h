@@ -40,11 +40,12 @@ public:
     EnemyAiWorld::PathQueryResult FindPath(
         const DirectX::XMFLOAT3& start,
         const DirectX::XMFLOAT3& goal, 
-        const EnemyAiAgent::NavigationAgentSettings& agent) {
+        const EnemyAiAgent::NavigationAgentSettings& agent,
+        const int enemyId = -1) {
         if (!m_isInitialized) return {};
 
-        EnemyAiWorld::PathQueryResult result = m_navigation.FindPath(m_context, start, goal, agent);
-        m_navigation.SmoothPath(m_context, agent, result.path);
+        EnemyAiWorld::PathQueryResult result = m_navigation.FindPath(m_context, start, goal, agent, enemyId);
+        // m_navigation.SmoothPath(m_context, agent, result.path);
         return result;
     }
 

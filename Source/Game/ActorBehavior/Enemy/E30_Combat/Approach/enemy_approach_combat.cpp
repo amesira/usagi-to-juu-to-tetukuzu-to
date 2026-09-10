@@ -7,9 +7,13 @@
 #include "Engine/Component/transform_component.h"
 #include <cmath>
 
+#include "Engine/Core/game_object.h"
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+
 void EnemyApproachCombat::Initialize(const EnemyContext& context, const EnemyApproachSettingsAsset* settings)
 {
     m_context.owner = this;
+    m_context.gameObjectID = context.owner ? context.owner->GetOwner()->GetID() : -1;
     m_context.settingsAsset = settings;
     m_restartCooldown = 0.0f;
 

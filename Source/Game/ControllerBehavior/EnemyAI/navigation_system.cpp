@@ -8,6 +8,7 @@
 
 #include "navigation_system.h"
 #include "enemy_ai_agent_settings_asset.h"
+#include "tactical_query_system.h"
 
 #include "Engine/Processor/PhysicsPass/Collision/collision_types.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
@@ -230,10 +231,9 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
     EnemyAIWorldContext& context,
     const DirectX::XMFLOAT3& start, 
     const DirectX::XMFLOAT3& goal,
-    const EnemyAiAgent::NavigationAgentSettings& agent) const
+    const EnemyAiAgent::NavigationAgentSettings& agent,
+    const int enemyId) const
 {
-    // TODO: TacticalQuerySystemからの情報も使って、経路探索のコストを調整する予定
-
     // 計測とキャッシュは1回の探索単位。地形・Agent変更後へ持ち越さない
     m_lastSearchStats = {};
     struct SearchTimer {
@@ -325,6 +325,9 @@ EnemyAiWorld::PathQueryResult NavigationSystem::FindPath(
                 
                 // 隣接セルのコストを計算する（斜め移動は1.414倍とする）
                 float tentativeGCost = nodes[currentIndex].gCost + ((dx != 0 && dz != 0) ? 1.414f : 1.0f);
+                if (enemyId >= 0) {
+                    context.tacticalQuery->GetTacticalCost(context, neighborCoord, enemyId);
+                }
                 
                 // コストが現在のものより小さい場合は更新する
                 if (tentativeGCost < nodes[neighborIndex].gCost) {

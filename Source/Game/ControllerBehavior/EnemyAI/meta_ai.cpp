@@ -71,5 +71,10 @@ void MetaAI::RegisterEnemy(GameObject* enemyGameObject)
         enemyInfo.entityInfo.position = enemyInfo.transform->GetPosition();
         enemyInfo.entityInfo.velocity = {};
     }
+    CapsuleColliderComponent* collider = enemyGameObject->GetComponent<CapsuleColliderComponent>();
+    if (collider) {
+        enemyInfo.entityInfo.radius = collider->GetRadius();
+    }
+
     m_enemies.push_back(enemyInfo);
 }

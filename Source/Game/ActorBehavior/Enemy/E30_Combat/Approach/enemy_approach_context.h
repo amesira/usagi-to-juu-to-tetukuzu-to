@@ -10,6 +10,7 @@ struct EnemyApproachRuntimeState {
 
 struct EnemyApproachContext {
     class EnemyApproachCombat* owner = nullptr;
+    int gameObjectID = -1;
     const EnemyApproachSettingsAsset* settingsAsset = nullptr;
 
     TransformComponent* enemyTransform = nullptr;

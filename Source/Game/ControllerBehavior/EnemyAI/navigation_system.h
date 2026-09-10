@@ -76,7 +76,8 @@ public:
         EnemyAIWorldContext& context,
         const DirectX::XMFLOAT3& start, 
         const DirectX::XMFLOAT3& goal,
-        const EnemyAiAgent::NavigationAgentSettings& agent) const;
+        const EnemyAiAgent::NavigationAgentSettings& agent,
+        const int enemyId = -1) const;
 
     /// @brief グリッド上で線分と敵の占有範囲が通行可能か確認する。
     bool CanMoveDirectly(const DirectX::XMFLOAT3& from, const DirectX::XMFLOAT3& to,
@@ -85,6 +86,12 @@ public:
         const EnemyAIWorldContext& context,
         const EnemyAiAgent::NavigationAgentSettings& agent, 
         EnemyAiWorld::NavigationPath& path) const;
+
+    /// @brief セル座標が有効かどうかを判定する
+    bool ValidateCellCoord(EnemyAiWorld::GridCoord coord) const {
+        return coord.x >= 0 && coord.x < m_buildSettings.cellCountX &&
+            coord.z >= 0 && coord.z < m_buildSettings.cellCountZ;
+    }
 
     // === Debug用 ===
     void DrawDebugGrid() const;
@@ -104,13 +111,6 @@ private:
         class IScene* scene,
         const EnemyAiWorld::NavigationGridSettings& settings,
         EnemyAiWorld::GridCoord coord) const;
-
-    /// @brief セル座標が有効かどうかを判定する
-    bool ValidateCellCoord(EnemyAiWorld::GridCoord coord) const {
-        return coord.x >= 0 && coord.x < m_buildSettings.cellCountX &&
-            coord.z >= 0 && coord.z < m_buildSettings.cellCountZ;
-    }
-
 };
 
 #endif // NAVIGATION_SYSTEM_H

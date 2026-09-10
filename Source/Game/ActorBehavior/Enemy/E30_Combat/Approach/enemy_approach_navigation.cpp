@@ -98,7 +98,8 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
     const bool canRepath = m_repathTimer <= 0.0f || targetMoved || needRepath;
 
     if (m_retryTimer <= 0.0f && m_minRepathTimer <= 0.0f && canRepath) {
-        auto result = context.aiWorld->FindPath(position, destination, context.aiAgentSettings().navigationAgent);
+        auto result = context.aiWorld->FindPath(
+            position, destination, context.aiAgentSettings().navigationAgent, context.gameObjectID);
         
         // 経路探索の結果を保存し、再探索のタイマーをリセットする
         m_lastPathTargetPosition = destination;
