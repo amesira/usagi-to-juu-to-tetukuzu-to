@@ -21,6 +21,23 @@ void MetaAI::Update(EnemyAIWorldContext& context, float deltaTime)
         m_player.entityInfo.position = m_player.transform->GetPosition();
         m_player.entityInfo.velocity = {};
     }
+
+    for (auto& enemy : m_enemies) {
+        if (enemy.transform) {
+            enemy.entityInfo.position = enemy.transform->GetPosition();
+            enemy.entityInfo.velocity = {};
+        }
+        else {
+            enemy.gameObject = nullptr;
+            enemy.transform = nullptr;
+            enemy.entityInfo.gameObjectID = -1;
+        }
+    }
+
+    // 敵リストから無効なエントリを削除する
+    std::erase_if(m_enemies, [](const EnemyInfo& enemy) {
+        return enemy.gameObject == nullptr || enemy.transform == nullptr;
+        });
 }
 
 void MetaAI::Finalize(const EnemyAIWorldContext& context)
