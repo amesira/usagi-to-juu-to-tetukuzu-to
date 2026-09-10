@@ -19,6 +19,7 @@ public:
     void Initialize(const EnemyContext& context, const EnemyApproachSettingsAsset* settings);
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
+    bool IsInterruptible(const EnemyContext& context) const override;
     
     void UpdateBackground(EnemyContext& context, float deltaTime) override;
     

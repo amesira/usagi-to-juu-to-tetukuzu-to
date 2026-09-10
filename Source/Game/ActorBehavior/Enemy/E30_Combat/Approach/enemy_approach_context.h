@@ -5,15 +5,6 @@
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 
 struct EnemyApproachRuntimeState {
-    DirectX::XMFLOAT3 destination = {};
-    DirectX::XMFLOAT3 lastPathTargetPosition = {};
-    DirectX::XMFLOAT3 lastProgressPosition = {};
-    float repathTimer = 0.0f;
-    float minRepathTimer = 0.0f;
-    float retryTimer = 0.0f;
-    float stuckCheckTimer = 0.0f;
-    int consecutivePathFailures = 0;
-    int consecutiveStuckChecks = 0;
     bool hasReachedDestination = false;
 };
 

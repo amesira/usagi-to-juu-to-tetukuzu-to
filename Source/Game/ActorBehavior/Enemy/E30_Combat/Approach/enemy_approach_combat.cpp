@@ -45,6 +45,17 @@ bool EnemyApproachCombat::CanContinue(const EnemyContext& context) const
     return context.runtimeState.hasCombatTarget && context.transform;
 }
 
+bool EnemyApproachCombat::IsInterruptible(const EnemyContext& context) const
+{
+    if (!CanContinue(context)) return true;
+
+    const auto position = context.transform->GetPosition();
+    const auto target = context.runtimeState.combatTargetPosition;
+
+    // 到達フレームはNavigationのSuccessと到達フラグの更新を優先する。
+    return std::hypot(target.x - position.x, target.z - position.z) > GetStopDistance();
+}
+
 void EnemyApproachCombat::UpdateBackground(EnemyContext&, float deltaTime)
 {
     m_restartCooldown -= deltaTime;
@@ -69,11 +80,12 @@ EnemyCombatStatus EnemyApproachCombat::Update(EnemyContext& context, float delta
         }
         break;
     }
-    case EnemyCombatStatus::Failure: {
-        m_restartCooldown = m_context.settings().pathRetryInterval;
-        break;
-    }
     default: break;
+    }
+
+    // Locomotion由来の失敗も、最終的なstatusでクールダウンを設定する。
+    if (status == EnemyCombatStatus::Failure) {
+        m_restartCooldown = m_context.settings().pathRetryInterval;
     }
 
     return status;
