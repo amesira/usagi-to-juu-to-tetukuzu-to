@@ -16,29 +16,21 @@
 /// @brief EnemyMoveMotorの移動処理を更新する
 void EnemyMoveMotor::UpdateMotor(EnemyMoveContext& context, const EnemyMoveIntent& intent, float deltaTime)
 {
-    if (true) {
-        if (context.runtimeState.isGrounded) {
-            context.runtimeState.physicsVelocity.y = -0.1f;
-        }
-        else {
-            float normalizedYVelocity = context.runtimeState.physicsVelocity.y / 0.1f;
-
-            // 重力加速度を計算する
-            float gravityAcceleration = -9.81f;
-            context.runtimeState.physicsVelocity.y += gravityAcceleration * deltaTime;
-        }
+    if (context.runtimeState.isGrounded) {
+        context.runtimeState.physicsVelocity.y = -0.1f;
     }
     else {
-        context.runtimeState.physicsVelocity.y = 0.0f;
+        float normalizedYVelocity = context.runtimeState.physicsVelocity.y / 0.1f;
+
+        // 重力加速度を計算する
+        float gravityAcceleration = -9.81f;
+        context.runtimeState.physicsVelocity.y += gravityAcceleration * deltaTime;
     }
 
     if (intent.movementMode == EnemyMovementMode::ControlVelocity)
     {
         // 移動速度を計算する
         float moveSpeed = context.settings().moveSpeed * intent.moveSpeedMultiplier;
-        /*if (!context.runtimeState.isGrounded) {
-            moveSpeed *= context.settings().airSpeedMultiplier;
-        }*/
 
         // 移動入力速度を算出
         m_inputVelocity = MiMath::Multiply(intent.moveDirection, moveSpeed);
@@ -55,11 +47,15 @@ void EnemyMoveMotor::UpdateMotor(EnemyMoveContext& context, const EnemyMoveInten
         context.runtimeState.controlVelocity.z = m_desiredVelocity.z;
     }
     else {
-        // 移動不可の場合は速度をゼロにする
+        // 移動不可の場合は移動入力速度をゼロにする
         m_inputVelocity = { 0.0f, 0.0f, 0.0f };
-        m_desiredVelocity = { 0.0f, 0.0f, 0.0f };
         context.runtimeState.controlVelocity.x = 0.0f;
         context.runtimeState.controlVelocity.z = 0.0f;
+
+        if (intent.movementMode == EnemyMovementMode::StopHorizontal) {
+            context.runtimeState.physicsVelocity.x = 0.0f;
+            context.runtimeState.physicsVelocity.z = 0.0f;
+        }
     }
 }
 
