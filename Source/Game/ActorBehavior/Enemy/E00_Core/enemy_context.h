@@ -44,7 +44,10 @@ public:
     EnemyAnimationController* animationController = nullptr;
 
     const EnemyAiAgentSettingsAsset* aiAgentSettingsAsset = nullptr;
-    const auto& aiAgentSettings() const { return aiAgentSettingsAsset->GetData(); }
+    const auto& aiAgentSettings() const { 
+        static const EnemyAiAgentSettings::Data defaultSettings = EnemyAiAgentSettings::Data{};
+        return aiAgentSettingsAsset ? aiAgentSettingsAsset->GetData() : defaultSettings;
+    }
 
     EnemyRuntimeState runtimeState;
 };

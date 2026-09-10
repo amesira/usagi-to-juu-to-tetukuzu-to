@@ -18,8 +18,8 @@ class EnemyContext;
 /// @brief 複数機能から届く移動要求を優先度で解決する。
 class EnemyLocomotionController {
 public:
-    static constexpr int MAX_REQUEST_COUNT = 8;
     static constexpr int INVALID_REQUEST_HANDLE = -1;
+    static constexpr int MAX_REQUEST_COUNT = 8;
 
     enum class DirectionSource {
         None,
@@ -67,6 +67,7 @@ public:
                 return i;
             }
         }
+        return INVALID_REQUEST_HANDLE;
     }
     bool UpdateRequest(int handle, const LocomotionRequest& request) {
         for (int i = 0; i < MAX_REQUEST_COUNT; i++) {
