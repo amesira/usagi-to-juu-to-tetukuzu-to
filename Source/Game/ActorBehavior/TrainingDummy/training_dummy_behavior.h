@@ -11,8 +11,6 @@
 
 #include "training_dummy_effects.h"
 #include "training_dummy_motions.h"
-#include "training_dummy_ai.h"
-#include "training_dummy_locomotion.h"
 
 class TrainingDummyBehavior : public BehaviorComponent {
 private:
@@ -24,8 +22,6 @@ private:
 
     TrainingDummyEffects m_effects;
     TrainingDummyMotions m_motions;
-    TrainingDummyAI m_ai;
-    TrainingDummyLocomotion m_locomotion;
 
 public:
     TrainingDummyBehavior() = default;

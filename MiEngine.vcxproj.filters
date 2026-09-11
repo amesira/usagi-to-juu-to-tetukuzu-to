@@ -166,8 +166,6 @@
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_tree.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_ai.cpp" />
-    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_locomotion.cpp" />
     <ClCompile Include="Source\Engine\Processor\camera_processor.cpp">
       <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
@@ -442,8 +440,6 @@
     <ClCompile Include="Source\Engine\Core\game_object.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClCompile>
-    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_ai.h" />
-    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_locomotion.h" />
     <ClInclude Include="Source\Engine\Component\image_component.h">
       <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
