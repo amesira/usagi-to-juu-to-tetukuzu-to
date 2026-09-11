@@ -20,7 +20,7 @@
 
 bool EnemyWaitCombat::CanStart(const EnemyContext& context) const
 {
-    return CanContinue(context);
+    return context.runtimeState.isInAttackRange;
 }
 
 bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
@@ -29,11 +29,7 @@ bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
         return false;
     }
 
-    // 射程内にいるかを判定する
-    const auto position = context.transform->GetPosition();
-    const auto target = context.runtimeState.combatTargetPosition;
-    const float distance = std::hypot(target.x - position.x, target.z - position.z);
-    return distance >= m_minDistance && distance <= m_maxDistance;
+
 }
 
 void EnemyWaitCombat::Start(EnemyContext& context)

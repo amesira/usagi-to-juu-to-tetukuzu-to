@@ -17,10 +17,13 @@ class EnemyCombatTree {
     std::vector<EnemyCombatBase*> m_combatBehaviors;
     EnemyCombatBase* m_activeBehavior = nullptr;
 
+    class EnemyAttackCombat* m_attackCombat;
+
 public:
     void Initialize(EnemyContext& context);
     void Finalize(EnemyContext& context);
 
+    void RegisterBehavior(EnemyAttackCombat& behavior);
     void RegisterBehavior(EnemyCombatBase& behavior);
     void ClearBehaviors(EnemyContext& context);
 

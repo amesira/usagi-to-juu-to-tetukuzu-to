@@ -97,6 +97,15 @@ void EnemyAttackCombat::Cancel(EnemyContext& context)
     if (wasActive) m_context.runtimeState.cooldownRemaining = settings().restartCooldown;
 }
 
+bool EnemyAttackCombat::IsInAttackRange(EnemyContext& context) const
+{
+    if (!context.transform) return false;
+    const auto position = context.transform->GetPosition();
+    const auto target = context.runtimeState.combatTargetPosition;
+    const float distance = std::hypot(target.x - position.x, target.z - position.z);
+    return distance >= settings().minDistance && distance <= settings().maxDistance;
+}
+
 void EnemyAttackCombat::CloseAttack(EnemyContext& context)
 {
     if (!m_attackEntered) return;

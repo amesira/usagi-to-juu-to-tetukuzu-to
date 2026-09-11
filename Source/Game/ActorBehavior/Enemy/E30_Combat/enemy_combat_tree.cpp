@@ -4,8 +4,10 @@
 // Author：Miu Kitamura
 //===================================================
 #include "enemy_combat_tree.h"
-
 #include <algorithm>
+
+#include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Attack/enemy_attack_combat.h"
 
 void EnemyCombatTree::Initialize(EnemyContext& context)
 {
@@ -15,6 +17,12 @@ void EnemyCombatTree::Initialize(EnemyContext& context)
 void EnemyCombatTree::Finalize(EnemyContext& context)
 {
     ClearBehaviors(context);
+}
+
+void EnemyCombatTree::RegisterBehavior(EnemyAttackCombat& behavior)
+{
+    m_attackCombat = &behavior;
+    RegisterBehavior(static_cast<EnemyCombatBase&>(behavior));
 }
 
 void EnemyCombatTree::RegisterBehavior(EnemyCombatBase& behavior)
@@ -33,6 +41,10 @@ void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 /// @brief 現在のCombat行動を更新する
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
+    // === RuntimeState更新 ===
+
+
+
     for (auto* behavior : m_combatBehaviors) {
         if (behavior) behavior->UpdateBackground(context, deltaTime);
     }

@@ -24,6 +24,8 @@ struct EnemyRuntimeState {
 
     bool hasCombatTarget = false;
     DirectX::XMFLOAT3 combatTargetPosition = {};
+
+    bool isInAttackRange = false;
 };
 
 /// @brief 敵個体を構成する各機能が共有する参照と状態。

@@ -14,7 +14,6 @@ class EnemyWaitCombat;
 /// @brief 予備動作・攻撃・後隙を管理し、攻撃本体を派生クラスへ委ねる。
 class EnemyAttackCombat : public EnemyCombatBase {
     EnemyAttackContext m_context;
-    EnemyWaitCombat* m_waitCombat = nullptr;
     bool m_attackEntered = false;
 
 public:
@@ -31,6 +30,8 @@ public:
     EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
     void Finish(EnemyContext& context) override;
     void Cancel(EnemyContext& context) override;
+
+    bool IsInAttackRange(EnemyContext& context) const;
 
 protected:
     const EnemyAttackSettings::Data& settings() const { return m_context.settings(); }

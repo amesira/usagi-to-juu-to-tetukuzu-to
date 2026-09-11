@@ -16,9 +16,6 @@ class EnemyWaitCombat : public EnemyCombatBase {
     EnemyLocomotionController* m_controller = nullptr;
     int m_requestHandle = -1;
 
-    float m_minDistance = 0.0f;
-    float m_maxDistance = 2.0f;
-
 public:
     EnemyWaitCombat() : EnemyCombatBase(15, true) {}
 
