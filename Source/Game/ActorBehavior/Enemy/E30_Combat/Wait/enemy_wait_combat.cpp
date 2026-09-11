@@ -4,16 +4,23 @@
 // Author：Miu Kitamura
 //===================================================
 #include "enemy_wait_combat.h"
-
 #include <algorithm>
 #include <cmath>
+
+#include "Engine/Core/game_object.h"
+
 #include "Engine/Component/transform_component.h"
+
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+
 bool EnemyWaitCombat::CanStart(const EnemyContext& context) const
 {
-    return m_requested && CanContinue(context);
+    return CanContinue(context);
 }
 
 bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
@@ -31,10 +38,15 @@ bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
 
 void EnemyWaitCombat::Start(EnemyContext& context)
 {
+    // 攻撃要求をEnemyAIWorldに送信
+    if (auto* enemyAiWorld = Game::EnemyAIWorld()) {
+        AttackCoordinatorSystem::AttackRequest request;
+        request.enemyId = context.owner->GetOwner()->GetID();
+        enemyAiWorld->RequestAttack(request);
+    }
+
+    // LocomotionControllerへの要求を更新
     ReleaseLocomotion();
-    m_requested = false;
-    m_completed = false;
-    m_remainingTime = m_waitDuration;
     UpdateLocomotion(context);
 }
 
@@ -43,27 +55,18 @@ EnemyCombatStatus EnemyWaitCombat::Update(EnemyContext& context, float deltaTime
     if (!CanContinue(context) || !UpdateLocomotion(context)) {
         return EnemyCombatStatus::Failure;
     }
-    
-    // 待機時間が終了したらSuccessを返す
-    m_remainingTime -= deltaTime;
-    if (m_remainingTime < 0.0f) m_remainingTime = 0.0f;
 
-    m_completed = m_remainingTime <= 0.0f;
-    return m_completed ? EnemyCombatStatus::Success : EnemyCombatStatus::Running;
+    return EnemyCombatStatus::Running;
 }
 
 void EnemyWaitCombat::Finish(EnemyContext&)
 {
     ReleaseLocomotion();
-    m_requested = false;
 }
 
 void EnemyWaitCombat::Cancel(EnemyContext&)
 {
     ReleaseLocomotion();
-    m_requested = false;
-    m_completed = false;
-    m_remainingTime = 0.0f;
 }
 
 #pragma region Locomotion
@@ -95,4 +98,5 @@ void EnemyWaitCombat::ReleaseLocomotion()
     m_controller = nullptr;
     m_requestHandle = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
 }
+
 #pragma endregion

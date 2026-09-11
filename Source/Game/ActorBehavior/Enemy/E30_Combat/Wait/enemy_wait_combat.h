@@ -16,19 +16,11 @@ class EnemyWaitCombat : public EnemyCombatBase {
     EnemyLocomotionController* m_controller = nullptr;
     int m_requestHandle = -1;
 
-    float m_waitDuration = 0.3f;
-    float m_remainingTime = 0.0f;
     float m_minDistance = 0.0f;
     float m_maxDistance = 2.0f;
-    
-    bool m_requested = false;
-    bool m_completed = false;
 
 public:
     EnemyWaitCombat() : EnemyCombatBase(15, true) {}
-
-    bool IsCompleted() const { return m_completed; }
-    float GetRemainingTime() const { return m_remainingTime; }
 
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
