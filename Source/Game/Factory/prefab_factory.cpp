@@ -178,6 +178,8 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
     collider->SetRadius(1.0f);
     collider->SetHeight(1.0f);
     collider->SetCenter({ 0.0f, 0.5f, 0.0f });
+    rigidbody->SetMass(1.0f);
+    rigidbody->SetGravityScale(0.0f);
 
     behavior->SetupAiAgentSettings(
         DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
@@ -189,6 +191,10 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
     behavior->SetupMoveSettings(
         DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
             "asset/Data/enemy_move_settings.data.json",
+            true));
+    behavior->SetupAttackSettings(
+        DATA_LOADER->GetAsset<EnemyAttackSettingsAsset>(
+            "asset/Data/enemy_attack_settings.data.json",
             true));
 
     return { enemy };

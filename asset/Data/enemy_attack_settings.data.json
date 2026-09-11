@@ -1,0 +1,20 @@
+{
+    "data": {
+        "interruptibleRecovery": false,
+        "interruptibleWindup": false,
+        "jumpDuration": 0.30000001192092896,
+        "jumpGravity": 20.0,
+        "maxDistance": 7.0,
+        "minDistance": 0.0,
+        "recoveryDuration": 0.5,
+        "restartCooldown": 1.0,
+        "shotCount": 3,
+        "shotInterval": 0.30000001192092896,
+        "slashDuration": 0.30000001192092896,
+        "this_is_header_field": null,
+        "windupDuration": 0.30000001192092896
+    },
+    "formatVersion": 0,
+    "name": "enemy_attack_settings.data",
+    "type": "EnemyAttackSettingsAsset"
+}

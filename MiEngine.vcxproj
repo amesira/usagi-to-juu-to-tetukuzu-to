@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.cpp" />
@@ -311,6 +312,7 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E00_Core\enemy_context.h" />
