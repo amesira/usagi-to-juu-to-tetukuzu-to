@@ -9,20 +9,27 @@
 #include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Wait/enemy_wait_combat.h"
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Engine/Core/game_object.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
 bool EnemyAttackCombat::CanStart(const EnemyContext& context) const
 {
     if (!CanContinue(context) || m_context.runtimeState.cooldownRemaining > 0.0f) return false;
-    const auto position = context.transform->GetPosition();
-    const auto target = context.runtimeState.combatTargetPosition;
-    const float distance = std::hypot(target.x - position.x, target.z - position.z);
-    return distance >= settings().minDistance && distance <= settings().maxDistance;
+
+    // 射程内で、かつCoordinatorが攻撃可能と判断した場合のみ開始する
+    return context.runtimeState.isInAttackRange
+        && context.aiWorld->CanAttack(context.owner->GetOwner()->GetID());
 }
 
 bool EnemyAttackCombat::CanContinue(const EnemyContext& context) const
 {
     // 開始後の射程離脱では中断しない。Stun/DeadはTreeがCancelする。
-    return context.runtimeState.hasCombatTarget && context.transform;
+    return context.runtimeState.hasCombatTarget && context.transform
+        && context.owner && context.owner->GetOwner()
+        && context.aiWorld && context.aiWorld->GetEnable() && context.aiWorld->IsInitialized()
+        && (!m_hasAttackSlot || context.aiWorld->GetAttackCoordinatorSystem().IsAttacking(
+            context.owner->GetOwner()->GetID()));
 }
 
 bool EnemyAttackCombat::IsInterruptible(const EnemyContext&) const
@@ -42,47 +49,72 @@ void EnemyAttackCombat::UpdateBackground(EnemyContext&, float deltaTime)
 void EnemyAttackCombat::Start(EnemyContext& context)
 {
     Release(context);
+
+    // 攻撃枠を消費して攻撃開始
+    m_hasAttackSlot = CanStart(context) && context.aiWorld->ConsumeAttackRequest(
+        context.owner->GetOwner()->GetID());
+    if (!m_hasAttackSlot) return;
+
     auto& state = m_context.runtimeState;
-    state.phase = EnemyAttackPhase::Windup;
-    state.phaseElapsed = 0.0f;
     state.aimPosition = context.runtimeState.combatTargetPosition;
-    BeginWindup(context);
+
+    ChangePhase(EnemyAttackPhase::Windup);
 }
 
 EnemyCombatStatus EnemyAttackCombat::Update(EnemyContext& context, float deltaTime)
 {
-    if (!CanContinue(context)) return EnemyCombatStatus::Failure;
+    if (!m_hasAttackSlot || !CanContinue(context)) return EnemyCombatStatus::Failure;
     const float dt = (std::max)(0.0f, deltaTime);
+
     auto& state = m_context.runtimeState;
     state.phaseElapsed += dt;
-    // 段階の切り替えは1更新に1回。新しい段階の時間は次の更新から計測する。
+
+    bool enteredPhase = m_enteredPhase;
+    m_enteredPhase = false;
+
     switch (state.phase) {
-    case EnemyAttackPhase::Windup:
+    case EnemyAttackPhase::Windup: {
+        if (enteredPhase) {
+            BeginWindup(context);
+        }
+
         state.aimPosition = context.runtimeState.combatTargetPosition;
         if (state.phaseElapsed >= settings().windupDuration) {
             EndWindup(context);
-            state.phase = EnemyAttackPhase::Active;
-            state.phaseElapsed = 0.0f;
+            ChangePhase(EnemyAttackPhase::Active);
+        }
+        return EnemyCombatStatus::Running;
+    }
+    case EnemyAttackPhase::Active: {
+        if (enteredPhase) {
             m_attackEntered = true;
             BeginAttack(context);
         }
-        return EnemyCombatStatus::Running;
-    case EnemyAttackPhase::Active: {
+
         const auto status = UpdateAttack(context, dt);
+
         if (status == EnemyCombatStatus::Failure) return status;
         if (status == EnemyCombatStatus::Success) {
             CloseAttack(context);
-            state.phase = EnemyAttackPhase::Recovery;
-            state.phaseElapsed = 0.0f;
+            ChangePhase(EnemyAttackPhase::Recovery);
         }
         return EnemyCombatStatus::Running;
     }
-    case EnemyAttackPhase::Recovery:
+    case EnemyAttackPhase::Recovery: {
+        // 後隙は待機するだけ
         return state.phaseElapsed >= settings().recoveryDuration
             ? EnemyCombatStatus::Success : EnemyCombatStatus::Running;
-    default:
-        return EnemyCombatStatus::Failure;
     }
+    default: return EnemyCombatStatus::Failure;
+    }
+}
+
+void EnemyAttackCombat::ChangePhase(EnemyAttackPhase newPhase)
+{
+    if (m_context.runtimeState.phase == newPhase) return;
+    m_context.runtimeState.phase = newPhase;
+    m_context.runtimeState.phaseElapsed = 0.0f;
+    m_enteredPhase = true;
 }
 
 void EnemyAttackCombat::Finish(EnemyContext& context) { Cancel(context); }
@@ -94,15 +126,17 @@ void EnemyAttackCombat::Cancel(EnemyContext& context)
     if (wasActive) m_context.runtimeState.cooldownRemaining = settings().restartCooldown;
 }
 
-bool EnemyAttackCombat::IsInAttackRange(EnemyContext& context) const
+/// @brief 攻撃対象との距離が射程内かどうかを判定する
+bool EnemyAttackCombat::IsInAttackRange(const EnemyContext& context) const
 {
-    if (!context.transform) return false;
+    if (!context.runtimeState.hasCombatTarget || !context.transform) return false;
     const auto position = context.transform->GetPosition();
     const auto target = context.runtimeState.combatTargetPosition;
     const float distance = std::hypot(target.x - position.x, target.z - position.z);
     return distance >= settings().minDistance && distance <= settings().maxDistance;
 }
 
+#pragma region 攻撃解放
 void EnemyAttackCombat::CloseAttack(EnemyContext& context)
 {
     if (!m_attackEntered) return;
@@ -116,4 +150,9 @@ void EnemyAttackCombat::Release(EnemyContext& context)
     if (m_context.runtimeState.phase == EnemyAttackPhase::Windup) EndWindup(context);
     m_context.runtimeState.phase = EnemyAttackPhase::Idle;
     m_context.runtimeState.phaseElapsed = 0.0f;
+    if (m_hasAttackSlot && context.aiWorld && context.owner && context.owner->GetOwner()) {
+        context.aiWorld->FinishAttack(context.owner->GetOwner()->GetID());
+    }
+    m_hasAttackSlot = false;
 }
+#pragma endregion

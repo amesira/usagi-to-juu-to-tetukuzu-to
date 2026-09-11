@@ -19,7 +19,6 @@ public:
     void Initialize(const EnemyContext& context, const EnemyApproachSettingsAsset* settings);
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
-    bool IsInterruptible(const EnemyContext& context) const override;
     
     void UpdateBackground(EnemyContext& context, float deltaTime) override;
     
@@ -28,7 +27,7 @@ public:
     void Finish(EnemyContext& context) override;
     void Cancel(EnemyContext& context) override;
 
-    float GetStopDistance() const { return m_context.settings().stopDistance; }
+    float GetStopDistance() const;
     const EnemyApproachContext& GetContext() const { return m_context; }
 
 private:

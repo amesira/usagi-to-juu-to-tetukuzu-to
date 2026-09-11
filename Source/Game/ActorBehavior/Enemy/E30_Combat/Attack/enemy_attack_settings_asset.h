@@ -11,16 +11,22 @@
 namespace EnemyAttackSettings {
     // 共通設定と各攻撃の仮の進行時間。実攻撃の接続後も調整に使用する。
     struct Data {
+        // === 攻撃の射程 ===
         float minDistance = 0.0f;
         float maxDistance = 2.0f;
+        // === 攻撃の進行時間 ===
         float windupDuration = 0.3f;
         float recoveryDuration = 0.5f;
         float restartCooldown = 1.0f;
+        // === 進行中の割り込み可否 ===
         bool interruptibleWindup = true;
         bool interruptibleRecovery = true;
+
+        // === Melee用の追加設定 ===
         float jumpDuration = 0.6f;
         float jumpHeight = 2.0f;
         float slashDuration = 0.3f;
+        // === Ranged用の追加設定 ===
         int shotCount = 3;
         float shotInterval = 0.3f;
     };
@@ -42,16 +48,26 @@ namespace EnemyAttackSettings {
 
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            // === 攻撃の射程 ===
+            MakeHeaderField("Attack Range"),
             MakeField("minDistance", "Min Distance", &Data::minDistance, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("maxDistance", "Max Distance", &Data::maxDistance, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === 攻撃の進行時間 ===
+            MakeHeaderField("Attack Timing"),
             MakeField("windupDuration", "Windup Duration", &Data::windupDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("recoveryDuration", "Recovery Duration", &Data::recoveryDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("restartCooldown", "Restart Cooldown", &Data::restartCooldown, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === 進行中の割り込み可否 ===
+            MakeHeaderField("Interruptibility"),
             MakeField("interruptibleWindup", "Interruptible Windup", &Data::interruptibleWindup),
             MakeField("interruptibleRecovery", "Interruptible Recovery", &Data::interruptibleRecovery),
+            // === Melee用の追加設定 ===
+            MakeHeaderField("Melee Attack Settings"),
             MakeField("jumpDuration", "Jump Duration", &Data::jumpDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("jumpHeight", "Jump Height", &Data::jumpHeight, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("slashDuration", "Slash Duration", &Data::slashDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === Ranged用の追加設定 ===
+            MakeHeaderField("Ranged Attack Settings"),
             MakeField("shotCount", "Shot Count", &Data::shotCount, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("shotInterval", "Shot Interval", &Data::shotInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
         };

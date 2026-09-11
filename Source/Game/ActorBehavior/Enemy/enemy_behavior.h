@@ -15,6 +15,7 @@
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_tree.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Approach/enemy_approach_combat.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/Melee/enemy_melee_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/Wait/enemy_wait_combat.h"
 
 #include "enemy_animation_controller.h"
 
@@ -35,6 +36,7 @@ private:
     EnemyAnimationController m_animationController;
 
     EnemyMeleeAttackCombat m_attackCombat;
+    EnemyWaitCombat m_waitCombat;
     EnemyApproachCombat m_approachCombat;
 
     const EnemyAiAgentSettingsAsset* m_aiAgentSettings = nullptr;

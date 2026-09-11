@@ -26,12 +26,13 @@ void EnemyApproachCombat::Initialize(const EnemyContext& context, const EnemyApp
     m_context.aiWorld = context.aiWorld;
     m_context.pathFollower = context.pathFollower;
     m_context.locomotionController = context.locomotionController;
+    m_context.combatTree = context.combatTree;
     m_context.aiAgentSettingsAsset = context.aiAgentSettingsAsset;
 }
 
 bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
 {
-    if (!CanContinue(context) || m_restartCooldown > 0.0f) {
+    if (!CanContinue(context) || context.runtimeState.isInAttackRange || m_restartCooldown > 0.0f) {
         return false;
     }
 
@@ -39,7 +40,9 @@ bool EnemyApproachCombat::CanStart(const EnemyContext& context) const
     const auto target = context.runtimeState.combatTargetPosition;
 
     float distanceToTarget = std::hypot(target.x - position.x, target.z - position.z);
-    float restartMargin = m_context.runtimeState.hasReachedDestination ? m_context.settings().restartDistanceMargin : 0.0f;
+    const bool hasAttack = m_context.combatTree && m_context.combatTree->GetAttackCombat();
+    float restartMargin = !hasAttack && m_context.runtimeState.hasReachedDestination
+        ? m_context.settings().restartDistanceMargin : 0.0f;
     return distanceToTarget > GetStopDistance() + restartMargin;
 }
 
@@ -49,15 +52,10 @@ bool EnemyApproachCombat::CanContinue(const EnemyContext& context) const
     return context.runtimeState.hasCombatTarget && context.transform;
 }
 
-bool EnemyApproachCombat::IsInterruptible(const EnemyContext& context) const
+float EnemyApproachCombat::GetStopDistance() const
 {
-    if (!CanContinue(context)) return true;
-
-    const auto position = context.transform->GetPosition();
-    const auto target = context.runtimeState.combatTargetPosition;
-
-    // 到達フレームはNavigationのSuccessと到達フラグの更新を優先する。
-    return std::hypot(target.x - position.x, target.z - position.z) > GetStopDistance();
+    const auto* attack = m_context.combatTree ? m_context.combatTree->GetAttackCombat() : nullptr;
+    return attack ? attack->GetMaxAttackDistance() : m_context.settings().stopDistance;
 }
 
 void EnemyApproachCombat::UpdateBackground(EnemyContext&, float deltaTime)

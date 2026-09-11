@@ -41,6 +41,7 @@ void EnemyBehavior::Start()
     m_combatTree.Initialize(m_context);
 
     m_combatTree.RegisterBehavior(m_attackCombat);
+    m_combatTree.RegisterBehavior(m_waitCombat);
     m_combatTree.RegisterBehavior(m_approachCombat);
 
     m_animationController.Initialize(m_context);
@@ -81,6 +82,7 @@ void EnemyBehavior::Update()
     }
     else {
         m_combatTree.Cancel(m_context);
+        m_context.runtimeState.isInAttackRange = false;
     }
 
     // 移動の更新

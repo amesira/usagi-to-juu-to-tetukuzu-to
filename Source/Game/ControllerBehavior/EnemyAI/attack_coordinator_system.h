@@ -35,6 +35,7 @@ private:
     // 次の攻撃許可を出すまでの残り時間
     float m_nextPermissionTime = 0.0f;
     bool m_initialized = false;
+    const EnemyAIWorldContext* m_worldContext = nullptr;
 
 public:
     void Initialize(const EnemyAIWorldContext& context);
@@ -44,6 +45,7 @@ public:
     bool RequestAttack(const AttackRequest& request);
     bool CanAttack(int enemyId) const;
     bool ConsumeAttackRequest(int enemyId);
+    bool FinishAttack(int enemyId);
 
     bool CancelAttackRequest(int enemyId);
     bool HasAttackRequest(int enemyId) const;

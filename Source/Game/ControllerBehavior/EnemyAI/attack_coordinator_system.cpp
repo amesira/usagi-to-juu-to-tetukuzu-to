@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
 
 using namespace EnemyAiWorld;
 
@@ -25,14 +26,16 @@ void AttackCoordinatorSystem::Initialize(const EnemyAIWorldContext& context)
 
     m_nextPermissionTime = 0.0f;
     m_initialized = true;
+    m_worldContext = &context;
 
     m_enemyValidator = [scene = context.scene](int enemyId) {
         if (!scene) return false;
         GameObject* enemyObject = scene->GetGameObjectByID(static_cast<unsigned int>(enemyId));
-        if (!enemyObject) return false;
+        if (!enemyObject || !enemyObject->GetActive()) return false;
         auto* behavior = enemyObject->GetComponent<EnemyBehavior>();
-        if (!behavior) return false;
-        return true;
+        if (!behavior || !behavior->GetEnable() || behavior->GetCondition() != EnemyCondition::Combat) return false;
+        auto* health = enemyObject->GetComponent<HealthBehavior>();
+        return !health || !health->IsDead();
         };
 }
 
@@ -45,6 +48,7 @@ void AttackCoordinatorSystem::Finalize(const EnemyAIWorldContext& context)
     m_nextPermissionTime = 0.0f;
     m_enemyValidator = {};
     m_initialized = false;
+    m_worldContext = nullptr;
 }
 
 void AttackCoordinatorSystem::Update(EnemyAIWorldContext& context, float deltaTime)
@@ -143,7 +147,7 @@ void AttackCoordinatorSystem::DelayNextPermission(const EnemyAIWorldContext& con
 
 bool AttackCoordinatorSystem::IsEnemyValid(int enemyId) const
 {
-    return m_enemyValidator ? m_enemyValidator(enemyId) : false;
+    return m_initialized && enemyId >= 0 && m_enemyValidator && m_enemyValidator(enemyId);
 }
 
 /// @brief 攻撃リクエストをキャンセルする
@@ -155,5 +159,13 @@ bool AttackCoordinatorSystem::CancelAttackRequest(int enemyId)
         [enemyId](const auto& permission) { return permission.enemyId == enemyId; });
     const auto attacking = std::erase(m_currentAttackers, enemyId);
 
+    if ((permitted || attacking) && m_worldContext) DelayNextPermission(*m_worldContext);
     return waiting || permitted || attacking;
+}
+
+bool AttackCoordinatorSystem::FinishAttack(int enemyId)
+{
+    if (std::erase(m_currentAttackers, enemyId) == 0) return false;
+    if (m_worldContext) DelayNextPermission(*m_worldContext);
+    return true;
 }

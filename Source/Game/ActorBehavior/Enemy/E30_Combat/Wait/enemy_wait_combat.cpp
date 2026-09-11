@@ -17,10 +17,11 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_tree.h"
 
 bool EnemyWaitCombat::CanStart(const EnemyContext& context) const
 {
-    return context.runtimeState.isInAttackRange;
+    return CanContinue(context);
 }
 
 bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
@@ -28,18 +29,14 @@ bool EnemyWaitCombat::CanContinue(const EnemyContext& context) const
     if (!context.runtimeState.hasCombatTarget || !context.transform || !context.locomotionController) {
         return false;
     }
-
-
+    return context.runtimeState.isInAttackRange && context.owner && context.owner->GetOwner()
+        && context.combatTree && context.aiWorld && context.aiWorld->GetEnable()
+        && context.aiWorld->IsInitialized();
 }
 
 void EnemyWaitCombat::Start(EnemyContext& context)
 {
-    // 攻撃要求をEnemyAIWorldに送信
-    if (auto* enemyAiWorld = Game::EnemyAIWorld()) {
-        AttackCoordinatorSystem::AttackRequest request;
-        request.enemyId = context.owner->GetOwner()->GetID();
-        enemyAiWorld->RequestAttack(request);
-    }
+    m_completed = false;
 
     // LocomotionControllerへの要求を更新
     ReleaseLocomotion();
@@ -52,23 +49,40 @@ EnemyCombatStatus EnemyWaitCombat::Update(EnemyContext& context, float deltaTime
         return EnemyCombatStatus::Failure;
     }
 
-    return EnemyCombatStatus::Running;
+    // クールダウン中は停止して待つ。攻撃枠は予約しない
+    if (!context.combatTree->IsAttackReady()) return EnemyCombatStatus::Running;
+    const int enemyId = context.owner->GetOwner()->GetID();
+
+    // 期限切れや外部取消後も再要求する。重複登録はCoordinatorが防ぐ
+    context.aiWorld->RequestAttack({ enemyId });
+    m_completed = context.aiWorld->CanAttack(enemyId);
+    return m_completed ? EnemyCombatStatus::Success : EnemyCombatStatus::Running;
 }
 
-void EnemyWaitCombat::Finish(EnemyContext&)
+void EnemyWaitCombat::Finish(EnemyContext& context)
 {
+    if (!m_completed) {
+        Cancel(context);
+        return;
+    }
+    // 正常終了では予約を保持する。次のAttack::Startが消費する。
     ReleaseLocomotion();
 }
 
-void EnemyWaitCombat::Cancel(EnemyContext&)
+void EnemyWaitCombat::Cancel(EnemyContext& context)
 {
     ReleaseLocomotion();
+    m_completed = false;
+    if (context.aiWorld && context.owner && context.owner->GetOwner()) {
+        context.aiWorld->CancelAttackRequest(context.owner->GetOwner()->GetID());
+    }
 }
 
 #pragma region Locomotion
 /// @brief LocomotionControllerへの要求を更新
 bool EnemyWaitCombat::UpdateLocomotion(const EnemyContext& context)
 {
+    if (m_controller != context.locomotionController) ReleaseLocomotion();
     m_controller = context.locomotionController;
     if (!m_controller) return false;
 

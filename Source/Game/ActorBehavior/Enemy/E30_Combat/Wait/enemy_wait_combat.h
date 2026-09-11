@@ -3,7 +3,7 @@
 // Date  ：2026/09/11
 // Author：Miu Kitamura
 // 
-// ・攻撃前の待機。RequestWaitで予約し、完了後はIsCompletedを攻撃側で確認する
+// ・射程内で停止し、クールダウン終了後にCoordinatorの攻撃許可を待つ
 // ・他の敵との攻撃タイミングが重なってしまうのを防ぎたい
 //---------------------------------------------------
 #pragma once
@@ -11,13 +11,14 @@
 
 class EnemyLocomotionController;
 
-/// @brief 攻撃前の待機。RequestWaitで予約し、完了後はIsCompletedを攻撃側で確認する
+/// @brief 許可取得で正常終了する。通常終了では予約を保持し、中断時は取り消す。
 class EnemyWaitCombat : public EnemyCombatBase {
     EnemyLocomotionController* m_controller = nullptr;
     int m_requestHandle = -1;
 
 public:
-    EnemyWaitCombat() : EnemyCombatBase(15, true) {}
+    // 許可取得時にSuccessで終了し、Attackへ予約を引き渡す。
+    EnemyWaitCombat() : EnemyCombatBase(15, false) {}
 
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
@@ -27,6 +28,7 @@ public:
     void Cancel(EnemyContext& context) override;
 
 private:
+    bool m_completed = false;
     bool UpdateLocomotion(const EnemyContext& context);
     void ReleaseLocomotion();
 

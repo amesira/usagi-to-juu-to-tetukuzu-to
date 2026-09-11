@@ -5,6 +5,7 @@
 //===================================================
 #include "enemy_approach_navigation.h"
 #include "enemy_approach_context.h"
+#include "enemy_approach_combat.h"
 
 #include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/Move/enemy_path_follower.h"
@@ -58,7 +59,8 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
 
     // ターゲットの位置を目的地として設定する
     const auto destination = context.enemyRuntimeState->combatTargetPosition;
-    state.hasReachedDestination = Distance(position, destination) <= settings.stopDistance;
+    const float stopDistance = context.owner ? context.owner->GetStopDistance() : settings.stopDistance;
+    state.hasReachedDestination = Distance(position, destination) <= stopDistance;
     if (state.hasReachedDestination) {
         return EnemyCombatStatus::Success;
     }

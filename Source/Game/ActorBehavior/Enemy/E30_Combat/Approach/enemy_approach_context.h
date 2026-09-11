@@ -20,6 +20,7 @@ struct EnemyApproachContext {
     EnemyAIWorldController* aiWorld = nullptr;
     EnemyPathFollower* pathFollower = nullptr;
     EnemyLocomotionController* locomotionController = nullptr;
+    EnemyCombatTree* combatTree = nullptr;
     
     const EnemyAiAgentSettingsAsset* aiAgentSettingsAsset = nullptr;
     

@@ -4,7 +4,12 @@
 #include <DirectXMath.h>
 #include "enemy_attack_settings_asset.h"
 
-enum class EnemyAttackPhase { Idle, Windup, Active, Recovery };
+enum class EnemyAttackPhase { 
+    Idle, 
+    Windup,     // 予備動作 
+    Active,     // 攻撃本体
+    Recovery    // 後隙
+};
 
 struct EnemyAttackRuntimeState {
     EnemyAttackPhase phase = EnemyAttackPhase::Idle;

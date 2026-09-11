@@ -17,7 +17,7 @@ class EnemyCombatTree {
     std::vector<EnemyCombatBase*> m_combatBehaviors;
     EnemyCombatBase* m_activeBehavior = nullptr;
 
-    class EnemyAttackCombat* m_attackCombat;
+    class EnemyAttackCombat* m_attackCombat = nullptr;
 
 public:
     void Initialize(EnemyContext& context);
@@ -32,4 +32,6 @@ public:
     void Cancel(EnemyContext& context);
 
     const EnemyCombatBase* GetActiveBehavior() const { return m_activeBehavior; }
+    bool IsAttackReady() const;
+    const EnemyAttackCombat* GetAttackCombat() const { return m_attackCombat; }
 };

@@ -8,6 +8,9 @@
 
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Attack/enemy_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Engine/Core/game_object.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
 void EnemyCombatTree::Initialize(EnemyContext& context)
 {
@@ -36,15 +39,17 @@ void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 {
     Cancel(context);
     m_combatBehaviors.clear();
+    m_attackCombat = nullptr;
 }
 
 /// @brief 現在のCombat行動を更新する
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
     // === RuntimeState更新 ===
-    if (m_attackCombat) {
-        context.runtimeState.isInAttackRange = m_attackCombat->IsInAttackRange(context);
-    }
+    context.runtimeState.isInAttackRange =
+        m_attackCombat && m_attackCombat->IsInAttackRange(context);
+    // Wait完了後、Attack開始前に射程を離れた場合も予約を残さない。
+    if (!m_activeBehavior && !context.runtimeState.isInAttackRange) Cancel(context);
 
 
     for (auto* behavior : m_combatBehaviors) {
@@ -68,7 +73,7 @@ void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
     }
 
     if (selected) {
-        Cancel(context);
+        if (m_activeBehavior) Cancel(context);
         m_activeBehavior = selected;
         if (m_activeBehavior) m_activeBehavior->Start(context);
     }
@@ -83,7 +88,14 @@ void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 
 void EnemyCombatTree::Cancel(EnemyContext& context)
 {
-    if (!m_activeBehavior) return;
-    m_activeBehavior->Cancel(context);
+    if (m_activeBehavior) m_activeBehavior->Cancel(context);
     m_activeBehavior = nullptr;
+    if (context.aiWorld && context.owner && context.owner->GetOwner()) {
+        context.aiWorld->CancelAttackRequest(context.owner->GetOwner()->GetID());
+    }
+}
+
+bool EnemyCombatTree::IsAttackReady() const
+{
+    return m_attackCombat && m_attackCombat->IsCooldownComplete();
 }
