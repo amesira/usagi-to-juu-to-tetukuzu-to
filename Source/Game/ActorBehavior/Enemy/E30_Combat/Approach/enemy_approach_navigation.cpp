@@ -68,9 +68,9 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
     m_minRepathTimer -= deltaTime;
     m_retryTimer -= deltaTime;
 
-    // 経路追従の更新を行う
     context.pathFollower->Update(position);
 
+    // === 立ち往生検知 ===
     const auto direction = context.pathFollower->GetMoveDirection();
     if (MiMath::Length(direction) > 0.001f) {
         m_stuckCheckTimer -= deltaTime;
@@ -102,6 +102,18 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
     const bool canRepath = m_repathTimer <= 0.0f || targetMoved || needRepath;
 
     if (m_retryTimer <= 0.0f && m_minRepathTimer <= 0.0f && canRepath) {
+        const auto& navigation = context.aiWorld->GetNavigationSystem();
+        FailedPathQuery query;
+        query.gridRevision = navigation.GetGridRevision();
+        query.agent = context.aiAgentSettings().navigationAgent;
+        query.valid = navigation.WorldToGrid(position, query.startCell)
+            && navigation.WorldToGrid(destination, query.goalCell);
+        // 到達不能と確認済みなら全探索を繰り返さない。
+        if (m_failedPathQuery.Matches(query)) {
+            context.pathFollower->ClearPath();
+            return EnemyCombatStatus::Failure;
+        }
+        m_failedPathQuery.valid = false;
         auto result = context.aiWorld->FindPath(
             position, destination, context.aiAgentSettings().navigationAgent, context.gameObjectID);
         
@@ -110,6 +122,15 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
         m_repathTimer = settings.repathInterval;
         m_minRepathTimer = settings.minRepathInterval;
         context.pathFollower->ClearPath();
+
+        // 完全探索での到達不能、またはセルの歩行不可だけを記録する。
+        // 範囲外でセル座標を得られない場合・未準備・立ち往生は記録しない。
+        if (query.valid && (result.status == EnemyAiWorld::PathQueryStatus::Unreachable
+            || result.status == EnemyAiWorld::PathQueryStatus::InvalidStart
+            || result.status == EnemyAiWorld::PathQueryStatus::InvalidGoal)) {
+            m_failedPathQuery = query;
+            return EnemyCombatStatus::Failure;
+        }
 
         if (result.status != EnemyAiWorld::PathQueryStatus::Success || result.path.waypoints.empty()) {
             m_retryTimer = settings.pathRetryInterval;

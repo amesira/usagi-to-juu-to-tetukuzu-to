@@ -22,7 +22,7 @@ using namespace EnemyAiAgent;
 
 void NavigationSystem::Initialize(EnemyAIWorldContext& context)
 {
-    m_isBuilt = false;
+    ClearGrid();
     BuildGrid(context);
 }
 
@@ -36,6 +36,7 @@ bool NavigationSystem::BuildGrid(EnemyAIWorldContext& context)
 {
     if (m_isBuilt) return true;
 
+    m_gridRevision = ++s_nextGridRevision;
     m_isBuilt = true;
     m_buildSettings = context.settings().navigationGrid;
 

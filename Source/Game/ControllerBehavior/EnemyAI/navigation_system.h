@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #ifndef NAVIGATION_SYSTEM_H
 #define NAVIGATION_SYSTEM_H
+#include <cstdint>
 #include "enemy_ai_world_context.h"
 #include "Engine/Core/game_object_layer.h"
 
@@ -21,6 +22,9 @@ private:
 
     EnemyAiWorld::NavigationGridSettings m_buildSettings;
     bool m_isBuilt = false;
+    // 別のNavigationSystemへの置き換えも識別できる、グリッドの世代番号。
+    inline static std::uint64_t s_nextGridRevision = 0;
+    std::uint64_t m_gridRevision = 0;
 
     // index = x * cellCountZ + z
     std::vector<EnemyAiWorld::GridCell> m_cells;
@@ -58,9 +62,11 @@ public:
 
     /// @brief NavigationGridを生成する
     bool BuildGrid(EnemyAIWorldContext& context);
+    std::uint64_t GetGridRevision() const { return m_gridRevision; }
     void ClearGrid() {
         m_cells.clear();
         m_isBuilt = false;
+        m_gridRevision = ++s_nextGridRevision;
     }
 
     // === NavigationCell変換・取得 ===

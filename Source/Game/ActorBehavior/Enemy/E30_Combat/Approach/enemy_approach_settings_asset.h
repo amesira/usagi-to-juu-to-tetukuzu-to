@@ -7,17 +7,19 @@
 #include "Engine/Editor/Schema/enum_field_editor.h"
 
 namespace EnemyApproachSettings {
-    enum class FacingMode { Movement, Target };
     struct Data {
+        // === 距離設定 ===
         float stopDistance = 2.0f;
         float restartDistanceMargin = 0.3f;
+        // === 移動速度設定 ===
         float moveSpeedMultiplier = 1.0f;
-        FacingMode facingMode = FacingMode::Target;
+        // === 経路再探索設定 ===
         float repathInterval = 0.5f;
         float targetMoveThreshold = 0.5f;
         float minRepathInterval = 0.1f;
         float pathRetryInterval = 1.0f;
         int maxPathFailures = 3;
+        // === 立ち往生検知設定 ===
         float stuckCheckInterval = 1.0f;
         float minProgressDistance = 0.1f;
     };
@@ -36,18 +38,22 @@ namespace EnemyApproachSettings {
     }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            // === Distance Settings ===
+            MakeHeaderField("Distance Settings"),
             MakeField("stopDistance", "Stop Distance", &Data::stopDistance, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("restartDistanceMargin", "Restart Distance Margin", &Data::restartDistanceMargin, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === Move Speed Settings ===
+            MakeHeaderField("Move Speed Settings"),
             MakeField("moveSpeedMultiplier", "Move Speed Multiplier", &Data::moveSpeedMultiplier, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
-            MakeField("facingMode", "Facing Mode", &Data::facingMode,
-                EnumFieldOptions<FacingMode>{ .choices = {
-                    {FacingMode::Movement, "Movement", "Movement"},
-                    {FacingMode::Target, "Target", "Target"}} }),
+            // === Repath Settings ===
+            MakeHeaderField("Repath Settings"),
             MakeField("repathInterval", "Repath Interval (s)", &Data::repathInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("targetMoveThreshold", "Target Move Threshold", &Data::targetMoveThreshold, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("minRepathInterval", "Min Repath Interval (s)", &Data::minRepathInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("pathRetryInterval", "Path Retry Interval (s)", &Data::pathRetryInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("maxPathFailures", "Max Path / Stuck Failures", &Data::maxPathFailures, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === Stuck Check Settings ===
+            MakeHeaderField("Stuck Check Settings"),
             MakeField("stuckCheckInterval", "Stuck Check Interval (s)", &Data::stuckCheckInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("minProgressDistance", "Min Progress Distance", &Data::minProgressDistance, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
         };
