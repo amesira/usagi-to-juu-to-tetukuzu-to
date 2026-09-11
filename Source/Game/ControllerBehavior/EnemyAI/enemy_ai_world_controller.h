@@ -14,6 +14,7 @@
 #include "meta_ai.h"
 #include "navigation_system.h"
 #include "tactical_query_system.h"
+#include "attack_coordinator_system.h"
 
 class EnemyAIWorldController : public BehaviorComponent {
 private:
@@ -22,6 +23,7 @@ private:
     MetaAI m_metaAI;
     NavigationSystem m_navigation;
     TacticalQuerySystem m_tacticalQuery;
+    AttackCoordinatorSystem m_attackCoordinator;
 
     bool m_isInitialized = false;
 
@@ -34,6 +36,18 @@ public:
     void DrawComponentInspector() override;
 
     bool IsInitialized() const { return m_isInitialized; }
+
+    bool RequestAttack(const AttackCoordinatorSystem::AttackRequest& request) {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.RequestAttack(request);
+    }
+    bool CanAttack(int enemyId) const {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.CanAttack(enemyId);
+    }
+    bool ConsumeAttackRequest(int enemyId) {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.ConsumeAttackRequest(enemyId);
+    }
+    bool FinishAttack(int enemyId) { return m_attackCoordinator.FinishAttack(enemyId); }
+    bool CancelAttackRequest(int enemyId) { return m_attackCoordinator.CancelAttackRequest(enemyId); }
 
     // 個体側へWorldContextを公開せず、経路探索の窓口を提供する
     // ここでSmoothPathまで行なってしまう
@@ -58,6 +72,8 @@ public:
     const NavigationSystem& GetNavigationSystem() const { return m_navigation; }
     TacticalQuerySystem& GetTacticalQuerySystem() { return m_tacticalQuery; }
     const TacticalQuerySystem& GetTacticalQuerySystem() const { return m_tacticalQuery; }
+    AttackCoordinatorSystem& GetAttackCoordinatorSystem() { return m_attackCoordinator; }
+    const AttackCoordinatorSystem& GetAttackCoordinatorSystem() const { return m_attackCoordinator; }
 
 };
 

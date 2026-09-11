@@ -75,6 +75,7 @@ struct EnemyAIWorldContext {
     class MetaAI* metaAI = nullptr;
     class NavigationSystem* navigation = nullptr;
     class TacticalQuerySystem* tacticalQuery = nullptr;
+    class AttackCoordinatorSystem* attackCoordinator = nullptr;
 
     const EnemyAiWorldSettingsAsset* settingsAsset = nullptr;
     const EnemyAiWorldSettings::Data& settings() const {

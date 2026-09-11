@@ -32,12 +32,19 @@ namespace EnemyAiWorld {
         float enemyInfluenceRadiusMultiplier = 1.5f;
         float enemyDensityCostWeight = 1.0f;
     };
+    /// @brief 攻撃調整の設定
+    struct AttackCoordinatorSettings {
+        int maxConcurrentAttacks = 1;
+        float attackInterval = 0.5f;
+        float permissionLifetime = 2.0f;
+    };
 }
 
 namespace EnemyAiWorldSettings {
     struct Data {
         EnemyAiWorld::NavigationGridSettings navigationGrid;
         EnemyAiWorld::TacticalSettings tactical;
+        EnemyAiWorld::AttackCoordinatorSettings attackCoordinator;
     };
 
     inline const auto& GetNavigationGridSchema() {
@@ -64,10 +71,24 @@ namespace EnemyAiWorldSettings {
         return schema;
     }
 
+    inline const auto& GetAttackCoordinatorSchema() {
+        using Attack = EnemyAiWorld::AttackCoordinatorSettings;
+        static const auto schema = FieldSchema{
+            MakeField("maxConcurrentAttacks", "Max Concurrent Attacks", &Attack::maxConcurrentAttacks, DragFieldOptions{.dragSpeed=1, .minValue=1, .maxValue=100}),
+            MakeField("attackInterval", "Attack Interval", &Attack::attackInterval, DragFieldOptions{.dragSpeed=0.01f, .minValue=0.01f, .maxValue=10}),
+            MakeField("permissionLifetime", "Permission Lifetime", &Attack::permissionLifetime, DragFieldOptions{.dragSpeed=0.01f, .minValue=0.01f, .maxValue=10})
+        };
+        return schema;
+    }
+
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
-            MakeStructField("navigationGrid", "Navigation Grid", &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{}),
-            MakeStructField("tactical", "Tactical", &Data::tactical, GetTacticalSchema(), DefaultFieldOptions{})
+            MakeStructField("navigationGrid", "Navigation Grid", 
+                &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{}),
+            MakeStructField("tactical", "Tactical", 
+                &Data::tactical, GetTacticalSchema(), DefaultFieldOptions{}),
+            MakeStructField("attackCoordinator", "Attack Coordinator", 
+                &Data::attackCoordinator, GetAttackCoordinatorSchema(), DefaultFieldOptions{})
         };
         return schema;
     }

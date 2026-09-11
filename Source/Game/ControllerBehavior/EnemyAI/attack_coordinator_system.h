@@ -3,33 +3,58 @@
 // Date  ：2026/09/11
 // Author：Miu Kitamura
 // 
-// ・敵の攻撃行動を調整するシステム
+// ・敵の攻撃を調整するシステム
 //---------------------------------------------------
 #pragma once
-#include <vector>
 #include <deque>
-#include <DirectXMath.h>
-#include "enemy_ai_world_context.h"
+#include <vector>
+#include <functional>
+
+struct EnemyAIWorldContext;
 
 class AttackCoordinatorSystem {
 public:
-    struct AttackRequest {
+    struct AttackRequest { 
         int enemyId = -1;
     };
+    struct AttackPermission {
+        int enemyId = -1;
+        float remainingTime = 0.0f;
+    };
+
+    
 
 private:
-    // 待機中の攻撃リクエスト
-    std::deque<AttackRequest> m_waitingRequests;
+    using EnemyValidator = std::function<bool(int enemyId)>;
+    EnemyValidator m_enemyValidator;
 
-    // 現在攻撃中の敵
-    std::vector<int> m_currentAttacker;
+    std::deque<AttackRequest> m_waitingRequests;
+    std::vector<AttackPermission> m_attackPermissions;
+    std::vector<int> m_currentAttackers;
+
+    // 次の攻撃許可を出すまでの残り時間
+    float m_nextPermissionTime = 0.0f;
+    bool m_initialized = false;
 
 public:
     void Initialize(const EnemyAIWorldContext& context);
     void Update(EnemyAIWorldContext& context, float deltaTime);
     void Finalize(const EnemyAIWorldContext& context);
 
-    void RequestAttack(const AttackRequest& request);
+    bool RequestAttack(const AttackRequest& request);
     bool CanAttack(int enemyId) const;
+    bool ConsumeAttackRequest(int enemyId);
+
+    bool CancelAttackRequest(int enemyId);
+    bool HasAttackRequest(int enemyId) const;
+    bool IsAttacking(int enemyId) const;
+
+    const std::deque<AttackRequest>& GetWaitingRequests() const { return m_waitingRequests; }
+    const std::vector<AttackPermission>& GetAttackPermissions() const { return m_attackPermissions; }
+    const std::vector<int>& GetCurrentAttackers() const { return m_currentAttackers; }
+
+private:
+    void DelayNextPermission(const EnemyAIWorldContext& context);
+    bool IsEnemyValid(int enemyId) const;
 
 };

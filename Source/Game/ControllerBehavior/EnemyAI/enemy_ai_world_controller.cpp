@@ -13,9 +13,12 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Engine/engine_service_locator.h"
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Base/health_behavior.h"
 
 EnemyAIWorldController::~EnemyAIWorldController()
 {
+    m_attackCoordinator.Finalize(m_context);
     m_tacticalQuery.Finalize(m_context);
     m_navigation.Finalize(m_context);
     m_metaAI.Finalize(m_context);
@@ -46,6 +49,7 @@ void EnemyAIWorldController::Start()
     m_context.metaAI = &m_metaAI;
     m_context.navigation = &m_navigation;
     m_context.tacticalQuery = &m_tacticalQuery;
+    m_context.attackCoordinator = &m_attackCoordinator;
 
     m_context.settingsAsset = Engine::DataLoader()->GetAsset<EnemyAiWorldSettingsAsset>(
         "asset/Data/enemy_ai_world_settings.data.json", true);
@@ -53,6 +57,7 @@ void EnemyAIWorldController::Start()
     m_metaAI.Initialize(m_context);
     m_navigation.Initialize(m_context);
     m_tacticalQuery.Initialize(m_context);
+    m_attackCoordinator.Initialize(m_context);
 
     m_isInitialized = true;
 }
@@ -64,6 +69,7 @@ void EnemyAIWorldController::Update()
     const float deltaTime = FPS_GetDeltaTime();
 
     m_metaAI.Update(m_context, deltaTime);
+    m_attackCoordinator.Update(m_context, deltaTime);
     m_tacticalQuery.Update(m_context, deltaTime);
 
     m_navigation.DrawDebugGrid();
@@ -74,6 +80,10 @@ void EnemyAIWorldController::DrawComponentInspector()
     if (BehaviorDetailView::BeginSection(this, "Enemy AI Controller")) {
         ImGui::Text("Initialized: %s", m_isInitialized ? "Yes" : "No");
         ImGui::TextUnformatted("MetaAI / NavigationSystem / TacticalQuerySystem");
+        ImGui::Text("Attack: %zu waiting / %zu permitted / %zu active",
+            m_attackCoordinator.GetWaitingRequests().size(),
+            m_attackCoordinator.GetAttackPermissions().size(),
+            m_attackCoordinator.GetCurrentAttackers().size());
         const auto& stats = m_navigation.GetLastSearchStats();
         ImGui::Text("Last Search: %.3f ms / %zu nodes", stats.milliseconds, stats.expandedNodes);
         ImGui::Text("Walkable: %zu evaluations / %zu cache hits",
