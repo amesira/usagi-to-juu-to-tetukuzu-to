@@ -18,10 +18,10 @@ class EnemyAttackCombat : public EnemyCombatBase {
 
 public:
     EnemyAttackCombat() : EnemyCombatBase(20, false) {}
+
     // 設定とWaitは非所有参照。非実行中に設定し、この行動より長く生存させる。
     void SetSettingsAsset(const EnemyAttackSettingsAsset* settings) { m_context.settingsAsset = settings; }
-    void SetWaitCombat(EnemyWaitCombat* wait) { m_waitCombat = wait; }
-    const EnemyAttackContext& GetContext() const { return m_context; }
+
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
     bool IsInterruptible(const EnemyContext& context) const override;
@@ -37,6 +37,7 @@ protected:
     const EnemyAttackSettings::Data& settings() const { return m_context.settings(); }
     const DirectX::XMFLOAT3& GetAimPosition() const { return m_context.runtimeState.aimPosition; }
     void SetAimPosition(const DirectX::XMFLOAT3& position) { m_context.runtimeState.aimPosition = position; }
+
     virtual void BeginWindup(EnemyContext&) {}
     virtual void EndWindup(EnemyContext&) {}
     virtual void BeginAttack(EnemyContext& context) = 0;

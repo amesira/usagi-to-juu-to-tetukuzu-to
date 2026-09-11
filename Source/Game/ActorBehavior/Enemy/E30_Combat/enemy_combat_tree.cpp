@@ -42,7 +42,9 @@ void EnemyCombatTree::ClearBehaviors(EnemyContext& context)
 void EnemyCombatTree::Update(EnemyContext& context, float deltaTime)
 {
     // === RuntimeState更新 ===
-
+    if (m_attackCombat) {
+        context.runtimeState.isInAttackRange = m_attackCombat->IsInAttackRange(context);
+    }
 
 
     for (auto* behavior : m_combatBehaviors) {

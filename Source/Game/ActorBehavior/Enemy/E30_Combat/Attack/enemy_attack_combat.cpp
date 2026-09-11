@@ -13,7 +13,6 @@
 bool EnemyAttackCombat::CanStart(const EnemyContext& context) const
 {
     if (!CanContinue(context) || m_context.runtimeState.cooldownRemaining > 0.0f) return false;
-    if (m_waitCombat && !m_waitCombat->IsCompleted()) return false;
     const auto position = context.transform->GetPosition();
     const auto target = context.runtimeState.combatTargetPosition;
     const float distance = std::hypot(target.x - position.x, target.z - position.z);
@@ -47,8 +46,6 @@ void EnemyAttackCombat::Start(EnemyContext& context)
     state.phase = EnemyAttackPhase::Windup;
     state.phaseElapsed = 0.0f;
     state.aimPosition = context.runtimeState.combatTargetPosition;
-    // Wait接続時は完了を一回で消費する。未接続なら射程/クールダウンで開始する。
-    if (m_waitCombat) m_waitCombat->Cancel(context);
     BeginWindup(context);
 }
 
