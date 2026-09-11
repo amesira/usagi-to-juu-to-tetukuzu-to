@@ -24,7 +24,7 @@ namespace EnemyAttackSettings {
 
         // === Melee用の追加設定 ===
         float jumpDuration = 0.6f;
-        float jumpHeight = 2.0f;
+        float jumpGravity = 9.8f;
         float slashDuration = 0.3f;
         // === Ranged用の追加設定 ===
         int shotCount = 3;
@@ -38,7 +38,7 @@ namespace EnemyAttackSettings {
         data.recoveryDuration = std::isfinite(data.recoveryDuration) ? (std::max)(0.0f, data.recoveryDuration) : 0.5f;
         data.restartCooldown = std::isfinite(data.restartCooldown) ? (std::max)(0.0f, data.restartCooldown) : 1.0f;
         data.jumpDuration = std::isfinite(data.jumpDuration) ? (std::max)(0.0f, data.jumpDuration) : 0.6f;
-        data.jumpHeight = std::isfinite(data.jumpHeight) ? (std::max)(0.0f, data.jumpHeight) : 2.0f;
+        data.jumpGravity = std::isfinite(data.jumpGravity) ? (std::max)(0.0f, data.jumpGravity) : 9.8f;
         data.slashDuration = std::isfinite(data.slashDuration) ? (std::max)(0.0f, data.slashDuration) : 0.3f;
         data.shotInterval = std::isfinite(data.shotInterval) ? (std::max)(0.0f, data.shotInterval) : 0.3f;
         data.maxDistance = (std::max)(data.minDistance, data.maxDistance);
@@ -64,7 +64,7 @@ namespace EnemyAttackSettings {
             // === Melee用の追加設定 ===
             MakeHeaderField("Melee Attack Settings"),
             MakeField("jumpDuration", "Jump Duration", &Data::jumpDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
-            MakeField("jumpHeight", "Jump Height", &Data::jumpHeight, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("jumpGravity", "Jump Gravity", &Data::jumpGravity, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("slashDuration", "Slash Duration", &Data::slashDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             // === Ranged用の追加設定 ===
             MakeHeaderField("Ranged Attack Settings"),

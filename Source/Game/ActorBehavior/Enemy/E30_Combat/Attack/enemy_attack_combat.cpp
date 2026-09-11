@@ -58,6 +58,7 @@ void EnemyAttackCombat::Start(EnemyContext& context)
     auto& state = m_context.runtimeState;
     state.aimPosition = context.runtimeState.combatTargetPosition;
 
+    m_context.runtimeState.phase = EnemyAttackPhase::Idle;
     ChangePhase(EnemyAttackPhase::Windup);
 }
 

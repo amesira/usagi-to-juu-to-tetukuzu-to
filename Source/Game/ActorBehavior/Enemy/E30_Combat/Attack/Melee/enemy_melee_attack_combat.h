@@ -8,20 +8,32 @@
 #pragma once
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_combat.h"
 
-enum class EnemyMeleeAttackPhase { Idle, Jump, Slash };
+enum class EnemyMeleeAttackPhase {
+    Idle, 
+    Jump, 
+    Slash
+};
 
 class EnemyMeleeAttackCombat : public EnemyAttackCombat {
     EnemyMeleeAttackPhase m_phase = EnemyMeleeAttackPhase::Idle;
     float m_elapsedTime = 0.0f;
+    bool m_enteredAttackPhase = false;
+
+    int m_locomotionRequestId = -1;
+
     DirectX::XMFLOAT3 m_jumpStartPosition = {};
     DirectX::XMFLOAT3 m_landingPosition = {};
+    DirectX::XMFLOAT3 m_jumpVelocity = {};
 
 public:
-    EnemyMeleeAttackPhase GetMeleePhase() const { return m_phase; }
+    /*EnemyMeleeAttackPhase GetMeleePhase() const { return m_phase; }
     const DirectX::XMFLOAT3& GetJumpStartPosition() const { return m_jumpStartPosition; }
-    const DirectX::XMFLOAT3& GetLandingPosition() const { return m_landingPosition; }
+    const DirectX::XMFLOAT3& GetLandingPosition() const { return m_landingPosition; }*/
 
 protected:
+    void BeginWindup(EnemyContext& context) override;
+    void EndWindup(EnemyContext& context) override;
+
     void BeginAttack(EnemyContext& context) override;
     EnemyCombatStatus UpdateAttack(EnemyContext& context, float deltaTime) override;
     void EndAttack(EnemyContext& context) override;
@@ -32,4 +44,8 @@ protected:
     virtual void BeginSlash(EnemyContext& context);
     virtual void UpdateSlash(EnemyContext& context, float deltaTime);
     virtual void ClearAttackEffects(EnemyContext& context);
+
+private:
+    void ChangeAttackPhase(EnemyMeleeAttackPhase newPhase);
+
 };
