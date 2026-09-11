@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/RePosition/enemy_re_position_navigation.cpp
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_re_position_navigation.h"
 
 #include <cmath>

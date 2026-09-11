@@ -1,5 +1,11 @@
+//---------------------------------------------------
+// File  ：_/E_30_Combat/RePosition/enemy_re_position_combat.h
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+// 
+// ・指定された位置へ移動しながら相手を向く。調整先の選択は呼び出し側が担当する
+//---------------------------------------------------
 #pragma once
-
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
 #include "enemy_re_position_navigation.h"
 
@@ -12,7 +18,7 @@ struct EnemyRePositionSettings {
     float restartCooldown = 0.5f;
 };
 
-/// @brief 指定された位置へ移動しながら相手を向く。調整先の選択は呼び出し側が担当する。
+/// @brief 指定された位置へ移動しながら相手を向く。調整先の選択は呼び出し側が担当する
 class EnemyRePositionCombat : public EnemyCombatBase {
     EnemyRePositionSettings m_settings;
     EnemyRePositionNavigation m_navigation;

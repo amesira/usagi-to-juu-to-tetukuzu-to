@@ -1,3 +1,5 @@
+// enemy_attack_context.h
+// 2026/09/11
 #pragma once
 #include <DirectXMath.h>
 #include "enemy_attack_settings_asset.h"

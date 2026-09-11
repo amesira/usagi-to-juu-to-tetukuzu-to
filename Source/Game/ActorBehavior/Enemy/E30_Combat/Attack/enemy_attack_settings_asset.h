@@ -1,3 +1,5 @@
+// enemy_attack_settings_asset.h
+// 2026/09/11
 #pragma once
 #include <algorithm>
 #include <cmath>

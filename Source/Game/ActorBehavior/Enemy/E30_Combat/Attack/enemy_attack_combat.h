@@ -1,3 +1,10 @@
+//---------------------------------------------------
+// File  ：_/E_30_Combat/Attack/enemy_attack_combat.h
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+// 
+// ・予備動作・攻撃・後隙を管理し、攻撃本体を派生クラスへ委ねる
+//---------------------------------------------------
 #pragma once
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
 #include "enemy_attack_context.h"

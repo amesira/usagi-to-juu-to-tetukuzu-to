@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/E_30_Combat/Attack/Ranged/enemy_ranged_attack_combat.cpp
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_ranged_attack_combat.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 

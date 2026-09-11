@@ -1,5 +1,11 @@
+//---------------------------------------------------
+// File  ：_/RePosition/enemy_re_position_navigation.h
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+// 
+// ・PathFollowerの経路再探索を要求し、進捗を監視する
+//---------------------------------------------------
 #pragma once
-
 #include <DirectXMath.h>
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
 

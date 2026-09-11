@@ -1,3 +1,10 @@
+//---------------------------------------------------
+// File  ：_/E_30_Combat/Attack/Ranged/enemy_ranged_attack_combat.h
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+// 
+// ・遠距離攻撃制御クラス
+//---------------------------------------------------
 #pragma once
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_combat.h"
 

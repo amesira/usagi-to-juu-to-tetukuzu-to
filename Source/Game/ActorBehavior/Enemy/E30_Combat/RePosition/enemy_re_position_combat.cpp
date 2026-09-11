@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/E_30_Combat/RePosition/enemy_re_position_combat.cpp
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_re_position_combat.h"
 
 #include <algorithm>

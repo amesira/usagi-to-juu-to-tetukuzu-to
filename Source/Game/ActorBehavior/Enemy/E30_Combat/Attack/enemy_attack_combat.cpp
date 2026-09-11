@@ -1,3 +1,8 @@
+//===================================================
+// File  ：_/E_30_Combat/Attack/enemy_attack_combat.cpp
+// Date  ：2026/09/11
+// Author：Miu Kitamura
+//===================================================
 #include "enemy_attack_combat.h"
 #include <algorithm>
 #include <cmath>
