@@ -6,12 +6,26 @@
 #include "enemy_attack_combat.h"
 #include <algorithm>
 #include <cmath>
+
+#include "Engine/Core/game_object.h"
+#include "Engine/Core/scene_interface.h"
+
+#include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Wait/enemy_wait_combat.h"
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
 #include "Engine/Core/game_object.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+
+void EnemyAttackCombat::Initialize(EnemyContext& context)
+{
+    m_context.combat = this;
+    m_context.owner = context.owner->GetOwner();
+    m_context.scene = context.scene;
+    m_context.transform = context.transform;
+    m_context.rigidbody = context.rigidbody;
+}
 
 bool EnemyAttackCombat::CanStart(const EnemyContext& context) const
 {

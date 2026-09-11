@@ -9,6 +9,7 @@
 
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
+#include "Game/ActorBehavior/Enemy/enemy_animation_controller.h"
 
 void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
 {
@@ -48,9 +49,7 @@ EnemyCombatStatus EnemyMeleeAttackCombat::UpdateAttack(EnemyContext& context, fl
         if (enteredPhase) {
             BeginSlash(context);
         }
-        UpdateSlash(context, deltaTime);
-        return m_elapsedTime >= settings().slashDuration
-            ? EnemyCombatStatus::Success : EnemyCombatStatus::Running;
+        return UpdateSlash(context, deltaTime);
     }
     default:
         return EnemyCombatStatus::Failure;
@@ -63,7 +62,14 @@ void EnemyMeleeAttackCombat::EndAttack(EnemyContext& context)
     m_phase = EnemyMeleeAttackPhase::Idle;
     m_elapsedTime = 0.0f;
 
-    context.locomotionController->RemoveRequest(m_locomotionRequestId);
+    if (context.locomotionController) {
+        context.locomotionController->RemoveRequest(m_locomotionRequestId);
+    }
+    m_locomotionRequestId = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
+    m_enteredAttackPhase = false;
+
+    // アニメーションを元に戻す
+    context.animationController->StopCombatAnimation(0.3f);
 }
 
 /// @brief 攻撃段階を変更する
@@ -96,6 +102,9 @@ void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
     m_jumpVelocity.y = (m_landingPosition.y - m_jumpStartPosition.y 
         + 0.5f * gravity * jumpDuration * jumpDuration) / jumpDuration;
     m_jumpVelocity.z = (m_landingPosition.z - m_jumpStartPosition.z) / jumpDuration;
+
+    // ジャンプアニメーション
+    context.animationController->PlayCombatAnimation(EnemyAnimationController::Animation::JumpPose, 1.0f);
 }
 
 void EnemyMeleeAttackCombat::UpdateJump(EnemyContext& context, float deltaTime)
@@ -118,24 +127,37 @@ void EnemyMeleeAttackCombat::UpdateJump(EnemyContext& context, float deltaTime)
 
 void EnemyMeleeAttackCombat::BeginSlash(EnemyContext& context)
 {
-    // TODO: スラッシュのアニメーション・攻撃判定を開始する。
+    // 地上で斬る。ジャンプの重力無効を解除し、向きと水平移動を固定する。
+    m_locomotionRequest.canMove = false;
+    m_locomotionRequest.canRotate = false;
+    m_locomotionRequest.useGravity = true;
+    m_locomotionRequest.movementMode = EnemyMovementMode::StopHorizontal;
+    if (context.locomotionController
+        && !context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest)) {
+        m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
+    }
 
-    // アニメーション再生
+    m_slash.Start(getContext());
+    m_effects.Initialize(getContext());
+    m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::Slash);
 
-    // エフェクト再生
-
+    // ジャンプアニメーション
+    context.animationController->PlayCombatAnimation(EnemyAnimationController::Animation::Slash, 2.0f);
 }
 
-void EnemyMeleeAttackCombat::UpdateSlash(EnemyContext& context, float deltaTime)
+EnemyCombatStatus EnemyMeleeAttackCombat::UpdateSlash(EnemyContext& context, float deltaTime)
 {
-    // TODO: 攻撃判定の有効期間を更新する。
+    if (!context.locomotionController
+        || m_locomotionRequestId == EnemyLocomotionController::INVALID_REQUEST_HANDLE) {
+        return EnemyCombatStatus::Failure;
+    }
+    m_effects.Update(getContext());
 
-    // 攻撃判定発生
-
+    return m_slash.Update(getContext(), deltaTime);
 }
 
 void EnemyMeleeAttackCombat::ClearAttackEffects(EnemyContext& context)
 {
-    // TODO: 通常終了とキャンセルの両方で移動要求・攻撃判定・演出を解除する
-
+    m_slash.Cancel();
+    m_effects.Finalize();
 }

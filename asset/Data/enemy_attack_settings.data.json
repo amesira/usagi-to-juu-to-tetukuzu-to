@@ -2,15 +2,41 @@
     "data": {
         "interruptibleRecovery": false,
         "interruptibleWindup": false,
-        "jumpDuration": 0.30000001192092896,
-        "jumpGravity": 20.0,
+        "jumpDuration": 0.5,
+        "jumpGravity": 19.600000381469727,
         "maxDistance": 7.0,
         "minDistance": 0.0,
         "recoveryDuration": 0.5,
         "restartCooldown": 1.0,
         "shotCount": 3,
         "shotInterval": 0.30000001192092896,
+        "slashBoxOffset": [
+            0.0,
+            1.0,
+            1.0
+        ],
+        "slashBoxSize": [
+            3.0,
+            2.0,
+            2.0
+        ],
+        "slashBurstTime": 0.05000000074505806,
+        "slashDamage": 10.0,
         "slashDuration": 0.30000001192092896,
+        "slashEffectAssetPath": "asset/MeshEffect/player_slash_burst_2_effect.mesh_effect.json",
+        "slashEffectPosition": [
+            0.0,
+            0.0,
+            1.0
+        ],
+        "slashEffectRotation": [
+            0.0,
+            180.0,
+            0.0
+        ],
+        "slashEffectScale": 2.0,
+        "slashKnockbackDistance": 2.0,
+        "slashKnockbackDuration": 0.20000000298023224,
         "this_is_header_field": null,
         "windupDuration": 0.30000001192092896
     },

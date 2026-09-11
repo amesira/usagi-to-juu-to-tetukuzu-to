@@ -22,6 +22,8 @@ public:
 
     void SetSettingsAsset(const EnemyAttackSettingsAsset* settings) { m_context.settingsAsset = settings; }
 
+    void Initialize(EnemyContext& context) override;
+
     bool CanStart(const EnemyContext& context) const override;
     bool CanContinue(const EnemyContext& context) const override;
     bool IsInterruptible(const EnemyContext& context) const override;
@@ -39,6 +41,7 @@ public:
 
 protected:
     const EnemyAttackSettings::Data& settings() const { return m_context.settings(); }
+    EnemyAttackContext& getContext() { return m_context; }
 
     // === Attack Phase ===
     const DirectX::XMFLOAT3& GetAimPosition() const { return m_context.runtimeState.aimPosition; }

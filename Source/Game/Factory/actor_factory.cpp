@@ -25,6 +25,7 @@
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -42,7 +43,6 @@ GameObject* ActorFactory::CreatePlayer(
 
     // component生成・登録
     TransformComponent* transform = player->AddComponent<TransformComponent>();
-   // BoxColliderComponent* collider = player->AddComponent<BoxColliderComponent>();
     RigidbodyComponent* rigidbody = player->AddComponent<RigidbodyComponent>();
     CapsuleColliderComponent* collider = player->AddComponent<CapsuleColliderComponent>();
 
@@ -66,6 +66,8 @@ GameObject* ActorFactory::CreatePlayer(
     // アニメーションの読み込みはPlayerAnimationControllerで行うため、ここではアニメーションの設定は行わない。
 
     // behavior生成・登録
+    player->AddComponent<HealthBehavior>();
+    player->AddComponent<HitReceiverBehavior>();
     player->AddComponent<PlayerBehavior>();
     player->AddComponent<PlayerUiBehavior>();
     return player;

@@ -19,6 +19,13 @@ struct EnemyAttackRuntimeState {
 };
 
 struct EnemyAttackContext {
+    class EnemyAttackCombat* combat = nullptr;
+    class GameObject* owner = nullptr;
+    class IScene* scene = nullptr;
+
+    class TransformComponent* transform = nullptr;
+    class RigidbodyComponent* rigidbody = nullptr;
+
     const EnemyAttackSettingsAsset* settingsAsset = nullptr;
     EnemyAttackRuntimeState runtimeState;
 

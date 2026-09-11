@@ -39,6 +39,8 @@ void EnemyBehavior::Start()
     m_approachCombat.Initialize(m_context, m_approachSettings);
     m_attackCombat.SetSettingsAsset(m_attackSettings);
     m_combatTree.Initialize(m_context);
+    m_attackCombat.Initialize(m_context);
+    m_waitCombat.Initialize(m_context);
 
     m_combatTree.RegisterBehavior(m_attackCombat);
     m_combatTree.RegisterBehavior(m_waitCombat);

@@ -7,6 +7,7 @@
 // ・プレイヤーほど複雑にはならないはず
 //---------------------------------------------------
 #pragma once
+#include "Engine/Core/GamePlay/tween_task.h"
 
 class EnemyContext;
 class AnimationComponent;
@@ -14,7 +15,13 @@ class AnimationComponent;
 /// @brief 敵の状態・移動・Combatからのアニメーション要求をまとめる窓口。
 class EnemyAnimationController {
 public:
-    enum class Animation { Idle, Walk };
+    enum class Animation { 
+        None,
+        Idle, 
+        Walk,
+        JumpPose,
+        Slash,
+    };
 
     struct Settings {
         float walkStartSpeed = 0.15f;
@@ -27,10 +34,17 @@ public:
 private:
     Settings m_settings;
     AnimationComponent* m_animationComponent = nullptr;
+
+    Animation m_currentAnimation = Animation::None;
+
+    Animation m_currentMainAnimation = Animation::None;
     int m_idleClipIndex = -1;
     int m_walkClipIndex = -1;
-    Animation m_currentAnimation = Animation::Idle;
-    bool m_hasCurrentAnimation = false;
+
+    bool m_inCombatAnimation = false;
+    WaitAndCallbackTask m_combatAnimationStopTask;
+    int m_jumpPoseClipIndex = -1;
+    int m_slashClipIndex = -1;
 
 public:
     void Initialize(EnemyContext& context);
@@ -40,6 +54,11 @@ public:
 
     Animation GetCurrentAnimation() const { return m_currentAnimation; }
 
+    // === 外部からのアニメーション要求 ===
+    void PlayCombatAnimation(Animation animation, float playbackSpeed);
+    void StopCombatAnimation(float duration = 0.0f);
+
 private:
-    void PlayAnimation(Animation animation);
+    void PlayMainAnimation(Animation animation);
+
 };

@@ -100,9 +100,9 @@ void GameScene::Initialize()
     for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 20.0f });
     }
-    for (int i = 0; i < 5; i++) {
+  /*  for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });
-    }
+    }*/
 
     // UI生成
    // GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");

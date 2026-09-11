@@ -22,6 +22,8 @@ public:
         : m_priority(priority), m_isInterruptible(isInterruptible) {}
     virtual ~EnemyCombatBase() = default;
 
+    virtual void Initialize(EnemyContext& context) {}
+
     /// @brief 非実行中の行動を開始できるか。
     virtual bool CanStart(const EnemyContext& context) const = 0;
     /// @brief 非実行中も呼ぶ。再開始クールダウンなどを更新する。

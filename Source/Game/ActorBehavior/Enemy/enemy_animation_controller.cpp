@@ -16,6 +16,8 @@
 #include <cmath>
 #include <filesystem>
 
+#include "Engine/Device/mi_fps.h"
+
 namespace {
     int FindOrLoadClip(ModelResource* model, const std::filesystem::path& path)
     {
@@ -30,7 +32,6 @@ namespace {
 
 void EnemyAnimationController::Initialize(EnemyContext& context)
 {
-    Finalize();
     auto* owner = context.transform ? context.transform->GetOwner() : nullptr;
     if (!owner) return;
 
@@ -41,7 +42,10 @@ void EnemyAnimationController::Initialize(EnemyContext& context)
 
     m_idleClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_idle.anim.fbx");
     m_walkClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_walk.anim.fbx");
-    PlayAnimation(Animation::Idle);
+    m_jumpPoseClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_jump_pose.anim.fbx");
+    m_slashClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_slash.anim.fbx");
+
+    PlayMainAnimation(Animation::Idle);
 }
 
 void EnemyAnimationController::Update(EnemyContext& context)
@@ -51,11 +55,11 @@ void EnemyAnimationController::Update(EnemyContext& context)
     if (context.conditionMachine) {
         const auto condition = context.conditionMachine->GetCurrentCondition();
         if (condition == EnemyCondition::Stun || condition == EnemyCondition::Dead) {
-            PlayAnimation(Animation::Idle);
             return;
         }
     }
 
+    // 速度に応じてメインアニメーションを切り替える
     const auto velocity = context.runtimeState.controlVelocity;
     const float speed = std::hypot(velocity.x, velocity.z);
     Animation next = m_currentAnimation;
@@ -65,23 +69,68 @@ void EnemyAnimationController::Update(EnemyContext& context)
     else if (speed >= m_settings.walkStartSpeed) {
         next = Animation::Walk;
     }
-    PlayAnimation(next);
+    PlayMainAnimation(next);
+
+    // Combatアニメーション停止の待機タスクを更新する
+    float deltaTime = FPS_GetDeltaTime();
+    m_combatAnimationStopTask.Update(deltaTime);
 }
 
-void EnemyAnimationController::PlayAnimation(Animation animation)
+void EnemyAnimationController::PlayMainAnimation(Animation animation)
 {
     if (!m_animationComponent) return;
-    // Walkが読み込めなかった場合はIdleへフォールバックする。
-    if (animation == Animation::Walk && m_walkClipIndex < 0) animation = Animation::Idle;
-    const int clipIndex = animation == Animation::Walk ? m_walkClipIndex : m_idleClipIndex;
-    if (clipIndex < 0 || (m_hasCurrentAnimation && animation == m_currentAnimation)) return;
+    if (m_inCombatAnimation) return;
+    if (animation == m_currentAnimation) return;
 
-    const float playbackSpeed = animation == Animation::Walk
-        ? m_settings.walkPlaybackSpeed : m_settings.idlePlaybackSpeed;
-    m_animationComponent->PlayAnimation(clipIndex, playbackSpeed, true, false,
-        m_hasCurrentAnimation ? m_settings.transitionTime : 0.0f);
+    switch (animation) {
+    case Animation::Walk:{
+        m_animationComponent->PlayAnimation(m_walkClipIndex, 
+            m_settings.walkPlaybackSpeed, true, false, m_settings.transitionTime);
+
+        break;
+    }
+    case Animation::Idle:{
+        m_animationComponent->PlayAnimation(m_idleClipIndex, 
+            m_settings.idlePlaybackSpeed, true, false, m_settings.transitionTime);
+        break;
+    }
+    default: return;
+    }
+
+    m_currentMainAnimation = animation;
     m_currentAnimation = animation;
-    m_hasCurrentAnimation = true;
+}
+
+void EnemyAnimationController::PlayCombatAnimation(Animation animation, float playbackSpeed)
+{
+    m_inCombatAnimation = true;
+
+    switch (animation) {
+        case Animation::JumpPose: {
+            // ジャンプはループ再生
+            m_animationComponent->PlayAnimation(m_jumpPoseClipIndex, playbackSpeed, true, true, 0.1f);
+            break;
+        }
+        case Animation::Slash: {
+            m_animationComponent->PlayAnimation(m_slashClipIndex, playbackSpeed, false, true, 0.1f);
+            break;
+        }
+        default: return;
+
+    }
+
+    m_currentAnimation = animation;
+}
+
+void EnemyAnimationController::StopCombatAnimation(float duration)
+{
+    m_combatAnimationStopTask.m_waitDuration = duration;
+    m_combatAnimationStopTask.m_callback = [this]() {
+        // Combatアニメーションが終了したら、メインアニメーションに戻す
+        m_inCombatAnimation = false;
+        PlayMainAnimation(m_currentMainAnimation);
+        };
+    m_combatAnimationStopTask.Start();
 }
 
 void EnemyAnimationController::Finalize()
@@ -90,5 +139,4 @@ void EnemyAnimationController::Finalize()
     m_idleClipIndex = -1;
     m_walkClipIndex = -1;
     m_currentAnimation = Animation::Idle;
-    m_hasCurrentAnimation = false;
 }

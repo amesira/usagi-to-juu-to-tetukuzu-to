@@ -3,6 +3,8 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <string>
+#include <DirectXMath.h>
 #include "Engine/Asset/Schema/field_master.h"
 #include "Engine/Asset/DataAsset/data_asset.h"
 #include "Engine/Asset/DataAsset/data_asset_type_id.h"
@@ -26,6 +28,15 @@ namespace EnemyAttackSettings {
         float jumpDuration = 0.6f;
         float jumpGravity = 9.8f;
         float slashDuration = 0.3f;
+        float slashBurstTime = 0.15f;
+        float slashDamage = 10.0f;
+        DirectX::XMFLOAT3 slashBoxSize = { 3.0f, 2.0f, 2.0f };
+        DirectX::XMFLOAT3 slashBoxOffset = { 0.0f, 1.0f, 1.0f };
+        std::string slashEffectAssetPath = "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json";
+        DirectX::XMFLOAT3 slashEffectPosition = {};
+        DirectX::XMFLOAT3 slashEffectRotation = {}; // ローカルEuler角（度）
+        float slashEffectScale = 1.0f;
+
         // === Ranged用の追加設定 ===
         int shotCount = 3;
         float shotInterval = 0.3f;
@@ -40,6 +51,24 @@ namespace EnemyAttackSettings {
         data.jumpDuration = std::isfinite(data.jumpDuration) ? (std::max)(0.0f, data.jumpDuration) : 0.6f;
         data.jumpGravity = std::isfinite(data.jumpGravity) ? (std::max)(0.0f, data.jumpGravity) : 9.8f;
         data.slashDuration = std::isfinite(data.slashDuration) ? (std::max)(0.0f, data.slashDuration) : 0.3f;
+        data.slashBurstTime = std::isfinite(data.slashBurstTime)
+            ? (std::clamp)(data.slashBurstTime, 0.0f, data.slashDuration) : data.slashDuration * 0.5f;
+        const auto nonNegative = [](float value, float fallback) {
+            return std::isfinite(value) ? (std::max)(0.0f, value) : fallback;
+        };
+        data.slashDamage = nonNegative(data.slashDamage, 10.0f);
+        data.slashEffectScale = nonNegative(data.slashEffectScale, 1.0f);
+        data.slashBoxSize.x = (std::max)(0.01f, nonNegative(data.slashBoxSize.x, 3.0f));
+        data.slashBoxSize.y = (std::max)(0.01f, nonNegative(data.slashBoxSize.y, 2.0f));
+        data.slashBoxSize.z = (std::max)(0.01f, nonNegative(data.slashBoxSize.z, 2.0f));
+        const auto finiteVector = [](DirectX::XMFLOAT3& value) {
+            if (!std::isfinite(value.x)) value.x = 0.0f;
+            if (!std::isfinite(value.y)) value.y = 0.0f;
+            if (!std::isfinite(value.z)) value.z = 0.0f;
+        };
+        finiteVector(data.slashBoxOffset);
+        finiteVector(data.slashEffectPosition);
+        finiteVector(data.slashEffectRotation);
         data.shotInterval = std::isfinite(data.shotInterval) ? (std::max)(0.0f, data.shotInterval) : 0.3f;
         data.maxDistance = (std::max)(data.minDistance, data.maxDistance);
         data.shotCount = (std::clamp)(data.shotCount, 1, 100);
@@ -66,6 +95,17 @@ namespace EnemyAttackSettings {
             MakeField("jumpDuration", "Jump Duration", &Data::jumpDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("jumpGravity", "Jump Gravity", &Data::jumpGravity, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("slashDuration", "Slash Duration", &Data::slashDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            // === Slashの判定と演出 ===
+            MakeHeaderField("Slash Burst"),
+            MakeField("slashBurstTime", "Burst Time (s)", &Data::slashBurstTime, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("slashDamage", "Damage", &Data::slashDamage, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("slashBoxSize", "Hit Box Size", &Data::slashBoxSize, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("slashBoxOffset", "Hit Box Local Offset", &Data::slashBoxOffset, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
+            MakeHeaderField("Slash Effect"),
+            MakeField("slashEffectAssetPath", "Effect Asset Path", &Data::slashEffectAssetPath),
+            MakeField("slashEffectPosition", "Local Position", &Data::slashEffectPosition, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
+            MakeField("slashEffectRotation", "Local Rotation (degrees)", &Data::slashEffectRotation, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
+            MakeField("slashEffectScale", "Scale", &Data::slashEffectScale, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
             // === Ranged用の追加設定 ===
             MakeHeaderField("Ranged Attack Settings"),
             MakeField("shotCount", "Shot Count", &Data::shotCount, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
