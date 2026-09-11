@@ -26,11 +26,18 @@ namespace EnemyAiWorld {
             return { center.x - (cellCountX * cellSize) / 2.0f, center.y - (cellCountZ * cellSize) / 2.0f };
         }
     };
+    /// @brief タクティカル情報の設定
+    struct TacticalSettings {
+        float updateInterval = 0.2f;
+        float enemyInfluenceRadiusMultiplier = 1.5f;
+        float enemyDensityCostWeight = 1.0f;
+    };
 }
 
 namespace EnemyAiWorldSettings {
     struct Data {
         EnemyAiWorld::NavigationGridSettings navigationGrid;
+        EnemyAiWorld::TacticalSettings tactical;
     };
 
     inline const auto& GetNavigationGridSchema() {
@@ -47,9 +54,20 @@ namespace EnemyAiWorldSettings {
         return schema;
     }
 
+    inline const auto& GetTacticalSchema() {
+        using Tactical = EnemyAiWorld::TacticalSettings;
+        static const auto schema = FieldSchema{
+            MakeField("updateInterval", "Update Interval", &Tactical::updateInterval, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10}),
+            MakeField("enemyInfluenceRadiusMultiplier", "Enemy Influence Radius Multiplier", &Tactical::enemyInfluenceRadiusMultiplier, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.1f, .maxValue = 10}),
+            MakeField("enemyDensityCostWeight", "Enemy Density Cost Weight", &Tactical::enemyDensityCostWeight, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0, .maxValue = 100})
+        };
+        return schema;
+    }
+
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
-            MakeStructField("navigationGrid", "Navigation Grid", &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{})
+            MakeStructField("navigationGrid", "Navigation Grid", &Data::navigationGrid, GetNavigationGridSchema(), DefaultFieldOptions{}),
+            MakeStructField("tactical", "Tactical", &Data::tactical, GetTacticalSchema(), DefaultFieldOptions{})
         };
         return schema;
     }

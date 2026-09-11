@@ -58,27 +58,8 @@ namespace EnemyAiWorld {
     // === Tactical情報 ===
     struct TacticalCellInfo {
         float enemyDensityCost = 0.0f;  // 敵の密度が高いほどコストが増える
-        float reservationCost = 0.0f;   // 他の敵が予約しているセルはコストが増える
+        // float reservationCost = 0.0f;   // 他の敵が予約しているセルはコストが増える
     };
-
-    //struct TacticalQueryWeights {
-    //    float targetDistance = 1.0f;
-    //    float enemyDensity = 1.0f;
-    //    float danger = 1.0f;
-    //    float lineOfSight = 1.0f;
-    //    float pathCost = 1.0f;
-    //};
-
-    //struct TacticalQueryRequest {
-    //    unsigned int requesterID = -1;
-    //    DirectX::XMFLOAT3 startPosition = {}; // 経路コストの起点
-    //    DirectX::XMFLOAT3 searchCenter = {};
-    //    float searchRadius = 0.0f;
-    //    EntityInfo target;
-    //    float desiredTargetDistance = 0.0f;
-    //    NavigationAgentSettings agentSettings;
-    //    TacticalQueryWeights weights;
-    //};
 
     struct TacticalQueryResult {
         bool found = false;
@@ -86,10 +67,6 @@ namespace EnemyAiWorld {
         float score = 0.0f; // 大きいほど高評価。found == trueのときのみ有効
     };
 }
-
-struct EnemyAIWorldRuntimeState {
-
-};
 
 struct EnemyAIWorldContext {
     class IScene* scene = nullptr;
@@ -99,7 +76,6 @@ struct EnemyAIWorldContext {
     class NavigationSystem* navigation = nullptr;
     class TacticalQuerySystem* tacticalQuery = nullptr;
 
-    EnemyAIWorldRuntimeState runtimeState;
     const EnemyAiWorldSettingsAsset* settingsAsset = nullptr;
     const EnemyAiWorldSettings::Data& settings() const {
         static const EnemyAiWorldSettings::Data defaults;

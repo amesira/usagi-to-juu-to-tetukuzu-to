@@ -11,6 +11,11 @@
             "rayBottomPosition": -20.0,
             "rayTopPosition": 20.0,
             "slopeThreshold": 10.0
+        },
+        "tactical": {
+            "enemyDensityCostWeight": 2.0,
+            "enemyInfluenceRadiusMultiplier": 5.0,
+            "updateInterval": 0.5
         }
     },
     "formatVersion": 0,

@@ -14,7 +14,6 @@ namespace EnemyAiAgent {
         float maxStepHeight = 0.5f;
         float maxSlopeDegrees = 45.0f;
     };
-
 }
 
 namespace EnemyAiAgentSettings {

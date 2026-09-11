@@ -32,7 +32,7 @@ void TacticalQuerySystem::Initialize(const EnemyAIWorldContext& context)
 
 void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
 {
-    if (m_updateTimer < UPDATE_INTERVAL) {
+    if (m_updateTimer < context.settings().tactical.updateInterval) {
         m_updateTimer += deltaTime;
         return;
     }
@@ -41,7 +41,6 @@ void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
     // タクティカルセル情報をリセット
     for (auto& cell : m_tacticalCells) {
         cell.enemyDensityCost = 0.0f;
-        cell.reservationCost = 0.0f;
     }
     m_densitySources.clear();
 
@@ -50,13 +49,13 @@ void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
     for (const auto& enemy : enemies) {
         GridCoord coord;
         if (!context.navigation->WorldToGrid(enemy.entityInfo.position, coord)) continue;
-        float radius = enemy.entityInfo.radius * 5.0f; // 敵の影響範囲を半径1.5倍に設定
+        float radius = enemy.entityInfo.radius * context.settings().tactical.enemyInfluenceRadiusMultiplier;
 
         // 敵の密度源情報を更新
         m_densitySources[enemy.entityInfo.gameObjectID] = { 
             enemy.entityInfo.position, 
             radius, 
-            ENEMY_DENSITY_COST_WEIGHT
+            context.settings().tactical.enemyDensityCostWeight
         };
 
         // radius内の周囲セルにも影響を与える
@@ -73,7 +72,7 @@ void TacticalQuerySystem::Update(EnemyAIWorldContext& context, float deltaTime)
                 float distance = std::hypot(
                     enemy.entityInfo.position.x - cellPosition.x,
                     enemy.entityInfo.position.z - cellPosition.z);
-                const float densityCost = CalculateDensityCost(distance, radius, ENEMY_DENSITY_COST_WEIGHT);
+                const float densityCost = CalculateDensityCost(distance, radius, context.settings().tactical.enemyDensityCostWeight);
 
                 int neighborIndex = neighborCoord.x * context.settings().navigationGrid.cellCountZ + neighborCoord.z;
                 if (neighborIndex >= 0 && neighborIndex < m_tacticalCells.size()) {
@@ -122,5 +121,5 @@ float TacticalQuerySystem::GetTacticalCost(const EnemyAIWorldContext& context,
         }
     }
 
-    return (std::max)(0.0f, densityCost) + cell.reservationCost;
+    return (std::max)(0.0f, densityCost);
 }

@@ -14,11 +14,6 @@
 // 共有情報と経路情報を使い、移動先の候補を評価する。
 class TacticalQuerySystem {
 private:
-    static constexpr float UPDATE_INTERVAL = 0.2f; // タクティカルセル情報の更新間隔（秒）
-
-    static constexpr float ENEMY_DENSITY_COST_WEIGHT = 1.0f; // 敵の密度コストの重み
-    static constexpr float RESERVATION_COST_WEIGHT = 1.0f;    // 予約コストの重み
-
     std::vector<EnemyAiWorld::TacticalCellInfo> m_tacticalCells;
     float m_updateTimer = 0.0f;
 
