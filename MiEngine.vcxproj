@@ -148,6 +148,9 @@
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.cpp" />
@@ -318,6 +321,9 @@
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_settings_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_context.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.h" />

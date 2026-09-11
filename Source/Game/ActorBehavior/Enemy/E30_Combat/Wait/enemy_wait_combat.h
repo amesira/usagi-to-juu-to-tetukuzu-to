@@ -1,1 +1,36 @@
 #pragma once
+
+#include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_base.h"
+
+class EnemyLocomotionController;
+
+/// @brief 攻撃前の待機。RequestWaitで予約し、完了後はIsCompletedを攻撃側で確認する。
+class EnemyWaitCombat : public EnemyCombatBase {
+    EnemyLocomotionController* m_controller = nullptr;
+    int m_requestHandle = -1;
+    float m_waitDuration = 0.3f;
+    float m_remainingTime = 0.0f;
+    float m_minDistance = 0.0f;
+    float m_maxDistance = 2.0f;
+    bool m_requested = false;
+    bool m_completed = false;
+
+public:
+    EnemyWaitCombat() : EnemyCombatBase(15, true) {}
+
+    /// @brief 非実行中に呼ぶ。射程離脱やCancel時は予約・完了状態を破棄する。
+    void RequestWait(float duration, float minDistance, float maxDistance);
+    bool IsCompleted() const { return m_completed; }
+    float GetRemainingTime() const { return m_remainingTime; }
+
+    bool CanStart(const EnemyContext& context) const override;
+    bool CanContinue(const EnemyContext& context) const override;
+    void Start(EnemyContext& context) override;
+    EnemyCombatStatus Update(EnemyContext& context, float deltaTime) override;
+    void Finish(EnemyContext& context) override;
+    void Cancel(EnemyContext& context) override;
+
+private:
+    bool UpdateLocomotion(const EnemyContext& context);
+    void ReleaseLocomotion();
+};
