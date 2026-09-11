@@ -7,6 +7,7 @@
 #ifndef HEALTH_BEHAVIOR_H
 #define HEALTH_BEHAVIOR_H
 #include "Engine/Component/behavior_component.h"
+#include "Game/PresBehavior/UI/ui_handle.h"
 
 #include <functional>
 
@@ -18,9 +19,13 @@ private:
     float m_maxHealth = 100.0f;
     DamageCallback m_onTakeDamage;
 
+    UiHandle m_healthBar;
+    DirectX::XMFLOAT3 m_uiOffset = { 0.0f, 2.0f, 0.0f };
+    DirectX::XMFLOAT3 m_uiScale = { 2.5f, 0.15f, 1.0f };
+
 public:
     HealthBehavior() {}
-    ~HealthBehavior() {}
+    ~HealthBehavior() override;
 
     void Start() override;
     void Update() override;
@@ -55,6 +60,18 @@ public:
         }
     }
     float GetHealth() const { return m_health; }
+
+    void SetUiOffset(const DirectX::XMFLOAT3& offset);
+    void SetUiActive(bool active) {
+        if (m_healthBar.IsValid()) {
+            m_healthBar.SetActive(active);
+        }
+    }
+
+private:
+    void CreateWorldHealthUi();
+    void UpdateWorldHealthUi();
+
 };
 
 #endif // HEALTH_BEHAVIOR_H

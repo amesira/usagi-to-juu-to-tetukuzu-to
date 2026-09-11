@@ -13,6 +13,7 @@ class EnemyConditionMachine;
 class EnemyCombatTree;
 class EnemyAnimationController;
 class HealthBehavior;
+class HitReceiverBehavior;
 class IScene;
 class RigidbodyComponent;
 class TransformComponent;
@@ -38,6 +39,7 @@ public:
     RigidbodyComponent* rigidbody = nullptr;
 
     HealthBehavior* health = nullptr;
+    HitReceiverBehavior* hitReceiver = nullptr;
     EnemyAIWorldController* aiWorld = nullptr;
 
     EnemyLocomotionController* locomotionController = nullptr;

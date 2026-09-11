@@ -19,6 +19,8 @@ namespace UiFactory {
     UiHandle CreateUiImageHandle(IScene* scene, const std::wstring& texturePath);
     UiHandle CreateUiTextHandle(IScene* scene, const std::u8string& text);
     UiHandle CreateUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value);
+    // ワールド空間に配置するスライダー生成
+    UiHandle CreateWorldUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor, const XMFLOAT4& fillColor, float value);
     // UIイメージ生成
     GameObject* CreateUiImage(IScene* scene, const std::wstring& texturePath);
     // UIテキスト生成

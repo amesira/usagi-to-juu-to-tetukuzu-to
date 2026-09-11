@@ -45,5 +45,8 @@ public:
     class CameraControlBehavior* cameraControlBehavior = nullptr;
     const class CameraSettingsAsset* defaultCameraSettingsAsset = nullptr;
 
+    class HitReceiverBehavior* hitReceiver = nullptr;
+    class HealthBehavior* healthBehavior = nullptr;
+
     // FIX: この下にDataAssetで作成したSettingsを入れる予定
 };

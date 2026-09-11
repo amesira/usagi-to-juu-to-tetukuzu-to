@@ -10,6 +10,7 @@
 
 // component
 #include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/transform_component.h"
 #include "Engine/Component/image_component.h"
 #include "Engine/Component/text_component.h"
 #include "Engine/Component/slider_component.h"
@@ -88,6 +89,29 @@ UiHandle UiFactory::CreateUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor,
     const XMFLOAT4& fillColor, float value)
 {
     return UiHandle(CreateUiSlider(scene, bgColor, fillColor, value));
+}
+
+UiHandle UiFactory::CreateWorldUiSliderHandle(IScene* scene, const XMFLOAT4& bgColor,
+    const XMFLOAT4& fillColor, float value)
+{
+    if (!scene) return {};
+
+    GameObject* uiSlider = scene->CreateGameObject();
+    if (!uiSlider) return {};
+    uiSlider->SetName("WorldUiSlider");
+
+    uiSlider->AddComponent<TransformComponent>();
+    SliderComponent* sliderComp = uiSlider->AddComponent<SliderComponent>();
+    if (!sliderComp) {
+        uiSlider->Destroy();
+        return {};
+    }
+
+    sliderComp->SetBgColor(bgColor);
+    sliderComp->SetFillColor(fillColor);
+    sliderComp->SetValue(value);
+
+    return UiHandle(uiSlider);
 }
 
 // UITransformセットアップ

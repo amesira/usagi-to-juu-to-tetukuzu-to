@@ -29,6 +29,9 @@
 
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
+
 #include "Utility/mi_math.h"
 
 using namespace DirectX;
@@ -50,6 +53,10 @@ void PlayerBehavior::Start()
     m_context.animationController = &m_animationController;
 
     m_context.uiBehavior = owner->GetComponent<PlayerUiBehavior>();
+
+    m_context.hitReceiver = owner->GetComponent<HitReceiverBehavior>();
+    m_context.healthBehavior = owner->GetComponent<HealthBehavior>();
+    m_context.healthBehavior->SetUiActive(false);
 
     IScene* scene = owner->GetScene();
     if (!scene) return;

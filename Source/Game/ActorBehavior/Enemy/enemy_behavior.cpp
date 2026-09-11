@@ -7,11 +7,16 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Device/mi_fps.h"
+
 #include "Engine/Editor/LevelEditor/behavior_detail_view.h"
+
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/transform_component.h"
 #include "External/ImGui/imgui.h"
+
 #include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
+
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
@@ -25,6 +30,7 @@ void EnemyBehavior::Start()
     m_context.transform = owner->GetComponent<TransformComponent>();
     m_context.rigidbody = owner->GetComponent<RigidbodyComponent>();
     m_context.health = owner->GetComponent<HealthBehavior>();
+    m_context.hitReceiver = owner->GetComponent<HitReceiverBehavior>();
     m_context.aiWorld = Game::EnemyAIWorld();
     m_context.aiAgentSettingsAsset = m_aiAgentSettings;
 
@@ -33,6 +39,8 @@ void EnemyBehavior::Start()
     m_context.conditionMachine = &m_conditionMachine;
     m_context.combatTree = &m_combatTree;
     m_context.animationController = &m_animationController;
+
+    m_context.health->SetUiOffset({ 0.0f, 3.0f, 0.0f });
 
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context, m_moveSettings);
