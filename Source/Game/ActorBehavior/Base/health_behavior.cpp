@@ -69,7 +69,7 @@ void HealthBehavior::CreateWorldHealthUi()
 
     m_healthBar = UiFactory::CreateWorldUiSliderHandle(
         owner->GetScene(),
-        { 0.8f, 0.8f, 0.8f, 0.8f },
+        { 0.2f, 0.2f, 0.2f, 1.0f },
         { 1.0f, 0.2f, 0.1f, 1.0f },
         GetHealthRate());
 

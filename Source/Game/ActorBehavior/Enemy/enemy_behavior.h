@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include "Engine/Component/behavior_component.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
 
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
@@ -18,6 +19,8 @@
 #include "Game/ActorBehavior/Enemy/E30_Combat/Wait/enemy_wait_combat.h"
 
 #include "enemy_animation_controller.h"
+#include "enemy_effects.h"
+#include "enemy_motions.h"
 
 class EnemyAiAgentSettingsAsset;
 class EnemyMoveSettingsAsset;
@@ -34,6 +37,8 @@ private:
     EnemyConditionMachine m_conditionMachine;
     EnemyCombatTree m_combatTree;
     EnemyAnimationController m_animationController;
+    EnemyEffects m_effects;
+    EnemyMotions m_motions;
 
     EnemyMeleeAttackCombat m_attackCombat;
     EnemyWaitCombat m_waitCombat;
@@ -71,6 +76,10 @@ public:
     EnemyCondition GetCondition() const { return m_conditionMachine.GetCurrentCondition(); }
     EnemyContext& GetContext() { return m_context; }
     const EnemyContext& GetContext() const { return m_context; }
+
+    void OnHitReceived(
+        const HitReceiver::HitData& hitData,
+        const HitReceiver::HitResult& hitResult);
 
 private:
     void UpdateTargetState();

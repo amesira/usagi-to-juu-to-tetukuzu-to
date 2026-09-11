@@ -40,6 +40,10 @@ void TrainingDummyBehavior::Start()
 
     m_effects.Initialize(GetOwner());
     m_motions.Initialize(GetOwner());
+
+    m_healthBehavior->SetHealth(100000.0f);
+    m_healthBehavior->SetMaxHealth(100000.0f);
+    m_healthBehavior->SetUiOffset({ 0.0f, 6.0f, 0.0f });
 }
 
 void TrainingDummyBehavior::Update()

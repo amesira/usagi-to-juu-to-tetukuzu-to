@@ -20,6 +20,8 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
+using namespace HitReceiver;
+
 void EnemyBehavior::Start()
 {
     GameObject* owner = GetOwner();
@@ -41,6 +43,21 @@ void EnemyBehavior::Start()
     m_context.animationController = &m_animationController;
 
     m_context.health->SetUiOffset({ 0.0f, 3.0f, 0.0f });
+
+    if (m_context.hitReceiver) {
+        m_context.hitReceiver->KnockbackReceiver()->SetDefaultMovementSource({
+            KnockbackMovementMode::SetRigidbodyVelocity,
+            true,
+            -9.81f
+        });
+        m_context.hitReceiver->SetOnHitCallback(
+            [this](const HitData& hitData, const HitResult& hitResult) {
+                OnHitReceived(hitData, hitResult);
+            });
+    }
+
+    m_effects.Initialize(owner);
+    m_motions.Initialize(owner);
 
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context, m_moveSettings);
@@ -73,6 +90,9 @@ void EnemyBehavior::Start()
 void EnemyBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
+
+    m_effects.Update(deltaTime);
+    m_motions.Update(deltaTime);
 
     if (!m_registeredEntityToMetaAI) {
         auto* aiWorld = Game::EnemyAIWorld();
@@ -130,4 +150,32 @@ void EnemyBehavior::UpdateTargetState()
         m_context.runtimeState.combatTargetPosition =
             m_context.aiWorld->GetMetaAI().GetPlayerPosition();
     }
+}
+
+void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitResult)
+{
+    if (!hitResult.WasAccepted()) return;
+
+    if (hitResult.killed) {
+        m_motions.Stop();
+        return;
+    }
+
+    m_effects.PlayHitEffects(hitData.hitPoint, hitData.hitDirection, hitResult.appliedDamage);
+    m_effects.PlayFlashBlinkerEffect();
+
+    if (hitData.attackType == AttackType::Slash) {
+        m_motions.PlaySlashHitMotion(
+            hitData.hitDirection,
+            0.5f,
+            hitData.hitStop.affectReceiver ? hitData.hitStop.duration : 0.0f);
+    }
+    else {
+        m_motions.PlayKnockbackMotion(hitData.hitDirection, 0.5f, 0.2f);
+    }
+
+    const float stunDuration = hitData.knockback.enabled
+        ? hitData.knockback.duration
+        : 0.2f;
+    StartStun(stunDuration);
 }

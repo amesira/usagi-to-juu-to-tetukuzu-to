@@ -216,6 +216,8 @@
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_motions.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\attached_effect_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
@@ -479,6 +481,8 @@
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_motions.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_agent_settings_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_context.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_settings_asset.h" />
