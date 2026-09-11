@@ -37,6 +37,7 @@ void EnemyBehavior::Start()
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context, m_moveSettings);
     m_approachCombat.Initialize(m_context, m_approachSettings);
+    m_attackCombat.SetSettingsAsset(m_attackSettings);
     m_combatTree.Initialize(m_context);
 
     m_combatTree.RegisterBehavior(m_attackCombat);
@@ -75,8 +76,6 @@ void EnemyBehavior::Update()
     m_conditionMachine.Update(m_context, deltaTime);
 
     // Combat状態の時のみCombatTreeを更新する
-    // Approachの停止距離を共有し、射程との設定の食い違いを防ぐ。
-    m_attackCombat.SetAttackDistance(m_approachCombat.GetStopDistance());
     if (m_conditionMachine.IsCombat()) {
         m_combatTree.Update(m_context, deltaTime);
     }

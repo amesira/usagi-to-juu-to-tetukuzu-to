@@ -14,7 +14,7 @@
 #include "Game/ActorBehavior/Enemy/E20_Condition/enemy_condition_machine.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_tree.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Approach/enemy_approach_combat.h"
-#include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/Attack/Melee/enemy_melee_attack_combat.h"
 
 #include "enemy_animation_controller.h"
 
@@ -34,12 +34,13 @@ private:
     EnemyCombatTree m_combatTree;
     EnemyAnimationController m_animationController;
 
-    EnemyAttackCombat m_attackCombat;
+    EnemyMeleeAttackCombat m_attackCombat;
     EnemyApproachCombat m_approachCombat;
 
     const EnemyAiAgentSettingsAsset* m_aiAgentSettings = nullptr;
     const EnemyMoveSettingsAsset* m_moveSettings = nullptr;
     const EnemyApproachSettingsAsset* m_approachSettings = nullptr;
+    const EnemyAttackSettingsAsset* m_attackSettings = nullptr;
 
 public:
     EnemyBehavior() = default;
@@ -58,6 +59,9 @@ public:
     }
     void SetupApproachSettings(const EnemyApproachSettingsAsset* settings) {
         m_approachSettings = settings;
+    }
+    void SetupAttackSettings(const EnemyAttackSettingsAsset* settings) {
+        m_attackSettings = settings;
     }
 
     // === Enemyへのアクセス ===

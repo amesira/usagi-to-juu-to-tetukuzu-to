@@ -1,0 +1,22 @@
+#pragma once
+#include <DirectXMath.h>
+#include "enemy_attack_settings_asset.h"
+
+enum class EnemyAttackPhase { Idle, Windup, Active, Recovery };
+
+struct EnemyAttackRuntimeState {
+    EnemyAttackPhase phase = EnemyAttackPhase::Idle;
+    float phaseElapsed = 0.0f;
+    float cooldownRemaining = 0.0f;
+    DirectX::XMFLOAT3 aimPosition = {};
+};
+
+struct EnemyAttackContext {
+    const EnemyAttackSettingsAsset* settingsAsset = nullptr;
+    EnemyAttackRuntimeState runtimeState;
+
+    const EnemyAttackSettings::Data& settings() const {
+        static const EnemyAttackSettings::Data defaults;
+        return settingsAsset ? settingsAsset->GetData() : defaults;
+    }
+};
