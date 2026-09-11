@@ -49,7 +49,7 @@ void EnemyLocomotionController::Finalize()
 }
 
 /// @brief 複数の移動要求から優先度の高いものを選択し、EnemyMoveIntentを構築する
-EnemyMoveIntent EnemyLocomotionController::BuildIntent(const EnemyContext& context) const
+EnemyMoveIntent EnemyLocomotionController::BuildIntent(const EnemyContext& context)
 {
     const LocomotionRequest* selected = nullptr;
     for (const RequestSlot& slot : m_requests) {
@@ -60,13 +60,22 @@ EnemyMoveIntent EnemyLocomotionController::BuildIntent(const EnemyContext& conte
     }
 
     EnemyMoveIntent intent;
-    if (!selected) return intent; // 要求がないときはデフォルトのまま返す
-
-    intent.moveDirection = CalculateDirection(selected->moveDirection, context);
-    intent.rotateDirection = CalculateDirection(selected->rotateDirection, context);
-    intent.moveSpeedMultiplier = selected->moveSpeedMultiplier;
-    intent.rotationSpeedMultiplier = selected->rotationSpeedMultiplier;
-    intent.movementMode = selected->movementMode;
-    intent.canRotate = selected->canRotate;
+    if (selected) {
+        intent.moveDirection = CalculateDirection(selected->moveDirection, context);
+        intent.rotateDirection = CalculateDirection(selected->rotateDirection, context);
+        intent.moveSpeedMultiplier = selected->moveSpeedMultiplier;
+        intent.rotationSpeedMultiplier = selected->rotationSpeedMultiplier;
+        intent.movementMode = selected->movementMode;
+        intent.canRotate = selected->canRotate;
+        intent.canMove = selected->canMove;
+        intent.useGravity = selected->useGravity;
+    }
+    // Stun/Deadなど、より高優先度の通常要求がある場合は強制移動を抑止する。
+    if (m_hasForceMoveRequest && (!selected || m_forceMoveRequest.priority >= selected->priority)) {
+        intent.forceMoveIntent.isActive = true;
+        intent.forceMoveIntent.targetPosition = m_forceMoveRequest.targetPosition;
+    }
+    m_forceMoveRequest = {};
+    m_hasForceMoveRequest = false;
     return intent;
 }

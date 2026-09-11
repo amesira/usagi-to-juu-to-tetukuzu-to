@@ -62,6 +62,8 @@ void EnemyMeleeAttackCombat::EndAttack(EnemyContext& context)
     ClearAttackEffects(context);
     m_phase = EnemyMeleeAttackPhase::Idle;
     m_elapsedTime = 0.0f;
+
+    context.locomotionController->RemoveRequest(m_locomotionRequestId);
 }
 
 /// @brief 攻撃段階を変更する
@@ -70,14 +72,19 @@ void EnemyMeleeAttackCombat::ChangeAttackPhase(EnemyMeleeAttackPhase newPhase)
     if (m_phase == newPhase) return;
     m_phase = newPhase;
     m_elapsedTime = 0.0f;
-    m_enteredAttackPhase = false;
+    m_enteredAttackPhase = true;
 }
 
 void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
 {
-    // LocomotionController
-    EnemyLocomotionController::LocomotionRequest request;
-    request.priority = 50;
+    // 移動要求：ジャンプ中はForceMoveにより移動するので、LocomotionRequestでは移動を無効化
+    m_locomotionRequest.priority = 50;
+    m_locomotionRequest.canMove = false;
+    m_locomotionRequest.canRotate = true;
+    m_locomotionRequest.useGravity = false;
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
+    m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
 
     m_jumpStartPosition = context.transform->GetPosition();
     m_landingPosition = GetAimPosition();
@@ -91,22 +98,44 @@ void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
     m_jumpVelocity.z = (m_landingPosition.z - m_jumpStartPosition.z) / jumpDuration;
 }
 
-void EnemyMeleeAttackCombat::UpdateJump(EnemyContext&, float)
+void EnemyMeleeAttackCombat::UpdateJump(EnemyContext& context, float deltaTime)
 {
-    // TODO: 弧を描く移動と着地/衝突を更新する。
+    XMFLOAT3 currentPosition = context.transform->GetPosition();
+    currentPosition = MiMath::Add(currentPosition, MiMath::Multiply(m_jumpVelocity, deltaTime));
+    m_jumpVelocity.y -= settings().jumpGravity * deltaTime;
+
+    // ForceMove要求で移動
+    context.locomotionController->AddForceMoveRequest({
+        .priority = 50,
+        .targetPosition = currentPosition
+        });
+
+    // 速度方向に回転更新
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::FixedDirection;
+    m_locomotionRequest.rotateDirection.fixedDirection = m_jumpVelocity;
+    context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest);
 }
 
-void EnemyMeleeAttackCombat::BeginSlash(EnemyContext&)
+void EnemyMeleeAttackCombat::BeginSlash(EnemyContext& context)
 {
     // TODO: スラッシュのアニメーション・攻撃判定を開始する。
+
+    // アニメーション再生
+
+    // エフェクト再生
+
 }
 
-void EnemyMeleeAttackCombat::UpdateSlash(EnemyContext&, float)
+void EnemyMeleeAttackCombat::UpdateSlash(EnemyContext& context, float deltaTime)
 {
     // TODO: 攻撃判定の有効期間を更新する。
+
+    // 攻撃判定発生
+
 }
 
-void EnemyMeleeAttackCombat::ClearAttackEffects(EnemyContext&)
+void EnemyMeleeAttackCombat::ClearAttackEffects(EnemyContext& context)
 {
-    // TODO: 通常終了とキャンセルの両方で移動要求・攻撃判定・演出を解除する。
+    // TODO: 通常終了とキャンセルの両方で移動要求・攻撃判定・演出を解除する
+
 }

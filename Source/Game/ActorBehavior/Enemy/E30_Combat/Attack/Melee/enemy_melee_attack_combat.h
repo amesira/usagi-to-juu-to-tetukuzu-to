@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 
 enum class EnemyMeleeAttackPhase {
     Idle, 
@@ -19,6 +20,7 @@ class EnemyMeleeAttackCombat : public EnemyAttackCombat {
     float m_elapsedTime = 0.0f;
     bool m_enteredAttackPhase = false;
 
+    EnemyLocomotionController::LocomotionRequest m_locomotionRequest = {};
     int m_locomotionRequestId = -1;
 
     DirectX::XMFLOAT3 m_jumpStartPosition = {};

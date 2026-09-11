@@ -41,6 +41,13 @@ public:
         float rotationSpeedMultiplier = 1.0f;
         EnemyMovementMode movementMode = EnemyMovementMode::ControlVelocity;
         bool canRotate = true;
+        bool canMove = true;
+        bool useGravity = true;
+    };
+
+    struct ForceMoveRequest {
+        int priority = 0;
+        DirectX::XMFLOAT3 targetPosition = {};
     };
 
 private:
@@ -50,13 +57,23 @@ private:
     };
 
     std::array<RequestSlot, MAX_REQUEST_COUNT> m_requests = {};
+    ForceMoveRequest m_forceMoveRequest;
+    bool m_hasForceMoveRequest = false;
 
 public:
     void Initialize();
     void Finalize();
 
     /// @brief 複数の移動要求から優先度の高いものを選択し、EnemyMoveIntentを構築する
-    EnemyMoveIntent BuildIntent(const EnemyContext& context) const;
+    EnemyMoveIntent BuildIntent(const EnemyContext& context);
+
+    // 1フレーム限定。同優先度では先に追加した要求を維持する。
+    void AddForceMoveRequest(const ForceMoveRequest& request) {
+        if (!m_hasForceMoveRequest || request.priority > m_forceMoveRequest.priority) {
+            m_forceMoveRequest = request;
+            m_hasForceMoveRequest = true;
+        }
+    }
 
     // === LocomotionRequestの管理 ===
     int AddRequest(const LocomotionRequest& request) {
@@ -87,6 +104,8 @@ public:
         }
     }
     void ClearRequests(){
+        m_forceMoveRequest = {};
+        m_hasForceMoveRequest = false;
         for (int i = 0; i < MAX_REQUEST_COUNT; i++) {
             m_requests[i].active = false;
         }

@@ -16,7 +16,10 @@
 /// @brief EnemyMoveMotorの移動処理を更新する
 void EnemyMoveMotor::UpdateMotor(EnemyMoveContext& context, const EnemyMoveIntent& intent, float deltaTime)
 {
-    if (context.runtimeState.isGrounded) {
+    if (!intent.useGravity) {
+        context.runtimeState.physicsVelocity.y = 0.0f;
+    }
+    else if (context.runtimeState.isGrounded) {
         context.runtimeState.physicsVelocity.y = -0.1f;
     }
     else {
@@ -27,7 +30,7 @@ void EnemyMoveMotor::UpdateMotor(EnemyMoveContext& context, const EnemyMoveInten
         context.runtimeState.physicsVelocity.y += gravityAcceleration * deltaTime;
     }
 
-    if (intent.movementMode == EnemyMovementMode::ControlVelocity)
+    if (intent.canMove && intent.movementMode == EnemyMovementMode::ControlVelocity)
     {
         // 移動速度を計算する
         float moveSpeed = context.settings().moveSpeed * intent.moveSpeedMultiplier;
@@ -49,6 +52,8 @@ void EnemyMoveMotor::UpdateMotor(EnemyMoveContext& context, const EnemyMoveInten
     else {
         // 移動不可の場合は移動入力速度をゼロにする
         m_inputVelocity = { 0.0f, 0.0f, 0.0f };
+        m_desiredVelocity = {};
+        m_velocitySmoothDamp = {};
         context.runtimeState.controlVelocity.x = 0.0f;
         context.runtimeState.controlVelocity.z = 0.0f;
 

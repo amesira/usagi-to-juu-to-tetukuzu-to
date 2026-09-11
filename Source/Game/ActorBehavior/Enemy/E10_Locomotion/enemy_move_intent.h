@@ -12,6 +12,11 @@ enum class EnemyMovementMode {
 
 /// @brief LocomotionControllerがEnemyMoveへ渡す、1フレーム分の移動意図。
 struct EnemyMoveIntent {
+    struct ForceMoveIntent {
+        bool isActive = false;
+        DirectX::XMFLOAT3 targetPosition = {};
+    };
+    ForceMoveIntent forceMoveIntent;
     DirectX::XMFLOAT3 moveDirection = {};
     DirectX::XMFLOAT3 rotateDirection = { 0.0f, 0.0f, 1.0f };
 
@@ -20,4 +25,6 @@ struct EnemyMoveIntent {
 
     EnemyMovementMode movementMode = EnemyMovementMode::StopHorizontal;
     bool canRotate = true;
+    bool canMove = true; // 通常の移動入力を許可する。強制移動とは独立。
+    bool useGravity = true;
 };

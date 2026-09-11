@@ -5,6 +5,7 @@
 //===================================================
 #include "enemy_move.h"
 #include <algorithm>
+#include <cmath>
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 
 #include "Engine/Core/game_object.h"
@@ -48,8 +49,16 @@ void EnemyMove::Finalize()
 
 void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent, float deltaTime)
 {
+    if (!m_context.transform || !m_context.rigidbody) return;
+    if (!std::isfinite(deltaTime) || deltaTime <= 0.0f) return;
+    
     m_context.runtimeState.isGrounded = CheckGrounded();
     m_context.runtimeState.desiredPosition = m_context.transform->GetPosition();
+
+    // 強制移動は位置の基準を置き換える。通常移動・重力の加算は各フラグで制御する。
+    if (intent.forceMoveIntent.isActive) {
+        m_context.runtimeState.desiredPosition = intent.forceMoveIntent.targetPosition;
+    }
     
     // === ジャンプ要求 ===
     /*if (input.triggerJumpCommand && m_context.runtimeState.m_isGrounded && moveIntent.canJump) {
