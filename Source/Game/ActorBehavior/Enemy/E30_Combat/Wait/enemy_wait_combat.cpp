@@ -11,17 +11,6 @@
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 
-/// @brief 待機状態を要求する
-void EnemyWaitCombat::RequestWait(float duration, float minDistance, float maxDistance)
-{
-    m_waitDuration = (std::max)(0.0f, duration);
-    m_minDistance = (std::max)(0.0f, minDistance);
-    m_maxDistance = (std::max)(m_minDistance, maxDistance);
-    m_remainingTime = m_waitDuration;
-    m_requested = true;
-    m_completed = false;
-}
-
 bool EnemyWaitCombat::CanStart(const EnemyContext& context) const
 {
     return m_requested && CanContinue(context);

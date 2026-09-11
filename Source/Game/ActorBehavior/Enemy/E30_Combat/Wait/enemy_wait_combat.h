@@ -27,8 +27,6 @@ class EnemyWaitCombat : public EnemyCombatBase {
 public:
     EnemyWaitCombat() : EnemyCombatBase(15, true) {}
 
-    /// @brief 非実行中に呼ぶ。射程離脱やCancel時は予約・完了状態を破棄する。
-    void RequestWait(float duration, float minDistance, float maxDistance);
     bool IsCompleted() const { return m_completed; }
     float GetRemainingTime() const { return m_remainingTime; }
 
