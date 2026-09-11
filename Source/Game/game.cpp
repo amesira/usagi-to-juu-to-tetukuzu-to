@@ -49,7 +49,7 @@ void GameScene::Initialize()
     }
 
     // シーン固有の初期配置物をLevelAssetから生成する。
-    LoadLevel("asset/Level/game.level.json");
+    LoadLevel("asset/Level/stage.level.json");
 
     // GameEffectControllerの生成
     GameObject* gameControllerObj = this->CreateGameObject();
@@ -68,14 +68,14 @@ void GameScene::Initialize()
     EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
     // Field
-    GameObject* field = this->CreateGameObject();
+    /*GameObject* field = this->CreateGameObject();
     Factory::CreateField(field, { 0.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 60.0f, 1.0f, 60.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
     {
         GameObject* field2 = this->CreateGameObject();
         Factory::CreateField(field2, { -10.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 3.0f, 6.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
         GameObject* field3 = this->CreateGameObject();
         Factory::CreateField(field3, { -10.0f, -1.4f, 8.6f }, { XMConvertToRadians(18.0f), 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
-    }
+    }*/
 
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
@@ -95,10 +95,10 @@ void GameScene::Initialize()
 
     // 敵を生成
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 15.0f });
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 3.5f, 15.0f });
     }
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 20.0f });
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 3.5f, 20.0f });
     }
   /*  for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });

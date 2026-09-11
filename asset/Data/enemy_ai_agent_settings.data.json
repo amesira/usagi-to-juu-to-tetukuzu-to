@@ -2,7 +2,7 @@
     "data": {
         "navigationAgent": {
             "maxSlopeDegrees": 45.0,
-            "maxStepHeight": 0.699999988079071,
+            "maxStepHeight": 1.0,
             "radius": 1.0
         }
     },
