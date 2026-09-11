@@ -13,6 +13,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/engine_service_locator.h"
+#include "Engine/Graphics/material_repository.h"
 
 #include <algorithm>
 
@@ -64,12 +65,43 @@ GameObject* LevelObjectFactory::CreateObject(
     sphereCollider->SetRadius(data.collider.sphereRadius);
     sphereCollider->SetEnable(data.collider.type == LevelColliderType::Sphere);
 
+    static bool isFieldMaterialCreated = false;
+    if (!isFieldMaterialCreated)
+    {
+        isFieldMaterialCreated = true;
+        MaterialResource field = {
+            .name = "FieldMaterial",
+            .renderMode = RenderMode::Opaque,
+            .baseColor = { 1.0f, 1.0f, 1.0f, 1.0f },
+            .metallic = 0.6f,
+            .roughness = 0.5f,
+            .emissiveColor = { 0.0f, 0.0f, 0.0f },
+            .emissiveIntensity = 1.0f,
+            .albedoTexture = Engine::GetTextureRepository()->GetTextureResource(L"asset/Texture/field.png"),
+            .uvTiling = { 1.0f, 1.0f },
+            .uvOffset = { 0.0f, 0.0f },
+            .cullBackFace = true
+        };
+        EngineServiceLocator::GetMaterialRepository()->GenerateMaterial(field);
+    }
+
     ModelComponent* model = object->AddComponent<ModelComponent>();
     if (!model) return nullptr;
     model->SetEnable(modelResource != nullptr);
     if (modelResource)
     {
         model->SetModelResource(modelResource);
+        if (model->GetMaterialSlots().empty())
+        {
+           
+        }
+        else
+        {
+            for (size_t i = 0; i < model->GetMaterialSlots().size(); i++)
+            {
+                model->GetMaterialSlots()[i].materialResource = Engine::GetMaterialRepository()->GetMaterial("FieldMaterial");
+            }
+        }
     }
 
     return object;

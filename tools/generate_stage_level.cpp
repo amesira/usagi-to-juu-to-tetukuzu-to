@@ -264,7 +264,7 @@ int main(int argc, char** argv) {
         {"renderLayer", "Default"}, {"collisionLayer", "Default"},
         {"transform", {{"position", {0.0f,0.0f,0.0f}}, {"rotationDegrees", {0.0f,0.0f,0.0f}}, {"scale", {1.0f,1.0f,1.0f}}}},
         {"collider", {{"type", "None"}, {"center", {0.0f,0.0f,0.0f}}, {"boxSize", {1.0f,1.0f,1.0f}}, {"sphereRadius", 0.5f}}},
-        {"modelPath", visualModel.generic_string()}
+        {"modelPath", visualModel.generic_string()}, {"materialName", ""}
     });
 
     for (size_t i = 0; i < boxes.size(); ++i) {
@@ -275,7 +275,7 @@ int main(int argc, char** argv) {
             {"renderLayer", "Default"}, {"collisionLayer", "Field"},
             {"transform", {{"position", Vec3(box.center)}, {"rotationDegrees", Vec3(box.rotationDegrees)}, {"scale", {1.0f,1.0f,1.0f}}}},
             {"collider", {{"type", "Box"}, {"center", {0.0f,0.0f,0.0f}}, {"boxSize", Vec3(box.size)}, {"sphereRadius", 0.5f}}},
-            {"modelPath", ""}
+            {"modelPath", ""}, {"materialName", ""}
         });
     }
 

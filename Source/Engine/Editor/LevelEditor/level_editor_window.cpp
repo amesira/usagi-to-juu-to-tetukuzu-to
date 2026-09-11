@@ -16,6 +16,7 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/engine_service_locator.h"
+#include "Engine/Graphics/material_repository.h"
 #include "Game/Factory/level_object_factory.h"
 
 #include <algorithm>

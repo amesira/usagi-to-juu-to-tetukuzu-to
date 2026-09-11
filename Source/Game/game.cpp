@@ -35,6 +35,8 @@
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 
+#include "Engine/Graphics/texture_repository.h"
+
 // ゲームシーン初期化処理
 void GameScene::Initialize()
 {
