@@ -65,16 +65,14 @@ GameObject* LevelObjectFactory::CreateObject(
     sphereCollider->SetRadius(data.collider.sphereRadius);
     sphereCollider->SetEnable(data.collider.type == LevelColliderType::Sphere);
 
-    static bool isFieldMaterialCreated = false;
-    if (!isFieldMaterialCreated)
     {
-        isFieldMaterialCreated = true;
         MaterialResource field = {
             .name = "FieldMaterial",
             .renderMode = RenderMode::Opaque,
-            .baseColor = { 1.0f, 1.0f, 1.0f, 1.0f },
-            .metallic = 0.6f,
-            .roughness = 0.5f,
+            .shaderProgram = Engine::GetShaderRepository()->GetShaderProgramResource(ShaderBase::Lit),
+            .baseColor = { 0.8f, 0.3f, 0.3f, 1.0f },
+            .metallic = 0.1f,
+            .roughness = 0.6f,
             .emissiveColor = { 0.0f, 0.0f, 0.0f },
             .emissiveIntensity = 1.0f,
             .albedoTexture = Engine::GetTextureRepository()->GetTextureResource(L"asset/Texture/field.png"),
