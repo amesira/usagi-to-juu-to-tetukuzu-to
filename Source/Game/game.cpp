@@ -94,8 +94,14 @@ void GameScene::Initialize()
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, -0.5f, 5.0f });
 
     // 敵を生成
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 15.0f });
+    }
+    for (int i = 0; i < 5; i++) {
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 20.0f });
+    }
+    for (int i = 0; i < 5; i++) {
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });
     }
 
     // UI生成

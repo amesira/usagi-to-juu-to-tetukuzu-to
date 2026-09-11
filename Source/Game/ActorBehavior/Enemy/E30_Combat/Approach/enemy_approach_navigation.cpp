@@ -26,8 +26,12 @@ void EnemyApproachNavigation::Start(EnemyApproachContext& context)
     context.runtimeState.hasReachedDestination = false;
     m_lastPathTargetPosition = {};
     m_lastProgressPosition = {};
-    m_repathTimer = 0.0f;
-    m_minRepathTimer = 0.0f;
+    
+    // 経路再探索のタイマーをランダム化して、複数の敵が同時に経路探索を行わないようにしてみる
+    int r = std::rand() % 10;
+    m_repathTimer = context.settings().repathInterval * (static_cast<float>(r) / 10.0f);
+    m_minRepathTimer = context.settings().minRepathInterval * (static_cast<float>(r) / 10.0f);
+
     m_retryTimer = 0.0f;
     m_consecutivePathFailures = 0;
     m_consecutiveStuckChecks = 0;
@@ -114,7 +118,6 @@ EnemyCombatStatus EnemyApproachNavigation::Update(EnemyApproachContext& context,
             }
         }
         else {
-            // FindPathの[start, 始点セル中心, ..., goal]の先頭をスキップする。
             context.pathFollower->SetPath(std::move(result.path), 0);
             context.pathFollower->Update(position);
 

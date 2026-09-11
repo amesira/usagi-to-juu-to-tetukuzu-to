@@ -1,9 +1,9 @@
 {
     "data": {
         "navigationGrid": {
-            "cellCountX": 200,
-            "cellCountZ": 200,
-            "cellSize": 1.0,
+            "cellCountX": 100,
+            "cellCountZ": 100,
+            "cellSize": 2.0,
             "center": [
                 0.0,
                 0.0
