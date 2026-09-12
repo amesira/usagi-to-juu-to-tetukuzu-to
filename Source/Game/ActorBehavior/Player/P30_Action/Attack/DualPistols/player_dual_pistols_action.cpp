@@ -12,6 +12,7 @@
 
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Engine/Core/game_object.h"
@@ -73,6 +74,11 @@ bool PlayerDualPistolsAction::IsReleaseAttackInput(const PlayerInput& input) con
 
 void PlayerDualPistolsAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    if (m_context.weaponController) {
+        m_context.weaponController->SetWeaponMode(
+            PlayerWeaponController::WeaponMode::DualPistols);
+    }
+
     // アニメーションのサブマシーンを切り替える（切替に失敗した場合は、アクションを終了する）
     m_enteredAnimationSubMachine = m_context.animationController->EnterSubMachine(
         PlayerAnimationController::SubMachine::DualPistols);
@@ -129,7 +135,9 @@ void PlayerDualPistolsAction::Update(PlayerContext& context, const PlayerInput& 
 
             m_context.rapidFire.Update(m_context, deltaTime);
 
-            if (m_context.runtimeState.releaseAttackInput || (input.triggerAimCommand || input.holdAimCommand)) {
+            if (!m_context.rapidFire.IsActive()
+                || m_context.runtimeState.releaseAttackInput
+                || (input.triggerAimCommand || input.holdAimCommand)) {
                 m_context.rapidFire.Stop(m_context);
                 ChangePhase(Phase::Exiting);
             }

@@ -39,6 +39,8 @@ private:
 
     float m_lastDisplayedHealth = -1.0f;
     float m_lastDisplayedMaxHealth = -1.0f;
+    int m_lastDisplayedAmmo = -1;
+    int m_lastDisplayedAmmoCapacity = -1;
 
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
@@ -59,6 +61,7 @@ private:
     PlayerShotgunSettingsAsset* m_shotgunSettings = nullptr;
 
     const class CameraSettingsAsset* m_shotgunCameraSettings = nullptr;
+    const class PlayerWeaponSettingsAsset* m_weaponSettings = nullptr;
 
 public:
     ~PlayerBehavior() = default;
@@ -83,9 +86,14 @@ public:
         m_dualPistolsSettings = settings;
     }
 
+    void SetupPlayerWeapon(const PlayerWeaponSettingsAsset* settings) {
+        m_weaponSettings = settings;
+    }
+
 private:
     /// @brief HealthBehaviorの状態をプレイヤーUIへ同期する
     void SyncHealthUi();
+    void SyncAmmoUi();
 
     /// @brief プレイヤーの入力を更新する
     PlayerInput UpdateInput();

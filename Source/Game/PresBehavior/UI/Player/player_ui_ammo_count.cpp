@@ -77,9 +77,10 @@ void PlayerUiAmmoCount::ApplyLayout(const PlayerUiSettings::AmmoCountSettings& s
     UpdateMarkers();
 }
 
-void PlayerUiAmmoCount::SetAmmoCount(int current)
+void PlayerUiAmmoCount::SetAmmoCount(int current, int maximum)
 {
-    m_ammoCount = std::clamp(current, 0, 20);
+    m_ammoCapacity = (std::max)(maximum, 0);
+    m_ammoCount = std::clamp(current, 0, m_ammoCapacity);
     UpdateDisplay();
 }
 
@@ -88,10 +89,16 @@ void PlayerUiAmmoCount::UpdateDisplay()
     if (!m_group) return;
 
     if (auto* image = m_fill.handle.GetImage()) {
-        image->SetFillAmount(static_cast<float>(m_ammoCount) / 20 * 0.75f);
+        const float rate = m_ammoCapacity > 0
+            ? static_cast<float>(m_ammoCount) / m_ammoCapacity
+            : 0.0f;
+        image->SetFillAmount(rate * 0.75f);
     }
     if (auto* text = m_currentText.handle.GetText()) {
         text->SetText(std::to_string(m_ammoCount));
+    }
+    if (auto* text = m_capacityText.handle.GetText()) {
+        text->SetText("/ " + std::to_string(m_ammoCapacity));
     }
     UpdateMarkers();
 }
@@ -120,7 +127,8 @@ void PlayerUiAmmoCount::DrawInspector()
 {
     ImGui::PushID(this);
     int ammo = m_ammoCount;
-    if (ImGui::SliderInt("Ammo / 20", &ammo, 0, 20, "%d", ImGuiSliderFlags_AlwaysClamp)) SetAmmoCount(ammo);
+    if (ImGui::SliderInt("Ammo", &ammo, 0, m_ammoCapacity, "%d", ImGuiSliderFlags_AlwaysClamp))
+        SetAmmoCount(ammo, m_ammoCapacity);
     ImGui::PopID();
 }
 

@@ -8,6 +8,7 @@
 
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
 
 #include "Utility/mi_math.h"
 
@@ -61,12 +62,21 @@ void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float
     while (m_fireTimer >= fireInterval) {
         m_fireTimer -= fireInterval;
         m_fireFlipFlop = 1 - m_fireFlipFlop;
+        bool fired = false;
         if (m_fireFlipFlop == 0) {
-            FireLeftPistol(context);
+            fired = FireLeftPistol(context);
+            if (!fired) {
+                Stop(context);
+                break;
+            }
             context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireLeft);
         }
         else {
-            FireRightPistol(context);
+            fired = FireRightPistol(context);
+            if (!fired) {
+                Stop(context);
+                break;
+            }
             context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireRight);
         }
     }
@@ -97,32 +107,43 @@ void PlayerDualPistolsRapidFire::Reset(PlayerDualPistolsContext& context)
     m_aimBlendParameterVelocity = 0.0f;
 }
 
-void PlayerDualPistolsRapidFire::FireVolley(PlayerDualPistolsContext& context)
+bool PlayerDualPistolsRapidFire::FireVolley(PlayerDualPistolsContext& context)
 {
-    FireLeftPistol(context);
-    FireRightPistol(context);
+    const bool firedLeft = FireLeftPistol(context);
+    const bool firedRight = FireRightPistol(context);
+    return firedLeft || firedRight;
 }
 
-void PlayerDualPistolsRapidFire::FireLeftPistol(PlayerDualPistolsContext& context)
+bool PlayerDualPistolsRapidFire::FireLeftPistol(PlayerDualPistolsContext& context)
 {
     const auto& aimResult = context.aim.GetAimResult();
-    if (!aimResult.hasLeftMuzzle) return;
+    if (!aimResult.hasLeftMuzzle || !context.weaponController) return false;
+    if (!context.weaponController->TryConsume(
+            PlayerWeaponController::AttackResourceType::DualPistolsFire)) {
+        return false;
+    }
     PlayerDualPistolsFiring::FireRequest request;
     request.muzzlePosition = aimResult.leftMuzzlePosition;
     request.fireDirection = aimResult.leftFireDirection;
     request.pistolSide = PlayerDualPistolsFiring::PistolSide::Left;
     context.firing.Fire(context, request);
+    return true;
 }
 
-void PlayerDualPistolsRapidFire::FireRightPistol(PlayerDualPistolsContext& context)
+bool PlayerDualPistolsRapidFire::FireRightPistol(PlayerDualPistolsContext& context)
 {
     const auto& aimResult = context.aim.GetAimResult();
-    if (!aimResult.hasRightMuzzle) return;
+    if (!aimResult.hasRightMuzzle || !context.weaponController) return false;
+    if (!context.weaponController->TryConsume(
+            PlayerWeaponController::AttackResourceType::DualPistolsFire)) {
+        return false;
+    }
     PlayerDualPistolsFiring::FireRequest request;
     request.muzzlePosition = aimResult.rightMuzzlePosition;
     request.fireDirection = aimResult.rightFireDirection;
     request.pistolSide = PlayerDualPistolsFiring::PistolSide::Right;
     context.firing.Fire(context, request);
+    return true;
 }
 
 void PlayerDualPistolsRapidFire::UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime)

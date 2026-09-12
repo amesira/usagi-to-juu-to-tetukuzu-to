@@ -89,6 +89,7 @@ void PlayerBehavior::Start()
     m_context.moveBehavior->Initialize(m_context, m_moveSettings);
     m_context.actionMachine->Initialize(m_context, m_input);
     m_context.animationController->Initialize(m_context);
+    m_weaponController.Initialize(m_weaponSettings);
 
     // SettingsAssetがPrefabから渡されるまではデフォルト設定を使用する
     static PlayerShotgunSettingsAsset defaultShotgunSettings;
@@ -130,6 +131,7 @@ void PlayerBehavior::Update()
     const float deltaTime = FPS_GetDeltaTime();
 
     SyncHealthUi();
+    SyncAmmoUi();
 
     if (!m_registeredEntityToMetaAI) {
         auto* enemyAIWorld = Game::EnemyAIWorld();
@@ -175,6 +177,22 @@ void PlayerBehavior::SyncHealthUi()
     m_context.uiBehavior->SetHealth(health, maxHealth);
     m_lastDisplayedHealth = health;
     m_lastDisplayedMaxHealth = maxHealth;
+}
+
+void PlayerBehavior::SyncAmmoUi()
+{
+    if (!m_context.uiBehavior) return;
+
+    const int ammo = m_weaponController.GetDisplayAmmo();
+    const int capacity = m_weaponController.GetDisplayCapacity();
+    if (ammo == m_lastDisplayedAmmo
+        && capacity == m_lastDisplayedAmmoCapacity) {
+        return;
+    }
+
+    m_context.uiBehavior->SetAmmoCount(ammo, capacity);
+    m_lastDisplayedAmmo = ammo;
+    m_lastDisplayedAmmoCapacity = capacity;
 }
 
 void PlayerBehavior::DrawComponentInspector()

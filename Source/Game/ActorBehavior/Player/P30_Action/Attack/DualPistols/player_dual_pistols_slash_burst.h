@@ -44,7 +44,7 @@ public:
     void Initialize(PlayerDualPistolsContext& context);
 
     void Start(PlayerDualPistolsContext& context);
-    void StartNextStep(PlayerDualPistolsContext& context);
+    bool StartNextStep(PlayerDualPistolsContext& context);
     void Update(PlayerDualPistolsContext& context, float deltaTime);
     void Finish(PlayerDualPistolsContext& context);
 

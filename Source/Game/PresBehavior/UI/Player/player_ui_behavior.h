@@ -54,7 +54,7 @@ public:
     // === 外部からのUI更新関数 ===
     void Setup(const PlayerUiSettingsAsset* settingsAsset);
     void SetHealth(float current, float maximum);
-    void SetAmmoCount(int current);
+    void SetAmmoCount(int current, int maximum);
     void SetRecoveryGauge(float amount);
     void SetRemainingLife(int current, int maximum);
 

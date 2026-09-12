@@ -18,7 +18,8 @@ private:
     PlayerUiWidgetElement m_currentText;
     PlayerUiWidgetElement m_capacityText;
     std::array<PlayerUiWidgetElement, 3> m_markers;
-    int m_ammoCount = 20;
+    int m_ammoCount = 0;
+    int m_ammoCapacity = 0;
 
 public:
     void ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2);
@@ -30,7 +31,7 @@ public:
     void DrawInspector();
     void Destroy();
     
-    void SetAmmoCount(int current);
+    void SetAmmoCount(int current, int maximum);
 
 private:
     void UpdateDisplay();

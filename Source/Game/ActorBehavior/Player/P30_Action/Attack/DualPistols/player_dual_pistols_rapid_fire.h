@@ -37,9 +37,9 @@ public:
     bool IsActive() const { return m_isActive; }
 
 private:
-    void FireVolley(PlayerDualPistolsContext& context);
-    void FireLeftPistol(PlayerDualPistolsContext& context);
-    void FireRightPistol(PlayerDualPistolsContext& context);
+    bool FireVolley(PlayerDualPistolsContext& context);
+    bool FireLeftPistol(PlayerDualPistolsContext& context);
+    bool FireRightPistol(PlayerDualPistolsContext& context);
 
     void UpdateRapidFireAnimation(PlayerDualPistolsContext& context, float deltaTime);
 

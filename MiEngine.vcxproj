@@ -510,6 +510,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />

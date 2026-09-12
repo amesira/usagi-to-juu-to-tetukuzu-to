@@ -14,6 +14,7 @@
 #include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
 #include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_settings_asset.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
 #include "Game/ActorBehavior/TrainingDummy/training_dummy_behavior.h"
 
@@ -76,6 +77,10 @@ PrefabFactory::PlayerPrefab PrefabFactory::CreatePlayerPrefab(
         DATA_LOADER->GetAsset<PlayerDualPistolsSettingsAsset>(
             "asset/Data/player_dual_pistols_settings.data.json",
             true);
+    PlayerWeaponSettingsAsset* weaponSettingsAsset =
+        DATA_LOADER->GetAsset<PlayerWeaponSettingsAsset>(
+            "asset/Data/player_weapon_settings.data.json",
+            true);
     CameraSettingsAsset* shotgunCameraSettingsAsset =
         DATA_LOADER->GetAsset<CameraSettingsAsset>(
             "asset/Data/camera_settings_shotgun.data.json",
@@ -89,6 +94,7 @@ PrefabFactory::PlayerPrefab PrefabFactory::CreatePlayerPrefab(
             shotgunCameraSettingsAsset);
         playerBehavior->SetupPlayerDualPistols(
             dualPistolsSettingsAsset);
+        playerBehavior->SetupPlayerWeapon(weaponSettingsAsset);
     }
 
     return prefab;

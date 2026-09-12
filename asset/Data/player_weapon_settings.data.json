@@ -1,0 +1,11 @@
+{
+    "data": {
+        "dualPistolsFireCost": 1,
+        "dualPistolsSlashBurstCost": 15,
+        "maxAmmo": 90,
+        "shotgunCost": 30
+    },
+    "formatVersion": 0,
+    "name": "player_weapon_settings.data",
+    "type": "PlayerWeaponSettingsAsset"
+}

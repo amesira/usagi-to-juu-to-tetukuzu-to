@@ -171,9 +171,9 @@ void PlayerUiBehavior::SetHealth(float current, float maximum)
 {
     m_healthBar.SetHealth(current, maximum);
 }
-void PlayerUiBehavior::SetAmmoCount(int current)
+void PlayerUiBehavior::SetAmmoCount(int current, int maximum)
 {
-    m_ammoCount.SetAmmoCount(current);
+    m_ammoCount.SetAmmoCount(current, maximum);
 }
 void PlayerUiBehavior::SetRecoveryGauge(float amount)
 {

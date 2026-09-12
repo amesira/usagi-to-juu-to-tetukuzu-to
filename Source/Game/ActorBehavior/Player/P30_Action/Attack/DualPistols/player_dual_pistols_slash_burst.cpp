@@ -15,6 +15,7 @@
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/collider_component.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
 
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 
@@ -48,12 +49,20 @@ void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
         m_locomotionRequestID = context.locomotionController->AddLocomotionRequest(m_locomotionRequest);
     }
 
-    StartNextStep(context);
+    if (!StartNextStep(context)) {
+        Finish(context);
+    }
 }
 
 /// @brief 次の攻撃ステップを開始する
-void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& context)
+bool PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& context)
 {
+    if (!context.weaponController
+        || !context.weaponController->TryConsume(
+            PlayerWeaponController::AttackResourceType::DualPistolsSlashBurst)) {
+        return false;
+    }
+
     m_attackTimer = 0.0f;
     m_fireTimer = context.settings().slashBurstFireInterval; // 最初の発射を即座に行うためにタイマーを初期化
 
@@ -97,6 +106,7 @@ void PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
         break;
     default: break;
     }
+    return true;
 }
 
 /// @brief 攻撃の更新処理
@@ -157,7 +167,9 @@ void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, floa
     // 次の攻撃への連鎖判定
     if (m_requestNextAttack && IsChainableFrame(context)) {
         // 次の攻撃への連鎖処理
-        StartNextStep(context);
+        if (!StartNextStep(context)) {
+            Finish(context);
+        }
         return;
     }
 

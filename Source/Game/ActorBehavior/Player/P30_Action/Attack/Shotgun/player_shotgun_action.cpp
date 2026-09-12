@@ -11,6 +11,7 @@
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
 #include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
 
 #include "Engine/engine_service_locator.h"
 #include "Engine/Core/game_object.h"
@@ -63,6 +64,11 @@ bool PlayerShotgunAction::CanStart(const PlayerContext& context, const PlayerInp
 
 void PlayerShotgunAction::Start(PlayerContext& context, const PlayerInput& input)
 {
+    if (m_context.weaponController) {
+        m_context.weaponController->SetWeaponMode(
+            PlayerWeaponController::WeaponMode::CombinedShotgun);
+    }
+
     // アニメーションのサブマシーンを切り替える（切替に失敗した場合は、アクションを終了する）
     m_enteredAnimationSubMachine = m_context.animationController->EnterSubMachine(
         PlayerAnimationController::SubMachine::Shotgun);
@@ -129,11 +135,16 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
         }
         case Phase::Firing: {
             if (enteredPhase) {
-                PlayerShotgunFiring::FireRequest fireRequest;
-                fireRequest.muzzlePosition = m_context.aim.GetAimResult().muzzlePosition;
-                fireRequest.fireDirection = m_context.aim.GetAimResult().fireDirection;
-                fireRequest.chargeRate = m_context.charging.GetChargeRate(m_context);
-                m_context.firing.Fire(m_context, fireRequest);
+                const bool consumed = m_context.weaponController
+                    && m_context.weaponController->TryConsume(
+                        PlayerWeaponController::AttackResourceType::Shotgun);
+                if (consumed) {
+                    PlayerShotgunFiring::FireRequest fireRequest;
+                    fireRequest.muzzlePosition = m_context.aim.GetAimResult().muzzlePosition;
+                    fireRequest.fireDirection = m_context.aim.GetAimResult().fireDirection;
+                    fireRequest.chargeRate = m_context.charging.GetChargeRate(m_context);
+                    m_context.firing.Fire(m_context, fireRequest);
+                }
             }
             ChangePhase(Phase::Recovery);
             break;
