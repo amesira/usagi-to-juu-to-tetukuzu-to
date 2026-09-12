@@ -219,3 +219,38 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateRangedEnemyPrefab(
     }
     return prefab;
 }
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverEnemyPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    EnemyPrefab prefab = CreateEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+
+    prefab.enemy->SetName("HoverEnemy");
+    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
+        behavior->SetupAiAgentSettings(
+            DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
+                "asset/Data/enemy_hover_ai_agent_settings.data.json",
+                true));
+        behavior->SetupMoveSettings(
+            DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
+                "asset/Data/enemy_hover_move_settings.data.json",
+                true));
+    }
+    return prefab;
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverRangedEnemyPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    EnemyPrefab prefab = CreateHoverEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+
+    prefab.enemy->SetName("HoverRangedEnemy");
+    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
+        behavior->SetupAttackType(EnemyAttackType::Ranged);
+    }
+    return prefab;
+}

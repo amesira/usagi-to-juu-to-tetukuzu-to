@@ -9,6 +9,9 @@ struct EnemyMoveRuntimeState {
     DirectX::XMFLOAT3 physicsVelocity = {};
     DirectX::XMFLOAT3 desiredPosition = {};
     bool isGrounded = false;
+    float hoverHeightVelocity = 0.0f;
+    float lastGroundHeight = 0.0f;
+    bool hasGroundHeight = false;
 };
 
 struct EnemyMoveContext {
@@ -18,6 +21,7 @@ struct EnemyMoveContext {
     class TransformComponent* transform = nullptr;
     class RigidbodyComponent* rigidbody = nullptr;
     class CapsuleColliderComponent* collider = nullptr;
+    class EnemyAIWorldController* aiWorld = nullptr;
 
     const EnemyMoveSettingsAsset* settingsAsset = nullptr;
     EnemyMoveRuntimeState runtimeState;

@@ -34,6 +34,8 @@ public:
 
 private:
     bool CheckGrounded();
+    bool ResolveNavigationGroundHeight(float& outHeight) const;
+    void ApplyHoverHeight(XMFLOAT3& outPosition, float deltaTime);
 
     void ApplyControlVelocity(XMFLOAT3& outPosition, float deltaTime);
     void ApplyPhysicsVelocity(XMFLOAT3& outPosition, float deltaTime);

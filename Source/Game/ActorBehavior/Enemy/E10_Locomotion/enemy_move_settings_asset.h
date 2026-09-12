@@ -26,6 +26,9 @@ namespace EnemyMoveSettings {
         float smoothTime = 0.1f;
         float stopSmoothTime = 0.05f;
         float waypointReachDistance = 0.2f;
+        bool hoverEnabled = false;
+        float hoverHeight = 3.0f;
+        float hoverHeightSmoothTime = 0.2f;
         float runEffectMinSpeed = 0.1f;
         AttachedEffectSettings runEffect;
     };
@@ -67,6 +70,12 @@ namespace EnemyMoveSettings {
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
             MakeHeaderField("Path Following"),
             MakeField("waypointReachDistance", "Waypoint Reach Distance", &Settings::waypointReachDistance,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
+            MakeHeaderField("Hover"),
+            MakeField("hoverEnabled", "Hover Enabled", &Settings::hoverEnabled),
+            MakeField("hoverHeight", "Hover Height", &Settings::hoverHeight,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("hoverHeightSmoothTime", "Height Smooth Time", &Settings::hoverHeightSmoothTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10.0f }),
             MakeHeaderField("Effects"),
             MakeField("runEffectMinSpeed", "Run Effect Min Speed", &Settings::runEffectMinSpeed,

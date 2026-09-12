@@ -1,0 +1,24 @@
+{
+    "data": {
+        "acceleration": 20.0,
+        "deceleration": 30.0,
+        "groundCheckDistance": 0.15,
+        "groundCheckRadius": 0.35,
+        "hoverEnabled": true,
+        "hoverHeight": 3.0,
+        "hoverHeightSmoothTime": 0.2,
+        "moveSpeed": 6.0,
+        "rotationSpeed": 25.0,
+        "runEffect": {
+            "particleAssetPath": "asset/Particle/run_dust.particle.json",
+            "positionOffset": [0.0, 1.0, 0.0]
+        },
+        "runEffectMinSpeed": 0.1,
+        "smoothTime": 0.2,
+        "stopSmoothTime": 0.05,
+        "waypointReachDistance": 0.2
+    },
+    "formatVersion": 0,
+    "name": "enemy_hover_move_settings.data",
+    "type": "EnemyMoveSettingsAsset"
+}

@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ControllerBehavior/EnemyAI/navigation_system.h"
 
 #include "Engine/Core/game_object.h"
 
@@ -29,6 +31,7 @@ void EnemyMove::Initialize(EnemyContext& context, const EnemyMoveSettingsAsset* 
     m_context.transform = context.transform;
     m_context.rigidbody = context.rigidbody;
     m_context.collider = owner ? owner->GetComponent<CapsuleColliderComponent>() : nullptr;
+    m_context.aiWorld = context.aiWorld;
     m_context.settingsAsset = settingsAsset;
     m_context.runtimeState = {};
 
@@ -51,8 +54,10 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
 {
     if (!m_context.transform || !m_context.rigidbody) return;
     if (!std::isfinite(deltaTime) || deltaTime <= 0.0f) return;
+    m_context.aiWorld = context.aiWorld;
     
-    m_context.runtimeState.isGrounded = CheckGrounded();
+    const bool hoverEnabled = m_context.settings().hoverEnabled;
+    m_context.runtimeState.isGrounded = hoverEnabled ? false : CheckGrounded();
     m_context.runtimeState.desiredPosition = m_context.transform->GetPosition();
 
     // 強制移動は位置の基準を置き換える。通常移動・重力の加算は各フラグで制御する。
@@ -70,13 +75,18 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
     }*/
 
     // === 移動処理 ===
-    m_context.moveMotor->UpdateMotor(m_context, intent, deltaTime);
+    EnemyMoveIntent resolvedIntent = intent;
+    if (hoverEnabled) resolvedIntent.useGravity = false;
+    m_context.moveMotor->UpdateMotor(m_context, resolvedIntent, deltaTime);
 
     // === 目標位置を算出し、速度を逆算 ===
     {
         // 速度で目標位置を更新
         ApplyControlVelocity(m_context.runtimeState.desiredPosition, deltaTime);
         ApplyPhysicsVelocity(m_context.runtimeState.desiredPosition, deltaTime);
+        if (hoverEnabled) {
+            ApplyHoverHeight(m_context.runtimeState.desiredPosition, deltaTime);
+        }
 
         // 現在位置と目標位置の差分を計算してRigidbodyに反映
         XMFLOAT3 currentPosition = m_context.transform->GetPosition();
@@ -152,6 +162,54 @@ bool EnemyMove::CheckGrounded()
         CollisionLayerToMask(CollisionLayer::Field));
 
     return hasHit;
+}
+
+bool EnemyMove::ResolveNavigationGroundHeight(float& outHeight) const
+{
+    if (!m_context.aiWorld || !m_context.aiWorld->IsInitialized()
+        || !m_context.transform) {
+        return false;
+    }
+
+    const auto& navigation = m_context.aiWorld->GetNavigationSystem();
+    EnemyAiWorld::GridCoord coord;
+    if (!navigation.WorldToGrid(m_context.transform->GetPosition(), coord)) {
+        return false;
+    }
+
+    const EnemyAiWorld::GridCell* cell = navigation.GetCell(coord);
+    if (!cell
+        || cell->type == EnemyAiWorld::CellType::Unknown
+        || cell->type == EnemyAiWorld::CellType::NoGround) {
+        return false;
+    }
+
+    outHeight = cell->height;
+    return true;
+}
+
+void EnemyMove::ApplyHoverHeight(XMFLOAT3& outPosition, float deltaTime)
+{
+    float groundHeight = 0.0f;
+    if (ResolveNavigationGroundHeight(groundHeight)) {
+        m_context.runtimeState.lastGroundHeight = groundHeight;
+        m_context.runtimeState.hasGroundHeight = true;
+    }
+    else if (m_context.runtimeState.hasGroundHeight) {
+        groundHeight = m_context.runtimeState.lastGroundHeight;
+    }
+    else {
+        return;
+    }
+
+    const float targetHeight = groundHeight + (std::max)(0.0f, m_context.settings().hoverHeight);
+    const float smoothTime = (std::max)(0.01f, m_context.settings().hoverHeightSmoothTime);
+    outPosition.y = MiMath::SmoothDamp(
+        m_context.transform->GetPosition().y,
+        targetHeight,
+        m_context.runtimeState.hoverHeightVelocity,
+        smoothTime,
+        deltaTime);
 }
 
 /// @brief 制御速度を適用する

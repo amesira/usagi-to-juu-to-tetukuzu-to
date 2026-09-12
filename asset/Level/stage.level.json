@@ -18,7 +18,6 @@
                 },
                 "collisionLayer": "Default",
                 "id": "stage_visual",
-                "materialName": "FieldMaterial",
                 "modelPath": "asset/Level/Stage.fbx",
                 "name": "Stage",
                 "renderLayer": "Default",
@@ -44,9 +43,9 @@
             {
                 "collider": {
                     "boxSize": [
-                        79.83541870117188,
-                        59.70077133178711,
-                        6.020467281341553
+                        79.53500366210938,
+                        60.70100021362305,
+                        5.920000076293945
                     ],
                     "center": [
                         0.0,
@@ -58,7 +57,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0001",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_1",
                 "renderLayer": "Default",
@@ -84,9 +82,9 @@
             {
                 "collider": {
                     "boxSize": [
-                        26.788246154785156,
-                        28.061141967773438,
-                        6.020467281341553
+                        27.788000106811523,
+                        23.961000442504883,
+                        4.619999885559082
                     ],
                     "center": [
                         0.0,
@@ -98,16 +96,15 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0002",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_2",
                 "renderLayer": "Default",
                 "tag": "Untagged",
                 "transform": {
                     "position": [
-                        26.22599983215332,
+                        25.326000213623047,
                         4.213168144226074,
-                        -16.117599487304688
+                        -17.118000030517578
                     ],
                     "rotationDegrees": [
                         -90.0,
@@ -138,7 +135,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0003",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_3",
                 "renderLayer": "Default",
@@ -147,7 +143,7 @@
                     "position": [
                         -1.965000033378601,
                         4.213168144226074,
-                        -8.253015518188477
+                        -8.553000450134277
                     ],
                     "rotationDegrees": [
                         90.0,
@@ -178,14 +174,13 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0004",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_4",
                 "renderLayer": "Default",
                 "tag": "Untagged",
                 "transform": {
                     "position": [
-                        33.29800033569336,
+                        32.99800109863281,
                         4.513000011444092,
                         4.00600004196167
                     ],
@@ -218,7 +213,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0005",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_5",
                 "renderLayer": "Default",
@@ -258,7 +252,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0006",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_6",
                 "renderLayer": "Default",
@@ -298,7 +291,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0007",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_7",
                 "renderLayer": "Default",
@@ -338,7 +330,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0008",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_8",
                 "renderLayer": "Default",
@@ -378,7 +369,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0009",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_9",
                 "renderLayer": "Default",
@@ -418,7 +408,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0010",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_10",
                 "renderLayer": "Default",
@@ -458,7 +447,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "stage_collider_0011",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_11",
                 "renderLayer": "Default",
@@ -498,7 +486,6 @@
                 },
                 "collisionLayer": "Field",
                 "id": "level_object_0001",
-                "materialName": "",
                 "modelPath": "",
                 "name": "StageCollider_12",
                 "renderLayer": "Default",
