@@ -135,16 +135,11 @@ void PlayerShotgunAction::Update(PlayerContext& context, const PlayerInput& inpu
         }
         case Phase::Firing: {
             if (enteredPhase) {
-                const bool consumed = m_context.weaponController
-                    && m_context.weaponController->TryConsume(
-                        PlayerWeaponController::AttackResourceType::Shotgun);
-                if (consumed) {
-                    PlayerShotgunFiring::FireRequest fireRequest;
-                    fireRequest.muzzlePosition = m_context.aim.GetAimResult().muzzlePosition;
-                    fireRequest.fireDirection = m_context.aim.GetAimResult().fireDirection;
-                    fireRequest.chargeRate = m_context.charging.GetChargeRate(m_context);
-                    m_context.firing.Fire(m_context, fireRequest);
-                }
+                PlayerShotgunFiring::FireRequest fireRequest;
+                fireRequest.muzzlePosition = m_context.aim.GetAimResult().muzzlePosition;
+                fireRequest.fireDirection = m_context.aim.GetAimResult().fireDirection;
+                fireRequest.chargeRate = m_context.charging.GetChargeRate(m_context);
+                m_context.firing.Fire(m_context, fireRequest);
             }
             ChangePhase(Phase::Recovery);
             break;

@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+#include "Engine/Device/mi_fps.h"
+
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
 #include "Game/ActorBehavior/Player/P00_Core/player_input.h"
 
@@ -25,8 +27,19 @@ void PlayerWeaponController::Initialize(const PlayerWeaponSettingsAsset* setting
 /// @brief 更新処理
 void PlayerWeaponController::Update(PlayerContext& context, const PlayerInput& input)
 {
+    float deltaTime = FPS_GetDeltaTime();
     // 現在の武器の更新
     // リロードなどはActionとして行なうので、ここで何を更新するかは悩み中
+
+    m_recoveryTimer -= deltaTime;
+    if (m_recoveryTimer <= 0.0f)
+    {
+        m_recoveryTimer += m_settingsAsset ? m_settingsAsset->GetData().recoveryTime : 0.2f;
+        if (m_ammo < GetMaxAmmo())
+        {
+            m_ammo++;
+        }
+    }
 }
 
 /// @brief 武器の切り替えが可能かどうか
@@ -49,50 +62,27 @@ int PlayerWeaponController::GetMaxAmmo() const
     return (std::max)(m_settingsAsset ? m_settingsAsset->GetData().maxAmmo : defaults.maxAmmo, 1);
 }
 
-int PlayerWeaponController::GetCost(AttackResourceType type) const
+bool PlayerWeaponController::CanConsume(int cost) const
 {
-    static const PlayerWeaponSettings::Data defaults;
-    const auto& settings = m_settingsAsset ? m_settingsAsset->GetData() : defaults;
-    int cost = 1;
-    switch (type) {
-    case AttackResourceType::Shotgun: cost = settings.shotgunCost; break;
-    case AttackResourceType::DualPistolsFire: cost = settings.dualPistolsFireCost; break;
-    case AttackResourceType::DualPistolsSlashBurst: cost = settings.dualPistolsSlashBurstCost; break;
+    return m_ammo >= cost;
+}
+
+float PlayerWeaponController::TryConsume(int cost)
+{
+    float consumeCost = cost;
+    if (m_ammo < cost) {
+        consumeCost = static_cast<float>(m_ammo); // 残りの弾薬が足りない場合は、残りの弾薬を消費する
     }
-    return (std::max)(cost, 1);
-}
-
-bool PlayerWeaponController::CanConsume(AttackResourceType type) const
-{
-    return m_ammo >= GetCost(type);
-}
-
-bool PlayerWeaponController::TryConsume(AttackResourceType type)
-{
-    const int cost = GetCost(type);
-    if (m_ammo < cost) return false;
-    m_ammo -= cost;
-    return true;
+    m_ammo -= static_cast<int>(consumeCost);
+    return consumeCost;
 }
 
 int PlayerWeaponController::GetDisplayAmmo() const
 {
-    if (m_weaponMode == WeaponMode::CombinedShotgun) {
-        return m_ammo / GetCost(AttackResourceType::Shotgun);
-    }
-    if (m_weaponMode == WeaponMode::SlashBurst) {
-        return m_ammo / GetCost(AttackResourceType::DualPistolsSlashBurst);
-    }
     return m_ammo;
 }
 
 int PlayerWeaponController::GetDisplayCapacity() const
 {
-    if (m_weaponMode == WeaponMode::CombinedShotgun) {
-        return GetMaxAmmo() / GetCost(AttackResourceType::Shotgun);
-    }
-    if (m_weaponMode == WeaponMode::SlashBurst) {
-        return GetMaxAmmo() / GetCost(AttackResourceType::DualPistolsSlashBurst);
-    }
     return GetMaxAmmo();
 }

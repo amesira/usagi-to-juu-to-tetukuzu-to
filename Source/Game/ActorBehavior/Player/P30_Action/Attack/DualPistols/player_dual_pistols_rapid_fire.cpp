@@ -123,10 +123,7 @@ bool PlayerDualPistolsRapidFire::FireLeftPistol(PlayerDualPistolsContext& contex
 {
     const auto& aimResult = context.aim.GetAimResult();
     if (!aimResult.hasLeftMuzzle || !context.weaponController) return false;
-    if (!context.weaponController->TryConsume(
-            PlayerWeaponController::AttackResourceType::DualPistolsFire)) {
-        return false;
-    }
+
     PlayerDualPistolsFiring::FireRequest request;
     request.muzzlePosition = aimResult.leftMuzzlePosition;
     request.fireDirection = aimResult.leftFireDirection;
@@ -139,10 +136,7 @@ bool PlayerDualPistolsRapidFire::FireRightPistol(PlayerDualPistolsContext& conte
 {
     const auto& aimResult = context.aim.GetAimResult();
     if (!aimResult.hasRightMuzzle || !context.weaponController) return false;
-    if (!context.weaponController->TryConsume(
-            PlayerWeaponController::AttackResourceType::DualPistolsFire)) {
-        return false;
-    }
+
     PlayerDualPistolsFiring::FireRequest request;
     request.muzzlePosition = aimResult.rightMuzzlePosition;
     request.fireDirection = aimResult.rightFireDirection;

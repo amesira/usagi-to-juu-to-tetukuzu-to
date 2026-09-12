@@ -29,7 +29,7 @@ public:
     };
 
 private:
-    // ここにPlayerWeaponBaseの派生クラスのインスタンスを保持する
+    // ここにPlayerWeaponBaseの派生クラスのインスタンスを保持する予定
     
     // 全武器のリスト
     std::vector<PlayerWeaponBase*> m_allWeapons;
@@ -38,6 +38,8 @@ private:
     const PlayerWeaponSettingsAsset* m_settingsAsset = nullptr;
     int m_ammo = 0;
     WeaponMode m_weaponMode = WeaponMode::DualPistols;
+
+    float m_recoveryTimer = 0.0f; // 1コスト回復するまでの時間（秒）
 
 public:
     /// @brief 初期化処理
@@ -50,12 +52,11 @@ public:
     /// @brief 武器を切り替える
     void SwitchWeapon();
 
-    bool CanConsume(AttackResourceType type) const;
-    bool TryConsume(AttackResourceType type);
+    bool CanConsume(int cost) const;
+    float TryConsume(int cost); // 実際に消費できたcostを返す。消費できなければ0を返す
 
     int GetAmmo() const { return m_ammo; }
     int GetMaxAmmo() const;
-    int GetCost(AttackResourceType type) const;
 
     WeaponMode GetWeaponMode() const { return m_weaponMode; }
     void SetWeaponMode(WeaponMode mode) { m_weaponMode = mode; }

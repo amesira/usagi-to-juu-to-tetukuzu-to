@@ -12,6 +12,8 @@
 #include "Game/Factory/projectile_factory.h"
 #include "Utility/mi_math.h"
 
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_controller.h"
+
 namespace
 {
     constexpr CollisionLayerMask SHOTGUN_HIT_LAYER_MASK =
@@ -24,7 +26,16 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
 {
     if (!context.scene) return;
 
-    const float chargeRate = MiMath::Clamp(request.chargeRate, 0.0f, 1.0f);
+    float chargeRate = MiMath::Clamp(request.chargeRate, 0.0f, 1.0f);
+    if (context.weaponController) {
+        if (!context.weaponController->CanConsume(1)) {
+            return; // 弾薬が足りない場合は発射しない
+        }
+        float consumeCost = context.weaponController->TryConsume(chargeRate * 10);
+
+        chargeRate = consumeCost / 10.0f; // 実際に消費できた量に応じてチャージ率を調整
+    }
+
     const auto& settings = context.settings();
     const float bulletSpeed = MiMath::Lerp(settings.minBulletSpeed, settings.maxBulletSpeed, chargeRate);
 

@@ -62,12 +62,6 @@ void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
 /// @brief 次の攻撃ステップを開始する
 bool PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& context)
 {
-    if (!context.weaponController
-        || !context.weaponController->TryConsume(
-            PlayerWeaponController::AttackResourceType::DualPistolsSlashBurst)) {
-        return false;
-    }
-
     m_attackTimer = 0.0f;
     m_fireTimer = context.settings().slashBurstFireInterval; // 最初の発射を即座に行うためにタイマーを初期化
 

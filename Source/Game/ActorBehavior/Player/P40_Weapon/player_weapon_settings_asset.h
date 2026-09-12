@@ -8,9 +8,7 @@
 namespace PlayerWeaponSettings {
     struct Data {
         int maxAmmo = 90;
-        int shotgunCost = 30;
-        int dualPistolsFireCost = 1;
-        int dualPistolsSlashBurstCost = 10;
+        float recoveryTime = 0.2f; // 1コスト回復するまでの時間（秒）
     };
 
     inline static const auto& GetSchema()
@@ -18,12 +16,8 @@ namespace PlayerWeaponSettings {
         static const auto& schema = FieldSchema{
             MakeField("maxAmmo", "Max Ammo", &Data::maxAmmo,
                 DragFieldOptions{.dragSpeed=1, .minValue=1, .maxValue=10000}),
-            MakeField("shotgunCost", "Shotgun Cost", &Data::shotgunCost,
-                DragFieldOptions{.dragSpeed=1, .minValue=1, .maxValue=10000}),
-            MakeField("dualPistolsFireCost", "Dual Pistols Fire Cost", &Data::dualPistolsFireCost,
-                DragFieldOptions{.dragSpeed=1, .minValue=1, .maxValue=10000}),
-            MakeField("dualPistolsSlashBurstCost", "Dual Pistols Slash Burst Cost", &Data::dualPistolsSlashBurstCost,
-                DragFieldOptions{.dragSpeed=1, .minValue=1, .maxValue=10000})
+            MakeField("recoveryTime", "Recovery Time", &Data::recoveryTime,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f})
         };
         return schema;
     }
