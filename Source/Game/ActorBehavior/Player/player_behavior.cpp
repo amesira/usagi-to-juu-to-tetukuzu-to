@@ -56,7 +56,9 @@ void PlayerBehavior::Start()
 
     m_context.hitReceiver = owner->GetComponent<HitReceiverBehavior>();
     m_context.healthBehavior = owner->GetComponent<HealthBehavior>();
-    m_context.healthBehavior->SetUiActive(false);
+    if (m_context.healthBehavior) {
+        m_context.healthBehavior->SetUiActive(false);
+    }
 
     IScene* scene = owner->GetScene();
     if (!scene) return;
@@ -127,6 +129,8 @@ void PlayerBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
 
+    SyncHealthUi();
+
     if (!m_registeredEntityToMetaAI) {
         auto* enemyAIWorld = Game::EnemyAIWorld();
         if (enemyAIWorld) {
@@ -155,6 +159,22 @@ void PlayerBehavior::Update()
     PlayerMoveIntent intent = m_context.locomotionController->BuildIntent(m_context, m_input);
     m_context.moveBehavior->UpdateMove(m_context, m_input, intent, deltaTime);
     m_context.animationController->Update();
+}
+
+void PlayerBehavior::SyncHealthUi()
+{
+    if (!m_context.healthBehavior || !m_context.uiBehavior) return;
+
+    const float health = m_context.healthBehavior->GetHealth();
+    const float maxHealth = m_context.healthBehavior->GetMaxHealth();
+    if (health == m_lastDisplayedHealth
+        && maxHealth == m_lastDisplayedMaxHealth) {
+        return;
+    }
+
+    m_context.uiBehavior->SetHealth(health, maxHealth);
+    m_lastDisplayedHealth = health;
+    m_lastDisplayedMaxHealth = maxHealth;
 }
 
 void PlayerBehavior::DrawComponentInspector()

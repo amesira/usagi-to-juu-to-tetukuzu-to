@@ -37,6 +37,9 @@ private:
     bool m_isInputEnabled = true;
     bool m_registeredEntityToMetaAI = false;
 
+    float m_lastDisplayedHealth = -1.0f;
+    float m_lastDisplayedMaxHealth = -1.0f;
+
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;
     PlayerMoveBehavior m_moveBehavior;
@@ -81,6 +84,9 @@ public:
     }
 
 private:
+    /// @brief HealthBehaviorの状態をプレイヤーUIへ同期する
+    void SyncHealthUi();
+
     /// @brief プレイヤーの入力を更新する
     PlayerInput UpdateInput();
 
