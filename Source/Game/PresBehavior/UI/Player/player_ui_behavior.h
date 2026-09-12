@@ -55,6 +55,7 @@ public:
     void Setup(const PlayerUiSettingsAsset* settingsAsset);
     void SetHealth(float current, float maximum);
     void SetAmmoCount(int current, int maximum);
+    void SetWeaponDisplay(PlayerUi::WeaponDisplayType type, bool animate = true);
     void SetRecoveryGauge(float amount);
     void SetRemainingLife(int current, int maximum);
 

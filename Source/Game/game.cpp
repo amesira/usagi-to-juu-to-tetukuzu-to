@@ -97,10 +97,12 @@ void GameScene::Initialize()
 
     // 敵を生成
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 15.0f });
+       // PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 15.0f });
+        PrefabFactory::CreateRangedEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 10.0f });
     }
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 20.0f });
+      //  PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 20.0f });
+        PrefabFactory::CreateHoverEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 25.0f });
     }
   /*  for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });

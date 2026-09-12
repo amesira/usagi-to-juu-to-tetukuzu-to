@@ -41,6 +41,8 @@ private:
     float m_lastDisplayedMaxHealth = -1.0f;
     int m_lastDisplayedAmmo = -1;
     int m_lastDisplayedAmmoCapacity = -1;
+    PlayerWeaponController::WeaponMode m_lastDisplayedWeaponMode = PlayerWeaponController::WeaponMode::DualPistols;
+    bool m_weaponDisplayInitialized = false;
 
     // === プレイヤー構成要素の実体 ===
     PlayerLocomotionController m_locomotionController;

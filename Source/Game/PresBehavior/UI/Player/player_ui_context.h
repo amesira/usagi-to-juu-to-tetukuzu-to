@@ -7,6 +7,7 @@
 
 namespace PlayerUi 
 {
+    enum class WeaponDisplayType { DualPistols, Shotgun, SlashBurst };
     enum class WidgetGroupID {
         None = 0,
         HealthBar,  // 体力バー

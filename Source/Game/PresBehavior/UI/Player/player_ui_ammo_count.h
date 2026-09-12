@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include "player_ui_widget_element.h"
+#include "ui_shake_task.h"
 #include <array>
 
 class PlayerUiAmmoCount {
@@ -20,6 +21,9 @@ private:
     std::array<PlayerUiWidgetElement, 3> m_markers;
     int m_ammoCount = 0;
     int m_ammoCapacity = 0;
+    PlayerUi::WeaponDisplayType m_weaponDisplay = PlayerUi::WeaponDisplayType::DualPistols;
+    PlayerUiSettings::AmmoCountSettings m_settings;
+    PlayerUi::ShakeTask m_iconShake;
 
 public:
     void ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2);
@@ -32,8 +36,12 @@ public:
     void Destroy();
     
     void SetAmmoCount(int current, int maximum);
+    void SetWeaponDisplay(PlayerUi::WeaponDisplayType type, bool animate);
+    void Update(float deltaTime);
 
 private:
     void UpdateDisplay();
+    void ApplyWeaponTexture();
+    void ApplyIconOffset();
 
 };

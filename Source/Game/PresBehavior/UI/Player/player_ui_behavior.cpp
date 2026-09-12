@@ -42,7 +42,7 @@ void PlayerUiBehavior::Update()
 
     // マーカーを毎フレーム更新
     m_healthBar.UpdateMarkers();
-    m_ammoCount.UpdateMarkers();
+    m_ammoCount.Update(FPS_GetUnscaledDeltaTime());
 
     // 演出の更新
     m_presentation.Update(m_context, FPS_GetUnscaledDeltaTime());
@@ -174,6 +174,10 @@ void PlayerUiBehavior::SetHealth(float current, float maximum)
 void PlayerUiBehavior::SetAmmoCount(int current, int maximum)
 {
     m_ammoCount.SetAmmoCount(current, maximum);
+}
+void PlayerUiBehavior::SetWeaponDisplay(PlayerUi::WeaponDisplayType type, bool animate)
+{
+    m_ammoCount.SetWeaponDisplay(type, animate);
 }
 void PlayerUiBehavior::SetRecoveryGauge(float amount)
 {

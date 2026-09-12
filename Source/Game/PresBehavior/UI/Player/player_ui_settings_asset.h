@@ -6,6 +6,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include <cmath>
+#include <string>
 #include "Engine/Component/ui_chromatic_echo.h"
 #include "Engine/Asset/Schema/field_master.h"
 #include "Engine/Asset/DataAsset/data_asset.h"
@@ -29,6 +30,11 @@ namespace PlayerUiSettings {
         WidgetTransform recoveryGauge = {{0, 28}, {280, 12}, 0};
     };
     struct AmmoCountSettings {
+        std::string dualPistolsIconPath = "asset/Texture/Ui/dual_pistols_icon.png";
+        std::string shotgunIconPath = "asset/Texture/Ui/shotgun_icon.png";
+        std::string slashBurstIconPath = "asset/Texture/Ui/slash_icon.png";
+        float iconShakeIntensity = 4.0f;
+        float iconShakeDuration = 0.18f;
         GroupPlacement placement = {{1, 1}, {-150, -140}};
         WidgetTransform circleGauge = {{0, 0}, {180, 180}, 0};
         WidgetTransform weaponIcon = {{0, -20}, {80, 48}, 0};
@@ -130,6 +136,13 @@ namespace PlayerUiSettings {
     }
     inline const auto& GetAmmoCountSchema() {
         static const auto schema = FieldSchema{
+            MakeField("dualPistolsIconPath", "Dual Pistols Icon", &AmmoCountSettings::dualPistolsIconPath),
+            MakeField("shotgunIconPath", "Shotgun Icon", &AmmoCountSettings::shotgunIconPath),
+            MakeField("slashBurstIconPath", "Slash Burst Icon", &AmmoCountSettings::slashBurstIconPath),
+            MakeField("iconShakeIntensity", "Icon Shake (px)", &AmmoCountSettings::iconShakeIntensity,
+                DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=100}),
+            MakeField("iconShakeDuration", "Icon Shake Duration (s)", &AmmoCountSettings::iconShakeDuration,
+                DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=10}),
             MakeStructField("placement", "Group Placement", &AmmoCountSettings::placement, GetGroupPlacementSchema(), DefaultFieldOptions{}),
             MakeStructField("circleGauge", "Circle Gauge", &AmmoCountSettings::circleGauge, GetWidgetTransformSchema(), DefaultFieldOptions{}),
             MakeStructField("weaponIcon", "Weapon Icon", &AmmoCountSettings::weaponIcon, GetWidgetTransformSchema(), DefaultFieldOptions{}),

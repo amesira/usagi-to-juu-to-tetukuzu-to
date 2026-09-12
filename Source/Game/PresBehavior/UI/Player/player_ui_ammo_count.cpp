@@ -9,6 +9,7 @@
 #include "Engine/Component/image_component.h"
 #include "Engine/Component/text_component.h"
 #include "Engine/Component/slider_component.h"
+#include "Engine/engine_service_locator.h"
 
 #include "External/ImGui/imgui.h"
 #include <algorithm>
@@ -72,6 +73,9 @@ void PlayerUiAmmoCount::ApplyLayout(const PlayerUiSettings::AmmoCountSettings& s
     m_background.ApplyLayout(*m_group, settings.circleGauge);
     m_fill.ApplyLayout(*m_group, settings.circleGauge);
     m_icon.ApplyLayout(*m_group, settings.weaponIcon);
+    m_settings = settings;
+    ApplyWeaponTexture();
+    ApplyIconOffset();
     m_currentText.ApplyLayout(*m_group, settings.currentText);
     m_capacityText.ApplyLayout(*m_group, settings.capacityText);
     UpdateMarkers();
@@ -82,6 +86,55 @@ void PlayerUiAmmoCount::SetAmmoCount(int current, int maximum)
     m_ammoCapacity = (std::max)(maximum, 0);
     m_ammoCount = std::clamp(current, 0, m_ammoCapacity);
     UpdateDisplay();
+}
+
+void PlayerUiAmmoCount::SetWeaponDisplay(PlayerUi::WeaponDisplayType type, bool animate)
+{
+    const bool changed = type != m_weaponDisplay;
+    m_weaponDisplay = type;
+    ApplyWeaponTexture();
+    if (changed && animate && m_group) {
+        m_iconShake.m_intensity = m_settings.iconShakeIntensity;
+        m_iconShake.m_duration = m_settings.iconShakeDuration;
+        m_iconShake.Start();
+    }
+    else if (!animate) {
+        m_iconShake.Cancel();
+    }
+    ApplyIconOffset();
+}
+
+void PlayerUiAmmoCount::ApplyWeaponTexture()
+{
+    if (!m_group || !TEXTURE_REPOSITORY) return;
+    const std::string* path = &m_settings.dualPistolsIconPath;
+    if (m_weaponDisplay == PlayerUi::WeaponDisplayType::Shotgun)
+        path = &m_settings.shotgunIconPath;
+    else if (m_weaponDisplay == PlayerUi::WeaponDisplayType::SlashBurst)
+        path = &m_settings.slashBurstIconPath;
+    if (auto* image = m_icon.handle.GetImage()) {
+        if (auto* texture = TEXTURE_REPOSITORY->GetTextureResource(*path))
+            image->SetTextureResource(texture);
+    }
+}
+
+void PlayerUiAmmoCount::ApplyIconOffset()
+{
+    if (!m_group || m_icon.slot >= m_group->offsetPositions.size()) return;
+    const auto base = m_settings.weaponIcon.position;
+    const auto shake = m_iconShake.m_currentOffset;
+    // Viewもこの位置を使うため、グループ演出や透視変換で上書きされない。
+    m_group->offsetPositions[m_icon.slot] = {base.x + shake.x, base.y + shake.y};
+    m_icon.handle.SetPosition(m_group->currentCenterPosition.x + base.x + shake.x,
+        m_group->currentCenterPosition.y + base.y + shake.y);
+}
+
+void PlayerUiAmmoCount::Update(float deltaTime)
+{
+    if (!m_group) return;
+    m_iconShake.Update(deltaTime);
+    ApplyIconOffset();
+    UpdateMarkers();
 }
 
 void PlayerUiAmmoCount::UpdateDisplay()
@@ -134,6 +187,7 @@ void PlayerUiAmmoCount::DrawInspector()
 
 void PlayerUiAmmoCount::Destroy()
 {
+    m_iconShake.Cancel();
     if (!m_group) return;
 
     for (auto& widget : m_group->widgets) {

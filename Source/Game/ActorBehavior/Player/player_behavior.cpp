@@ -183,6 +183,18 @@ void PlayerBehavior::SyncAmmoUi()
 {
     if (!m_context.uiBehavior) return;
 
+    const auto mode = m_weaponController.GetWeaponMode();
+    if (!m_weaponDisplayInitialized || mode != m_lastDisplayedWeaponMode) {
+        auto display = PlayerUi::WeaponDisplayType::DualPistols;
+        if (mode == PlayerWeaponController::WeaponMode::CombinedShotgun)
+            display = PlayerUi::WeaponDisplayType::Shotgun;
+        else if (mode == PlayerWeaponController::WeaponMode::SlashBurst)
+            display = PlayerUi::WeaponDisplayType::SlashBurst;
+        m_context.uiBehavior->SetWeaponDisplay(display, m_weaponDisplayInitialized);
+        m_lastDisplayedWeaponMode = mode;
+        m_weaponDisplayInitialized = true;
+    }
+
     const int ammo = m_weaponController.GetDisplayAmmo();
     const int capacity = m_weaponController.GetDisplayCapacity();
     if (ammo == m_lastDisplayedAmmo
