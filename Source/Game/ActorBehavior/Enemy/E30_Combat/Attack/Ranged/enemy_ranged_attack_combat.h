@@ -11,8 +11,12 @@
 class EnemyRangedAttackCombat : public EnemyAttackCombat {
     int m_shotsFired = 0;
     float m_timeUntilNextShot = 0.0f;
+    class ModelComponent* m_model = nullptr;
+    unsigned int m_leftMuzzleBoneIndex = static_cast<unsigned int>(-1);
+    unsigned int m_rightMuzzleBoneIndex = static_cast<unsigned int>(-1);
 
 public:
+    void Initialize(EnemyContext& context) override;
     int GetShotsFired() const { return m_shotsFired; }
     float GetTimeUntilNextShot() const { return m_timeUntilNextShot; }
 
@@ -24,5 +28,11 @@ protected:
     // 発射ごとに狙い直す。弾生成は未実装。
     virtual void FireShot(EnemyContext& context, const DirectX::XMFLOAT3& targetPosition);
     virtual void ClearAttackEffects(EnemyContext& context);
+
+private:
+    bool FireFromBone(
+        EnemyContext& context,
+        unsigned int boneIndex,
+        const DirectX::XMFLOAT3& targetPosition);
 
 };

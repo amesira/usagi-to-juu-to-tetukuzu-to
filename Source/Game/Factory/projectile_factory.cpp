@@ -145,7 +145,14 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
             "Failed to load particle asset: " + BULLET_PARTICLE_PATH.generic_string());
     }
 
-    bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
+    bulletBehavior->Initialize(
+        desc.velocity,
+        desc.radius,
+        desc.lifeTime,
+        desc.layerMask,
+        desc.attacker,
+        desc.damage,
+        desc.attackType);
 
     return bullet;
 }

@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <filesystem>
 #include "Engine/Core/game_object_layer.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
 
 #include <string>
 
@@ -20,6 +21,9 @@ namespace ProjectileFactory
         float radius = 0.25f;
         float lifeTime = 3.0f;
         CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL;
+        GameObject* attacker = nullptr;
+        float damage = 10.0f;
+        HitReceiver::AttackType attackType = HitReceiver::AttackType::Shot;
 
         const char* modelPath = "asset\\Model\\bullet.fbx";
         const char* materialName = "BulletHologramMaterial";

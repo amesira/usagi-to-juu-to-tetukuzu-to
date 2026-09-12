@@ -6,6 +6,7 @@
 #include "player_dual_pistols_firing.h"
 #include "player_dual_pistols_context.h"
 
+#include "Engine/Component/transform_component.h"
 #include "Game/Factory/projectile_factory.h"
 #include "Utility/mi_math.h"
 
@@ -38,6 +39,9 @@ void PlayerDualPistolsFiring::Fire(
     bulletDesc.radius = settings.bulletRadius;
     bulletDesc.lifeTime = settings.bulletLifetime;
     bulletDesc.layerMask = DUAL_PISTOLS_HIT_LAYER_MASK;
+    bulletDesc.attacker = context.playerTransform
+        ? context.playerTransform->GetOwner() : nullptr;
+    bulletDesc.damage = settings.bulletRadius * 20.0f;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
 }

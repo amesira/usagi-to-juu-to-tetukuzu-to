@@ -8,6 +8,7 @@
 #include "player_shotgun_firing.h"
 #include "player_shotgun_context.h"
 
+#include "Engine/Component/transform_component.h"
 #include "Game/Factory/projectile_factory.h"
 #include "Utility/mi_math.h"
 
@@ -37,6 +38,9 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
     bulletDesc.radius = MiMath::Lerp(settings.minBulletRadius, settings.maxBulletRadius, chargeRate);
     bulletDesc.lifeTime = settings.bulletLifetime;
     bulletDesc.layerMask = SHOTGUN_HIT_LAYER_MASK;
+    bulletDesc.attacker = context.playerTransform
+        ? context.playerTransform->GetOwner() : nullptr;
+    bulletDesc.damage = bulletDesc.radius * 20.0f;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
 

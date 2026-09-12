@@ -31,4 +31,8 @@ namespace PrefabFactory
     EnemyPrefab CreateEnemyPrefab(
         IScene* scene,
         const XMFLOAT3& position);
+
+    EnemyPrefab CreateRangedEnemyPrefab(
+        IScene* scene,
+        const XMFLOAT3& position);
 }

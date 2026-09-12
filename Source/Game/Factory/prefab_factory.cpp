@@ -205,3 +205,17 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
 
     return { enemy };
 }
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateRangedEnemyPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    EnemyPrefab prefab = CreateEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+
+    prefab.enemy->SetName("RangedEnemy");
+    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
+        behavior->SetupAttackType(EnemyAttackType::Ranged);
+    }
+    return prefab;
+}

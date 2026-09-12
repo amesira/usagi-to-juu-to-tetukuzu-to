@@ -78,41 +78,27 @@ void BulletBehavior::Update()
             m_hasHit = true;
 
             bool isHitStop = false;
-            if (hit.hitObject->GetCollisionLayer() == CollisionLayer::Enemy) {
-                XMFLOAT3 scale = m_transform->GetScaling();
-                HitReceiverBehavior* hitReceiver = hit.hitObject->GetComponent<HitReceiverBehavior>();
-                if (hitReceiver) {
-                    XMFLOAT3 knockbackDir = direction;
-                    knockbackDir.y = 0.0f; // 水平方向のみにする
-                    knockbackDir = MiMath::Normalize(knockbackDir);
+            HitReceiverBehavior* hitReceiver =
+                hit.hitObject->GetComponent<HitReceiverBehavior>();
+            if (hitReceiver) {
+                XMFLOAT3 knockbackDir = direction;
+                knockbackDir.y = 0.0f;
+                knockbackDir = MiMath::Normalize(knockbackDir);
 
-                    HitReceiver::HitData hitData = {
-                        .attacker = GetOwner(),
-                        .damage = scale.x * 10.0f,
-                        .hitPoint = hit.hitPoint,
-                        .hitDirection = direction,
-                        .knockback = {
-                            .enabled = false,
-                            .overrideStartPosition = false,
-                            .startPosition = { 0.0f, 0.0f, 0.0f },
-                            .targetPosition = { 0.0f, 0.0f, 0.0f },
-                            .direction = knockbackDir,
-                            .distance = 3.0f,
-                            .duration = 0.2f,
-                            .overrideMovementSource = false,
-                        },
-                        .attackType = HitReceiver::AttackType::Shot,
-                    };
-                    hitReceiver->ReceiveHit(hitData);
-                }
-
-
-               // HealthBehavior* health = hit.hitObject->GetComponent<HealthBehavior>();
-              //  health->TakeDamage(scale.x * 10.0f);
-
-              /*  if (health->IsDead()) {
-                    isHitStop = true;
-                }*/
+                HitReceiver::HitData hitData = {
+                    .attacker = m_attacker ? m_attacker : GetOwner(),
+                    .damage = m_damage,
+                    .hitPoint = hit.hitPoint,
+                    .hitDirection = direction,
+                    .knockback = {
+                        .enabled = false,
+                        .direction = knockbackDir,
+                        .distance = 3.0f,
+                        .duration = 0.2f,
+                    },
+                    .attackType = m_attackType,
+                };
+                hitReceiver->ReceiveHit(hitData);
             }
             
             // ヒットポイントに弾を移動させる
@@ -153,12 +139,18 @@ void BulletBehavior::Initialize(
     const DirectX::XMFLOAT3& velocity,
     float radius,
     float lifeTime,
-    CollisionLayerMask layerMask)
+    CollisionLayerMask layerMask,
+    GameObject* attacker,
+    float damage,
+    HitReceiver::AttackType attackType)
 {
     m_currentVelocity = velocity;
     SetRadius(radius);
     m_lifeTime = lifeTime;
     m_layerMask = layerMask;
+    m_attacker = attacker;
+    m_damage = (std::max)(0.0f, damage);
+    m_attackType = attackType;
     m_lifeTimer = 0.0f;
     m_hitStopTask.Reset();
     m_isExpired = false;

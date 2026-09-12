@@ -40,6 +40,14 @@ namespace EnemyAttackSettings {
         // === Ranged用の追加設定 ===
         int shotCount = 3;
         float shotInterval = 0.3f;
+        std::string leftMuzzleBoneName = "Gun.L";
+        std::string rightMuzzleBoneName = "Gun.R";
+        float projectileSpeed = 30.0f;
+        float projectileRadius = 0.2f;
+        float projectileLifeTime = 5.0f;
+        float projectileDamage = 10.0f;
+        float projectileSpawnForwardOffset = 0.2f;
+        float targetHeightOffset = 1.0f;
     };
 
     inline void Sanitize(Data& data) {
@@ -73,6 +81,13 @@ namespace EnemyAttackSettings {
         data.maxDistance = (std::max)(data.minDistance, data.maxDistance);
         data.shotCount = (std::clamp)(data.shotCount, 1, 100);
         data.shotInterval = (std::max)(0.01f, data.shotInterval);
+        data.projectileSpeed = nonNegative(data.projectileSpeed, 30.0f);
+        data.projectileRadius = nonNegative(data.projectileRadius, 0.2f);
+        data.projectileLifeTime = nonNegative(data.projectileLifeTime, 5.0f);
+        data.projectileDamage = nonNegative(data.projectileDamage, 10.0f);
+        data.projectileSpawnForwardOffset = nonNegative(data.projectileSpawnForwardOffset, 0.2f);
+        data.targetHeightOffset = std::isfinite(data.targetHeightOffset)
+            ? data.targetHeightOffset : 1.0f;
     }
 
     inline const auto& GetSchema() {
@@ -110,6 +125,14 @@ namespace EnemyAttackSettings {
             MakeHeaderField("Ranged Attack Settings"),
             MakeField("shotCount", "Shot Count", &Data::shotCount, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("shotInterval", "Shot Interval", &Data::shotInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("leftMuzzleBoneName", "Left Muzzle Bone", &Data::leftMuzzleBoneName),
+            MakeField("rightMuzzleBoneName", "Right Muzzle Bone", &Data::rightMuzzleBoneName),
+            MakeField("projectileSpeed", "Projectile Speed", &Data::projectileSpeed, DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("projectileRadius", "Projectile Radius", &Data::projectileRadius, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("projectileLifeTime", "Projectile Life Time", &Data::projectileLifeTime, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("projectileDamage", "Projectile Damage", &Data::projectileDamage, DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 10000.0f }),
+            MakeField("projectileSpawnForwardOffset", "Spawn Forward Offset", &Data::projectileSpawnForwardOffset, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("targetHeightOffset", "Target Height Offset", &Data::targetHeightOffset, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -100.0f, .maxValue = 100.0f }),
         };
         return schema;
     }

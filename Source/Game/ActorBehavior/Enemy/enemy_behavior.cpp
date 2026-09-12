@@ -62,12 +62,15 @@ void EnemyBehavior::Start()
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context, m_moveSettings);
     m_approachCombat.Initialize(m_context, m_approachSettings);
-    m_attackCombat.SetSettingsAsset(m_attackSettings);
+    m_attackCombat = m_attackType == EnemyAttackType::Ranged
+        ? static_cast<EnemyAttackCombat*>(&m_rangedAttackCombat)
+        : static_cast<EnemyAttackCombat*>(&m_meleeAttackCombat);
+    m_attackCombat->SetSettingsAsset(m_attackSettings);
     m_combatTree.Initialize(m_context);
-    m_attackCombat.Initialize(m_context);
+    m_attackCombat->Initialize(m_context);
     m_waitCombat.Initialize(m_context);
 
-    m_combatTree.RegisterBehavior(m_attackCombat);
+    m_combatTree.RegisterBehavior(*m_attackCombat);
     m_combatTree.RegisterBehavior(m_waitCombat);
     m_combatTree.RegisterBehavior(m_approachCombat);
 

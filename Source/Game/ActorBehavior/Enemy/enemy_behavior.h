@@ -16,6 +16,7 @@
 #include "Game/ActorBehavior/Enemy/E30_Combat/enemy_combat_tree.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Approach/enemy_approach_combat.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/Melee/enemy_melee_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/Attack/Ranged/enemy_ranged_attack_combat.h"
 #include "Game/ActorBehavior/Enemy/E30_Combat/Wait/enemy_wait_combat.h"
 
 #include "enemy_animation_controller.h"
@@ -24,6 +25,11 @@
 
 class EnemyAiAgentSettingsAsset;
 class EnemyMoveSettingsAsset;
+
+enum class EnemyAttackType {
+    Melee,
+    Ranged,
+};
 
 /// @brief 敵個体の状態判断、戦闘、移動、アニメーションを更新する司令塔。
 class EnemyBehavior : public BehaviorComponent {
@@ -40,7 +46,10 @@ private:
     EnemyEffects m_effects;
     EnemyMotions m_motions;
 
-    EnemyMeleeAttackCombat m_attackCombat;
+    EnemyMeleeAttackCombat m_meleeAttackCombat;
+    EnemyRangedAttackCombat m_rangedAttackCombat;
+    EnemyAttackCombat* m_attackCombat = nullptr;
+    EnemyAttackType m_attackType = EnemyAttackType::Melee;
     EnemyWaitCombat m_waitCombat;
     EnemyApproachCombat m_approachCombat;
 
@@ -70,6 +79,7 @@ public:
     void SetupAttackSettings(const EnemyAttackSettingsAsset* settings) {
         m_attackSettings = settings;
     }
+    void SetupAttackType(EnemyAttackType type) { m_attackType = type; }
 
     // === Enemyへのアクセス ===
     void StartStun(float duration) { m_conditionMachine.StartStun(duration); }

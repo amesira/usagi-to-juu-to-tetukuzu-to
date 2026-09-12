@@ -9,6 +9,7 @@
 #include "Engine/Core/game_object_layer.h"
 #include "Engine/Component/behavior_component.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
 
 #include <functional>
 #include "Game/ActorBehavior/Base/ReactionEffects/hit_stop_sequence_task.h"
@@ -30,6 +31,9 @@ private:
     float m_lifeTime = 5.0f;
     float m_lifeTimer = 0.0f;
     CollisionLayerMask m_layerMask = COLLISION_LAYER_MASK_ALL;
+    class GameObject* m_attacker = nullptr;
+    float m_damage = 10.0f;
+    HitReceiver::AttackType m_attackType = HitReceiver::AttackType::Shot;
 
     bool m_isExpired = false;       // 弾が寿命切れかどうか
     bool m_hasHit = false;          // 何かにヒットしたかどうか
@@ -53,7 +57,10 @@ public:
         const DirectX::XMFLOAT3& velocity,
         float radius,
         float lifeTime,
-        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL);
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL,
+        GameObject* attacker = nullptr,
+        float damage = 10.0f,
+        HitReceiver::AttackType attackType = HitReceiver::AttackType::Shot);
 
     // 弾の速度の設定・取得
     void SetVelocity(const DirectX::XMFLOAT3& velocity) { m_currentVelocity = velocity; }
