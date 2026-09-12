@@ -32,6 +32,11 @@ void PlayerDualPistolsSlashBurst::Initialize(PlayerDualPistolsContext& context)
 /// @brief 攻撃を開始する
 void PlayerDualPistolsSlashBurst::Start(PlayerDualPistolsContext& context)
 {
+    if (context.weaponController) {
+        context.weaponController->SetWeaponMode(
+            PlayerWeaponController::WeaponMode::SlashBurst);
+    }
+
     EndHitStop();
     m_isActive = true;
     m_isFinished = false;

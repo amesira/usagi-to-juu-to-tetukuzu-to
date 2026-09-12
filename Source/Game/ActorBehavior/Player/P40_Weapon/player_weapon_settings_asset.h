@@ -10,7 +10,7 @@ namespace PlayerWeaponSettings {
         int maxAmmo = 90;
         int shotgunCost = 30;
         int dualPistolsFireCost = 1;
-        int dualPistolsSlashBurstCost = 15;
+        int dualPistolsSlashBurstCost = 10;
     };
 
     inline static const auto& GetSchema()

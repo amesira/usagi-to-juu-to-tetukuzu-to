@@ -80,6 +80,9 @@ int PlayerWeaponController::GetDisplayAmmo() const
     if (m_weaponMode == WeaponMode::CombinedShotgun) {
         return m_ammo / GetCost(AttackResourceType::Shotgun);
     }
+    if (m_weaponMode == WeaponMode::SlashBurst) {
+        return m_ammo / GetCost(AttackResourceType::DualPistolsSlashBurst);
+    }
     return m_ammo;
 }
 
@@ -87,6 +90,9 @@ int PlayerWeaponController::GetDisplayCapacity() const
 {
     if (m_weaponMode == WeaponMode::CombinedShotgun) {
         return GetMaxAmmo() / GetCost(AttackResourceType::Shotgun);
+    }
+    if (m_weaponMode == WeaponMode::SlashBurst) {
+        return GetMaxAmmo() / GetCost(AttackResourceType::DualPistolsSlashBurst);
     }
     return GetMaxAmmo();
 }

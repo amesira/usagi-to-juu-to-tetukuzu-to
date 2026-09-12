@@ -18,6 +18,7 @@ class PlayerWeaponController {
 public:
     enum class WeaponMode {
         DualPistols,
+        SlashBurst,
         CombinedShotgun,
     };
 

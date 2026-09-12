@@ -1,7 +1,7 @@
 {
     "data": {
         "dualPistolsFireCost": 1,
-        "dualPistolsSlashBurstCost": 15,
+        "dualPistolsSlashBurstCost": 10,
         "maxAmmo": 90,
         "shotgunCost": 30
     },

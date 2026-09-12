@@ -19,6 +19,11 @@ void PlayerDualPistolsRapidFire::Initialize(PlayerDualPistolsContext& context)
 
 void PlayerDualPistolsRapidFire::Start(PlayerDualPistolsContext& context)
 {
+    if (context.weaponController) {
+        context.weaponController->SetWeaponMode(
+            PlayerWeaponController::WeaponMode::DualPistols);
+    }
+
     m_isActive = true;
     m_fireTimer = 0.0f;
     m_moveBlendParameter = {};
