@@ -135,6 +135,39 @@ bool LevelEditorDocument::RemoveObject(const std::string& id)
     m_dirty = true;
     return true;
 }
+
+bool LevelEditorDocument::ScaleAllObjects(float factor, const DirectX::XMFLOAT3& pivot)
+{
+    if (factor <= 0.0f) return false;
+
+    auto& objects = m_asset.GetData().objects;
+    if (objects.empty()) return false;
+
+    for (LevelObjectData& object : objects)
+    {
+        auto& transform = object.transform;
+        transform.position.x = pivot.x + (transform.position.x - pivot.x) * factor;
+        transform.position.y = pivot.y + (transform.position.y - pivot.y) * factor;
+        transform.position.z = pivot.z + (transform.position.z - pivot.z) * factor;
+        transform.scale.x *= factor;
+        transform.scale.y *= factor;
+        transform.scale.z *= factor;
+
+        // 現在の衝突形状計算はTransformのScaleを使わないため、
+        // Colliderのローカル座標と寸法も同じ倍率で拡縮する。
+        auto& collider = object.collider;
+        collider.center.x *= factor;
+        collider.center.y *= factor;
+        collider.center.z *= factor;
+        collider.boxSize.x *= factor;
+        collider.boxSize.y *= factor;
+        collider.boxSize.z *= factor;
+        collider.sphereRadius *= factor;
+    }
+
+    m_dirty = true;
+    return true;
+}
 #pragma endregion
 
 /// @brief レベル内で一意なIDを生成する

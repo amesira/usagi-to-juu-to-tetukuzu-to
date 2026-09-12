@@ -6,8 +6,8 @@
             "permissionLifetime": 2.0
         },
         "navigationGrid": {
-            "cellCountX": 50,
-            "cellCountZ": 40,
+            "cellCountX": 55,
+            "cellCountZ": 45,
             "cellSize": 1.5,
             "center": [
                 0.0,

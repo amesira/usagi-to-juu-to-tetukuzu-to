@@ -51,7 +51,7 @@ void GameScene::Initialize()
     }
 
     // シーン固有の初期配置物をLevelAssetから生成する。
-    LoadLevel("asset/Level/stage.level.json");
+    LoadLevel("asset/Level/stage.generated.level.json");
 
     // GameEffectControllerの生成
     GameObject* gameControllerObj = this->CreateGameObject();
@@ -62,7 +62,7 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<EnemyAIWorldController>();
 
     // camera
-    GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,10.0f,-1.0f }, { 0.0f,0.0f,8.0f });
+    GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });
     EnvironmentFactory::AttachCameraControl(camera);
     camera->SetName("MainCamera");
 
@@ -80,7 +80,7 @@ void GameScene::Initialize()
     }*/
 
     // プレイヤープレハブ生成
-    PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,3.0f,10.0f });
+    PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });
 
     // テスト：JointGroup
    /* GameObject* jointGroup = this->CreateGameObject();
@@ -89,18 +89,18 @@ void GameScene::Initialize()
     // モデルを５つ生成
     for (int i = 0; i < 5; i++) {
         GameObject* modelObj = this->CreateGameObject();
-        Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 2.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
+        Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 10.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
     }
 
     // かかしプレハブ生成
-    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, -0.5f, 5.0f });
+    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
 
     // 敵を生成
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 3.5f, 15.0f });
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 15.0f });
     }
     for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 3.5f, 20.0f });
+        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 20.0f });
     }
   /*  for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });

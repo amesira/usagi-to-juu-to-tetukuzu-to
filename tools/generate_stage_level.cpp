@@ -253,7 +253,12 @@ int main(int argc, char** argv) {
     const std::filesystem::path visualModel = argc > 3 ? argv[3] : "asset/Level/Stage.fbx";
 
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(input.string(), aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
+    // 描画用モデルと同じ座標系・後処理で読み込み、
+    // 生成したColliderと描画メッシュの向きを一致させる。
+    const aiScene* scene = importer.ReadFile(input.string(),
+        aiProcessPreset_TargetRealtime_MaxQuality |
+        aiProcess_ConvertToLeftHanded |
+        aiProcess_Triangulate);
     if (!scene) { std::cerr << importer.GetErrorString() << '\n'; return 1; }
 
     std::vector<Box> boxes = BuildNodeBoxes(scene);

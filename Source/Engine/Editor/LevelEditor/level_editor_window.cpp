@@ -20,6 +20,7 @@
 #include "Game/Factory/level_object_factory.h"
 
 #include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <typeinfo>
 
@@ -27,6 +28,9 @@ using namespace DirectX;
 
 namespace
 {
+    constexpr float kMinimumLevelScale = 0.01f;
+    constexpr float kMaximumLevelScale = 100.0f;
+
     // ImGuiのInputTextでstd::stringを扱うためのラッパー関数
     bool InputString(const char* label, std::string& value)
     {
@@ -35,6 +39,24 @@ namespace
         if (!ImGui::InputText(label, buffer, sizeof(buffer))) return false;
         value = buffer;
         return true;
+    }
+
+    void ScaleObjectData(LevelObjectData& object, float factor)
+    {
+        object.transform.position.x *= factor;
+        object.transform.position.y *= factor;
+        object.transform.position.z *= factor;
+        object.transform.scale.x *= factor;
+        object.transform.scale.y *= factor;
+        object.transform.scale.z *= factor;
+
+        object.collider.center.x *= factor;
+        object.collider.center.y *= factor;
+        object.collider.center.z *= factor;
+        object.collider.boxSize.x *= factor;
+        object.collider.boxSize.y *= factor;
+        object.collider.boxSize.z *= factor;
+        object.collider.sphereRadius *= factor;
     }
 }
 
@@ -60,6 +82,8 @@ void LevelEditorWindow::Draw()
         else {
             m_document.New();
         }
+        m_levelScaleFactor = 1.0f;
+        m_levelScalePreviewActive = false;
     }
 
     DrawToolbar();
@@ -70,6 +94,8 @@ void LevelEditorWindow::Draw()
     {
         if (ImGui::BeginTabItem("Level Objects"))
         {
+            DrawLevelScaleControls();
+            ImGui::Separator();
             DrawLevelObjectsTab();
             ImGui::EndTabItem();
         }
@@ -99,6 +125,8 @@ void LevelEditorWindow::DrawToolbar()
         m_document.New();
         m_selectedLevelObjectId.clear();
         m_editorContext->selectedObject = nullptr;
+        m_levelScaleFactor = 1.0f;
+        m_levelScalePreviewActive = false;
     }
     ImGui::SameLine();
     if (ImGui::Button("Load"))
@@ -146,8 +174,44 @@ void LevelEditorWindow::DrawToolbar()
     }
 }
 
+void LevelEditorWindow::DrawLevelScaleControls()
+{
+    ImGui::TextUnformatted("Level Transform");
+    ImGui::SameLine();
+    ImGui::TextDisabled("Pivot: (0, 0, 0)");
+
+    ImGui::SetNextItemWidth(180.0f);
+    if (ImGui::DragFloat("Global Scale", &m_levelScaleFactor, 0.01f,
+        kMinimumLevelScale, kMaximumLevelScale, "%.3f"))
+    {
+        m_levelScaleFactor = std::clamp(m_levelScaleFactor,
+            kMinimumLevelScale, kMaximumLevelScale);
+        m_levelScalePreviewActive = std::fabs(m_levelScaleFactor - 1.0f) > 0.0001f;
+        PreviewLevelScale(m_levelScaleFactor);
+    }
+
+    ImGui::SameLine();
+    const bool hasObjects = !m_document.GetAsset().GetData().objects.empty();
+    ImGui::BeginDisabled(!hasObjects || !m_levelScalePreviewActive);
+    if (ImGui::Button("Apply"))
+    {
+        if (m_document.ScaleAllObjects(m_levelScaleFactor))
+            ApplyAllObjectData();
+        m_levelScaleFactor = 1.0f;
+        m_levelScalePreviewActive = false;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel")) CancelLevelScalePreview();
+    ImGui::EndDisabled();
+
+    if (m_levelScalePreviewActive)
+        ImGui::TextColored({ 1.0f, 0.75f, 0.2f, 1.0f },
+            "Previewing scale. Apply or cancel before editing objects.");
+}
+
 void LevelEditorWindow::DrawLevelObjectsTab()
 {
+    ImGui::BeginDisabled(m_levelScalePreviewActive);
     if (ImGui::BeginTable("LevelObjectLayout", 2,
         ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerV))
     {
@@ -160,6 +224,7 @@ void LevelEditorWindow::DrawLevelObjectsTab()
         DrawLevelInspector();
         ImGui::EndTable();
     }
+    ImGui::EndDisabled();
 }
 
 void LevelEditorWindow::DrawRuntimeObjectsTab()
@@ -390,10 +455,35 @@ bool LevelEditorWindow::ApplyObjectData(GameObject* object, const LevelObjectDat
     return true;
 }
 
+void LevelEditorWindow::PreviewLevelScale(float factor)
+{
+    for (const LevelObjectData& source : m_document.GetAsset().GetData().objects)
+    {
+        LevelObjectData preview = source;
+        ScaleObjectData(preview, factor);
+        ApplyObjectData(FindLevelObject(source.id), preview);
+    }
+}
+
+void LevelEditorWindow::CancelLevelScalePreview()
+{
+    ApplyAllObjectData();
+    m_levelScaleFactor = 1.0f;
+    m_levelScalePreviewActive = false;
+}
+
+void LevelEditorWindow::ApplyAllObjectData()
+{
+    for (const LevelObjectData& data : m_document.GetAsset().GetData().objects)
+        ApplyObjectData(FindLevelObject(data.id), data);
+}
+
 /// @brief レベルオブジェクトを再構築する
 void LevelEditorWindow::RebuildLevelObjects()
 {
     DestroyLevelObjects();
+    m_levelScaleFactor = 1.0f;
+    m_levelScalePreviewActive = false;
     m_selectedLevelObjectId.clear();
     m_editorContext->selectedObject = nullptr;
     if (m_editorContext->scene)
@@ -434,4 +524,6 @@ void LevelEditorWindow::OnSceneDestroyed()
     m_selectedLevelObjectId.clear();
     m_selectedRuntimeObjectId = static_cast<unsigned int>(-1);
     m_appliedScene = nullptr;
+    m_levelScaleFactor = 1.0f;
+    m_levelScalePreviewActive = false;
 }

@@ -39,6 +39,8 @@ public:
     LevelObjectData* FindObject(const std::string& id);
     LevelObjectData& AddObject();
     bool RemoveObject(const std::string& id);
+    bool ScaleAllObjects(float factor,
+        const DirectX::XMFLOAT3& pivot = { 0.0f, 0.0f, 0.0f });
 
 private:
     /// @brief レベル内で一意なIDを生成

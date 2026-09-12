@@ -27,6 +27,8 @@ private:
 
     bool m_autoSave = true;
     int m_autoSaveFrameCounter = 0;
+    float m_levelScaleFactor = 1.0f;
+    bool m_levelScalePreviewActive = false;
 
 public:
     explicit LevelEditorWindow(EditorContext* editorContext);
@@ -36,6 +38,7 @@ public:
 
 private:
     void DrawToolbar();
+    void DrawLevelScaleControls();
     void DrawLevelObjectsTab();
     void DrawRuntimeObjectsTab();
     void DrawLevelHierarchy();
@@ -46,6 +49,9 @@ private:
     GameObject* FindLevelObject(const std::string& id) const;
     GameObject* FindRuntimeObject() const;
     bool ApplyObjectData(GameObject* object, const LevelObjectData& data);
+    void PreviewLevelScale(float factor);
+    void CancelLevelScalePreview();
+    void ApplyAllObjectData();
     void RebuildLevelObjects();
     void DestroyLevelObjects();
     void SelectLevelObject(const std::string& id);
