@@ -34,6 +34,9 @@
                     1.2000000476837158
                 ]
             },
+            "dualPistolsIconPath": "asset/Texture/Ui/dual_pistols_icon.png",
+            "iconShakeDuration": 0.18000000715255737,
+            "iconShakeIntensity": 4.0,
             "placement": {
                 "position": [
                     -200.0,
@@ -44,6 +47,8 @@
                     1.0
                 ]
             },
+            "shotgunIconPath": "asset/Texture/Ui/shotgun_icon.png",
+            "slashBurstIconPath": "asset/Texture/Ui/slash_icon.png",
             "weaponIcon": {
                 "position": [
                     0.0,
@@ -68,14 +73,14 @@
             ],
             "enabled": true,
             "offsetDistance": 5.0,
-            "opacity": 0.30000001192092896,
+            "opacity": 0.4000000059604645,
             "orderInLayerOffset": -10,
             "scale": 1.0049999952316284
         },
         "color1": [
             0.21702128648757935,
-            0.7900951504707336,
-            1.0
+            1.0,
+            0.9900045990943909
         ],
         "color2": [
             1.0,

@@ -1,9 +1,7 @@
 {
     "data": {
-        "dualPistolsFireCost": 1,
-        "dualPistolsSlashBurstCost": 10,
-        "maxAmmo": 90,
-        "shotgunCost": 30
+        "maxAmmo": 70,
+        "recoveryTime": 0.20000000298023224
     },
     "formatVersion": 0,
     "name": "player_weapon_settings.data",
