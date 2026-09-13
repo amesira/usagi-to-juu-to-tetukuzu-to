@@ -10,8 +10,8 @@ struct WaveSettings {
     int defeatPoints = 10;
     int maxConcurrentEnemies = 6;
     float spawnInterval = 1.5f;
-    float preparationDuration = 2.0f;
-    float intermissionDuration = 2.0f;
+    float preparationDuration = 5.0f;
+    float intermissionDuration = 5.0f;
     float corpseDuration = 0.5f;
 };
 

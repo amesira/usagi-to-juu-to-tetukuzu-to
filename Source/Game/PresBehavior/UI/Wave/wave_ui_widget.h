@@ -11,6 +11,8 @@ class WaveUiWidget {
     PlayerUiWidgetElement m_label;
     PlayerUiWidgetElement m_gauge;
     WaveUiSettings::WidgetSettings m_settings;
+    DirectX::XMFLOAT2 m_labelSize = {1,1};
+    DirectX::XMFLOAT2 m_screenAnchor = {0.5f,0.5f};
     std::string m_lastText;
     bool m_hasGauge = false;
     float m_pulseRemaining = 0;
@@ -25,6 +27,8 @@ public:
     }
     void ApplyLayout(const WaveUiSettings::WidgetSettings& settings, DirectX::XMFLOAT2 screen) {
         m_settings = settings;
+        m_labelSize = settings.label.size;
+        m_screenAnchor = settings.placement.screenAnchor;
         m_group.currentCenterPosition = UiLayoutSettings::ResolveGroupPosition(settings.placement, screen);
         m_group.originalCenterPosition = m_group.currentCenterPosition;
         m_label.ApplyLayout(m_group, settings.label);
@@ -50,7 +54,7 @@ public:
         auto echoSettings = settings.chromaticEcho;
         echoSettings.enabled = echoSettings.enabled && m_settings.applyChromaticEcho;
         const auto echo = UiLayoutSettings::ResolveChromaticEcho(echoSettings,
-            perspective.vanishingPoint, m_settings.placement.screenAnchor, screen);
+            perspective.vanishingPoint, m_screenAnchor, screen);
         for (const auto& handle : m_group.widgets) {
             if (auto* rect = handle.GetRectTransform()) {
                 rect->SetPresentationTransform(transform);
@@ -59,6 +63,18 @@ public:
         }
     }
     void SetFill(float value) { m_targetFill = std::isfinite(value) ? std::clamp(value, 0.0f, 1.0f) : 0; }
+    void ApplyAnimatedLayout(const UiLayoutSettings::GroupPlacement& placement,
+        DirectX::XMFLOAT2 labelSize, DirectX::XMFLOAT2 screen) {
+        m_screenAnchor = placement.screenAnchor;
+        m_labelSize = labelSize;
+        m_group.currentCenterPosition = UiLayoutSettings::ResolveGroupPosition(placement, screen);
+        m_group.originalCenterPosition = m_group.currentCenterPosition;
+        for (size_t i = 0; i < m_group.widgets.size(); ++i) {
+            const auto offset = m_group.offsetPositions[i];
+            m_group.widgets[i].SetPosition(m_group.currentCenterPosition.x + offset.x,
+                m_group.currentCenterPosition.y + offset.y);
+        }
+    }
     void Pulse(float duration) { m_pulseRemaining = duration; }
     void Update(float dt, const WaveUiSettings::Data& settings) {
         if (m_hasGauge && std::isfinite(dt) && dt > 0) {
@@ -74,7 +90,7 @@ public:
         m_pulseRemaining = (std::max)(0.0f, m_pulseRemaining - dt);
         const float t = settings.pulseDuration > 0 ? std::clamp(m_pulseRemaining / settings.pulseDuration, 0.0f, 1.0f) : 0;
         const float scale = 1 + (settings.pulseScale - 1) * std::sin(t * DirectX::XM_PI);
-        m_label.handle.SetSize(m_settings.label.size.x * scale, m_settings.label.size.y * scale);
+        m_label.handle.SetSize(m_labelSize.x * scale, m_labelSize.y * scale);
     }
     void SetActive(bool active) { for (auto& handle : m_group.widgets) handle.SetActive(active); }
     void Destroy() { for (auto& handle : m_group.widgets) handle.Destroy(); *this = {}; }

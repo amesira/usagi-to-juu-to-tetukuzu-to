@@ -88,6 +88,22 @@
                 ]
             }
         },
+        "phaseMoveDelay": 1.0,
+        "phaseMoveDuration": 0.4000000059604645,
+        "phasePlacementB": {
+            "position": [
+                0.0,
+                180.0
+            ],
+            "screenAnchor": [
+                0.5,
+                0.0
+            ]
+        },
+        "phaseScaleB": [
+            0.3499999940395355,
+            0.3499999940395355
+        ],
         "points": {
             "gauge": {
                 "position": [

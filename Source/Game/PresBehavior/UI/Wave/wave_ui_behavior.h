@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Component/behavior_component.h"
 #include "wave_ui_widget.h"
+#include "wave_ui_phase_motion.h"
 #include "Game/ControllerBehavior/Wave/wave_progress.h"
 #include <array>
 #include <cstdint>
@@ -18,6 +19,7 @@ class WaveUiBehavior : public BehaviorComponent {
     const WaveUiSettingsAsset* m_settingsAsset = nullptr;
     WaveUiSettings::Data m_settings;
     WaveUiWidget m_number, m_points, m_phase;
+    WaveUiPhaseMotion m_phaseMotion;
     std::array<Popup, 24> m_popups;
     size_t m_nextPopup = 0;
     bool m_created = false;
@@ -35,6 +37,7 @@ public:
     void DestroyWidgets();
 private:
     void ApplyLayout();
+    void ApplyPhaseMotion();
     void SpawnPopup(int points, DirectX::XMFLOAT3 position);
     void UpdatePopups(float dt);
 };

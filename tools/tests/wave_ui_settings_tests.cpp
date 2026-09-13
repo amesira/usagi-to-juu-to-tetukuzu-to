@@ -1,11 +1,28 @@
 #include "Game/PresBehavior/UI/Wave/wave_ui_settings_asset.h"
 #include "Utility/mi_math.h"
 #include "Game/PresBehavior/UI/ui_perspective.h"
+#include "Game/PresBehavior/UI/Wave/wave_ui_phase_motion.h"
 #include <cassert>
 #include <fstream>
 #include <iostream>
 #include <limits>
 int main() {
+    WaveUiPhaseMotion motion;
+    motion.Begin(WaveProgress::State::Battle);
+    motion.Update(0.5f);
+    assert(motion.GetBlend(1,0.4f) == 0);
+    motion.Update(0.7f);
+    assert(std::abs(motion.GetBlend(1,0.4f)-0.5f) < 0.001f);
+    motion.Update(1);
+    assert(motion.GetBlend(1,0.4f) == 1);
+    motion.Begin(WaveProgress::State::Clearing);
+    assert(motion.GetBlend(1,0.4f) == 0); // Battle -> Clearing restarts at A.
+    motion.Update(1);
+    assert(motion.GetBlend(1,0) == 1);
+    motion.Begin(WaveProgress::State::Intermission);
+    motion.Update(10);
+    assert(motion.GetBlend(0,0) == 0);
+    motion.Reset();
     std::ifstream file("asset/Data/wave_ui_settings.data.json");
     assert(file.good());
     const auto json = nlohmann::json::parse(file);
@@ -13,14 +30,19 @@ int main() {
     WaveUiSettings::Data settings;
     assert(FieldSerialization::DeserializeFields(json["data"], settings, WaveUiSettings::GetSchema()));
     WaveUiSettings::Sanitize(settings);
-    assert(!settings.perspective.enabled && !settings.chromaticEcho.enabled);
-    assert(settings.number.applyPerspective && settings.points.text.applyChromaticEcho);
+    const WaveUiSettings::Data defaults;
+    assert(!defaults.perspective.enabled && !defaults.chromaticEcho.enabled);
+    assert(defaults.number.applyPerspective && defaults.points.text.applyChromaticEcho);
+    assert(defaults.phaseScaleB.x == 0.35f && defaults.phaseMoveDelay == 1);
     auto oldData = json["data"];
     oldData.erase("perspective"); oldData.erase("chromaticEcho");
+    oldData.erase("phasePlacementB"); oldData.erase("phaseScaleB");
+    oldData.erase("phaseMoveDelay"); oldData.erase("phaseMoveDuration");
     oldData["number"].erase("applyPerspective"); oldData["number"].erase("applyChromaticEcho");
     WaveUiSettings::Data oldSettings;
     assert(FieldSerialization::DeserializeFields(oldData, oldSettings, WaveUiSettings::GetSchema()));
     assert(!oldSettings.perspective.enabled && oldSettings.number.applyPerspective);
+    assert(oldSettings.phaseScaleB.y == 0.35f);
     settings.perspective.enabled = true;
     settings.chromaticEcho.enabled = true;
     settings.chromaticEcho.offsetDistance = 10;
@@ -56,8 +78,11 @@ int main() {
     settings.points.gaugeSmoothTime = std::numeric_limits<float>::quiet_NaN();
     settings.pulseScale = std::numeric_limits<float>::quiet_NaN();
     settings.phase.fontSize = -10;
+    settings.phaseMoveDelay = -1;
+    settings.phaseScaleB.x = std::numeric_limits<float>::quiet_NaN();
     WaveUiSettings::Sanitize(settings);
     assert(settings.popupDuration > 0 && std::isfinite(settings.pulseScale) && settings.phase.fontSize > 0);
     assert(settings.points.gaugeSmoothTime == 0.2f);
+    assert(settings.phaseMoveDelay == 0 && settings.phaseScaleB.x == 0.35f);
     std::cout << "Wave UI settings tests passed\n";
 }

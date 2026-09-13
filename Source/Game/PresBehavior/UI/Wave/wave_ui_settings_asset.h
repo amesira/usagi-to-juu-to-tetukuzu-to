@@ -26,6 +26,10 @@ namespace WaveUiSettings {
         WidgetSettings number;
         PointsSettings points;
         WidgetSettings phase;
+        UiLayoutSettings::GroupPlacement phasePlacementB = {{0.5f, 0}, {0, 165}};
+        DirectX::XMFLOAT2 phaseScaleB = {0.35f, 0.35f}; // Absolute text XY scale, like phase.label.size.
+        float phaseMoveDelay = 1.0f;
+        float phaseMoveDuration = 0.4f;
         float pulseDuration = 0.3f;
         float pulseScale = 1.15f;
         bool popupEnabled = true;
@@ -70,6 +74,10 @@ namespace WaveUiSettings {
             MakeStructField("number", "Wave Number", &Data::number, GetWidgetSchema(), DefaultFieldOptions{}),
             MakeStructField("points", "Points", &Data::points, GetPointsSchema(), DefaultFieldOptions{}),
             MakeStructField("phase", "Phase", &Data::phase, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("phasePlacementB", "Phase Placement B", &Data::phasePlacementB, UiLayoutSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
+            MakeField("phaseScaleB", "Phase Text XY Scale B", &Data::phaseScaleB, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=100}),
+            MakeField("phaseMoveDelay", "Phase Move Delay (s)", &Data::phaseMoveDelay, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=30}),
+            MakeField("phaseMoveDuration", "Phase Move Duration (s)", &Data::phaseMoveDuration, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=10}),
             MakeField("pulseDuration", "Pulse Duration", &Data::pulseDuration, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0, .maxValue = 10}),
             MakeField("pulseScale", "Pulse Scale", &Data::pulseScale, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 1, .maxValue = 3}),
             MakeField("popupEnabled", "Defeat Popup", &Data::popupEnabled),
@@ -83,6 +91,11 @@ namespace WaveUiSettings {
     }
     inline void Sanitize(Data& data) {
         auto finite = [](float value, float fallback) { return std::isfinite(value) ? value : fallback; };
+        data.phaseMoveDelay = (std::max)(0.0f, finite(data.phaseMoveDelay, 1));
+        data.phaseMoveDuration = (std::max)(0.0f, finite(data.phaseMoveDuration, 0.4f));
+        data.phaseScaleB.x = (std::max)(0.0f, finite(data.phaseScaleB.x, 0.35f));
+        data.phaseScaleB.y = (std::max)(0.0f, finite(data.phaseScaleB.y, 0.35f));
+        if (!UiLayoutSettings::IsValid(data.phasePlacementB)) data.phasePlacementB = {{0.5f,0},{0,165}};
         data.points.gaugeSmoothTime = std::clamp(finite(data.points.gaugeSmoothTime, 0.2f), 0.01f, 5.0f);
         data.pulseDuration = (std::max)(0.0f, finite(data.pulseDuration, 0.3f));
         data.pulseScale = std::clamp(finite(data.pulseScale, 1.15f), 1.0f, 3.0f);

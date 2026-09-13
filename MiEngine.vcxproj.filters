@@ -563,6 +563,7 @@
     <ClInclude Include="Source\Game\title.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_phase_motion.h" />
     <ClInclude Include="Source\Engine\Core\scene_transition.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />

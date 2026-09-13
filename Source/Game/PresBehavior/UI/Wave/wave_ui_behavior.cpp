@@ -42,14 +42,18 @@ void WaveUiBehavior::Update()
     const float rawDt = FPS_GetUnscaledDeltaTime();
     const float dt = std::isfinite(rawDt) ? (std::max)(0.0f, rawDt) : 0;
     auto* controller = Game::Wave();
+    bool phaseChanged = false;
     if (controller != m_controller) {
         m_controller = controller;
         m_eventCursor = controller ? controller->GetDefeatSerial() : 0;
         m_lastWave = -1; m_lastPoints = -1;
+        m_phaseMotion.Reset();
         for (auto& popup : m_popups) { popup.active = false; popup.handle.SetActive(false); }
     }
     if (controller) {
         const auto& progress = controller->GetProgress();
+        phaseChanged = m_lastWave < 0 || m_lastState != progress.state || m_lastWave != progress.waveNumber;
+        if (phaseChanged) m_phaseMotion.Begin(progress.state);
         if (m_lastWave >= 0 && m_lastWave != progress.waveNumber) m_number.Pulse(m_settings.pulseDuration);
         if (m_lastPoints >= 0 && m_lastPoints != progress.wavePoints) m_points.Pulse(m_settings.pulseDuration);
         if (m_lastWave >= 0 && m_lastState != progress.state) m_phase.Pulse(m_settings.pulseDuration);
@@ -60,7 +64,7 @@ void WaveUiBehavior::Update()
         std::string phase;
         switch (progress.state) {
         case WaveProgress::State::WaitingForWorld: phase = "WAIT"; break;
-        case WaveProgress::State::Preparing: phase = "用意は出来ているな？  " + std::to_string(seconds); break;
+        case WaveProgress::State::Preparing: phase = "READY？ " + std::to_string(seconds); break;
         case WaveProgress::State::Battle: phase = "鉄屑を撃ち倒せ！"; break;
         case WaveProgress::State::Clearing: phase = "CLEAR REMAINING ENEMIES  " + std::to_string(controller->GetAliveEnemyCount()); break;
         case WaveProgress::State::Intermission: phase = "WAVE クリア！ / 次の WAVE まで  " + std::to_string(seconds); break;
@@ -78,8 +82,23 @@ void WaveUiBehavior::Update()
     else {
         m_number.SetText("WAVE --"); m_points.SetText("-- / --"); m_points.SetFill(0); m_phase.SetText("WAITING FOR WAVE CONTROLLER");
     }
+    if (!phaseChanged) m_phaseMotion.Update(dt);
+    ApplyPhaseMotion();
     m_number.Update(dt, m_settings); m_points.Update(dt, m_settings); m_phase.Update(dt, m_settings);
+    m_phase.ApplyPresentation(m_settings, m_screen);
     UpdatePopups(dt);
+}
+
+void WaveUiBehavior::ApplyPhaseMotion()
+{
+    const float t = m_phaseMotion.GetBlend(m_settings.phaseMoveDelay, m_settings.phaseMoveDuration);
+    auto lerp = [t](DirectX::XMFLOAT2 a, DirectX::XMFLOAT2 b) {
+        return DirectX::XMFLOAT2{a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t};
+    };
+    const auto& a = m_settings.phase.placement;
+    const auto& b = m_settings.phasePlacementB;
+    const UiLayoutSettings::GroupPlacement placement = {lerp(a.screenAnchor,b.screenAnchor),lerp(a.position,b.position)};
+    m_phase.ApplyAnimatedLayout(placement, lerp(m_settings.phase.label.size,m_settings.phaseScaleB),m_screen);
 }
 
 void WaveUiBehavior::SpawnPopup(int points, DirectX::XMFLOAT3 position)
@@ -117,6 +136,7 @@ void WaveUiBehavior::UpdatePopups(float dt)
 
 void WaveUiBehavior::DestroyWidgets()
 {
+    m_phaseMotion.Reset();
     m_number.Destroy(); m_points.Destroy(); m_phase.Destroy();
     for (auto& popup : m_popups) { popup.handle.Destroy(); popup = {}; }
     m_created = false; m_controller = nullptr; m_lastWave = -1; m_lastPoints = -1;
