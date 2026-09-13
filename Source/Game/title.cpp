@@ -5,6 +5,7 @@
 #include "Engine/engine_service_locator.h"
 
 #include "Game/ControllerBehavior/title_controller_behavior.h"
+#include "Game/PresBehavior/UI/Title/title_ui_behavior.h"
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
@@ -30,6 +31,10 @@ void TitleScene::Initialize()
     GameObject* controller = CreateGameObject();
     controller->SetName("TitleController");
     controller->AddComponent<TitleControllerBehavior>();
+    GameObject* titleUi = CreateGameObject();
+    titleUi->SetName("TitleUi");
+    titleUi->AddComponent<TitleUiBehavior>()->Setup(
+        DATA_LOADER->GetAsset<TitleUiSettingsAsset>("asset/Data/title_ui_settings.data.json", true));
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(

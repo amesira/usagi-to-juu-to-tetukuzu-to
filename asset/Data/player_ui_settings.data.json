@@ -67,15 +67,15 @@
                 0.5
             ],
             "color": [
-                0.0,
-                0.0,
+                1.0,
+                0.9191489219665527,
                 0.0
             ],
             "enabled": true,
-            "offsetDistance": 5.0,
-            "opacity": 0.4000000059604645,
+            "offsetDistance": 0.019999999552965164,
+            "opacity": 0.6000000238418579,
             "orderInLayerOffset": -10,
-            "scale": 1.0049999952316284
+            "scale": 1.003000020980835
         },
         "color1": [
             0.21702128648757935,
@@ -133,10 +133,10 @@
             }
         },
         "perspective": {
-            "cameraDistance": 500.0,
+            "cameraDistance": 1600.0,
             "enabled": true,
             "maxTiltDegrees": 30.0,
-            "tiltDegrees": 3.0,
+            "tiltDegrees": 22.0,
             "vanishingPoint": [
                 0.5,
                 0.5

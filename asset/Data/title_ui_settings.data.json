@@ -1,0 +1,253 @@
+{
+    "data": {
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                1.0,
+                0.9191489219665527,
+                0.0
+            ],
+            "enabled": true,
+            "offsetDistance": 0.20000000298023224,
+            "opacity": 0.6000000238418579,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
+        "fontSize": 36,
+        "highScore": {
+            "group": {
+                "applyChromaticEcho": true,
+                "applyPerspective": true,
+                "placement": {
+                    "position": [
+                        -219.0,
+                        132.0
+                    ],
+                    "screenAnchor": [
+                        1.0,
+                        0.0
+                    ]
+                }
+            },
+            "text": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.8999999761581421,
+                    0.8999999761581421
+                ]
+            },
+            "value": "HIGH SCORE"
+        },
+        "menu": {
+            "exit": {
+                "position": [
+                    0.0,
+                    90.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "exitText": "終了",
+            "group": {
+                "applyChromaticEcho": true,
+                "applyPerspective": true,
+                "placement": {
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "screenAnchor": [
+                        0.20000000298023224,
+                        0.699999988079071
+                    ]
+                }
+            },
+            "practice": {
+                "position": [
+                    0.0,
+                    -90.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "practiceText": "練習場",
+            "selection": {
+                "position": [
+                    0.0,
+                    -12.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    360.0,
+                    56.0
+                ]
+            },
+            "selectionImagePath": "asset/Texture/white.bmp",
+            "startGame": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "startGameText": "討伐開始"
+        },
+        "panelColor": [
+            0.07999999821186066,
+            0.10000000149011612,
+            0.15000000596046448
+        ],
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 30.0,
+            "tiltDegrees": 24.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "popup": {
+            "dimmerOpacity": 0.6499999761581421,
+            "group": {
+                "applyChromaticEcho": false,
+                "applyPerspective": false,
+                "placement": {
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "screenAnchor": [
+                        0.5,
+                        0.5
+                    ]
+                }
+            },
+            "message": {
+                "position": [
+                    0.0,
+                    -50.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "messageText": "ゲームを終了しますか？",
+            "no": {
+                "position": [
+                    130.0,
+                    65.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "noText": "いいえ",
+            "panel": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    640.0,
+                    260.0
+                ]
+            },
+            "panelImagePath": "asset/Texture/white.bmp",
+            "selection": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    180.0,
+                    52.0
+                ]
+            },
+            "selectionImagePath": "asset/Texture/white.bmp",
+            "yes": {
+                "position": [
+                    -130.0,
+                    65.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "yesText": "はい"
+        },
+        "selectedTextColor": [
+            0.0,
+            1.0,
+            0.8851063251495361
+        ],
+        "selectionColor": [
+            0.025531888008117676,
+            0.025531888008117676,
+            0.025531888008117676
+        ],
+        "selectionMoveDuration": 0.15000000596046448,
+        "selectionOpacity": 0.800000011920929,
+        "textColor": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "version": {
+            "group": {
+                "applyChromaticEcho": false,
+                "applyPerspective": true,
+                "placement": {
+                    "position": [
+                        -130.0,
+                        -35.0
+                    ],
+                    "screenAnchor": [
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "text": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.6000000238418579,
+                    0.6000000238418579
+                ]
+            },
+            "value": "Ver. 0.1.0"
+        }
+    },
+    "formatVersion": 0,
+    "name": "title_ui_settings.data",
+    "type": "TitleUiSettingsAsset"
+}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -139,6 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
@@ -318,6 +321,13 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_perspective.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_layout_settings.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
