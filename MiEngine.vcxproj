@@ -282,6 +282,8 @@
     <ClCompile Include="Source\Engine\game_world.cpp" />
     <ClCompile Include="Source\Engine\Device\mi_fps.cpp" />
     <ClCompile Include="Source\Game\game.cpp" />
+    <ClCompile Include="Source\Game\title.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Core\game_object.h" />
     <ClCompile Include="Source\Engine\Device\keyboard.cpp" />
     <ClCompile Include="Source\Engine\Component\collider_component.cpp" />
@@ -622,6 +624,8 @@
     <ClInclude Include="Utility\debug_ostream.h" />
     <ClInclude Include="Source\Engine\Device\direct3d.h" />
     <ClInclude Include="Source\Game\game.h" />
+    <ClInclude Include="Source\Game\title.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Device\keyboard.h" />
     <ClInclude Include="Source\Engine\Device\mouse.h" />
     <ClInclude Include="Source\Engine\Core\processor.h" />

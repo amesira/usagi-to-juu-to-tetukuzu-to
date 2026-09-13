@@ -202,6 +202,10 @@
     <ClCompile Include="Source\Game\game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\title.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
@@ -544,6 +548,10 @@
     <ClInclude Include="Source\Game\game.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\title.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Component\behavior_component.h">
       <Filter>Sources\Engine\Component</Filter>
     </ClInclude>

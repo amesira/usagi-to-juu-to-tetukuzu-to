@@ -9,11 +9,12 @@
 #include "Engine/Core/scene_interface.h"
 
 #include "Game/game.h"
+#include "Game/title.h"
 
 // シーン管理の初期化
 void SceneManager::Initialize()
 {
-    m_currentScene = SceneID::Game;
+    m_currentScene = SceneID::Title;
     m_nextScene = m_currentScene;
 
     // 最初のシーンをセット
@@ -80,13 +81,10 @@ void SceneManager::LoadScene(SceneID sceneId)
     // シーンIDに応じてシーンを生成
     switch (sceneId) {
         case SceneID::Title:
-            // m_pScene = new TitleScene();
+            m_pScene = new TitleScene();
             break;
         case SceneID::Game:
             m_pScene = new GameScene();
-            break;
-        case SceneID::Result:
-            // m_pScene = new ResultScene();
             break;
         default:
             m_pScene = nullptr;
