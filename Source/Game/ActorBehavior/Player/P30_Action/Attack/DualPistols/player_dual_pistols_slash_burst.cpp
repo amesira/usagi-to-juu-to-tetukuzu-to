@@ -273,7 +273,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .overrideMovementSource = false,
                 },
                 .attackType = HitReceiver::AttackType::Slash,
-                .hitStop = { .duration = 0.03f, .affectAttacker = true, .affectReceiver = true },
+                .hitStop = { .duration = 0.05f, .affectAttacker = true, .affectReceiver = true },
             };
             const auto result = hitReceiver->ReceiveHit(hitData);
             if (result.WasAccepted() && hitData.hitStop.affectAttacker) {
@@ -432,6 +432,7 @@ void PlayerDualPistolsSlashBurst::FireLeftPistol(PlayerDualPistolsContext& conte
     if (muzzle.isValid) {
         request.muzzlePosition = muzzle.position;
         request.fireDirection = MiMath::RotateVector(muzzle.rotation, { 0.0f, 1.0f, 0.0f });
+        request.fireDirection = MiMath::HorizontalNormalize(request.fireDirection);
         context.firing.Fire(context, request);
     }
 }
@@ -445,6 +446,7 @@ void PlayerDualPistolsSlashBurst::FireRightPistol(PlayerDualPistolsContext& cont
     if (muzzle.isValid) {
         request.muzzlePosition = muzzle.position;
         request.fireDirection = MiMath::RotateVector(muzzle.rotation, { 0.0f, 1.0f, 0.0f });
+        request.fireDirection = MiMath::HorizontalNormalize(request.fireDirection);
         context.firing.Fire(context, request);
     }
 }
