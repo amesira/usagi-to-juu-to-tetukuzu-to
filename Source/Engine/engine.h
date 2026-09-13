@@ -17,6 +17,7 @@
 class MiEngine {
 private:
     bool m_isRunning = false;
+    bool m_quitRequested = false;
 
     EditorManager   m_editorManager;
     EditorContext*  m_editorContext;
@@ -43,6 +44,8 @@ public:
     bool Initialize(HWND hWnd);
     void Finalize();
     bool RunOneFrame();
+    void RequestQuit() { m_quitRequested = true; }
+    bool IsQuitRequested() const { return m_quitRequested; }
 
 private:
     void Update();

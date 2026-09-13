@@ -15,6 +15,10 @@ private: friend class MiEngine;
     static inline MiEngine* s_engineInstance = nullptr;
 
 public:
+    static void RequestQuit() {
+        if (s_engineInstance) s_engineInstance->RequestQuit();
+    }
+
     // デバッグログの追加
     static void AddLogMessage(const std::string& message) {
         if (s_engineInstance) {
