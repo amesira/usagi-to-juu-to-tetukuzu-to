@@ -19,7 +19,7 @@ private:
 
     float m_health = 100;
     float m_maxHealth = 100;
-    float m_recovery = 1;
+    float m_recovery = 0.0f;
 
 public:
     void ApplyColors(const DirectX::XMFLOAT3& color1, const DirectX::XMFLOAT3& color2);
