@@ -35,7 +35,7 @@
         "slashEffectAssetPath": "asset/MeshEffect/player_slash_burst_2_effect.mesh_effect.json",
         "slashEffectPosition": [
             0.0,
-            0.0,
+            2.0,
             1.0
         ],
         "slashEffectRotation": [
@@ -43,7 +43,7 @@
             180.0,
             0.0
         ],
-        "slashEffectScale": 2.0,
+        "slashEffectScale": 3.0,
         "targetHeightOffset": 1.0,
         "this_is_header_field": null,
         "windupDuration": 0.30000001192092896

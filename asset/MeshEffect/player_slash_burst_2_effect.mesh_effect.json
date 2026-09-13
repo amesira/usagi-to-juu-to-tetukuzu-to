@@ -77,9 +77,9 @@
             "billboardMode": "None",
             "blendMode": "Additive",
             "color": [
-                0.0,
-                0.7829790115356445,
                 1.0,
+                0.0,
+                0.0,
                 1.0
             ],
             "intensity": 3.0,

@@ -178,31 +178,39 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyFromDefinition(
     auto* enemy = prefab.enemy;
     enemy->SetName(definition.displayName);
     auto* model = enemy->GetComponent<ModelComponent>();
+
     // モデル・クリップのA/B管理方法は従来通り攻撃タイプで選択する。
     if (definition.ranged) model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
+
     auto* behavior = enemy->GetComponent<EnemyBehavior>();
     behavior->SetupAttackType(definition.ranged ? EnemyAttackType::Ranged : EnemyAttackType::Melee);
     behavior->SetupResolvedAiAgentSettings(EnemyDefinition::ResolveAgent(definition, agent->GetData()));
     behavior->SetupMoveSettings(move);
     behavior->SetupApproachSettings(approach);
     behavior->SetupAttackSettings(attack);
+    behavior->SetElite(definition.isElite);
+
     auto* health = enemy->GetComponent<HealthBehavior>();
     health->SetMaxHealth(definition.maxHealth);
     health->SetHealth(definition.maxHealth);
     enemy->GetComponent<TransformComponent>()->SetScaling({definition.scale, definition.scale, definition.scale});
+
     auto* collider = enemy->GetComponent<CapsuleColliderComponent>();
     collider->SetRadius(definition.scale);
     collider->SetHeight(definition.scale);
     collider->SetCenter({0, 0.8f * definition.scale, 0});
+
     for (const auto* material : {&definition.material1, &definition.material2}) {
         if (material->targetMaterialName.empty()) continue;
         bool found = false;
         for (auto& slot : model->GetMaterialSlots()) {
             if (!slot.materialResource) continue;
+
             const auto& name = slot.materialResource->name;
             const auto marker = name.rfind("_mat%");
             const auto fbxName = marker == std::string::npos ? name : name.substr(marker + 5);
             if (fbxName != material->targetMaterialName) continue;
+
             found = true;
             slot.isOverrideBaseColor = slot.isOverrideEmissive = true;
             slot.overrideBaseColor = material->baseColor;

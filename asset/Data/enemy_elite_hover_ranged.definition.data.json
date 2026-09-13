@@ -6,6 +6,7 @@
         "defeatPoints": 30,
         "displayName": "elite_hover_ranged",
         "hover": true,
+        "isElite": true,
         "material1": {
             "baseColor": [
                 0.0,

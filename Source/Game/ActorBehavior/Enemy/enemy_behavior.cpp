@@ -43,8 +43,6 @@ void EnemyBehavior::Start()
     m_context.combatTree = &m_combatTree;
     m_context.animationController = &m_animationController;
 
-    m_context.health->SetUiOffset({ 0.0f, 3.0f, 0.0f });
-
     if (m_context.hitReceiver) {
         m_context.hitReceiver->KnockbackReceiver()->SetDefaultMovementSource({
             KnockbackMovementMode::SetRigidbodyVelocity,
@@ -54,7 +52,13 @@ void EnemyBehavior::Start()
             [this](const HitData& hitData, const HitResult& hitResult) {
                 OnHitReceived(hitData, hitResult);
             });
+
+        if (m_isElite) {
+            m_context.hitReceiver->KnockbackReceiver()->SetLockKnockback(true);
+        }
     }
+
+    m_context.health->SetUiOffset({ 0.0f, m_context.transform->GetScaling().y * 3.0f, 0.0f });
 
     m_effects.Initialize(owner);
     const bool modelB = m_attackType == EnemyAttackType::Ranged;
@@ -180,8 +184,11 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
         m_motions.PlayKnockbackMotion(hitData.hitDirection, 1.0f, 0.2f);
     }
 
-    const float stunDuration = hitData.knockback.enabled
-        ? hitData.knockback.duration
-        : 0.2f;
-    StartStun(stunDuration);
+    // エリート敵はスタンしないようにする
+    if (!m_isElite){
+        const float stunDuration = hitData.knockback.enabled
+            ? hitData.knockback.duration
+            : 0.2f;
+        StartStun(stunDuration);
+    }
 }

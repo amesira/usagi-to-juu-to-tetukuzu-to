@@ -37,6 +37,7 @@ private:
     bool m_registeredEntityToMetaAI = false;
 
     EnemyContext m_context;
+    bool m_isElite = false;
 
     EnemyLocomotionController m_locomotionController;
     EnemyMove m_moveBehavior;
@@ -67,6 +68,9 @@ public:
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
+
+    void SetElite(bool isElite) { m_isElite = isElite; }
+    const bool IsElite() const { return m_isElite; }
 
     // === SettingsAssetの設定 ===
     void SetupAiAgentSettings(const EnemyAiAgentSettingsAsset* settings) {

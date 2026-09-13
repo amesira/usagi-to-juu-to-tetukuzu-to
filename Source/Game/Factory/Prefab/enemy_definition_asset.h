@@ -19,6 +19,7 @@ namespace EnemyDefinition {
     };
     struct Data {
         std::string displayName = "Enemy";
+        bool isElite = false;
         bool hover = false;
         bool ranged = false;
         float maxHealth = 100;
@@ -45,6 +46,7 @@ namespace EnemyDefinition {
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
             MakeField("displayName", "Display Name", &Data::displayName),
+            MakeField("isElite", "Elite Enemy", &Data::isElite),
             MakeField("hover", "Hover", &Data::hover),
             MakeField("ranged", "Ranged", &Data::ranged),
             MakeField("maxHealth", "Max HP", &Data::maxHealth, DragFieldOptions{.dragSpeed = 1, .minValue = 1, .maxValue = 100000}),

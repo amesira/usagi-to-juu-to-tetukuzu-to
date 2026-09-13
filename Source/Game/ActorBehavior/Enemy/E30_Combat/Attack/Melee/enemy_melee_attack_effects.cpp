@@ -36,7 +36,9 @@ void EnemyMeleeAttackEffects::PlayEffects(EffectsType type)
     }
 }
 
-void EnemyMeleeAttackEffects::StopSlash() { m_slashEffect.Stop(); }
+void EnemyMeleeAttackEffects::StopSlash() { 
+    m_slashEffect.Stop();
+}
 
 void EnemyMeleeAttackEffects::Finalize()
 {

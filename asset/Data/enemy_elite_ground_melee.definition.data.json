@@ -6,6 +6,7 @@
         "defeatPoints": 25,
         "displayName": "elite_ground_melee",
         "hover": false,
+        "isElite": true,
         "material1": {
             "baseColor": [
                 0.42978721857070923,
