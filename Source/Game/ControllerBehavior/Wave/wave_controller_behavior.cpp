@@ -48,7 +48,9 @@ void WaveControllerBehavior::NotifyEnemyDefeated(unsigned int id)
         if (!health || !health->IsDead()) return;
         enemy.credited = true;
         const int previousScore = m_progress.totalScore;
-        m_progress.AddDefeatPoints(enemy.defeatPoints);
+        auto* behavior = object->GetComponent<EnemyBehavior>();
+        if (behavior && behavior->GetDeathReason() == EnemyDeathReason::WaveCleanup) return;
+        m_progress.AddDefeatPoints(enemy.defeatPoints, m_settings);
         const int gained = m_progress.totalScore - previousScore;
         if (gained > 0) {
             if (auto* transform = object->GetComponent<TransformComponent>()) {
@@ -85,6 +87,36 @@ void WaveControllerBehavior::CollectEnemies(IScene* scene, EnemyAIWorldControlle
         object->Destroy();
         return true;
     });
+}
+
+void WaveControllerBehavior::StopAllEnemies(IScene* scene, EnemyAIWorldController* aiWorld)
+{
+    for (auto& enemy : m_enemies) {
+        auto* object = scene->GetGameObjectByID(enemy.id);
+        if (!object || !object->GetActive() || object->GetName() != enemy.name) continue;
+        if (auto* behavior = object->GetComponent<EnemyBehavior>()) {
+            behavior->StartStun(5.0f);
+        }
+    }
+}
+
+void WaveControllerBehavior::CleanupRemainingEnemies(IScene* scene, EnemyAIWorldController* aiWorld)
+{
+    // Close the scoring window before invoking any enemy death processing.
+    m_progress.MarkCleanupIssued();
+    for (auto& enemy : m_enemies) {
+        auto* object = scene->GetGameObjectByID(enemy.id);
+        if (!object || !object->GetActive() || object->GetName() != enemy.name) continue;
+        auto* health = object->GetComponent<HealthBehavior>();
+        if (!health || health->IsDead()) continue;
+        enemy.credited = true;
+        if (aiWorld) {
+            aiWorld->CancelAttackRequest(static_cast<int>(enemy.id));
+            aiWorld->GetMetaAI().UnregisterEnemy(enemy.id);
+        }
+        if (auto* behavior = object->GetComponent<EnemyBehavior>()) behavior->RequestWaveCleanup();
+        else { health->SetHealth(0); health->SetUiActive(false); }
+    }
 }
 
 int WaveControllerBehavior::GetAliveEnemyCount() const
@@ -212,6 +244,14 @@ void WaveControllerBehavior::Update()
         && aiWorld->IsInitialized() && aiWorld->GetMetaAI().HasPlayer();
     const auto previousState = m_progress.state;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
+
+    if (m_progress.state == WaveProgress::State::Intermission) {
+        StopAllEnemies(scene, aiWorld);
+    }
+
+    if (m_progress.ShouldCleanupEnemies()) {
+        CleanupRemainingEnemies(scene, aiWorld);
+    }
     if (m_progress.state != WaveProgress::State::Battle || !ready) return;
     if (previousState != WaveProgress::State::Battle) m_spawnTimer = 0.0f;
     m_spawnTimer = (std::max)(m_spawnTimer - deltaTime, 0.0f);
@@ -225,7 +265,7 @@ void WaveControllerBehavior::Update()
 void WaveControllerBehavior::DrawComponentInspector()
 {
     if (BehaviorDetailView::BeginSection(this, "Wave Controller")) {
-        const char* states[] = {"Waiting", "Preparing", "Battle", "Clearing", "Intermission", "Complete", "Game Over"};
+        const char* states[] = {"Waiting", "Preparing", "Battle", "Intermission", "Complete", "Game Over"};
         ImGui::Text("State: %s", states[static_cast<int>(m_progress.state)]);
         ImGui::Text("Wave: %d / %d", m_progress.waveNumber, m_settings.waveCount);
         ImGui::Text("Points: %d / %d | Total: %d", m_progress.wavePoints, m_progress.targetPoints, m_progress.totalScore);
@@ -273,6 +313,7 @@ void WaveControllerBehavior::DrawComponentInspector()
         ImGui::SliderFloat("Spawn Interval", &m_settings.spawnInterval, 0.1f, 10.0f);
         ImGui::SliderFloat("Preparation", &m_settings.preparationDuration, 0.0f, 10.0f);
         ImGui::SliderFloat("Intermission", &m_settings.intermissionDuration, 0.0f, 10.0f);
+        ImGui::SliderFloat("Cleanup Delay", &m_settings.cleanupDelay, 0.0f, 10.0f);
         if (ImGui::TreeNode("Spawn Points (XZ; Y resolved from navigation)")) {
             for (size_t i = 0; i < m_spawnPoints.size(); ++i) {
                 ImGui::PushID(static_cast<int>(i));

@@ -8,7 +8,7 @@ class WaveUiPhaseMotion {
     float m_age = 0;
 public:
     void Begin(WaveProgress::State state) {
-        m_moveToB = state == WaveProgress::State::Battle || state == WaveProgress::State::Clearing;
+        m_moveToB = state == WaveProgress::State::Battle;
         m_age = 0;
     }
     void Reset() { m_moveToB = false; m_age = 0; }

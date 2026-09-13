@@ -65,9 +65,28 @@ void WaveUiBehavior::Update()
         switch (progress.state) {
         case WaveProgress::State::WaitingForWorld: phase = "WAIT"; break;
         case WaveProgress::State::Preparing: phase = "READY？ " + std::to_string(seconds); break;
-        case WaveProgress::State::Battle: phase = "鉄屑を撃ち倒せ！"; break;
-        case WaveProgress::State::Clearing: phase = "CLEAR REMAINING ENEMIES  " + std::to_string(controller->GetAliveEnemyCount()); break;
-        case WaveProgress::State::Intermission: phase = "WAVE クリア！ / 次の WAVE まで  " + std::to_string(seconds); break;
+        case WaveProgress::State::Battle: {
+            if (progress.waveNumber == 1) {
+                phase = "鉄屑を撃ち倒せ！";
+            }
+            else if (progress.waveNumber == 2) {
+                phase = "バラバラにしてやれ！";
+            }
+            else if (progress.waveNumber == 3) {
+                phase = "撃って、砕いて、突き進め！";
+            }
+            else if (progress.waveNumber == 4) {
+                phase = "残らずスクラップにしろ！";
+            }
+            else {
+                phase = "兎の火力を思い知れ！";
+            }
+            break;
+        }
+        case WaveProgress::State::Intermission:
+            phase = progress.waveNumber >= controller->GetWaveCount() ? "WAVE クリア！"
+                : "WAVE クリア！ / 次の WAVE まで  " + std::to_string(seconds);
+            break;
         case WaveProgress::State::Complete: phase = "全 WAVES クリア！！"; break;
         case WaveProgress::State::GameOver: phase = "GAME OVER"; break;
         }

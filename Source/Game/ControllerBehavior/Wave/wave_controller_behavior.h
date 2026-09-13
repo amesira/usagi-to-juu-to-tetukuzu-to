@@ -85,6 +85,8 @@ public:
 
 private:
     void CollectEnemies(IScene* scene, EnemyAIWorldController* aiWorld, float deltaTime);
+    void StopAllEnemies(IScene* scene, EnemyAIWorldController* aiWorld);
+    void CleanupRemainingEnemies(IScene* scene, EnemyAIWorldController* aiWorld);
     bool TrySpawnEnemy(IScene* scene, EnemyAIWorldController& aiWorld);
     int CountSceneEnemies(IScene* scene) const;
 };

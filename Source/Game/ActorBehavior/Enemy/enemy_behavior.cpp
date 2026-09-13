@@ -12,6 +12,7 @@
 
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/transform_component.h"
+#include "Engine/Component/collider_component.h"
 #include "External/ImGui/imgui.h"
 
 #include "Game/ActorBehavior/Base/health_behavior.h"
@@ -166,7 +167,9 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
     if (!hitResult.WasAccepted()) return;
 
     if (hitResult.killed) {
-        if (auto* wave = Game::Wave()) wave->NotifyEnemyDefeated(GetOwner()->GetID());
+        if (m_deathReason == EnemyDeathReason::Defeated) {
+            if (auto* wave = Game::Wave()) wave->NotifyEnemyDefeated(GetOwner()->GetID());
+        }
         m_motions.Stop();
         return;
     }
@@ -191,4 +194,20 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
             : 0.2f;
         StartStun(stunDuration);
     }
+}
+
+void EnemyBehavior::RequestWaveCleanup()
+{
+    auto* owner = GetOwner();
+    auto* health = owner ? owner->GetComponent<HealthBehavior>() : nullptr;
+    if (!health || health->IsDead()) return;
+    // Mark before triggering death, so cleanup can never be credited as a hit.
+    m_deathReason = EnemyDeathReason::WaveCleanup;
+    m_motions.Stop();
+    m_combatTree.Cancel(m_context);
+    if (m_context.hitReceiver) m_context.hitReceiver->SetEnable(false);
+    if (auto* collider = owner->GetComponent<CapsuleColliderComponent>()) collider->SetEnable(false);
+    health->SetHealth(0);
+    health->SetUiActive(false);
+    m_conditionMachine.Update(m_context, 0);
 }

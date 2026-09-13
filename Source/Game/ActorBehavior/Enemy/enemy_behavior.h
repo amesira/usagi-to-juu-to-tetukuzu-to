@@ -30,6 +30,7 @@ enum class EnemyAttackType {
     Melee,
     Ranged,
 };
+enum class EnemyDeathReason { Defeated, WaveCleanup };
 
 /// @brief 敵個体の状態判断、戦闘、移動、アニメーションを更新する司令塔。
 class EnemyBehavior : public BehaviorComponent {
@@ -38,6 +39,7 @@ private:
 
     EnemyContext m_context;
     bool m_isElite = false;
+    EnemyDeathReason m_deathReason = EnemyDeathReason::Defeated;
 
     EnemyLocomotionController m_locomotionController;
     EnemyMove m_moveBehavior;
@@ -67,6 +69,8 @@ public:
 
     void Start() override;
     void Update() override;
+    void RequestWaveCleanup();
+    EnemyDeathReason GetDeathReason() const { return m_deathReason; }
     void DrawComponentInspector() override;
 
     void SetElite(bool isElite) { m_isElite = isElite; }

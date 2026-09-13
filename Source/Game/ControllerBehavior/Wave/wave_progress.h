@@ -13,17 +13,30 @@ struct WaveSettings {
     float preparationDuration = 5.0f;
     float intermissionDuration = 5.0f;
     float corpseDuration = 0.5f;
+    float cleanupDelay = 2.0f;
 };
 
 class WaveProgress {
 public:
-    enum class State { WaitingForWorld, Preparing, Battle, Clearing, Intermission, Complete, GameOver };
+    enum class State { WaitingForWorld, Preparing, Battle, Intermission, Complete, GameOver };
     State state = State::WaitingForWorld;
     int waveNumber = 0;
     int wavePoints = 0;
     int totalScore = 0;
     int targetPoints = 0;
     float remainingTime = 0.0f;
+private:
+    bool m_cleanupIssued = false;
+    float m_cleanupRemaining = 0;
+
+public:
+    bool ShouldCleanupEnemies() const { 
+        return state == State::Intermission && !m_cleanupIssued && m_cleanupRemaining <= 0;
+    }
+    void MarkCleanupIssued() { 
+        if (state == State::Intermission) m_cleanupIssued = true;
+    }
+    float GetCleanupRemaining() const { return m_cleanupRemaining; }
 
     void Update(float deltaTime, bool worldReady, int remainingEnemies, const WaveSettings& settings) {
         if (!std::isfinite(deltaTime) || deltaTime < 0.0f) return;
@@ -33,28 +46,37 @@ public:
         }
         if (state == State::Preparing || state == State::Intermission) {
             remainingTime = (std::max)(remainingTime - deltaTime, 0.0f);
+            if (state == State::Intermission) {
+                m_cleanupRemaining = (std::max)(m_cleanupRemaining - deltaTime, 0.0f);
+                if (!m_cleanupIssued || remainingEnemies > 0) return;
+                if (waveNumber >= (std::max)(settings.waveCount, 1)) {
+                    state = State::Complete;
+                    remainingTime = 0;
+                    return;
+                }
+            }
             if (worldReady && remainingTime <= 0.0f) {
                 ++waveNumber;
                 wavePoints = 0;
                 targetPoints = (std::max)(settings.firstTargetPoints +
                     (waveNumber - 1) * settings.targetPointsIncrement, 1);
                 state = State::Battle;
-            }
-        }
-        else if (state == State::Clearing && remainingEnemies == 0) {
-            if (waveNumber >= (std::max)(settings.waveCount, 1)) state = State::Complete;
-            else {
-                state = State::Intermission;
-                remainingTime = (std::max)(settings.intermissionDuration, 0.0f);
+                m_cleanupIssued = false;
             }
         }
     }
 
-    void AddDefeatPoints(int points) {
-        if (state != State::Battle && state != State::Clearing) return;
+    void AddDefeatPoints(int points, const WaveSettings& settings = WaveSettings{}) {
+        if (state != State::Battle && !(state == State::Intermission && !m_cleanupIssued)) return;
         points = (std::max)(points, 0);
         totalScore += points;
         wavePoints += points;
-        if (state == State::Battle && wavePoints >= targetPoints) state = State::Clearing;
+        if (state == State::Battle && wavePoints >= targetPoints) {
+            state = State::Intermission;
+            m_cleanupIssued = false;
+            m_cleanupRemaining = std::isfinite(settings.cleanupDelay) ? (std::max)(settings.cleanupDelay, 0.0f) : 2.0f;
+            remainingTime = waveNumber >= (std::max)(settings.waveCount,1)
+                ? m_cleanupRemaining : (std::max)(settings.intermissionDuration, 0.0f);
+        }
     }
 };

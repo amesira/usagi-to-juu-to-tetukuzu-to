@@ -15,8 +15,8 @@ int main() {
     assert(std::abs(motion.GetBlend(1,0.4f)-0.5f) < 0.001f);
     motion.Update(1);
     assert(motion.GetBlend(1,0.4f) == 1);
-    motion.Begin(WaveProgress::State::Clearing);
-    assert(motion.GetBlend(1,0.4f) == 0); // Battle -> Clearing restarts at A.
+    motion.Begin(WaveProgress::State::Battle);
+    assert(motion.GetBlend(1,0.4f) == 0); // A new battle restarts at A.
     motion.Update(1);
     assert(motion.GetBlend(1,0) == 1);
     motion.Begin(WaveProgress::State::Intermission);
