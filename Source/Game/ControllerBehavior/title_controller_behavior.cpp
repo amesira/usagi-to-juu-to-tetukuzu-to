@@ -19,7 +19,7 @@ void TitleControllerBehavior::Start()
 
 void TitleControllerBehavior::Update()
 {
-    if (m_state == State::QuitRequested) return;
+    if (m_state == State::QuitRequested || m_state == State::StartingGame) return;
     if (m_state == State::ExitConfirm) {
         if (Keyboard_IsKeyDownTrigger(KK_BACK)) {
             CancelExitConfirmation();
@@ -52,6 +52,7 @@ void TitleControllerBehavior::Update()
     m_titleUi->SetSelectedMenu(static_cast<TitleUi::MenuItem>(m_selectedMenu));
     if (Keyboard_IsKeyDownTrigger(KK_ENTER)) {
         if (m_selectedMenu == 0) EnterPractice();
+        else if (m_selectedMenu == 1) StartGame();
         else if (m_selectedMenu == 2) OpenExitConfirmation();
     }
 }
@@ -61,6 +62,7 @@ void TitleControllerBehavior::DrawComponentInspector()
     ImGui::PushID(this);
     if (m_state == State::Menu) {
         if (ImGui::Button("Enter practice")) EnterPractice();
+        if (ImGui::Button("Start game with fade")) StartGame();
         if (ImGui::Button("Open exit confirmation")) OpenExitConfirmation();
     }
     else if (m_state == State::ExitConfirm) {
@@ -73,6 +75,7 @@ void TitleControllerBehavior::DrawComponentInspector()
         if (ImGui::Button("Cancel")) CancelExitConfirmation();
     }
     else if (m_state == State::QuitRequested) ImGui::TextUnformatted("Quit requested.");
+    else if (m_state == State::StartingGame) ImGui::TextUnformatted("Fading to game...");
     else if (m_state == State::Practice) {
         ImGui::TextUnformatted("Backspace: return to title");
         if (ImGui::Button("Return to title")) ReturnToTitle();
@@ -94,7 +97,7 @@ void TitleControllerBehavior::EnterPractice()
 
 void TitleControllerBehavior::ReturnToTitle()
 {
-    if (m_state == State::QuitRequested) return;
+    if (m_state == State::QuitRequested || m_state == State::StartingGame) return;
     m_state = State::Menu;
     if (m_camera) m_camera->ReturnToTitle();
     if (m_titleUi) {
@@ -102,6 +105,14 @@ void TitleControllerBehavior::ReturnToTitle()
         m_titleUi->SetExitPopupVisible(false);
     }
     if (m_playerUi) m_playerUi->SetVisible(false);
+}
+
+void TitleControllerBehavior::StartGame()
+{
+    if (m_state != State::Menu) return;
+    if (EngineServiceLocator::ChangeSceneWithFade(SceneManager::SceneID::Game)) {
+        m_state = State::StartingGame;
+    }
 }
 
 void TitleControllerBehavior::OpenExitConfirmation()

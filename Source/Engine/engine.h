@@ -55,6 +55,7 @@ private:
 public:
     // GameWorldへのアクセス
     const GameWorld& GetGameWorld() const { return m_gameWorld; }
+    GameWorld& GetGameWorld() { return m_gameWorld; }
 
     // ResourceManagerへのアクセス
     ResourceManager& GetResourceManager() { return m_resourceManager; }

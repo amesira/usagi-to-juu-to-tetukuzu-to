@@ -15,6 +15,9 @@ private: friend class MiEngine;
     static inline MiEngine* s_engineInstance = nullptr;
 
 public:
+    static bool ChangeSceneWithFade(SceneManager::SceneID sceneId, float outDuration = 0.4f, float inDuration = 0.4f) {
+        return s_engineInstance && s_engineInstance->GetGameWorld().GetSceneManager().ChangeSceneWithFade(sceneId, outDuration, inDuration);
+    }
     static void RequestQuit() {
         if (s_engineInstance) s_engineInstance->RequestQuit();
     }

@@ -286,6 +286,7 @@
     <ClCompile Include="Source\Engine\Device\mi_fps.cpp" />
     <ClCompile Include="Source\Game\game.cpp" />
     <ClCompile Include="Source\Game\title.cpp" />
+    <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\title_camera_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Core\game_object.h" />
@@ -636,6 +637,7 @@
     <ClInclude Include="Source\Engine\Device\direct3d.h" />
     <ClInclude Include="Source\Game\game.h" />
     <ClInclude Include="Source\Game\title.h" />
+    <ClInclude Include="Source\Engine\Core\scene_transition.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_blend.h" />

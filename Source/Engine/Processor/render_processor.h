@@ -48,11 +48,13 @@ private:
     PostEffectPass m_postEffectPass;
 
     UIRenderPass m_uiRenderPass;
+    ComPtr<ID3D11BlendState> m_blackFadeBlend;
 
 public:
     void    Initialize()override;
     void    Finalize()override;
     void    Process(IScene* pScene)override;
+    void DrawBlackFade(float alpha);
 
     // 描画に必要な情報をまとめる構造体RenderViewのバインド
     void    BindRenderView(RenderView* view) {

@@ -28,11 +28,25 @@ void RenderProcessor::Initialize()
     m_transparentRenderPass.Initialize(m_pDevice, m_pContext);
     m_maskRenderPass.Initialize(m_pDevice, m_pContext);
     m_postEffectPass.Initialize(m_pDevice, m_pContext);
+    D3D11_BLEND_DESC fade = {};
+    auto& target = fade.RenderTarget[0];
+    target.BlendEnable = TRUE;
+    target.SrcBlend = D3D11_BLEND_ZERO;
+    target.DestBlend = D3D11_BLEND_INV_BLEND_FACTOR;
+    target.BlendOp = D3D11_BLEND_OP_ADD;
+    target.SrcBlendAlpha = D3D11_BLEND_ZERO;
+    target.DestBlendAlpha = D3D11_BLEND_ONE;
+    target.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    target.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    if (FAILED(m_pDevice->CreateBlendState(&fade, m_blackFadeBlend.GetAddressOf()))) {
+        EngineServiceLocator::AddLogMessage("Failed to create black fade blend state.");
+    }
 }
 
 // 描画制御プロセッサーの終了処理
 void RenderProcessor::Finalize()
 {
+    m_blackFadeBlend.Reset();
     m_lightingPass.Finalize();
     m_opaqueRenderPass.Finalize();
     m_uiRenderPass.Finalize();
@@ -152,6 +166,34 @@ void RenderProcessor::Process(IScene* pScene)
 }
 
 // 3D描画時のカメラCBバインド
+void RenderProcessor::DrawBlackFade(float alpha)
+{
+    if (!m_renderView || !m_blackFadeBlend || alpha <= 0) return;
+    auto* texture = TEXTURE_REPOSITORY->GetTextureResource("asset/Texture/white.bmp");
+    if (!texture) return;
+
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
+    EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+
+    SetDepthState(DEPTHSTATE_DISABLE);
+    SetRasterizerState(RASTERIZERSTATE_CULL_NONE);
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+
+    // RGB = destination * (1-alpha), independent of the source texture color.
+    const float factor[] = {alpha, alpha, alpha, alpha};
+    m_pContext->OMSetBlendState(m_blackFadeBlend.Get(), factor, 0xffffffff);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+    m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
+    m_pContext->Draw(3, 0);
+
+    ID3D11ShaderResourceView* empty = nullptr;
+    m_pContext->PSSetShaderResources(0, 1, &empty);
+    SetBlendState(BLENDSTATE_NONE);
+    SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
+}
+
 void RenderProcessor::Bind3DCameraCB(const RenderView* view)
 {
     EngineServiceLocator::UpdateCameraCB({

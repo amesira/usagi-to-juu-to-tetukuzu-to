@@ -108,6 +108,7 @@ void GameWorld::Render()
         //view.enableDebugDraw = true; // デバッグ描画を有効化
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
+        m_renderProcessor.DrawBlackFade(m_sceneManager.GetTransition().GetAlpha());
     }
 
     if (m_sceneRenderView.enabled) {

@@ -10,7 +10,7 @@ private:
     class PlayerUiBehavior* m_playerUi = nullptr;
     class TitleCameraBehavior* m_camera = nullptr;
     int m_selectedMenu = 0;
-    enum class State { Menu, ExitConfirm, QuitRequested, EnteringPractice, Practice };
+    enum class State { Menu, ExitConfirm, QuitRequested, StartingGame, EnteringPractice, Practice };
     bool m_exitYesSelected = false;
     State m_state = State::Menu;
 public:
@@ -18,6 +18,7 @@ public:
     void Update() override;
     void DrawComponentInspector() override;
     void EnterPractice();
+    void StartGame();
     void ReturnToTitle();
     void OpenExitConfirmation();
     void CancelExitConfirmation();

@@ -43,6 +43,12 @@ bool MiEngine::Initialize(HWND hWnd)
 
     // GameWorldの初期化
     m_gameWorld.Initialize();
+    m_gameWorld.GetSceneManager().SetBeforeSceneRelease([this]() {
+        m_editorContext->selectedObject = nullptr;
+        m_editorContext->scene = nullptr;
+        m_editorContext->environmentAsset = nullptr;
+        m_editorManager.OnSceneDestroyed();
+    });
 
     return true;
 }
@@ -89,10 +95,6 @@ void MiEngine::Update()
         m_editorContext->triggerSceneReload = false;
         m_gameWorld.GetSceneManager().ReloadScene();
 
-        // シーン破棄時の処理を呼び出す
-        m_editorContext->selectedObject = nullptr; // 選択オブジェクトをリセット
-        m_editorContext->scene = nullptr;
-        m_editorManager.OnSceneDestroyed(); // Editor側のシーン破棄処理を呼び出す
     }
 
     // デバッグ描画のバッファリセット
@@ -123,4 +125,5 @@ void MiEngine::Render()
     m_editorManager.Render();
 
     Direct3D_Present();
+    m_gameWorld.GetSceneManager().NotifyFramePresented();
 }
