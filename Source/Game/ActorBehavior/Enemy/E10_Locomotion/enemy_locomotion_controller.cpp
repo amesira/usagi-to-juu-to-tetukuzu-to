@@ -32,8 +32,6 @@ namespace {
             break;
         }
 
-        direction.y = 0.0f;
-        if (MiMath::Length(direction) <= 0.001f) return {};
         return MiMath::Normalize(direction);
     }
 }

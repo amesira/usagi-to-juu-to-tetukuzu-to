@@ -206,30 +206,17 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const
     return { enemy };
 }
 
-PrefabFactory::EnemyPrefab PrefabFactory::CreateRangedEnemyPrefab(
+PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverRangedEnemyPrefab(
     IScene* scene,
     const XMFLOAT3& position)
 {
     EnemyPrefab prefab = CreateEnemyPrefab(scene, position);
     if (!prefab.enemy) return prefab;
 
-    prefab.enemy->SetName("RangedEnemy");
+    prefab.enemy->SetName("HoverRangedEnemy");
     prefab.enemy->GetComponent<ModelComponent>()->SetModelResource(
         MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
-    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
-        behavior->SetupAttackType(EnemyAttackType::Ranged);
-    }
-    return prefab;
-}
 
-PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverEnemyPrefab(
-    IScene* scene,
-    const XMFLOAT3& position)
-{
-    EnemyPrefab prefab = CreateEnemyPrefab(scene, position);
-    if (!prefab.enemy) return prefab;
-
-    prefab.enemy->SetName("HoverEnemy");
     if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
         behavior->SetupAiAgentSettings(
             DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
@@ -239,22 +226,12 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverEnemyPrefab(
             DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
                 "asset/Data/enemy_hover_move_settings.data.json",
                 true));
-    }
-    return prefab;
-}
-
-PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverRangedEnemyPrefab(
-    IScene* scene,
-    const XMFLOAT3& position)
-{
-    EnemyPrefab prefab = CreateHoverEnemyPrefab(scene, position);
-    if (!prefab.enemy) return prefab;
-
-    prefab.enemy->SetName("HoverRangedEnemy");
-    prefab.enemy->GetComponent<ModelComponent>()->SetModelResource(
-        MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
-    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
         behavior->SetupAttackType(EnemyAttackType::Ranged);
+        behavior->SetupApproachSettings(
+            DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(
+                "asset/Data/enemy_hover_approach_settings.data.json",
+                true));
     }
+
     return prefab;
 }

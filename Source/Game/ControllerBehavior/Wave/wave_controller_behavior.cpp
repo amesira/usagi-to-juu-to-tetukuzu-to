@@ -143,8 +143,10 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
         if (occupied) continue;
         if (aiWorld.FindPath(position, player, agent).status != EnemyAiWorld::PathQueryStatus::Success) continue;
         if (hover) position.y += moveAsset ? moveAsset->GetData().hoverHeight : 3.0f;
+
         auto prefab = hover ? PrefabFactory::CreateHoverRangedEnemyPrefab(scene, position)
                             : PrefabFactory::CreateEnemyPrefab(scene, position);
+
         if (!prefab.enemy) continue;
         auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>();
         behavior->SetupAiAgentSettings(asset);

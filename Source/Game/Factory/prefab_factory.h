@@ -28,18 +28,10 @@ namespace PrefabFactory
         IScene* scene,
         const XMFLOAT3& position);
 
+    // === EnemyPrefabを生成する関数 ===
     EnemyPrefab CreateEnemyPrefab(
         IScene* scene,
         const XMFLOAT3& position);
-
-    EnemyPrefab CreateRangedEnemyPrefab(
-        IScene* scene,
-        const XMFLOAT3& position);
-
-    EnemyPrefab CreateHoverEnemyPrefab(
-        IScene* scene,
-        const XMFLOAT3& position);
-
     EnemyPrefab CreateHoverRangedEnemyPrefab(
         IScene* scene,
         const XMFLOAT3& position);

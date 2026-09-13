@@ -68,7 +68,7 @@ namespace
         }
         generated = true;
         
-        XMFLOAT4 hologramColor = { 0.35f, 0.85f, 1.0f, 0.75f };
+        XMFLOAT4 hologramColor = { 0.85f, 0.55f, 1.0f, 0.75f };
         float hologramIntensity = 7.0f;
 
         MaterialResource material = {};
@@ -130,7 +130,7 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     bullet->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(desc.position);
-    transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
+    transform->SetScaling({ desc.radius * 2.5f, desc.radius * 2.5f, desc.radius * 2.5f });
 
     // 弾の進行方向に合わせて回転を設定
     XMFLOAT3 forward = MiMath::Multiply(desc.velocity, -1.0f);
