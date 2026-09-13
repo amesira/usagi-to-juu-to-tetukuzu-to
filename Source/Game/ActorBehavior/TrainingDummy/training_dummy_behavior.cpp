@@ -29,7 +29,6 @@ void TrainingDummyBehavior::Start()
     if (m_hitReceiverBehavior) {
         m_hitReceiverBehavior->KnockbackReceiver()->SetDefaultMovementSource({
             KnockbackMovementMode::SetRigidbodyVelocity,
-            true,
             -9.81f
             });
         m_hitReceiverBehavior->KnockbackReceiver()->SetLockKnockback(true);

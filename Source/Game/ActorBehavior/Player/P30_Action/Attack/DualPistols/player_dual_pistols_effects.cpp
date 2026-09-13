@@ -139,6 +139,11 @@ void PlayerDualPistolsEffects::PlayEffects(PlayerDualPistolsContext& context, Ef
             m_slashBurstEffect3[1].Play();
             break;
         }
+        case EffectsType::BurstHit: {
+            Game::GameFeedback()->PlayCameraShake(1.0f, 0.1f);
+            Game::CustomPostEffect()->PlayEffect(CustomPostEffectType::RadialBlur, 0.3f, 0.05f, 0.01f);
+            break;
+        }
         default: break;
     }
 }

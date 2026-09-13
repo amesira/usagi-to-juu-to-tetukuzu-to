@@ -245,6 +245,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
     // 攻撃ターゲットの検出
     std::vector<GameObject*> hitTargets = DetectAttackTarget(context);
 
+    bool isBurstHit = false;
     for (GameObject* target : hitTargets) {
         TransformComponent* targetTransform = target->GetComponent<TransformComponent>();
         HitReceiverBehavior* hitReceiver = target->GetComponent<HitReceiverBehavior>();
@@ -278,8 +279,14 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
             if (result.WasAccepted() && hitData.hitStop.affectAttacker) {
                 BeginHitStop(context, hitData.hitStop.duration);
             }
+            isBurstHit = true;
         }
     }
+
+    if (isBurstHit) {
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::BurstHit);
+    }
+
     return true;
 }
 

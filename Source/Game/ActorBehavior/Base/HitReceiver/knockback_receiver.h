@@ -37,7 +37,6 @@ private:
     // デフォルトとなるノックバック移動方法
     HitReceiver::KnockbackMovementSource m_defaultMovementSource = {
         HitReceiver::KnockbackMovementMode::SetTransformPosition,
-        true,
         -9.81f
     };
 

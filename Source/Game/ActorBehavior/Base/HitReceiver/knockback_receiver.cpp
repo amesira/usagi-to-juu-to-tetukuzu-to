@@ -63,6 +63,7 @@ void KnockbackReceiver::Update(float deltaTime)
         if (m_currentRequest.movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
             m_rigidbody->SetGravityScale(m_rbGravity);
             m_rigidbody->SetFriction(m_rbFriction);
+            m_rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
         }
         return;
     }
@@ -94,7 +95,7 @@ bool KnockbackReceiver::StartKnockback(const KnockbackRequest& request)
     XMFLOAT3 targetPosition = EvaluateTargetPosition(
         m_startPosition, 
         request);
-    float gravity = movementSource.useRbGravity && m_rigidbody ? (m_rbGravity * m_rbMass) : movementSource.gravity;
+    float gravity = movementSource.gravity;
     m_velocity = CalculateInitialVelocity(
         m_startPosition,
         targetPosition,

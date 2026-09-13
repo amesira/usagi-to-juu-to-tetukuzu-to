@@ -48,8 +48,7 @@ void EnemyBehavior::Start()
     if (m_context.hitReceiver) {
         m_context.hitReceiver->KnockbackReceiver()->SetDefaultMovementSource({
             KnockbackMovementMode::SetRigidbodyVelocity,
-            true,
-            -9.81f
+            -9.81f * 2.0f,
         });
         m_context.hitReceiver->SetOnHitCallback(
             [this](const HitData& hitData, const HitResult& hitResult) {
@@ -172,11 +171,11 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
     if (hitData.attackType == AttackType::Slash) {
         m_motions.PlaySlashHitMotion(
             hitData.hitDirection,
-            0.5f,
+            1.0f,
             hitData.hitStop.affectReceiver ? hitData.hitStop.duration : 0.0f);
     }
     else {
-        m_motions.PlayKnockbackMotion(hitData.hitDirection, 0.5f, 0.2f);
+        m_motions.PlayKnockbackMotion(hitData.hitDirection, 1.0f, 0.2f);
     }
 
     const float stunDuration = hitData.knockback.enabled

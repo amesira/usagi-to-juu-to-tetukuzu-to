@@ -34,7 +34,7 @@
         "chargeTime": 1.2999999523162842,
         "maxBulletRadius": 0.75,
         "maxBulletSpeed": 300.0,
-        "minBulletRadius": 0.20000000298023224,
+        "minBulletRadius": 0.30000001192092896,
         "minBulletSpeed": 200.0,
         "muzzleFlashEffectOffset": [
             1.0,

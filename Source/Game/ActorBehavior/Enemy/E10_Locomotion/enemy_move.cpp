@@ -95,7 +95,11 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
 
         // Rigidbodyの速度を設定
         XMFLOAT3 newVelocity = MiMath::Multiply(deltaPosition, 1.0f / deltaTime);
-        m_context.rigidbody->SetVelocity(newVelocity);
+
+        // Rigidbodyの速度を直接設定する場合は、移動モードがKeepRigidbodyVelocityでないことを確認
+        if (intent.movementMode != EnemyMovementMode::KeepRigidbodyVelocity) {
+            m_context.rigidbody->SetVelocity(newVelocity);
+        }
     }
 
     // === 回転処理 ===

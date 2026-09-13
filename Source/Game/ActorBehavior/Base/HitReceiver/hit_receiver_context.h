@@ -40,7 +40,6 @@ namespace HitReceiver
     /// @brief ノックバックの移動方法に関する設定
     struct KnockbackMovementSource{
         KnockbackMovementMode mode = KnockbackMovementMode::SetTransformPosition;
-        bool useRbGravity = true; // Rigidbodyの重力を使用するかどうか
         float gravity = -9.81f; // 重力加速度
     };;
 

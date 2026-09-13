@@ -68,7 +68,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float t = depthInShadowMap * depthInShadowMap;
     t = saturate(t);
     
-    col.rgb = lerp(col.rgb, col.rgb * float3(1.5, 1.5, 1.5), 1.0f - t); // シャドウの影響を減算（0.5倍にする）
+    col.rgb = lerp(col.rgb, col.rgb * float3(2.0, 2.0, 2.0), 1.0f - t); // シャドウの影響を減算（0.5倍にする）
     
     return col;
 }

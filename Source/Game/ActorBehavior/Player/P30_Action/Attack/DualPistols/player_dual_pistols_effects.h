@@ -20,6 +20,8 @@ public:
         SlashBurst1,
         SlashBurst2,
         SlashBurst3,
+
+        BurstHit,
     };
 
 private:

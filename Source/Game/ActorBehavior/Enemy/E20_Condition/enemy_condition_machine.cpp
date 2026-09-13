@@ -73,14 +73,14 @@ void EnemyConditionMachine::EnterCondition(EnemyContext& context, EnemyCondition
 
     EnemyLocomotionController::LocomotionRequest request;
     request.priority = 100;
-    request.canRotate = false;
+    request.canRotate = true;
 
     if (condition == EnemyCondition::Stun) {
         // 被弾側がRigidbodyへ与えたノックバック速度を維持する。
         request.movementMode = EnemyMovementMode::KeepRigidbodyVelocity;
     }
     else if (condition == EnemyCondition::Dead) {
-        request.movementMode = EnemyMovementMode::StopHorizontal;
+        request.movementMode = EnemyMovementMode::KeepRigidbodyVelocity;
     }
     else {
         return;
