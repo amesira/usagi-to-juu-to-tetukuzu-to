@@ -37,9 +37,10 @@ void TitleUiBehavior::ApplySettings() {
     m_presentation.popupSelection.MoveTo(m_popup.GetSelectionTarget(m_yesSelected), 0);
 }
 void TitleUiBehavior::ApplyView() {
-    m_menu.group.visible = m_menuVisible;
-    m_highScore.group.visible = m_menuVisible;
-    m_popup.group.visible = m_popupVisible;
+    m_menu.group.visible = m_visible && m_menuVisible;
+    m_highScore.group.visible = m_visible && m_menuVisible;
+    m_popup.group.visible = m_visible && m_popupVisible;
+    m_version.group.visible = m_visible;
     const auto& s = Settings();
     m_view.ApplyGroup(m_menu.group, s, m_screenSize, 0, m_presentation.menuSelection.GetPosition());
     m_view.ApplyGroup(m_popup.group, s, m_screenSize, 1, m_presentation.popupSelection.GetPosition());
@@ -57,6 +58,7 @@ void TitleUiBehavior::SetSelectedMenu(TitleUi::MenuItem item, bool animate) {
     ApplyView();
 }
 void TitleUiBehavior::SetMenuVisible(bool visible) { m_menuVisible = visible; if (m_created) ApplyView(); }
+void TitleUiBehavior::SetVisible(bool visible) { m_visible = visible; if (m_created) ApplyView(); }
 void TitleUiBehavior::SetExitPopupVisible(bool visible) {
     m_popupVisible = visible;
     if (visible) SetExitConfirmationSelection(false, false);

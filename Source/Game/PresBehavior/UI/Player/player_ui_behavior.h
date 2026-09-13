@@ -28,6 +28,7 @@ private:
     PlayerUiPresentation m_presentation;
 
     bool m_widgetsCreated = false;
+    bool m_visible = true;
     PlayerUiHealthBar m_healthBar;
     PlayerUiAmmoCount m_ammoCount;
     PlayerUiCrosshair m_crosshair;
@@ -50,6 +51,8 @@ public:
 
     // シーン全体の破棄はシーンが担当。個別にUIを終了するときに呼ぶ。
     void DestroyWidgets();
+    void SetVisible(bool visible);
+    bool IsVisible() const { return m_visible; }
 
     // === 外部からのUI更新関数 ===
     void Setup(const PlayerUiSettingsAsset* settingsAsset);

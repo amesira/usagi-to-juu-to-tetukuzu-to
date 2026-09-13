@@ -208,6 +208,7 @@
     <ClCompile Include="Source\Game\title.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\PresBehavior\Camera\title_camera_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp">
       <Filter>Sources\Engine</Filter>
@@ -561,6 +562,9 @@
     <ClInclude Include="Source\Game\title.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_blend.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Component\behavior_component.h">
       <Filter>Sources\Engine\Component</Filter>

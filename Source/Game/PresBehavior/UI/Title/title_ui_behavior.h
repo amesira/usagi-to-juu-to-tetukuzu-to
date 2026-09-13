@@ -16,6 +16,7 @@ class TitleUiBehavior : public BehaviorComponent {
     TitleUi::MenuItem m_selected = TitleUi::MenuItem::Practice;
     bool m_yesSelected = false, m_created = false, m_dirty = true;
     bool m_menuVisible = true, m_popupVisible = false;
+    bool m_visible = true;
     int m_score = 0;
     std::string m_versionOverride;
     bool m_hasVersionOverride = false;
@@ -32,6 +33,7 @@ public:
     void DestroyWidgets();
     void SetSelectedMenu(TitleUi::MenuItem item, bool animate = true);
     void SetMenuVisible(bool visible);
+    void SetVisible(bool visible);
     void SetExitPopupVisible(bool visible);
     void SetExitConfirmationSelection(bool yesSelected, bool animate = true);
     void SetHighScore(int score);

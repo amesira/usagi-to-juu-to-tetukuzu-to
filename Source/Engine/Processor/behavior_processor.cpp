@@ -56,6 +56,12 @@ void BehaviorProcessor::Process(IScene* pScene)
         behavior->Update();
     }
 
+    for (BehaviorComponent* behavior : m_updateList) {
+        if (behavior->GetEnable() && behavior->GetOwner()->GetActive()) {
+            behavior->LateUpdate();
+        }
+    }
+
     m_startList.clear();
     m_updateList.clear();
 }

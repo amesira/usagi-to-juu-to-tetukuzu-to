@@ -43,9 +43,6 @@ void CameraProcessor::Process(IScene* pScene)
         if (!transform->GetEnable() || !c->GetEnable()) continue;
         if (camera.GetOwner()->GetActive() == false) continue;
 
-        // gameObjectIDsに登録
-        if (m_cameraCounter >= MAX_CAMERAS)break;
-
         // ビュー行列、プロジェクション行列計算
         XMVECTOR vPos = XMVectorSet(
             transform->GetPosition().x,
@@ -73,6 +70,8 @@ void CameraProcessor::Process(IScene* pScene)
         camera.SetViewMatrix(view);
         camera.SetProjectionMatrix(projection);
         camera.SetEyePosition(transform->GetPosition());
+
+        if (!camera.GetRenderEnabled() || m_cameraCounter >= MAX_CAMERAS) continue;
 
         m_cameras[m_cameraCounter] = c;
 

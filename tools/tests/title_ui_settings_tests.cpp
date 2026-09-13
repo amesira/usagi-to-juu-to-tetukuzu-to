@@ -1,5 +1,8 @@
 #include "Game/PresBehavior/UI/Title/title_ui_settings_asset.h"
 #include "Game/PresBehavior/UI/Title/title_ui_presentation.h"
+#include "Game/PresBehavior/Camera/title_camera_blend.h"
+#include "Game/PresBehavior/Camera/title_camera_settings_asset.h"
+#include "Engine/Component/camera_component.h"
 #include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
 #include "Game/PresBehavior/UI/Player/player_ui_perspective.h"
 #include <cassert>
@@ -7,6 +10,25 @@
 #include <iostream>
 
 int main(int argc, char**) {
+    TitleCameraBlend blend;
+    blend.Start({{0,40,-20},{0,0,0},60}, 1);
+    auto pose = blend.Update({{0,10,-10},{0,5,0},80},0.5f);
+    assert(pose.position.y == 25 && pose.fov == 70 && !blend.IsComplete());
+    // Completion follows the latest moving target rather than the initial TPS pose.
+    pose = blend.Update({{15,12,-5},{15,5,5},90},0.5f);
+    assert(blend.IsComplete() && pose.position.x == 15 && pose.fov == 90);
+    blend.Start(pose,0);
+    pose = blend.Update({{20,12,-5},{20,5,5},90},0);
+    assert(blend.IsComplete() && pose.position.x == 20);
+    CameraComponent camera;
+    assert(camera.GetRenderEnabled());
+    camera.SetRenderEnabled(false);
+    assert(!camera.GetRenderEnabled() && camera.GetEnable());
+    std::ifstream cameraFile("asset/Data/title_camera_settings.data.json");
+    const auto cameraJson = nlohmann::json::parse(cameraFile);
+    TitleCameraSettings::Data cameraSettings;
+    assert(FieldSerialization::DeserializeFields(cameraJson.at("data"),cameraSettings,TitleCameraSettings::GetSchema()));
+    assert(cameraSettings.blendDuration > 0 && cameraSettings.position.y > cameraSettings.lookAt.y);
     TitleUiSettings::Data data;
     const auto saved = FieldSerialization::SerializeFields(data, TitleUiSettings::GetSchema());
     TitleUiSettings::Data restored;

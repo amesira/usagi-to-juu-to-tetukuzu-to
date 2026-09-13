@@ -113,6 +113,7 @@ void PlayerUiBehavior::CreateWidgets()
 
     // レイアウトを適用
     ApplyLayoutSettings();
+    SetVisible(m_visible);
 }
 
 void PlayerUiBehavior::DestroyWidgets()
@@ -167,6 +168,14 @@ void PlayerUiBehavior::ApplyLayoutSettings()
 }
 
 #pragma region 外部からのUI更新関数
+void PlayerUiBehavior::SetVisible(bool visible)
+{
+    m_visible = visible;
+    for (auto& group : m_context.widgetGroups) {
+        for (auto& widget : group.widgets) widget.SetActive(visible);
+    }
+}
+
 void PlayerUiBehavior::SetHealth(float current, float maximum)
 {
     m_healthBar.SetHealth(current, maximum);

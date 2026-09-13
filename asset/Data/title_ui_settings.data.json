@@ -7,7 +7,7 @@
             ],
             "color": [
                 1.0,
-                0.9191489219665527,
+                0.8680851459503174,
                 0.0
             ],
             "enabled": true,
@@ -39,8 +39,8 @@
                 ],
                 "rotationDegrees": 0.0,
                 "size": [
-                    0.8999999761581421,
-                    0.8999999761581421
+                    0.800000011920929,
+                    0.800000011920929
                 ]
             },
             "value": "HIGH SCORE"
@@ -48,7 +48,7 @@
         "menu": {
             "exit": {
                 "position": [
-                    0.0,
+                    40.0,
                     90.0
                 ],
                 "rotationDegrees": 0.0,
@@ -98,7 +98,7 @@
             "selectionImagePath": "asset/Texture/white.bmp",
             "startGame": {
                 "position": [
-                    0.0,
+                    20.0,
                     0.0
                 ],
                 "rotationDegrees": 0.0,

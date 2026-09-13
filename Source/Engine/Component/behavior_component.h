@@ -29,6 +29,8 @@ public:
 
     virtual void    Start() = 0;
     virtual void    Update() = 0;
+    // Runs after all Behavior Update calls, before camera matrices/rendering.
+    virtual void    LateUpdate() {}
 
     virtual void    DrawComponentInspector() = 0;
 

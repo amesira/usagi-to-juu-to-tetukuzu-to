@@ -16,6 +16,7 @@ class CameraProcessor;
 
 class CameraComponent : public Component {
 private:
+    bool m_renderEnabled = true;
     XMFLOAT3    m_atPosition = { 0.0f, 0.0f, 0.0f };// 注視点
     XMFLOAT3    m_upVector = { 0.0f, 1.0f, 0.0f };  // 上方ベクトル
 
@@ -34,6 +35,10 @@ private:
         | RenderLayerToMask(RenderLayer::Bullet) | RenderLayerToMask(RenderLayer::Enemy);
 
 public:
+    // Keep camera matrices/gameplay references alive without creating a RenderView.
+    void SetRenderEnabled(bool enabled) { m_renderEnabled = enabled; }
+    bool GetRenderEnabled() const { return m_renderEnabled; }
+    void SetUpVector(XMFLOAT3 up) { m_upVector = up; }
     // カメラの位置、注視点、上方ベクトルの設定・取得
     void    SetAtPosition(XMFLOAT3 atPosition) { m_atPosition = atPosition; }
     XMFLOAT3   GetAtPosition() const { return m_atPosition; }

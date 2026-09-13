@@ -6,6 +6,9 @@
 
 #include "Game/ControllerBehavior/title_controller_behavior.h"
 #include "Game/PresBehavior/UI/Title/title_ui_behavior.h"
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
+#include "Game/PresBehavior/Camera/title_camera_behavior.h"
+#include "Engine/Component/camera_component.h"
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
@@ -38,15 +41,25 @@ void TitleScene::Initialize()
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(
-        DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/stage_decoration_settings.data.json", true));
+        DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/title_decoration_settings.data.json", true));
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });
     EnvironmentFactory::AttachCameraControl(camera);
     camera->SetName("MainCamera");
+    camera->GetComponent<CameraComponent>()->SetRenderEnabled(false);
+
+    // Only this camera renders. MainCamera continues updating TPS controls.
+    GameObject* viewCamera = EnvironmentFactory::CreateCamera(this, {0,45,-25}, {0,0,10});
+    viewCamera->SetName("TitleViewCamera");
+    viewCamera->AddComponent<TitleCameraBehavior>()->Setup(
+        DATA_LOADER->GetAsset<TitleCameraSettingsAsset>("asset/Data/title_camera_settings.data.json", true));
 
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });
+    if (playerPrefab.player) {
+        if (auto* ui = playerPrefab.player->GetComponent<PlayerUiBehavior>()) ui->SetVisible(false);
+    }
 
     // かかしプレハブ生成
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
