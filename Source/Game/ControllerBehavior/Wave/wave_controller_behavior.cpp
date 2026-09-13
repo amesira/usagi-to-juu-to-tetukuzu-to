@@ -245,10 +245,6 @@ void WaveControllerBehavior::Update()
     const auto previousState = m_progress.state;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
 
-    if (m_progress.state == WaveProgress::State::Intermission) {
-        StopAllEnemies(scene, aiWorld);
-    }
-
     if (m_progress.ShouldCleanupEnemies()) {
         CleanupRemainingEnemies(scene, aiWorld);
     }

@@ -13,7 +13,7 @@ struct WaveSettings {
     float preparationDuration = 5.0f;
     float intermissionDuration = 5.0f;
     float corpseDuration = 0.5f;
-    float cleanupDelay = 2.0f;
+    float cleanupDelay = 0.05f;
 };
 
 class WaveProgress {
