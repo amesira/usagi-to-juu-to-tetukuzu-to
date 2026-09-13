@@ -1,0 +1,51 @@
+{
+    "data": {
+        "agentPath": "asset/Data/enemy_hover_ai_agent_settings.data.json",
+        "approachPath": "asset/Data/enemy_hover_approach_settings.data.json",
+        "attackPath": "asset/Data/enemy_hover_attack_settings.data.json",
+        "defeatPoints": 15,
+        "displayName": "hover_ranged",
+        "hover": true,
+        "material1": {
+            "baseColor": [
+                0.0,
+                0.0767769142985344,
+                0.4510638117790222,
+                1.0
+            ],
+            "emissiveColor": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "emissiveIntensity": 0.0,
+            "metallic": 1.0,
+            "roughness": 0.5,
+            "targetMaterialName": "Body"
+        },
+        "material2": {
+            "baseColor": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "emissiveColor": [
+                0.0,
+                0.35346320271492004,
+                0.5191489458084106
+            ],
+            "emissiveIntensity": 2.0,
+            "metallic": 1.0,
+            "roughness": 1.0,
+            "targetMaterialName": "Gear.003"
+        },
+        "maxHealth": 50.0,
+        "movePath": "asset/Data/enemy_hover_move_settings.data.json",
+        "ranged": true,
+        "scale": 1.0
+    },
+    "formatVersion": 0,
+    "name": "enemy_hover_ranged.definition.data",
+    "type": "EnemyDefinitionAsset"
+}

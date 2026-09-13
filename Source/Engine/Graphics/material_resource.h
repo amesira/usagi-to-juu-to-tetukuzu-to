@@ -112,6 +112,10 @@ public:
     bool isOverrideEmissive = false;
     XMFLOAT3 overrideEmissiveColor = { 0,0,0 };
     float overrideEmissiveIntensity = 1.0f;
+    bool isOverrideMetallic = false;
+    float overrideMetallic = 0.0f;
+    bool isOverrideRoughness = false;
+    float overrideRoughness = 1.0f;
 
     // カスタムプロパティのオーバーライド設定
     bool isOverrideCustomProperties[MaterialResource::CUSTOM_PROPERTY_COUNT] = { false };

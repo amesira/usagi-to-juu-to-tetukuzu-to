@@ -9,16 +9,6 @@
 
 enum class WaveEnemyType { GroundMelee, HoverRanged, EliteGroundMelee, EliteHoverRanged };
 
-struct WaveEnemyDefinition {
-    WaveEnemyType type;
-    int defeatPoints;
-    float maxHealth;
-    float scale;
-    const char* agentPath;
-    const char* movePath;
-    const char* approachPath = "asset/Data/enemy_approach_settings.data.json";
-    const char* attackPath = "asset/Data/enemy_attack_settings.data.json";
-};
 struct WaveEnemyEntry { int weight; int maxAlive; };
 struct WaveComposition {
     std::array<WaveEnemyEntry, 4> enemies;
@@ -46,11 +36,11 @@ class WaveControllerBehavior : public BehaviorComponent {
     WaveSettings m_settings;
     WaveProgress m_progress;
     std::vector<SpawnedEnemy> m_enemies;
-    std::array<WaveEnemyDefinition, 4> m_definitions = {{
-        {WaveEnemyType::GroundMelee, 10, 100, 1, "asset/Data/enemy_ai_agent_settings.data.json", "asset/Data/enemy_move_settings.data.json"},
-        {WaveEnemyType::HoverRanged, 15, 100, 1, "asset/Data/enemy_hover_ai_agent_settings.data.json", "asset/Data/enemy_hover_move_settings.data.json"},
-        {WaveEnemyType::EliteGroundMelee, 25, 200, 1.2f, "asset/Data/enemy_elite_ai_agent_settings.data.json", "asset/Data/enemy_move_settings.data.json"},
-        {WaveEnemyType::EliteHoverRanged, 30, 200, 1.2f, "asset/Data/enemy_elite_hover_ai_agent_settings.data.json", "asset/Data/enemy_hover_move_settings.data.json"}
+    std::array<std::string, 4> m_definitionPaths = {{
+        "asset/Data/enemy_ground_melee.definition.data.json",
+        "asset/Data/enemy_hover_ranged.definition.data.json",
+        "asset/Data/enemy_elite_ground_melee.definition.data.json",
+        "asset/Data/enemy_elite_hover_ranged.definition.data.json"
     }};
     // 5ウェーブ目以降は最後の構成を再利用する。
     std::array<WaveComposition, 5> m_compositions = {{

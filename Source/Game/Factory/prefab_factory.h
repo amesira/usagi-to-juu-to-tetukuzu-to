@@ -5,6 +5,7 @@ using namespace DirectX;
 
 class GameObject;
 class IScene;
+namespace EnemyDefinition { struct Data; }
 
 namespace PrefabFactory
 {
@@ -35,4 +36,5 @@ namespace PrefabFactory
     EnemyPrefab CreateHoverRangedEnemyPrefab(
         IScene* scene,
         const XMFLOAT3& position);
+    EnemyPrefab CreateEnemyFromDefinition(IScene* scene, const XMFLOAT3& position, const EnemyDefinition::Data& definition);
 }

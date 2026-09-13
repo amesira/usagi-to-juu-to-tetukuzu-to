@@ -514,6 +514,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\enemy_definition_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />

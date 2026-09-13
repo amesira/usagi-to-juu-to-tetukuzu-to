@@ -155,6 +155,8 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
         // マテリアル定数バッファの更新とバインド
         MaterialBufferData materialBufferData = mat.materialResource->CreateBufferData();
         materialBufferData.baseColor = mat.isOverrideBaseColor ? mat.overrideBaseColor : materialBufferData.baseColor;
+        materialBufferData.metallic = mat.isOverrideMetallic ? mat.overrideMetallic : materialBufferData.metallic;
+        materialBufferData.roughness = mat.isOverrideRoughness ? mat.overrideRoughness : materialBufferData.roughness;
         materialBufferData.emissiveColor = mat.isOverrideEmissive ? mat.overrideEmissiveColor : materialBufferData.emissiveColor;
         materialBufferData.emissiveIntensity = mat.isOverrideEmissive ? mat.overrideEmissiveIntensity : materialBufferData.emissiveIntensity;
         MATERIAL_REPOSITORY->BindMaterialCB(materialBufferData);

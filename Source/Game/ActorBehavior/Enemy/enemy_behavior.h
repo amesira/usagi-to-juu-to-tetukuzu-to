@@ -54,6 +54,8 @@ private:
     EnemyApproachCombat m_approachCombat;
 
     const EnemyAiAgentSettingsAsset* m_aiAgentSettings = nullptr;
+    EnemyAiAgentSettingsAsset m_instanceAiAgentSettings;
+    bool m_useInstanceAiAgentSettings = false;
     const EnemyMoveSettingsAsset* m_moveSettings = nullptr;
     const EnemyApproachSettingsAsset* m_approachSettings = nullptr;
     const EnemyAttackSettingsAsset* m_attackSettings = nullptr;
@@ -78,6 +80,10 @@ public:
     }
     void SetupAttackSettings(const EnemyAttackSettingsAsset* settings) {
         m_attackSettings = settings;
+    }
+    void SetupResolvedAiAgentSettings(const EnemyAiAgentSettings::Data& settings) {
+        m_instanceAiAgentSettings.DeserializeDataToApply(FieldSerialization::SerializeFields(settings, EnemyAiAgentSettings::GetSchema()));
+        m_useInstanceAiAgentSettings = true;
     }
     void SetupAttackType(EnemyAttackType type) { m_attackType = type; }
 

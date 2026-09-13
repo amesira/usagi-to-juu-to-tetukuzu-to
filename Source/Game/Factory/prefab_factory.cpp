@@ -19,6 +19,8 @@
 #include "Game/ActorBehavior/TrainingDummy/training_dummy_behavior.h"
 
 #include "Game/Factory/Prefab/player_prefab_settings_asset.h"
+#include "Game/Factory/Prefab/enemy_definition_asset.h"
+#include <Windows.h>
 #include "Game/Factory/Prefab/training_dummy_prefab_settings_asset.h"
 #include "Game/PresBehavior/Camera/camera_settings_asset.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
@@ -155,6 +157,68 @@ PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
     health->SetHealth(settings.maxHealth);
 
     prefab.dummy = dummy;
+    return prefab;
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyFromDefinition(
+    IScene* scene, const XMFLOAT3& position, const EnemyDefinition::Data& source)
+{
+    auto definition = source;
+    EnemyDefinition::Sanitize(definition);
+    auto* agent = DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(definition.agentPath);
+    auto* move = DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(definition.movePath);
+    auto* approach = DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(definition.approachPath);
+    auto* attack = DATA_LOADER->GetAsset<EnemyAttackSettingsAsset>(definition.attackPath);
+    if (!scene || !agent || !move || !approach || !attack || move->GetData().hoverEnabled != definition.hover) {
+        OutputDebugStringA("Enemy definition: missing settings or Hover / Move settings mismatch.\n");
+        return {};
+    }
+    auto prefab = CreateEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+    auto* enemy = prefab.enemy;
+    enemy->SetName(definition.displayName);
+    auto* model = enemy->GetComponent<ModelComponent>();
+    // モデル・クリップのA/B管理方法は従来通り攻撃タイプで選択する。
+    if (definition.ranged) model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
+    auto* behavior = enemy->GetComponent<EnemyBehavior>();
+    behavior->SetupAttackType(definition.ranged ? EnemyAttackType::Ranged : EnemyAttackType::Melee);
+    behavior->SetupResolvedAiAgentSettings(EnemyDefinition::ResolveAgent(definition, agent->GetData()));
+    behavior->SetupMoveSettings(move);
+    behavior->SetupApproachSettings(approach);
+    behavior->SetupAttackSettings(attack);
+    auto* health = enemy->GetComponent<HealthBehavior>();
+    health->SetMaxHealth(definition.maxHealth);
+    health->SetHealth(definition.maxHealth);
+    enemy->GetComponent<TransformComponent>()->SetScaling({definition.scale, definition.scale, definition.scale});
+    auto* collider = enemy->GetComponent<CapsuleColliderComponent>();
+    collider->SetRadius(definition.scale);
+    collider->SetHeight(definition.scale);
+    collider->SetCenter({0, 0.5f * definition.scale, 0});
+    for (const auto* material : {&definition.material1, &definition.material2}) {
+        if (material->targetMaterialName.empty()) continue;
+        bool found = false;
+        for (auto& slot : model->GetMaterialSlots()) {
+            if (!slot.materialResource) continue;
+            const auto& name = slot.materialResource->name;
+            const auto marker = name.rfind("_mat%");
+            const auto fbxName = marker == std::string::npos ? name : name.substr(marker + 5);
+            if (fbxName != material->targetMaterialName) continue;
+            found = true;
+            slot.isOverrideBaseColor = slot.isOverrideEmissive = true;
+            slot.overrideBaseColor = material->baseColor;
+            slot.overrideEmissiveColor = material->emissiveColor;
+            slot.overrideEmissiveIntensity = material->emissiveIntensity;
+            slot.isOverrideMetallic = slot.isOverrideRoughness = true;
+            slot.overrideMetallic = material->metallic;
+            slot.overrideRoughness = material->roughness;
+            slot.isOverrideAlbedoTexture = true;
+            slot.overrideAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource("asset/Texture/white.bmp");
+        }
+        if (!found) {
+            const auto message = "Enemy definition: FBX material not found: " + material->targetMaterialName + "\n";
+            OutputDebugStringA(message.c_str());
+        }
+    }
     return prefab;
 }
 

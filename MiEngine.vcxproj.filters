@@ -997,6 +997,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\enemy_definition_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />

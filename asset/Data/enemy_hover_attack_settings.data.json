@@ -1,0 +1,54 @@
+{
+    "data": {
+        "firstShotDelay": 0.10000000149011612,
+        "interruptibleRecovery": false,
+        "interruptibleWindup": false,
+        "jumpDuration": 0.5,
+        "jumpGravity": 19.600000381469727,
+        "leftMuzzleBoneName": "Gun.L",
+        "maxDistance": 10.0,
+        "minDistance": 2.0,
+        "projectileDamage": 5.0,
+        "projectileLifeTime": 5.0,
+        "projectileRadius": 0.20000000298023224,
+        "projectileSpawnForwardOffset": 0.20000000298023224,
+        "projectileSpeed": 30.0,
+        "recoveryDuration": 0.5,
+        "restartCooldown": 1.0,
+        "rightMuzzleBoneName": "Gun.R",
+        "shotCount": 3,
+        "shotInterval": 0.30000001192092896,
+        "shotPlaybackSpeed": 1.0,
+        "slashBoxOffset": [
+            0.0,
+            1.0,
+            1.0
+        ],
+        "slashBoxSize": [
+            3.0,
+            2.0,
+            2.0
+        ],
+        "slashBurstTime": 0.05000000074505806,
+        "slashDamage": 10.0,
+        "slashDuration": 0.30000001192092896,
+        "slashEffectAssetPath": "asset/MeshEffect/player_slash_burst_2_effect.mesh_effect.json",
+        "slashEffectPosition": [
+            0.0,
+            0.0,
+            1.0
+        ],
+        "slashEffectRotation": [
+            0.0,
+            180.0,
+            0.0
+        ],
+        "slashEffectScale": 2.0,
+        "targetHeightOffset": 1.0,
+        "this_is_header_field": null,
+        "windupDuration": 0.30000001192092896
+    },
+    "formatVersion": 0,
+    "name": "enemy_hover_attack_settings.data",
+    "type": "EnemyAttackSettingsAsset"
+}

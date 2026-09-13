@@ -5,6 +5,8 @@
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/Factory/prefab_factory.h"
+#include "Game/Factory/Prefab/enemy_definition_asset.h"
+#include <cstdio>
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Component/transform_component.h"
@@ -30,6 +32,8 @@ void WaveControllerBehavior::Start()
         return;
     }
     GameControllerLocator::s_waveController = this;
+    // エディタのAsset型登録もGetAssetで行われる。欠落時に別種の初期値を保存しない。
+    for (const auto& path : m_definitionPaths) DATA_LOADER->GetAsset<EnemyDefinitionAsset>(path);
 }
 
 void WaveControllerBehavior::NotifyEnemyDefeated(unsigned int id)
@@ -90,9 +94,12 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
     std::array<int, 4> counts{};
     for (const auto& enemy : m_enemies) ++counts[static_cast<size_t>(enemy.type)];
     std::array<int, 4> weights{};
+    std::array<EnemyDefinitionAsset*, 4> definitions{};
     int totalWeight = 0;
     for (size_t i = 0; i < weights.size(); ++i) {
-        const bool hover = i == 1 || i == 3;
+        definitions[i] = DATA_LOADER->GetAsset<EnemyDefinitionAsset>(m_definitionPaths[i]);
+        if (!definitions[i]) continue;
+        const bool hover = definitions[i]->GetData().hover;
         const bool allowed = std::any_of(m_spawnPoints.begin(), m_spawnPoints.end(),
             [hover](const auto& point) { return hover ? point.allowHover : point.allowGround; });
         if (allowed && counts[i] < composition.enemies[i].maxAlive)
@@ -106,15 +113,16 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
         choice -= weights[typeIndex];
         if (choice <= 0) break;
     }
-    const auto& definition = m_definitions[typeIndex];
-    const bool hover = typeIndex == 1 || typeIndex == 3;
+    const auto definition = definitions[typeIndex]->GetData();
+    const bool hover = definition.hover;
     auto* asset = DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
-        definition.agentPath, true);
-    auto agent = asset ? asset->GetData().navigationAgent : EnemyAiAgent::NavigationAgentSettings{};
-
-    // 物理コライダーを拡大するため、生成候補も実際の半径で検証する。
-    agent.radius = (std::max)(agent.radius, definition.scale);
-    auto* moveAsset = DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(definition.movePath, true);
+        definition.agentPath);
+    auto* moveAsset = DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(definition.movePath);
+    if (!asset || !moveAsset || moveAsset->GetData().hoverEnabled != hover) {
+        m_status = "Enemy definition: missing AI / Move settings or Hover mismatch";
+        return false;
+    }
+    const auto agent = EnemyDefinition::ResolveAgent(definition, asset->GetData()).navigationAgent;
     auto& navigation = aiWorld.GetNavigationSystem();
     const auto player = aiWorld.GetMetaAI().GetPlayerPosition();
     for (size_t attempt = 0; attempt < m_spawnPoints.size(); ++attempt) {
@@ -144,26 +152,15 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
         if (aiWorld.FindPath(position, player, agent).status != EnemyAiWorld::PathQueryStatus::Success) continue;
         if (hover) position.y += moveAsset ? moveAsset->GetData().hoverHeight : 3.0f;
 
-        auto prefab = hover ? PrefabFactory::CreateHoverRangedEnemyPrefab(scene, position)
-                            : PrefabFactory::CreateEnemyPrefab(scene, position);
+        auto prefab = PrefabFactory::CreateEnemyFromDefinition(scene, position, definition);
 
-        if (!prefab.enemy) continue;
-        auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>();
-        behavior->SetupAiAgentSettings(asset);
-        behavior->SetupMoveSettings(moveAsset);
-        behavior->SetupApproachSettings(DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(definition.approachPath, true));
-        behavior->SetupAttackSettings(DATA_LOADER->GetAsset<EnemyAttackSettingsAsset>(definition.attackPath, true));
-        auto* health = prefab.enemy->GetComponent<HealthBehavior>();
-        health->SetMaxHealth(definition.maxHealth);
-        health->SetHealth(definition.maxHealth);
-        prefab.enemy->GetComponent<TransformComponent>()->SetScaling({definition.scale, definition.scale, definition.scale});
-        auto* collider = prefab.enemy->GetComponent<CapsuleColliderComponent>();
-        collider->SetRadius(definition.scale);
-        collider->SetHeight(definition.scale);
-        collider->SetCenter({0, 0.5f * definition.scale, 0});
+        if (!prefab.enemy) {
+            m_status = "Enemy definition: creation failed; check settings references";
+            return false;
+        }
         const std::string name = "WaveEnemy_" + std::to_string(++m_spawnSerial);
         prefab.enemy->SetName(name);
-        m_enemies.push_back({prefab.enemy->GetID(), name, definition.type, definition.defeatPoints});
+        m_enemies.push_back({prefab.enemy->GetID(), name, static_cast<WaveEnemyType>(typeIndex), definition.defeatPoints});
         m_status = "Enemy type " + std::to_string(typeIndex) + " spawned";
         return true;
     }
@@ -220,13 +217,17 @@ void WaveControllerBehavior::DrawComponentInspector()
         ImGui::SliderInt("Target Increment", &m_settings.targetPointsIncrement, 0, 1000);
         const char* types[] = {"Ground Melee", "Hover Ranged", "Elite Ground Melee", "Elite Hover Ranged"};
         if (ImGui::TreeNode("Enemy Definitions")) {
-            for (size_t i = 0; i < m_definitions.size(); ++i) {
+            for (size_t i = 0; i < m_definitionPaths.size(); ++i) {
                 ImGui::PushID(static_cast<int>(i));
                 ImGui::TextUnformatted(types[i]);
-                auto& definition = m_definitions[i];
-                ImGui::SliderInt("Defeat Points", &definition.defeatPoints, 1, 1000);
-                ImGui::SliderFloat("HP", &definition.maxHealth, 1, 2000);
-                ImGui::Text("Scale: %.2f (navigation radius must match)", definition.scale);
+                char path[512];
+                std::snprintf(path, sizeof(path), "%s", m_definitionPaths[i].c_str());
+                if (ImGui::InputText("Definition Asset", path, sizeof(path))) m_definitionPaths[i] = path;
+                if (auto* asset = DATA_LOADER->GetAsset<EnemyDefinitionAsset>(m_definitionPaths[i])) {
+                    const auto& definition = asset->GetData();
+                    ImGui::Text("HP %.0f | Points %d | Scale %.2f", definition.maxHealth, definition.defeatPoints, definition.scale);
+                }
+                else ImGui::TextUnformatted("Definition asset not found");
                 ImGui::PopID();
             }
             ImGui::TreePop();

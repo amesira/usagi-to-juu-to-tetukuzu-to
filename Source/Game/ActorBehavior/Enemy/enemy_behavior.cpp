@@ -35,7 +35,7 @@ void EnemyBehavior::Start()
     m_context.health = owner->GetComponent<HealthBehavior>();
     m_context.hitReceiver = owner->GetComponent<HitReceiverBehavior>();
     m_context.aiWorld = Game::EnemyAIWorld();
-    m_context.aiAgentSettingsAsset = m_aiAgentSettings;
+    m_context.aiAgentSettingsAsset = m_useInstanceAiAgentSettings ? &m_instanceAiAgentSettings : m_aiAgentSettings;
 
     m_context.locomotionController = &m_locomotionController;
     m_context.moveBehavior = &m_moveBehavior;
