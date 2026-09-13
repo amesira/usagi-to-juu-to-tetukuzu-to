@@ -77,7 +77,7 @@ void GameScene::Initialize()
     camera->SetName("MainCamera");
 
     // light
-    EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
+   // EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });
