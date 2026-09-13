@@ -140,6 +140,34 @@
                     1.0
                 ],
                 "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_acce_b.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "rotationDegrees": [
+                    90.0,
+                    180.0,
+                    0.0
+                ],
+                "rotationEnabled": false,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
             }
         ],
         "useUnscaledTime": false
