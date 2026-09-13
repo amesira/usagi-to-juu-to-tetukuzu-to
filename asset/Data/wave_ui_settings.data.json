@@ -1,6 +1,24 @@
 {
     "data": {
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                0.0,
+                1.0,
+                0.9361701011657715
+            ],
+            "enabled": true,
+            "offsetDistance": 0.10000000149011612,
+            "opacity": 0.5,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
         "number": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
             "color": [
                 1.0,
                 1.0,
@@ -29,7 +47,19 @@
                 ]
             }
         },
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 22.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
         "phase": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
             "color": [
                 1.0,
                 1.0,
@@ -71,12 +101,14 @@
                 ]
             },
             "gaugeColor": [
-                0.19999998807907104,
-                0.31914907693862915,
-                0.8999999761581421
+                0.9106382727622986,
+                0.9067632555961609,
+                0.0
             ],
             "gaugeSmoothTime": 0.05000000074505806,
             "text": {
+                "applyChromaticEcho": true,
+                "applyPerspective": true,
                 "color": [
                     1.0,
                     1.0,
@@ -107,9 +139,9 @@
             }
         },
         "popupColor": [
-            0.19999998807907104,
-            0.35659581422805786,
-            1.0
+            1.0,
+            0.9702127575874329,
+            0.0
         ],
         "popupDuration": 0.800000011920929,
         "popupEnabled": true,

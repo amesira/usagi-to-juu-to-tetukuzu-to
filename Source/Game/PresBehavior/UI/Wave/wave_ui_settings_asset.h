@@ -1,21 +1,28 @@
 #pragma once
-#include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
+#include "Game/PresBehavior/UI/ui_layout_settings.h"
+#include "Engine/Asset/DataAsset/data_asset.h"
+#include "Engine/Asset/DataAsset/data_asset_type_id.h"
+#include "Engine/Editor/Schema/field_editor.h"
 #include <algorithm>
 
 namespace WaveUiSettings {
     struct WidgetSettings {
-        PlayerUiSettings::GroupPlacement placement = {{0.5f, 0}, {0, 60}};
-        PlayerUiSettings::WidgetTransform label = {{0, 0}, {1, 1}, 0};
+        UiLayoutSettings::GroupPlacement placement = {{0.5f, 0}, {0, 60}};
+        UiLayoutSettings::WidgetTransform label = {{0, 0}, {1, 1}, 0};
+        bool applyPerspective = true;
+        bool applyChromaticEcho = true;
         int fontSize = 26;
         DirectX::XMFLOAT3 color = {1, 1, 1};
     };
     struct PointsSettings {
         WidgetSettings text;
-        PlayerUiSettings::WidgetTransform gauge = {{0, 30}, {320, 10}, 0};
+        UiLayoutSettings::WidgetTransform gauge = {{0, 30}, {320, 10}, 0};
         DirectX::XMFLOAT3 gaugeColor = {0.9f, 0.9f, 0.2f};
         float gaugeSmoothTime = 0.2f;
     };
     struct Data {
+        UiLayoutSettings::PerspectiveSettings perspective;
+        UiLayoutSettings::ChromaticEchoSettings chromaticEcho;
         WidgetSettings number;
         PointsSettings points;
         WidgetSettings phase;
@@ -28,6 +35,8 @@ namespace WaveUiSettings {
         float popupScale = 1.5f;
         DirectX::XMFLOAT3 popupColor = {1, 0.9f, 0.2f};
         Data() {
+            perspective.enabled = false;
+            chromaticEcho.enabled = false;
             points.text.placement.position.y = 100;
             points.text.fontSize = 22;
             phase.placement.position.y = 165;
@@ -36,8 +45,10 @@ namespace WaveUiSettings {
     };
     inline const auto& GetWidgetSchema() {
         static const auto schema = FieldSchema{
-            MakeStructField("placement", "Group Placement", &WidgetSettings::placement, PlayerUiSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
-            MakeStructField("label", "Text Transform", &WidgetSettings::label, PlayerUiSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("placement", "Group Placement", &WidgetSettings::placement, UiLayoutSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
+            MakeStructField("label", "Text Transform", &WidgetSettings::label, UiLayoutSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeField("applyPerspective", "Apply Perspective", &WidgetSettings::applyPerspective),
+            MakeField("applyChromaticEcho", "Apply Chromatic Echo", &WidgetSettings::applyChromaticEcho),
             MakeField("fontSize", "Font Size", &WidgetSettings::fontSize, DragFieldOptions{.dragSpeed = 1, .minValue = 1, .maxValue = 128}),
             MakeField("color", "Color", &WidgetSettings::color, ColorFieldOptions{})
         };
@@ -46,7 +57,7 @@ namespace WaveUiSettings {
     inline const auto& GetPointsSchema() {
         static const auto schema = FieldSchema{
             MakeStructField("text", "Text", &PointsSettings::text, GetWidgetSchema(), DefaultFieldOptions{}),
-            MakeStructField("gauge", "Gauge Transform", &PointsSettings::gauge, PlayerUiSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeStructField("gauge", "Gauge Transform", &PointsSettings::gauge, UiLayoutSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
             MakeField("gaugeSmoothTime", "Gauge Smooth Time (s)", &PointsSettings::gaugeSmoothTime, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 5}),
             MakeField("gaugeColor", "Gauge Color", &PointsSettings::gaugeColor, ColorFieldOptions{})
         };
@@ -54,6 +65,8 @@ namespace WaveUiSettings {
     }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
+            MakeStructField("perspective", "Perspective", &Data::perspective, UiLayoutSettings::GetPerspectiveSchema(), DefaultFieldOptions{}),
+            MakeStructField("chromaticEcho", "Chromatic Echo", &Data::chromaticEcho, UiLayoutSettings::GetEchoSchema(), DefaultFieldOptions{}),
             MakeStructField("number", "Wave Number", &Data::number, GetWidgetSchema(), DefaultFieldOptions{}),
             MakeStructField("points", "Points", &Data::points, GetPointsSchema(), DefaultFieldOptions{}),
             MakeStructField("phase", "Phase", &Data::phase, GetWidgetSchema(), DefaultFieldOptions{}),

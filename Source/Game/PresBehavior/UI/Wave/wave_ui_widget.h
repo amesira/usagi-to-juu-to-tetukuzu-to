@@ -3,6 +3,7 @@
 #include "Game/PresBehavior/UI/Player/player_ui_widget_element.h"
 #include "Game/Factory/ui_factory.h"
 #include "Utility/mi_math.h"
+#include "Game/PresBehavior/UI/ui_perspective.h"
 
 // PlayerUiと同じグループ中心＋要素オフセットで配置する、ウェーブ用ウィジェット。
 class WaveUiWidget {
@@ -24,7 +25,8 @@ public:
     }
     void ApplyLayout(const WaveUiSettings::WidgetSettings& settings, DirectX::XMFLOAT2 screen) {
         m_settings = settings;
-        m_group.currentCenterPosition = PlayerUiSettings::ResolveGroupPosition(settings.placement, screen);
+        m_group.currentCenterPosition = UiLayoutSettings::ResolveGroupPosition(settings.placement, screen);
+        m_group.originalCenterPosition = m_group.currentCenterPosition;
         m_label.ApplyLayout(m_group, settings.label);
         m_label.handle.SetColor(settings.color);
         if (auto* text = m_label.handle.GetText()) text->SetFontSize(settings.fontSize);
@@ -38,6 +40,23 @@ public:
         if (value == m_lastText) return;
         m_lastText = value;
         if (auto* text = m_label.handle.GetText()) text->SetText(value);
+    }
+    // Call after both label and gauge layout so they share one projection origin.
+    void ApplyPresentation(const WaveUiSettings::Data& settings, DirectX::XMFLOAT2 screen) {
+        auto perspective = settings.perspective;
+        perspective.enabled = perspective.enabled && m_settings.applyPerspective;
+        const auto transform = UiPerspective::MakeTransform(perspective,
+            m_group.originalCenterPosition, m_group.currentCenterPosition, screen);
+        auto echoSettings = settings.chromaticEcho;
+        echoSettings.enabled = echoSettings.enabled && m_settings.applyChromaticEcho;
+        const auto echo = UiLayoutSettings::ResolveChromaticEcho(echoSettings,
+            perspective.vanishingPoint, m_settings.placement.screenAnchor, screen);
+        for (const auto& handle : m_group.widgets) {
+            if (auto* rect = handle.GetRectTransform()) {
+                rect->SetPresentationTransform(transform);
+                rect->SetChromaticEcho(echo);
+            }
+        }
     }
     void SetFill(float value) { m_targetFill = std::isfinite(value) ? std::clamp(value, 0.0f, 1.0f) : 0; }
     void Pulse(float duration) { m_pulseRemaining = duration; }

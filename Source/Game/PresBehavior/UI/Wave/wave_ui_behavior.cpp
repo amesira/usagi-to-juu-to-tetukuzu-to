@@ -27,6 +27,9 @@ void WaveUiBehavior::ApplyLayout()
     m_points.ApplyLayout(m_settings.points.text, m_screen);
     m_points.ApplyGauge(m_settings.points);
     m_phase.ApplyLayout(m_settings.phase, m_screen);
+    m_number.ApplyPresentation(m_settings, m_screen);
+    m_points.ApplyPresentation(m_settings, m_screen);
+    m_phase.ApplyPresentation(m_settings, m_screen);
     m_revision = m_settingsAsset ? m_settingsAsset->GetRevision() : 0;
     m_dirty = false;
 }
@@ -51,17 +54,17 @@ void WaveUiBehavior::Update()
         if (m_lastPoints >= 0 && m_lastPoints != progress.wavePoints) m_points.Pulse(m_settings.pulseDuration);
         if (m_lastWave >= 0 && m_lastState != progress.state) m_phase.Pulse(m_settings.pulseDuration);
         m_number.SetText("WAVE " + std::to_string(progress.waveNumber) + " / " + std::to_string(controller->GetWaveCount()));
-        m_points.SetText(std::to_string(progress.wavePoints) + " / " + std::to_string(progress.targetPoints) + "  TOTAL " + std::to_string(progress.totalScore));
+        m_points.SetText(std::to_string(progress.wavePoints) + " / " + std::to_string(progress.targetPoints) + "  合計 " + std::to_string(progress.totalScore));
         m_points.SetFill(progress.targetPoints > 0 ? static_cast<float>(progress.wavePoints) / progress.targetPoints : 0);
         const int seconds = static_cast<int>(std::ceil(progress.remainingTime));
         std::string phase;
         switch (progress.state) {
-        case WaveProgress::State::WaitingForWorld: phase = "WAITING"; break;
-        case WaveProgress::State::Preparing: phase = "GET READY  " + std::to_string(seconds); break;
-        case WaveProgress::State::Battle: phase = "BATTLE"; break;
+        case WaveProgress::State::WaitingForWorld: phase = "WAIT"; break;
+        case WaveProgress::State::Preparing: phase = "用意は出来ているな？  " + std::to_string(seconds); break;
+        case WaveProgress::State::Battle: phase = "鉄屑を撃ち倒せ！"; break;
         case WaveProgress::State::Clearing: phase = "CLEAR REMAINING ENEMIES  " + std::to_string(controller->GetAliveEnemyCount()); break;
-        case WaveProgress::State::Intermission: phase = "WAVE CLEAR / NEXT WAVE IN  " + std::to_string(seconds); break;
-        case WaveProgress::State::Complete: phase = "ALL WAVES CLEAR"; break;
+        case WaveProgress::State::Intermission: phase = "WAVE クリア！ / 次の WAVE まで  " + std::to_string(seconds); break;
+        case WaveProgress::State::Complete: phase = "全 WAVES クリア！！"; break;
         case WaveProgress::State::GameOver: phase = "GAME OVER"; break;
         }
         m_phase.SetText(phase);
