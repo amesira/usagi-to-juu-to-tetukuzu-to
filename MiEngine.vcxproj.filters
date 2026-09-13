@@ -434,6 +434,7 @@
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_motions.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
@@ -998,6 +999,9 @@
     <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
     <ClInclude Include="Source\Game\Factory\Prefab\enemy_definition_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_widget.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />

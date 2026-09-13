@@ -47,7 +47,15 @@ void WaveControllerBehavior::NotifyEnemyDefeated(unsigned int id)
         auto* health = object->GetComponent<HealthBehavior>();
         if (!health || !health->IsDead()) return;
         enemy.credited = true;
+        const int previousScore = m_progress.totalScore;
         m_progress.AddDefeatPoints(enemy.defeatPoints);
+        const int gained = m_progress.totalScore - previousScore;
+        if (gained > 0) {
+            if (auto* transform = object->GetComponent<TransformComponent>()) {
+                m_defeatEvents.push_back({++m_defeatSerial, gained, transform->GetPosition()});
+                if (m_defeatEvents.size() > 64) m_defeatEvents.pop_front();
+            }
+        }
         return;
     }
 }
@@ -77,6 +85,20 @@ void WaveControllerBehavior::CollectEnemies(IScene* scene, EnemyAIWorldControlle
         object->Destroy();
         return true;
     });
+}
+
+int WaveControllerBehavior::GetAliveEnemyCount() const
+{
+    auto* scene = GetOwner() ? GetOwner()->GetScene() : nullptr;
+    if (!scene) return 0;
+    int count = 0;
+    for (const auto& enemy : m_enemies) {
+        auto* object = scene->GetGameObjectByID(enemy.id);
+        if (!object || !object->GetActive() || object->GetName() != enemy.name) continue;
+        auto* health = object->GetComponent<HealthBehavior>();
+        if (health && !health->IsDead()) ++count;
+    }
+    return count;
 }
 
 int WaveControllerBehavior::CountSceneEnemies(IScene* scene) const

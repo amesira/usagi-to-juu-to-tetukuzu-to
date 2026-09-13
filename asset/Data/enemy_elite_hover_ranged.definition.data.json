@@ -40,7 +40,7 @@
             "roughness": 1.0,
             "targetMaterialName": "Gear.003"
         },
-        "maxHealth": 200.0,
+        "maxHealth": 300.0,
         "movePath": "asset/Data/enemy_hover_move_settings.data.json",
         "ranged": true,
         "scale": 2.5

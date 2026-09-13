@@ -6,6 +6,14 @@
 #include <vector>
 #include <array>
 #include <random>
+#include <deque>
+#include <cstdint>
+
+struct WaveDefeatEvent {
+    std::uint64_t serial;
+    int points;
+    DirectX::XMFLOAT3 position;
+};
 
 enum class WaveEnemyType { GroundMelee, HoverRanged, EliteGroundMelee, EliteHoverRanged };
 
@@ -59,6 +67,8 @@ class WaveControllerBehavior : public BehaviorComponent {
     unsigned int m_spawnSerial = 0;
     size_t m_nextSpawnPoint = 0;
     std::string m_status = "Waiting for AI world / player";
+    std::deque<WaveDefeatEvent> m_defeatEvents;
+    std::uint64_t m_defeatSerial = 0;
 
 public:
     ~WaveControllerBehavior() override;
@@ -68,6 +78,10 @@ public:
     // 敵の被弾処理から通知。生成済み敵に一度だけ加点し、ここでは破棄しない。
     void NotifyEnemyDefeated(unsigned int id);
     const WaveProgress& GetProgress() const { return m_progress; }
+    int GetWaveCount() const { return m_settings.waveCount; }
+    int GetAliveEnemyCount() const;
+    const std::deque<WaveDefeatEvent>& GetDefeatEvents() const { return m_defeatEvents; }
+    std::uint64_t GetDefeatSerial() const { return m_defeatSerial; }
 
 private:
     void CollectEnemies(IScene* scene, EnemyAIWorldController* aiWorld, float deltaTime);

@@ -35,6 +35,7 @@
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
+#include "Game/PresBehavior/UI/Wave/wave_ui_behavior.h"
 
 #include "Engine/Graphics/texture_repository.h"
 
@@ -62,6 +63,10 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();
     gameControllerObj->AddComponent<WaveControllerBehavior>();
+    auto* waveUiObject = this->CreateGameObject();
+    waveUiObject->SetName("WaveUi");
+    waveUiObject->AddComponent<WaveUiBehavior>()->Setup(
+        DATA_LOADER->GetAsset<WaveUiSettingsAsset>("asset/Data/wave_ui_settings.data.json", true));
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });
@@ -89,10 +94,10 @@ void GameScene::Initialize()
     Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);*/
 
     // モデルを５つ生成
-    for (int i = 0; i < 5; i++) {
+   /* for (int i = 0; i < 5; i++) {
         GameObject* modelObj = this->CreateGameObject();
         Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 10.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
-    }
+    }*/
 
     // かかしプレハブ生成
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });

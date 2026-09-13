@@ -105,7 +105,7 @@ void GameWorld::Render()
         if (!m_gameRenderViews[i].enabled) continue;
 
         RenderView& view = m_gameRenderViews[i];
-        view.enableDebugDraw = true; // デバッグ描画を有効化
+        //view.enableDebugDraw = true; // デバッグ描画を有効化
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
     }

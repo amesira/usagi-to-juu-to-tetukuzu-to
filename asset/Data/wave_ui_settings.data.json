@@ -1,0 +1,125 @@
+{
+    "data": {
+        "number": {
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 26,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    -150.0,
+                    100.0
+                ],
+                "screenAnchor": [
+                    1.0,
+                    0.0
+                ]
+            }
+        },
+        "phase": {
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 92,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "screenAnchor": [
+                    0.5,
+                    0.5
+                ]
+            }
+        },
+        "points": {
+            "gauge": {
+                "position": [
+                    0.0,
+                    30.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1200.0,
+                    30.0
+                ]
+            },
+            "gaugeColor": [
+                0.19999998807907104,
+                0.31914907693862915,
+                0.8999999761581421
+            ],
+            "gaugeSmoothTime": 0.05000000074505806,
+            "text": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "fontSize": 22,
+                "label": {
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        1.0,
+                        1.0
+                    ]
+                },
+                "placement": {
+                    "position": [
+                        0.0,
+                        100.0
+                    ],
+                    "screenAnchor": [
+                        0.5,
+                        0.0
+                    ]
+                }
+            }
+        },
+        "popupColor": [
+            0.19999998807907104,
+            0.35659581422805786,
+            1.0
+        ],
+        "popupDuration": 0.800000011920929,
+        "popupEnabled": true,
+        "popupHeightOffset": 3.0,
+        "popupRiseDistance": 1.5,
+        "popupScale": 1.5,
+        "pulseDuration": 0.10000000149011612,
+        "pulseScale": 1.5
+    },
+    "formatVersion": 0,
+    "name": "wave_ui_settings.data",
+    "type": "WaveUiSettingsAsset"
+}

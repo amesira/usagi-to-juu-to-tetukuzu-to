@@ -1,0 +1,127 @@
+#include "wave_ui_behavior.h"
+#include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Engine/Core/game_object.h"
+#include "Engine/Core/scene_interface.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Device/mi_fps.h"
+#include "External/ImGui/imgui.h"
+
+void WaveUiBehavior::Start()
+{
+    if (m_created || !GetOwner() || !GetOwner()->GetScene()) return;
+    auto* scene = GetOwner()->GetScene();
+    m_number.Initialize(scene, "WaveUi.Number");
+    m_points.Initialize(scene, "WaveUi.Points", true);
+    m_phase.Initialize(scene, "WaveUi.Phase");
+    m_created = true;
+    ApplyLayout();
+}
+
+void WaveUiBehavior::ApplyLayout()
+{
+    m_settings = m_settingsAsset ? m_settingsAsset->GetData() : WaveUiSettings::Data{};
+    WaveUiSettings::Sanitize(m_settings);
+    m_screen = {static_cast<float>(Direct3D_GetBackBufferWidth()), static_cast<float>(Direct3D_GetBackBufferHeight())};
+    m_number.ApplyLayout(m_settings.number, m_screen);
+    m_points.ApplyLayout(m_settings.points.text, m_screen);
+    m_points.ApplyGauge(m_settings.points);
+    m_phase.ApplyLayout(m_settings.phase, m_screen);
+    m_revision = m_settingsAsset ? m_settingsAsset->GetRevision() : 0;
+    m_dirty = false;
+}
+
+void WaveUiBehavior::Update()
+{
+    if (!m_created) return;
+    if (m_dirty || m_revision != (m_settingsAsset ? m_settingsAsset->GetRevision() : 0)
+        || m_screen.x != Direct3D_GetBackBufferWidth() || m_screen.y != Direct3D_GetBackBufferHeight()) ApplyLayout();
+    const float rawDt = FPS_GetUnscaledDeltaTime();
+    const float dt = std::isfinite(rawDt) ? (std::max)(0.0f, rawDt) : 0;
+    auto* controller = Game::Wave();
+    if (controller != m_controller) {
+        m_controller = controller;
+        m_eventCursor = controller ? controller->GetDefeatSerial() : 0;
+        m_lastWave = -1; m_lastPoints = -1;
+        for (auto& popup : m_popups) { popup.active = false; popup.handle.SetActive(false); }
+    }
+    if (controller) {
+        const auto& progress = controller->GetProgress();
+        if (m_lastWave >= 0 && m_lastWave != progress.waveNumber) m_number.Pulse(m_settings.pulseDuration);
+        if (m_lastPoints >= 0 && m_lastPoints != progress.wavePoints) m_points.Pulse(m_settings.pulseDuration);
+        if (m_lastWave >= 0 && m_lastState != progress.state) m_phase.Pulse(m_settings.pulseDuration);
+        m_number.SetText("WAVE " + std::to_string(progress.waveNumber) + " / " + std::to_string(controller->GetWaveCount()));
+        m_points.SetText(std::to_string(progress.wavePoints) + " / " + std::to_string(progress.targetPoints) + "  TOTAL " + std::to_string(progress.totalScore));
+        m_points.SetFill(progress.targetPoints > 0 ? static_cast<float>(progress.wavePoints) / progress.targetPoints : 0);
+        const int seconds = static_cast<int>(std::ceil(progress.remainingTime));
+        std::string phase;
+        switch (progress.state) {
+        case WaveProgress::State::WaitingForWorld: phase = "WAITING"; break;
+        case WaveProgress::State::Preparing: phase = "GET READY  " + std::to_string(seconds); break;
+        case WaveProgress::State::Battle: phase = "BATTLE"; break;
+        case WaveProgress::State::Clearing: phase = "CLEAR REMAINING ENEMIES  " + std::to_string(controller->GetAliveEnemyCount()); break;
+        case WaveProgress::State::Intermission: phase = "WAVE CLEAR / NEXT WAVE IN  " + std::to_string(seconds); break;
+        case WaveProgress::State::Complete: phase = "ALL WAVES CLEAR"; break;
+        case WaveProgress::State::GameOver: phase = "GAME OVER"; break;
+        }
+        m_phase.SetText(phase);
+        m_lastState = progress.state; m_lastWave = progress.waveNumber; m_lastPoints = progress.wavePoints;
+        for (const auto& event : controller->GetDefeatEvents()) {
+            if (event.serial <= m_eventCursor) continue;
+            if (m_settings.popupEnabled) SpawnPopup(event.points, event.position);
+            m_eventCursor = event.serial;
+        }
+    }
+    else {
+        m_number.SetText("WAVE --"); m_points.SetText("-- / --"); m_points.SetFill(0); m_phase.SetText("WAITING FOR WAVE CONTROLLER");
+    }
+    m_number.Update(dt, m_settings); m_points.Update(dt, m_settings); m_phase.Update(dt, m_settings);
+    UpdatePopups(dt);
+}
+
+void WaveUiBehavior::SpawnPopup(int points, DirectX::XMFLOAT3 position)
+{
+    auto& popup = m_popups[m_nextPopup++ % m_popups.size()];
+    if (!popup.handle.IsValid()) {
+        auto* object = GetOwner()->GetScene()->CreateGameObject();
+        object->SetName("WaveUi.DefeatPopup");
+        object->AddComponent<TransformComponent>();
+        auto* text = object->AddComponent<TextComponent>();
+        text->SetFontPath("asset/Font/Makinas-4-Square.otf"); text->SetFontSize(32); text->SetCenter(true);
+        popup.handle = UiHandle(object);
+    }
+    position.y += m_settings.popupHeightOffset;
+    popup.origin = position; popup.age = 0; popup.duration = m_settings.popupDuration; popup.rise = m_settings.popupRiseDistance; popup.active = true;
+    popup.handle.SetActive(true);
+    popup.handle.GetTransform()->SetPosition(position);
+    popup.handle.GetTransform()->SetScaling({m_settings.popupScale, m_settings.popupScale, m_settings.popupScale});
+    popup.handle.GetText()->SetText("+" + std::to_string(points));
+    popup.handle.SetColor(m_settings.popupColor); popup.handle.SetAlpha(1);
+}
+
+void WaveUiBehavior::UpdatePopups(float dt)
+{
+    for (auto& popup : m_popups) {
+        if (!popup.active) continue;
+        popup.age += dt;
+        const float t = std::clamp(popup.age / popup.duration, 0.0f, 1.0f);
+        auto position = popup.origin; position.y += popup.rise * t;
+        if (auto* transform = popup.handle.GetTransform()) transform->SetPosition(position);
+        popup.handle.SetAlpha(1 - t);
+        if (t >= 1) { popup.active = false; popup.handle.SetActive(false); }
+    }
+}
+
+void WaveUiBehavior::DestroyWidgets()
+{
+    m_number.Destroy(); m_points.Destroy(); m_phase.Destroy();
+    for (auto& popup : m_popups) { popup.handle.Destroy(); popup = {}; }
+    m_created = false; m_controller = nullptr; m_lastWave = -1; m_lastPoints = -1;
+}
+
+void WaveUiBehavior::DrawComponentInspector()
+{
+    ImGui::TextUnformatted("Layout: asset/Data/wave_ui_settings.data.json (DataAsset editor)");
+    if (ImGui::Button("Preview Phase Pulse")) m_phase.Pulse(m_settings.pulseDuration);
+    ImGui::Text("Widgets created: %s", m_created ? "yes" : "no");
+}
