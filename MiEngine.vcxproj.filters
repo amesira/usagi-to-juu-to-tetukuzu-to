@@ -435,6 +435,7 @@
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
@@ -617,6 +618,9 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\Editor\editor_context.h">
       <Filter>Sources\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Graphics\model_texture_path.h">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_repository.h">
       <Filter>Sources\Engine\Graphics</Filter>
@@ -1002,6 +1006,8 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_widget.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_settings_asset.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />

@@ -103,6 +103,8 @@ class MaterialInstance {
 public:
     // マテリアルリソースへのポインタ
     MaterialResource* materialResource = nullptr;
+    bool isOverrideShaderProgram = false;
+    ShaderProgramResource* overrideShaderProgram = nullptr;
 
     // オーバーライド設定
     bool isOverrideAlbedoTexture = false;

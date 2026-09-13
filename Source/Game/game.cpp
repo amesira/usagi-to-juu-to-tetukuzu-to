@@ -35,6 +35,7 @@
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
+#include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/PresBehavior/UI/Wave/wave_ui_behavior.h"
 
 #include "Engine/Graphics/texture_repository.h"
@@ -63,6 +64,8 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();
     gameControllerObj->AddComponent<WaveControllerBehavior>();
+    gameControllerObj->AddComponent<StageDecorationControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/stage_decoration_settings.data.json", true));
     auto* waveUiObject = this->CreateGameObject();
     waveUiObject->SetName("WaveUi");
     waveUiObject->AddComponent<WaveUiBehavior>()->Setup(
@@ -76,41 +79,11 @@ void GameScene::Initialize()
     // light
     EnvironmentFactory::CreatePointLight(this, { 1.0f, 1.0f, 0.0f, 1.0f }, 10.0f);
 
-    // Field
-    /*GameObject* field = this->CreateGameObject();
-    Factory::CreateField(field, { 0.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 60.0f, 1.0f, 60.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
-    {
-        GameObject* field2 = this->CreateGameObject();
-        Factory::CreateField(field2, { -10.0f, -2.5f, 0.0f }, { 0.0f, 0.0f, 0.0f }, { 3.0f, 3.0f, 6.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
-        GameObject* field3 = this->CreateGameObject();
-        Factory::CreateField(field3, { -10.0f, -1.4f, 8.6f }, { XMConvertToRadians(18.0f), 0.0f, 0.0f }, { 3.0f, 1.0f, 3.0f }, { 0.2f, 0.2f, 0.2f, 1.0f });
-    }*/
-
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });
 
-    // テスト：JointGroup
-   /* GameObject* jointGroup = this->CreateGameObject();
-    Factory::CreateJointGroup(jointGroup, {0.0f, 0.0f, 0.0f}, {10.0f, 1.0f, 0.0f}, 0.7f);*/
-
-    // モデルを５つ生成
-   /* for (int i = 0; i < 5; i++) {
-        GameObject* modelObj = this->CreateGameObject();
-        Factory::CreateModel(modelObj, "asset\\Model\\bullet.fbx", { -5.0f + i * 10.5f, 0.0f, 5.0f } ,{2.0f, 2.0f, 2.0f});
-    }*/
-
     // かかしプレハブ生成
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
-
-    // 敵生成はWaveControllerBehaviorに集約する。
-  /*  for (int i = 0; i < 5; i++) {
-        PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });
-    }*/
-
-    // UI生成
-   // GameObject* uiText = UiFactory::CreateUiText(this, u8"Mi Engine 現在制作中のゲーム");
-    //UiFactory::SetupUiTransform(uiText, { 960.0f, 300.0f }, {1.0f, 1.0f});
-
 }
 
 // ゲームシーン終了処理

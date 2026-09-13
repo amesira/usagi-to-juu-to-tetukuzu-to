@@ -65,7 +65,7 @@ private:
     void SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex);
 
     // aiMaterialからMaterialResourceを作成
-    MaterialResource CreateMaterialResource(aiMaterial* mat);
+    MaterialResource CreateMaterialResource(aiMaterial* mat, const std::filesystem::path& modelPath);
 
     // モデルの解放
     void ReleaseModel(const std::filesystem::path& filePath);

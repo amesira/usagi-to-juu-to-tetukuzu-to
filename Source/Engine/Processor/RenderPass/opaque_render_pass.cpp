@@ -148,8 +148,9 @@ void OpaqueRenderPass::DrawMeshList(const std::vector<ModelMesh>& meshes, const 
         // 不透明マテリアル以外はスキップ
         if (mat.materialResource->renderMode != RenderMode::Opaque)continue;
 
-        if (mat.materialResource->shaderProgram != nullptr) {
-            EngineServiceLocator::BindShader(mat.materialResource->shaderProgram);
+        auto* shader = mat.isOverrideShaderProgram ? mat.overrideShaderProgram : mat.materialResource->shaderProgram;
+        if (shader != nullptr) {
+            EngineServiceLocator::BindShader(shader);
         }
 
         // マテリアル定数バッファの更新とバインド

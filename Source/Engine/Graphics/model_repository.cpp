@@ -5,6 +5,7 @@
 // Date  ：2026/03/19
 //===================================================
 #include "model_repository.h"
+#include "model_texture_path.h"
 
 #include <memory>
 #include "Utility/mi_string.h"
@@ -286,7 +287,7 @@ ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
 
         // マテリアルリソースの生成
         {
-            MaterialResource material = CreateMaterialResource(mat);
+            MaterialResource material = CreateMaterialResource(mat, cacheKey);
             material.name = cacheKey.generic_string() + "_mat%" + mat->GetName().C_Str();
             if (isSkinnedMesh) {
                 material.shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::SkinnedLit);
@@ -573,7 +574,7 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
 }
 
 // aiMaterialからMaterialResourceを作成
-MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
+MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat, const std::filesystem::path& modelPath)
 {
     XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
     std::filesystem::path albedoTexturePath;
@@ -597,7 +598,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (AI_SUCCESS == mat->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) ||
             AI_SUCCESS == mat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
         {
-            albedoTexturePath = MiString::ToWString(texturePath.C_Str());
+            albedoTexturePath = ModelTexturePath::ResolveExternal(modelPath, texturePath.C_Str());
         }
     }
 
@@ -609,7 +610,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (AI_SUCCESS == mat->GetTexture(aiTextureType_NORMALS, 0, &texturePath) ||
             AI_SUCCESS == mat->GetTexture(aiTextureType_HEIGHT, 0, &texturePath))
         {
-            normalTexturePath = MiString::ToWString(texturePath.C_Str());
+            normalTexturePath = ModelTexturePath::ResolveExternal(modelPath, texturePath.C_Str());
         }
     }
 
