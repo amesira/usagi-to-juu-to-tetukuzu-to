@@ -169,7 +169,7 @@ GameObject* ProjectileFactory::CreateDamageNumber(IScene* scene, const DamageNum
     TextComponent* textComponent = damageNumber->AddComponent<TextComponent>();
     textComponent->SetCenter(true);
     textComponent->SetFontPath(desc.fontPath);
-    textComponent->SetFontSize(36);
+    textComponent->SetFontSize(42);
 
     DamageNumberBehavior* behavior = damageNumber->AddComponent<DamageNumberBehavior>();
     behavior->Show(desc.damage, desc.position, desc.color);

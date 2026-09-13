@@ -193,7 +193,7 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyFromDefinition(
     auto* collider = enemy->GetComponent<CapsuleColliderComponent>();
     collider->SetRadius(definition.scale);
     collider->SetHeight(definition.scale);
-    collider->SetCenter({0, 0.5f * definition.scale, 0});
+    collider->SetCenter({0, 0.8f * definition.scale, 0});
     for (const auto* material : {&definition.material1, &definition.material2}) {
         if (material->targetMaterialName.empty()) continue;
         bool found = false;

@@ -30,23 +30,31 @@ void EnemyEffects::Update(float)
 
 void EnemyEffects::PlayHitEffects(
     const DirectX::XMFLOAT3& hitPosition,
-    const DirectX::XMFLOAT3&,
+    const DirectX::XMFLOAT3& hitDirection,
     float damage)
 {
     if (!m_transform) return;
 
+    XMFLOAT3 effectPosition = hitPosition;
+    effectPosition = MiMath::Add(effectPosition, MiMath::Multiply(hitDirection, -1.5f));
+
     m_hitEffect.SetLocalTransform(EffectTransform{
-        .position = MiMath::Subtract(hitPosition, m_transform->GetPosition()),
+        .position = MiMath::Subtract(effectPosition, m_transform->GetPosition()),
         .rotation = { 0.0f, 0.0f, 0.0f, 1.0f },
         .scaling = { 1.0f, 1.0f, 1.0f }
     });
     m_hitEffect.Play();
 
+    XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+    if (damage > 30.0f) {
+        color = { 1.0f, 1.0f, 0.0f, 1.0f };
+    }
+
     if (m_scene && damage > 0.0f) {
         ProjectileFactory::CreateDamageNumber(m_scene, ProjectileFactory::DamageNumberCreateDesc{
-            .position = hitPosition,
+            .position = effectPosition,
             .damage = damage,
-            .color = { 1.0f, 1.0f, 1.0f, 1.0f }
+            .color = color
         });
     }
 }
