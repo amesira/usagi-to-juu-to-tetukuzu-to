@@ -10,18 +10,22 @@
 class GameFeedbackController;
 class CustomPostEffectController;
 class EnemyAIWorldController;
+class WaveControllerBehavior;
 
 class GameControllerLocator {
 private:
     friend class GameFeedbackController;
     friend class CustomPostEffectController;
     friend class EnemyAIWorldController;
+    friend class WaveControllerBehavior;
 
     static inline GameFeedbackController* s_gameEffectController = nullptr;
     static inline CustomPostEffectController* s_customPostEffectController = nullptr;
     static inline EnemyAIWorldController* s_enemyAIController = nullptr;
+    static inline WaveControllerBehavior* s_waveController = nullptr;
 
 public:
+    static WaveControllerBehavior* Wave() { return s_waveController; }
     static EnemyAIWorldController* EnemyAIWorld() {
         return s_enemyAIController;
     }

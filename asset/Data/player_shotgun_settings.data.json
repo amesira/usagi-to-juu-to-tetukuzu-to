@@ -11,6 +11,7 @@
         "aimRadialBlurHoldTime": 0.019999999552965164,
         "aimSpeedMultiplier": 0.6000000238418579,
         "aimTransitionTime": 0.05000000074505806,
+        "bulletDamage": 30.0,
         "bulletLifetime": 3.0,
         "bulletSpawnForwardOffset": 1.0,
         "chargeCompleteEffectOffset": [
@@ -19,6 +20,7 @@
             0.0
         ],
         "chargeCompleteEffectScale": 2.5,
+        "chargeDamageMultiplier": 4.0,
         "chargeEffectOffset": [
             1.0,
             1.2999999523162842,

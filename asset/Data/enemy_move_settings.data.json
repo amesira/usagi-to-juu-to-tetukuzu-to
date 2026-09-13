@@ -6,8 +6,8 @@
         "groundCheckRadius": 0.3499999940395355,
         "hoverEnabled": false,
         "hoverHeight": 3.0,
-        "hoverHeightSmoothTime": 0.2,
-        "moveSpeed": 6.0,
+        "hoverHeightSmoothTime": 0.20000000298023224,
+        "moveSpeed": 8.0,
         "rotationSpeed": 25.0,
         "runEffect": {
             "particleAssetPath": "asset/Particle/run_dust.particle.json",

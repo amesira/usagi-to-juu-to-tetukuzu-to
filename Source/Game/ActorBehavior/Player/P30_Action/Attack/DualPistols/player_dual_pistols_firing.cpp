@@ -50,7 +50,7 @@ void PlayerDualPistolsFiring::Fire(
     bulletDesc.layerMask = DUAL_PISTOLS_HIT_LAYER_MASK;
     bulletDesc.attacker = context.playerTransform
         ? context.playerTransform->GetOwner() : nullptr;
-    bulletDesc.damage = settings.bulletRadius * 20.0f;
+    bulletDesc.damage = settings.bulletDamage;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
 }

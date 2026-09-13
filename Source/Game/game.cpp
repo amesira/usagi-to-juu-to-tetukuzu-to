@@ -34,6 +34,7 @@
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
 
 #include "Engine/Graphics/texture_repository.h"
 
@@ -60,6 +61,7 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<GameFeedbackController>();
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();
+    gameControllerObj->AddComponent<WaveControllerBehavior>();
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });
@@ -95,15 +97,7 @@ void GameScene::Initialize()
     // かかしプレハブ生成
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
 
-    // 敵を生成
-    for (int i = 0; i < 5; i++) {
-       // PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 15.0f });
-        PrefabFactory::CreateRangedEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 10.0f });
-    }
-    for (int i = 0; i < 5; i++) {
-      //  PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 20.0f });
-        PrefabFactory::CreateHoverEnemyPrefab(this, { -5.0f + i * 5.0f, 10.5f, 25.0f });
-    }
+    // 敵生成はWaveControllerBehaviorに集約する。
   /*  for (int i = 0; i < 5; i++) {
         PrefabFactory::CreateEnemyPrefab(this, { -5.0f + i * 5.0f, -0.5f, 25.0f });
     }*/

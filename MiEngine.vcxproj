@@ -228,6 +228,7 @@
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
     <ClCompile Include="Source\Engine\Processor\animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Device\audio.cpp" />
@@ -521,6 +522,8 @@
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_progress.h" />
     <ClInclude Include="Source\Game\Factory\actor_factory.h" />
     <ClInclude Include="Source\Engine\Component\animation_component.h" />
     <ClInclude Include="Source\Engine\Processor\animation_processor.h" />

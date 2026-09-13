@@ -18,8 +18,6 @@ namespace EnemyMoveSettings {
 
     struct Data {
         float moveSpeed = 6.0f;
-        float acceleration = 20.0f;
-        float deceleration = 30.0f;
         float groundCheckRadius = 0.35f;
         float groundCheckDistance = 0.15f;
         float rotationSpeed = 10.0f;
@@ -50,10 +48,6 @@ namespace EnemyMoveSettings {
         static const auto schema = FieldSchema{
             MakeHeaderField("Movement"),
             MakeField("moveSpeed", "Move Speed", &Settings::moveSpeed,
-                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
-            MakeField("acceleration", "Acceleration", &Settings::acceleration,
-                DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
-            MakeField("deceleration", "Deceleration", &Settings::deceleration,
                 DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeHeaderField("Ground Check Settings"),
             MakeField("groundCheckRadius", "Ground Check Radius", &Settings::groundCheckRadius,

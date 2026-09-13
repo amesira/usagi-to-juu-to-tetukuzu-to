@@ -46,7 +46,7 @@ void PlayerShotgunAim::EnterAim(PlayerShotgunContext& context)
         m_locomotionRequest = PlayerLocomotionController::LocomotionRequest{
             .priority = 10,
             .moveDirSourceInfo = { PlayerLocomotionController::DirectionSource::MoveInput },
-            .rotateDirSourceInfo = { PlayerLocomotionController::DirectionSource::CameraForward },
+            .rotateDirSourceInfo = { PlayerLocomotionController::DirectionSource::FixedDirection },
             .speedMultiplier = context.settings().aimMoveSpeedMultiplier,
             .jumpPowerMultiplier = context.settings().aimJumpPowerMultiplier,
             .canMove = true,
@@ -73,6 +73,10 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
     // カメラ中央からRaycastし、命中点をマズルから狙う。
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
     m_aimResult.cameraRayDirection = MiMath::Normalize(context.cameraComponent->GetForward());
+
+    m_aimResult.cameraRayOrigin = MiMath::Add(
+        m_aimResult.cameraRayOrigin,
+        MiMath::Multiply(m_aimResult.cameraRayDirection, 3.0f));
 
     const PlayerMuzzleState& muzzle = context.runtimeState.muzzle;
     if (!muzzle.isValid) {
@@ -101,6 +105,10 @@ void PlayerShotgunAim::UpdateAim(PlayerShotgunContext& context, float deltaTime)
 
     m_aimResult.fireDirection = MiMath::Normalize(
         MiMath::Subtract(m_aimResult.targetPosition, m_aimResult.muzzlePosition));
+
+    // エイム方向に身体を向ける
+    m_locomotionRequest.rotateDirSourceInfo.source = PlayerLocomotionController::DirectionSource::FixedDirection;
+    m_locomotionRequest.rotateDirSourceInfo.fixedDirection = m_aimResult.fireDirection;
 }
 
 void PlayerShotgunAim::ExitAim(PlayerShotgunContext& context)

@@ -260,7 +260,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 
             HitReceiver::HitData hitData = {
                 .attacker = context.playerTransform->GetOwner(),
-                .damage = 10.0f,
+                .damage = context.settings().slashBurstDamage,
                 .hitDirection = attackDir,
                 .knockback = {
                     .enabled = true,

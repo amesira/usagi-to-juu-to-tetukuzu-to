@@ -89,6 +89,10 @@ namespace PlayerDualPistolsSettings {
         float bulletRadius = 0.1f;
         float bulletLifetime = 3.0f;
         float bulletSpawnForwardOffset = 0.2f;
+
+        // === Damage ===
+        float bulletDamage = 2.0f;
+        float slashBurstDamage = 5.0f;
     };
 
     inline static const auto& GetSchema()
@@ -205,6 +209,13 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0.0f, .maxValue = 60.0f }),
             MakeField("bulletSpawnForwardOffset", "Bullet Spawn Forward Offset", &Data::bulletSpawnForwardOffset,
                 DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+
+            // === Damage ===
+            MakeHeaderField("Damage"),
+            MakeField("bulletDamage", "Bullet Damage", &Data::bulletDamage,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("slashBurstDamage", "Slash Burst Damage", &Data::slashBurstDamage,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f })
 
         };
         return schema;

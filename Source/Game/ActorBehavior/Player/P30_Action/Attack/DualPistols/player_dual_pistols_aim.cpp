@@ -40,6 +40,10 @@ void PlayerDualPistolsAim::UpdateAim(PlayerDualPistolsContext& context, float de
     m_aimResult.cameraRayOrigin = context.cameraTransform->GetPosition();
     m_aimResult.cameraRayDirection = MiMath::Normalize(context.cameraComponent->GetForward());
 
+    m_aimResult.cameraRayOrigin = MiMath::Add(
+        m_aimResult.cameraRayOrigin,
+        MiMath::Multiply(m_aimResult.cameraRayDirection, 3.0f));
+
     RaycastHit hit;
     m_aimResult.hasTargetHit = CollisionQuery::Raycast(
         context.scene,

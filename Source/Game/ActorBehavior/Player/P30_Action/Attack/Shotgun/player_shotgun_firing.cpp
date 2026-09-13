@@ -31,9 +31,9 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
         if (!context.weaponController->CanConsume(1)) {
             return; // 弾薬が足りない場合は発射しない
         }
-        float consumeCost = context.weaponController->TryConsume(chargeRate * 10);
+        float consumeCost = context.weaponController->TryConsume(chargeRate * 25);
 
-        chargeRate = consumeCost / 10.0f; // 実際に消費できた量に応じてチャージ率を調整
+        chargeRate = consumeCost / 25.0f; // 実際に消費できた量に応じてチャージ率を調整
     }
 
     const auto& settings = context.settings();
@@ -51,7 +51,7 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
     bulletDesc.layerMask = SHOTGUN_HIT_LAYER_MASK;
     bulletDesc.attacker = context.playerTransform
         ? context.playerTransform->GetOwner() : nullptr;
-    bulletDesc.damage = bulletDesc.radius * 20.0f;
+    bulletDesc.damage = settings.bulletDamage * (1.0f + chargeRate * (settings.chargeDamageMultiplier - 1.0f));
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
 

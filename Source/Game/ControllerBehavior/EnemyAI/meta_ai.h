@@ -35,6 +35,7 @@ public:
 
     void RegisterPlayer(class GameObject* playerGameObject);
     void RegisterEnemy(class GameObject* enemyGameObject);
+    void UnregisterEnemy(unsigned int id);
 
     const DirectX::XMFLOAT3& GetPlayerPosition() const { return m_player.entityInfo.position; }
     bool HasPlayer() const { return m_player.transform != nullptr; }

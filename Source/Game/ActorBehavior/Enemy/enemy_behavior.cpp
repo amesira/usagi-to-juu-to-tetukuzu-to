@@ -19,6 +19,7 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
 
 using namespace HitReceiver;
 
@@ -160,6 +161,7 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
     if (!hitResult.WasAccepted()) return;
 
     if (hitResult.killed) {
+        if (auto* wave = Game::Wave()) wave->NotifyEnemyDefeated(GetOwner()->GetID());
         m_motions.Stop();
         return;
     }

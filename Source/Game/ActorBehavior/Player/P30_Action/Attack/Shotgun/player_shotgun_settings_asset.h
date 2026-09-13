@@ -51,6 +51,10 @@ namespace PlayerShotgunSettings {
         float   aimExitRadialBlurStrength = 0.3f;
         float   aimRadialBlurHoldTime = 0.01f;
         float   chargeMonoMaskStrength = 0.6f;
+
+        // === ダメージ設定 ===
+        float   bulletDamage = 5.0f;
+        float   chargeDamageMultiplier = 2.0f;
     };
 
     using json = nlohmann::json;
@@ -210,6 +214,13 @@ namespace PlayerShotgunSettings {
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("chargeMonoMaskStrength", "Charge Mono Mask Strength", &Data::chargeMonoMaskStrength,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+
+            // === Shotgun Damage Settings ===
+            MakeHeaderField("Shotgun Damage Settings"),
+            MakeField("bulletDamage", "Bullet Damage", &Data::bulletDamage,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("chargeDamageMultiplier", "Charge Damage Multiplier", &Data::chargeDamageMultiplier,
+                DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f })
         };
         return schema;
     }

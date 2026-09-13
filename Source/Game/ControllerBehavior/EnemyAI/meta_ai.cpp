@@ -17,6 +17,28 @@ void MetaAI::Initialize(const EnemyAIWorldContext& context)
 
 void MetaAI::Update(EnemyAIWorldContext& context, float deltaTime)
 {
+    // Component破棄後のキャッシュポインタを参照する前に、シーンから再取得する。
+    if (m_player.gameObject && context.scene) {
+        auto* object = context.scene->GetGameObjectByID(m_player.entityInfo.gameObjectID);
+        if (!object || !object->GetActive()) {
+            m_player.gameObject = nullptr;
+            m_player.transform = nullptr;
+        }
+        else m_player.transform = object->GetComponent<TransformComponent>();
+    }
+    if (context.scene) {
+        for (auto& enemy : m_enemies) {
+            auto* object = context.scene->GetGameObjectByID(enemy.entityInfo.gameObjectID);
+            if (!object || !object->GetActive()) {
+                enemy.gameObject = nullptr;
+                enemy.transform = nullptr;
+            }
+            else {
+                enemy.gameObject = object;
+                enemy.transform = object->GetComponent<TransformComponent>();
+            }
+        }
+    }
     if (m_player.transform) {
         m_player.entityInfo.position = m_player.transform->GetPosition();
         m_player.entityInfo.velocity = {};
@@ -42,6 +64,7 @@ void MetaAI::Update(EnemyAIWorldContext& context, float deltaTime)
 
 void MetaAI::Finalize(const EnemyAIWorldContext& context)
 {
+    m_enemies.clear();
     m_player.gameObject = nullptr;
     m_player.transform = nullptr;
 }
@@ -62,6 +85,7 @@ void MetaAI::RegisterPlayer(GameObject* playerGameObject)
 void MetaAI::RegisterEnemy(GameObject* enemyGameObject)
 {
     if (!enemyGameObject) return;
+    UnregisterEnemy(enemyGameObject->GetID());
 
     EnemyInfo enemyInfo;
     enemyInfo.gameObject = enemyGameObject;
@@ -77,4 +101,11 @@ void MetaAI::RegisterEnemy(GameObject* enemyGameObject)
     }
 
     m_enemies.push_back(enemyInfo);
+}
+
+void MetaAI::UnregisterEnemy(unsigned int id)
+{
+    std::erase_if(m_enemies, [id](const EnemyInfo& enemy) {
+        return enemy.entityInfo.gameObjectID == id;
+    });
 }
