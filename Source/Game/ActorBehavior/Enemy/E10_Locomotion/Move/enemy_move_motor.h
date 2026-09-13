@@ -7,6 +7,7 @@
 //---------------------------------------------------
 #pragma once
 #include <DirectXMath.h>
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_resolver.h"
 using namespace DirectX;
 
 class EnemyMoveMotor {
@@ -18,6 +19,11 @@ private:
     XMFLOAT3 m_desiredVelocity = { 0.0f, 0.0f, 0.0f }; // 目標速度を保持する変数
 
 public:
+    void ApplyBounds(const StageBounds::Result& result) {
+        result.ClipVelocity(m_inputVelocity);
+        result.ClipVelocity(m_desiredVelocity);
+        result.ClipVelocity(m_velocitySmoothDamp);
+    }
     /// @brief EnemyMoveMotorの移動処理を更新する
     void UpdateMotor(struct EnemyMoveContext& context, const struct EnemyMoveIntent& intent, float deltaTime);
 

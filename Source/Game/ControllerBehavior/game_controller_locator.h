@@ -12,6 +12,7 @@ class CustomPostEffectController;
 class EnemyAIWorldController;
 class WaveControllerBehavior;
 class StageDecorationControllerBehavior;
+class StageBoundsControllerBehavior;
 
 class GameControllerLocator {
 private:
@@ -20,14 +21,17 @@ private:
     friend class EnemyAIWorldController;
     friend class WaveControllerBehavior;
     friend class StageDecorationControllerBehavior;
+    friend class StageBoundsControllerBehavior;
 
     static inline GameFeedbackController* s_gameEffectController = nullptr;
     static inline CustomPostEffectController* s_customPostEffectController = nullptr;
     static inline EnemyAIWorldController* s_enemyAIController = nullptr;
     static inline WaveControllerBehavior* s_waveController = nullptr;
     static inline StageDecorationControllerBehavior* s_stageDecorationController = nullptr;
+    static inline StageBoundsControllerBehavior* s_stageBoundsController = nullptr;
 
 public:
+    static StageBoundsControllerBehavior* StageBounds() { return s_stageBoundsController; }
     static StageDecorationControllerBehavior* StageDecoration() { return s_stageDecorationController; }
     static WaveControllerBehavior* Wave() { return s_waveController; }
     static EnemyAIWorldController* EnemyAIWorld() {

@@ -15,6 +15,7 @@
 
 // === Component ===
 #include "Engine/Component/transform_component.h"
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/collider_component.h"
 #include "Engine/Component/camera_component.h"
@@ -68,6 +69,7 @@ void PlayerMoveBehavior::Initialize(const PlayerContext& playerContext, PlayerMo
 
 void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& input, const PlayerMoveIntent& moveIntent, float deltaTime)
 {
+    if (!std::isfinite(deltaTime) || deltaTime <= 0.0f) return;
     if (moveIntent.pauseMovement) {
         // 内部の物理速度は保持し、Rigidbodyへの移動出力だけ止める。
         m_context.rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
@@ -97,6 +99,14 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
         // 速度で目標位置を更新
         ApplyControlVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
         ApplyPhysicsVelocity(m_context.runtimeState.m_desiredPosition, deltaTime);
+        if (auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform)) {
+            const auto result = bounds->Resolve(m_context.transform, m_context.runtimeState.m_desiredPosition);
+            m_context.runtimeState.m_desiredPosition = result.position;
+            result.ClipVelocity(m_context.runtimeState.m_controlVelocity);
+            result.ClipVelocity(m_context.runtimeState.m_physicsVelocity);
+            m_context.moveMotor.ApplyBounds(result);
+            if (result.floor && m_context.runtimeState.m_physicsVelocity.y <= 0) m_context.runtimeState.m_isGrounded = true;
+        }
 
         // 現在位置と目標位置の差分を計算してRigidbodyに反映
         XMFLOAT3 currentPosition = m_context.transform->GetPosition();
@@ -105,6 +115,9 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
 
         // Rigidbodyの速度を設定
         XMFLOAT3 newVelocity = MiMath::Multiply(deltaPosition, 1.0f / deltaTime);
+        if (auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform)) {
+            newVelocity = bounds->ConstrainVelocity(m_context.transform, m_context.rigidbody, newVelocity, deltaTime);
+        }
         m_context.rigidbody->SetVelocity(newVelocity);
     }
 
@@ -190,7 +203,8 @@ bool PlayerMoveBehavior::CheckGrounded()
         settings.groundCheckDistance,
         CollisionLayerToMask(CollisionLayer::Field));
 
-    return hasHit;
+    auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform);
+    return hasHit || (bounds && bounds->IsGrounded(m_context.transform, settings.groundCheckDistance));
 }
 
 /// @brief 制御速度を適用する

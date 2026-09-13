@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl">
@@ -1134,5 +1134,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Engine\Component\ui_chromatic_echo.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_chromatic_echo_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_resolver.h" />
   </ItemGroup>
 </Project>

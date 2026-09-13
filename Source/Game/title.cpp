@@ -10,6 +10,7 @@
 #include "Game/PresBehavior/Camera/title_camera_behavior.h"
 #include "Engine/Component/camera_component.h"
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
@@ -40,6 +41,8 @@ void TitleScene::Initialize()
         DATA_LOADER->GetAsset<TitleUiSettingsAsset>("asset/Data/title_ui_settings.data.json", true));
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
+    controller->AddComponent<StageBoundsControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/title_decoration_settings.data.json", true));
 

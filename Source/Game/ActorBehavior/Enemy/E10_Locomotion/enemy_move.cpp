@@ -15,6 +15,7 @@
 #include "Engine/Component/collider_component.h"
 #include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/transform_component.h"
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 
 #include "Engine/Processor/PhysicsPass/Collision/collision_query.h"
 #include "Engine/Processor/PhysicsPass/Collision/collision_utility.h"
@@ -88,6 +89,16 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
             ApplyHoverHeight(m_context.runtimeState.desiredPosition, deltaTime);
         }
 
+        if (auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform)) {
+            const auto result = bounds->Resolve(m_context.transform, m_context.runtimeState.desiredPosition);
+            m_context.runtimeState.desiredPosition = result.position;
+            result.ClipVelocity(m_context.runtimeState.controlVelocity);
+            result.ClipVelocity(m_context.runtimeState.physicsVelocity);
+            m_motor.ApplyBounds(result);
+            if (result.normal.y != 0) m_context.runtimeState.hoverHeightVelocity = 0;
+            if (!hoverEnabled && result.floor && m_context.runtimeState.physicsVelocity.y <= 0) m_context.runtimeState.isGrounded = true;
+        }
+
         // 現在位置と目標位置の差分を計算してRigidbodyに反映
         XMFLOAT3 currentPosition = m_context.transform->GetPosition();
         XMFLOAT3 desiredPosition = m_context.runtimeState.desiredPosition;
@@ -98,7 +109,17 @@ void EnemyMove::UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent,
 
         // Rigidbodyの速度を直接設定する場合は、移動モードがKeepRigidbodyVelocityでないことを確認
         if (intent.movementMode != EnemyMovementMode::KeepRigidbodyVelocity) {
+            if (auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform)) {
+                newVelocity = bounds->ConstrainVelocity(m_context.transform, m_context.rigidbody, newVelocity, deltaTime);
+            }
             m_context.rigidbody->SetVelocity(newVelocity);
+        }
+    }
+
+    if (intent.movementMode == EnemyMovementMode::KeepRigidbodyVelocity) {
+        if (auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform)) {
+            m_context.rigidbody->SetVelocity(bounds->ConstrainVelocity(m_context.transform, m_context.rigidbody,
+                m_context.rigidbody->GetVelocity(), deltaTime));
         }
     }
 
@@ -165,7 +186,8 @@ bool EnemyMove::CheckGrounded()
         settings.groundCheckDistance,
         CollisionLayerToMask(CollisionLayer::Field));
 
-    return hasHit;
+    auto* bounds = StageBoundsControllerBehavior::Find(m_context.transform);
+    return hasHit || (bounds && bounds->IsGrounded(m_context.transform, settings.groundCheckDistance));
 }
 
 bool EnemyMove::ResolveNavigationGroundHeight(float& outHeight) const

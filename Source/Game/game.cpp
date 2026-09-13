@@ -36,6 +36,7 @@
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Game/PresBehavior/UI/Wave/wave_ui_behavior.h"
 
 #include "Engine/Graphics/texture_repository.h"
@@ -64,6 +65,8 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();
     gameControllerObj->AddComponent<WaveControllerBehavior>();
+    gameControllerObj->AddComponent<StageBoundsControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     gameControllerObj->AddComponent<StageDecorationControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/stage_decoration_settings.data.json", true));
     auto* waveUiObject = this->CreateGameObject();
@@ -83,7 +86,7 @@ void GameScene::Initialize()
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });
 
     // かかしプレハブ生成
-    PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
+   // PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
 }
 
 // ゲームシーン終了処理

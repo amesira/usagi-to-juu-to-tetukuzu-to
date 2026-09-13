@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -247,6 +247,7 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
@@ -536,6 +537,9 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_resolver.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />

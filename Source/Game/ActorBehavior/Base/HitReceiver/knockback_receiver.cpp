@@ -4,8 +4,10 @@
 // Author：Miu Kitamura
 //===================================================
 #include "knockback_receiver.h"
+#include <cmath>
 
 #include "Engine/Component/transform_component.h"
+#include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Engine/Component/rigidbody_component.h"
 
 using namespace HitReceiver;
@@ -18,6 +20,7 @@ void KnockbackReceiver::Initialize(TransformComponent* transform, RigidbodyCompo
 
 void KnockbackReceiver::Update(float deltaTime)
 {
+    if (!std::isfinite(deltaTime) || deltaTime < 0.0f) return;
     if (!m_isActive) return;
     if (!m_transform) return;
 
@@ -36,6 +39,12 @@ void KnockbackReceiver::Update(float deltaTime)
         m_velocity.y += m_currentRequest.movementSource.gravity * deltaTime;
     }
 
+    if (auto* bounds = StageBoundsControllerBehavior::Find(m_transform)) {
+        const auto result = bounds->Resolve(m_transform, currentPosition);
+        currentPosition = result.position;
+        result.ClipVelocity(m_velocity);
+    }
+
     // === 位置の適用 ===
     switch (m_currentRequest.movementSource.mode) {
         case KnockbackMovementMode::SetTransformPosition: {
@@ -49,6 +58,9 @@ void KnockbackReceiver::Update(float deltaTime)
                     currentPosition,
                     m_transform->GetPosition()
                 ), 1.0f / deltaTime);
+                if (auto* bounds = StageBoundsControllerBehavior::Find(m_transform)) {
+                    velocity = bounds->ConstrainVelocity(m_transform, m_rigidbody, velocity, deltaTime);
+                }
                 m_rigidbody->SetVelocity(velocity);
             }
             break;
@@ -63,7 +75,11 @@ void KnockbackReceiver::Update(float deltaTime)
         if (m_currentRequest.movementSource.mode == KnockbackMovementMode::SetRigidbodyVelocity && m_rigidbody) {
             m_rigidbody->SetGravityScale(m_rbGravity);
             m_rigidbody->SetFriction(m_rbFriction);
-            m_rigidbody->SetVelocity({ 0.0f, 0.0f, 0.0f });
+            DirectX::XMFLOAT3 stopVelocity = {};
+            if (auto* bounds = StageBoundsControllerBehavior::Find(m_transform)) {
+                stopVelocity = bounds->ConstrainVelocity(m_transform, m_rigidbody, stopVelocity, deltaTime);
+            }
+            m_rigidbody->SetVelocity(stopVelocity);
         }
         return;
     }

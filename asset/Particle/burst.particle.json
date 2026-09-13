@@ -24,9 +24,9 @@
                     1.0
                 ],
                 "colorMax": [
+                    0.0,
+                    0.08264374732971191,
                     0.6936169862747192,
-                    0.0,
-                    0.0,
                     1.0
                 ],
                 "colorMin": [
@@ -44,7 +44,7 @@
                 "randomBetweenTwoConstants": false
             },
             "startSize": {
-                "constant": 1.0,
+                "constant": 2.0999999046325684,
                 "constantMax": 1.0,
                 "constantMin": 1.0,
                 "randomBetweenTwoConstants": false
@@ -58,7 +58,7 @@
         },
         "renderer": {
             "billboardMode": "View",
-            "blendMode": "AlphaBlend",
+            "blendMode": "Additive",
             "sortByDistance": true,
             "texturePath": "asset/Texture/pika_effect_sheet.png",
             "uvRect": [
@@ -110,6 +110,6 @@
         }
     },
     "formatVersion": 1,
-    "name": "kirakira.particle",
+    "name": "burst.particle",
     "type": "ParticleSystem"
 }

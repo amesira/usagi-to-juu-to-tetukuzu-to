@@ -6,7 +6,7 @@
             "rateOverTime": 320.0
         },
         "main": {
-            "duration": 5.0,
+            "duration": 0.5,
             "gravity": [
                 0.0,
                 -0.20000000298023224,
