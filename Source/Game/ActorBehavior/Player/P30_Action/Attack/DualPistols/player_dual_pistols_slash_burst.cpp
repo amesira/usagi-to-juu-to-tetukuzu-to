@@ -286,8 +286,9 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
 /// @brief 攻撃対象の検出
 std::vector<GameObject*> PlayerDualPistolsSlashBurst::DetectAttackTarget(PlayerDualPistolsContext& context)
 {
-    const float width = 3.0f;
-    const float depth = 2.0f;
+    XMFLOAT3 attackOrigin = context.playerTransform->GetPosition();
+    XMFLOAT3 attackOffset = MiMath::RotateVector(context.playerTransform->GetRotation(), context.settings().slashBurstDamageAreaLocalOffset);
+    attackOrigin = MiMath::Add(attackOrigin, attackOffset);
 
     std::vector<ColliderComponent*> outHitTargets = {};
     constexpr CollisionLayerMask layerMask = CollisionLayerToMask(CollisionLayer::Enemy);
@@ -295,8 +296,8 @@ std::vector<GameObject*> PlayerDualPistolsSlashBurst::DetectAttackTarget(PlayerD
     CollisionQuery::OverlapBox(
         context.scene,
         outHitTargets,
-        context.playerTransform->GetPosition(),
-        { width, 1.0f, depth },
+        attackOrigin,
+        context.settings().slashBurstDamageAreaSize,
         context.playerTransform->GetRotation(),
         layerMask);
 

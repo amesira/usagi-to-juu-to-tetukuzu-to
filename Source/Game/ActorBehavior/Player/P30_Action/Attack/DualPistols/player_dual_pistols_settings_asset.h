@@ -74,6 +74,10 @@ namespace PlayerDualPistolsSettings {
         SlashBurstEffectTransformSettings slashBurst3RightEffect;
         float slashBurstEffectScale = 1.0f;
 
+        // === Slash Burst Damage Area ===
+        XMFLOAT3 slashBurstDamageAreaLocalOffset = { 0.0f, 1.0f, 1.0f };
+        XMFLOAT3 slashBurstDamageAreaSize = { 3.0f, 1.0f, 3.0f };
+
         // === Slash Burst Movement ===
         float stepMoveDuration = 0.2f;
         float stepMoveDistance = 1.0f;
@@ -177,6 +181,13 @@ namespace PlayerDualPistolsSettings {
                 DefaultFieldOptions{}),
             MakeField("slashBurstEffectScale", "Slash Burst Effect Scale", &Data::slashBurstEffectScale,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 20.0f }),
+
+            // === Slash Burst Damage Area ===
+            MakeHeaderField("Slash Burst Damage Area"),
+            MakeField("slashBurstDamageAreaLocalOffset", "Damage Area Local Offset", &Data::slashBurstDamageAreaLocalOffset,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = -10.0f, .maxValue = 10.0f }),
+            MakeField("slashBurstDamageAreaSize", "Damage Area Size", &Data::slashBurstDamageAreaSize,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
 
             // === Slash Burst Movement ===
             MakeHeaderField("Slash Burst Movement"),
