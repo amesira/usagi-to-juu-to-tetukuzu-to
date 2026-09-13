@@ -16,7 +16,7 @@
                     0.0
                 ],
                 "rotationDegrees": [
-                    0.0,
+                    90.0,
                     0.0,
                     0.0
                 ],
@@ -44,7 +44,91 @@
                     1.0
                 ],
                 "rotationDegrees": [
+                    80.0,
                     0.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    -45.0,
+                    50.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    50.0,
+                    -60.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": -30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    -20.0,
                     0.0,
                     0.0
                 ],
