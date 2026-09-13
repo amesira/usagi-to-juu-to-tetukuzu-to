@@ -57,7 +57,9 @@ void EnemyBehavior::Start()
     }
 
     m_effects.Initialize(owner);
-    m_motions.Initialize(owner);
+    const bool modelB = m_attackType == EnemyAttackType::Ranged;
+    m_motions.Initialize(owner, modelB);
+    m_animationController.SetModelB(modelB);
 
     m_locomotionController.Initialize();
     m_moveBehavior.Initialize(m_context, m_moveSettings);

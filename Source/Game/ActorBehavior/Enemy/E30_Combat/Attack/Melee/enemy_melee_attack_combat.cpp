@@ -120,8 +120,8 @@ void EnemyMeleeAttackCombat::UpdateJump(EnemyContext& context, float deltaTime)
         });
 
     // 速度方向に回転更新
-    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::FixedDirection;
-    m_locomotionRequest.rotateDirection.fixedDirection = m_jumpVelocity;
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    m_locomotionRequest.rotateDirection.targetPosition = m_landingPosition;
     context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest);
 }
 

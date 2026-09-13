@@ -1,13 +1,11 @@
 {
     "data": {
-        "acceleration": 20.0,
-        "deceleration": 30.0,
         "groundCheckDistance": 0.15000000596046448,
         "groundCheckRadius": 0.3499999940395355,
         "hoverEnabled": true,
-        "hoverHeight": 3.0,
+        "hoverHeight": 7.0,
         "hoverHeightSmoothTime": 0.20000000298023224,
-        "moveSpeed": 7.0,
+        "moveSpeed": 5.0,
         "rotationSpeed": 25.0,
         "runEffect": {
             "particleAssetPath": "asset/Particle/run_dust.particle.json",

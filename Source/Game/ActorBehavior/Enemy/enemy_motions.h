@@ -28,7 +28,7 @@ private:
     bool m_isPlaying = false;
 
 public:
-    void Initialize(class GameObject* owner);
+    void Initialize(class GameObject* owner, bool modelB = false);
     void Update(float deltaTime);
     void PlaySlashHitMotion(const DirectX::XMFLOAT3& direction, float powerRate, float duration);
     void PlayKnockbackMotion(const DirectX::XMFLOAT3& direction, float powerRate, float duration);

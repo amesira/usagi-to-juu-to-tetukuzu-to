@@ -23,7 +23,7 @@ namespace {
     }
 }
 
-void EnemyMotions::Initialize(GameObject* owner)
+void EnemyMotions::Initialize(GameObject* owner, bool modelB)
 {
     if (!owner) return;
 
@@ -33,16 +33,18 @@ void EnemyMotions::Initialize(GameObject* owner)
     ModelResource* modelResource = modelComponent ? modelComponent->GetModelResource() : nullptr;
     if (!m_animationComponent || !modelResource) return;
 
-    Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/enemy_a_break_forward.anim.fbx");
-    Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/enemy_a_break_back.anim.fbx");
-    Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/enemy_a_break_right.anim.fbx");
-    Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/enemy_a_break_left.anim.fbx");
+    const std::string prefix = modelB ? "enemy_b_" : "enemy_a_";
+    for (const char* direction : {"forward", "back", "right", "left"}) {
+        const std::string file = prefix + "break_" + direction + ".anim.fbx";
+        if (FindClipIndex(modelComponent, file) < 0)
+            Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/" + file);
+    }
 
     m_hitBlendTreeNodes = {
-        { FindClipIndex(modelComponent, "enemy_a_break_forward.anim.fbx"), { 0.0f, 1.0f } },
-        { FindClipIndex(modelComponent, "enemy_a_break_back.anim.fbx"), { 0.0f, -1.0f } },
-        { FindClipIndex(modelComponent, "enemy_a_break_right.anim.fbx"), { 1.0f, 0.0f } },
-        { FindClipIndex(modelComponent, "enemy_a_break_left.anim.fbx"), { -1.0f, 0.0f } },
+        { FindClipIndex(modelComponent, prefix + "break_forward.anim.fbx"), { 0.0f, 1.0f } },
+        { FindClipIndex(modelComponent, prefix + "break_back.anim.fbx"), { 0.0f, -1.0f } },
+        { FindClipIndex(modelComponent, prefix + "break_right.anim.fbx"), { 1.0f, 0.0f } },
+        { FindClipIndex(modelComponent, prefix + "break_left.anim.fbx"), { -1.0f, 0.0f } },
     };
 
     // Bodyとその子ボーンだけへ被弾姿勢をOverride合成する。

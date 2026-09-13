@@ -40,6 +40,8 @@ namespace EnemyAttackSettings {
         // === Ranged用の追加設定 ===
         int shotCount = 3;
         float shotInterval = 0.3f;
+        float firstShotDelay = 0.1f; // 各単発クリップ開始から発射までの秒数
+        float shotPlaybackSpeed = 1.0f;
         std::string leftMuzzleBoneName = "Gun.L";
         std::string rightMuzzleBoneName = "Gun.R";
         float projectileSpeed = 30.0f;
@@ -81,6 +83,8 @@ namespace EnemyAttackSettings {
         data.maxDistance = (std::max)(data.minDistance, data.maxDistance);
         data.shotCount = (std::clamp)(data.shotCount, 1, 100);
         data.shotInterval = (std::max)(0.01f, data.shotInterval);
+        data.firstShotDelay = (std::min)(nonNegative(data.firstShotDelay, 0.1f), data.shotInterval);
+        data.shotPlaybackSpeed = (std::max)(0.01f, nonNegative(data.shotPlaybackSpeed, 1.0f));
         data.projectileSpeed = nonNegative(data.projectileSpeed, 30.0f);
         data.projectileRadius = nonNegative(data.projectileRadius, 0.2f);
         data.projectileLifeTime = nonNegative(data.projectileLifeTime, 5.0f);
@@ -123,6 +127,8 @@ namespace EnemyAttackSettings {
             MakeField("slashEffectScale", "Scale", &Data::slashEffectScale, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
             // === Ranged用の追加設定 ===
             MakeHeaderField("Ranged Attack Settings"),
+            MakeField("firstShotDelay", "Shot Clip Fire Delay (s)", &Data::firstShotDelay, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("shotPlaybackSpeed", "Shot Playback Speed", &Data::shotPlaybackSpeed, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 100.0f }),
             MakeField("shotCount", "Shot Count", &Data::shotCount, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("shotInterval", "Shot Interval", &Data::shotInterval, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("leftMuzzleBoneName", "Left Muzzle Bone", &Data::leftMuzzleBoneName),

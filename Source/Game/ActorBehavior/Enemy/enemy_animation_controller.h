@@ -21,6 +21,7 @@ public:
         Walk,
         JumpPose,
         Slash,
+        Shot,
     };
 
     struct Settings {
@@ -45,9 +46,12 @@ private:
     WaitAndCallbackTask m_combatAnimationStopTask;
     int m_jumpPoseClipIndex = -1;
     int m_slashClipIndex = -1;
+    int m_shotClipIndex = -1;
+    bool m_modelB = false;
 
 public:
     void Initialize(EnemyContext& context);
+    void SetModelB(bool enabled) { m_modelB = enabled; }
 
     void Update(EnemyContext& context);
     void Finalize();

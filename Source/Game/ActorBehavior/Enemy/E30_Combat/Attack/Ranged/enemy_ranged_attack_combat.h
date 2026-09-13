@@ -7,16 +7,24 @@
 //---------------------------------------------------
 #pragma once
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_combat.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 
 class EnemyRangedAttackCombat : public EnemyAttackCombat {
+private:
     int m_shotsFired = 0;
     float m_timeUntilNextShot = 0.0f;
+    bool m_waitingForFire = false;
     class ModelComponent* m_model = nullptr;
+
     unsigned int m_leftMuzzleBoneIndex = static_cast<unsigned int>(-1);
     unsigned int m_rightMuzzleBoneIndex = static_cast<unsigned int>(-1);
 
+    EnemyLocomotionController::LocomotionRequest m_locomotionRequest = {};
+    int m_locomotionRequestId = -1;
+
 public:
     void Initialize(EnemyContext& context) override;
+    void Cancel(EnemyContext& context) override;
     int GetShotsFired() const { return m_shotsFired; }
     float GetTimeUntilNextShot() const { return m_timeUntilNextShot; }
 
@@ -25,7 +33,7 @@ protected:
     EnemyCombatStatus UpdateAttack(EnemyContext& context, float deltaTime) override;
     void EndAttack(EnemyContext& context) override;
 
-    // 発射ごとに狙い直す。弾生成は未実装。
+    // 発射ごとに狙い直し、左右のボーンから弾を生成する。
     virtual void FireShot(EnemyContext& context, const DirectX::XMFLOAT3& targetPosition);
     virtual void ClearAttackEffects(EnemyContext& context);
 

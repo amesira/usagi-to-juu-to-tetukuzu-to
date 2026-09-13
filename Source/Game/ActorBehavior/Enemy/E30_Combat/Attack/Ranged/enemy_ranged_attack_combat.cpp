@@ -6,6 +6,8 @@
 #include "enemy_ranged_attack_combat.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Enemy/enemy_animation_controller.h"
+#include <Windows.h>
 #include "Engine/Component/model_component.h"
 #include "Engine/Component/transform_component.h"
 #include "Engine/Core/game_object.h"
@@ -36,32 +38,70 @@ void EnemyRangedAttackCombat::Initialize(EnemyContext& context)
         *m_model,
         settings().rightMuzzleBoneName,
         m_rightMuzzleBoneIndex);
+    if (m_leftMuzzleBoneIndex == static_cast<unsigned int>(-1)
+        || m_rightMuzzleBoneIndex == static_cast<unsigned int>(-1))
+        OutputDebugStringA("Enemy ranged attack: muzzle bone not found; check Gun.L / Gun.R.\n");
 }
 
-void EnemyRangedAttackCombat::BeginAttack(EnemyContext&)
+void EnemyRangedAttackCombat::BeginAttack(EnemyContext& context)
 {
     m_shotsFired = 0;
-    m_timeUntilNextShot = 0.0f;
+    m_timeUntilNextShot = settings().firstShotDelay;
+    m_waitingForFire = true;
+    if (context.animationController) {
+        context.animationController->PlayCombatAnimation(EnemyAnimationController::Animation::Shot, settings().shotPlaybackSpeed);
+    }
+
+    m_locomotionRequest.priority = 50;
+    m_locomotionRequest.canMove = false;
+    m_locomotionRequest.canRotate = true;
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
+    m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
 }
 
 EnemyCombatStatus EnemyRangedAttackCombat::UpdateAttack(EnemyContext& context, float deltaTime)
 {
     m_timeUntilNextShot -= deltaTime;
-    // 長いフレームでも指定回数を超えず、発射間隔の余りを維持する。
-    while (m_shotsFired < settings().shotCount && m_timeUntilNextShot <= 0.0f) {
+    // アニメーションを実際に評価する機会を確保するため、1フレーム1イベントまで。
+    if (m_shotsFired < settings().shotCount && m_timeUntilNextShot <= 0.0f) {
+        if (!m_waitingForFire) {
+            if (context.animationController)
+                context.animationController->PlayCombatAnimation(EnemyAnimationController::Animation::Shot, settings().shotPlaybackSpeed);
+            m_waitingForFire = true;
+            m_timeUntilNextShot = settings().firstShotDelay;
+            return EnemyCombatStatus::Running;
+        }
+        if (m_leftMuzzleBoneIndex == static_cast<unsigned int>(-1)
+            || m_rightMuzzleBoneIndex == static_cast<unsigned int>(-1)) return EnemyCombatStatus::Failure;
         SetAimPosition(context.runtimeState.combatTargetPosition);
         FireShot(context, GetAimPosition());
         ++m_shotsFired;
-        m_timeUntilNextShot += settings().shotInterval;
+        m_waitingForFire = false;
+        m_timeUntilNextShot = (std::max)(0.0f, settings().shotInterval - settings().firstShotDelay);
     }
+
+    // 移動要求更新
+    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
+    context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest);
+
     return m_shotsFired >= settings().shotCount
         ? EnemyCombatStatus::Success : EnemyCombatStatus::Running;
 }
 
 void EnemyRangedAttackCombat::EndAttack(EnemyContext& context)
 {
+    if (context.animationController) {
+        context.animationController->StopCombatAnimation(settings().recoveryDuration);
+    }
+
     ClearAttackEffects(context);
     m_timeUntilNextShot = 0.0f;
+
+    if (m_locomotionRequestId != -1) {
+        context.locomotionController->RemoveRequest(m_locomotionRequestId);
+        m_locomotionRequestId = -1;
+    }
 }
 
 void EnemyRangedAttackCombat::FireShot(
@@ -70,6 +110,13 @@ void EnemyRangedAttackCombat::FireShot(
 {
     FireFromBone(context, m_leftMuzzleBoneIndex, targetPosition);
     FireFromBone(context, m_rightMuzzleBoneIndex, targetPosition);
+}
+
+void EnemyRangedAttackCombat::Cancel(EnemyContext& context)
+{
+    EnemyAttackCombat::Cancel(context);
+    if (context.animationController) context.animationController->StopCombatAnimation();
+    m_waitingForFire = false;
 }
 
 void EnemyRangedAttackCombat::ClearAttackEffects(EnemyContext&)
@@ -111,7 +158,6 @@ bool EnemyRangedAttackCombat::FireFromBone(
     bulletDesc.layerMask = ENEMY_BULLET_HIT_LAYER_MASK;
     bulletDesc.attacker = context.owner ? context.owner->GetOwner() : nullptr;
     bulletDesc.damage = settings().projectileDamage;
-    bulletDesc.materialName = "EnemyBulletHologramMaterial";
 
     return ProjectileFactory::CreateBullet(context.scene, bulletDesc) != nullptr;
 }

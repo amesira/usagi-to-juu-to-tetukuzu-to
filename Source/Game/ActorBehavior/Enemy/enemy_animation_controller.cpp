@@ -40,10 +40,16 @@ void EnemyAnimationController::Initialize(EnemyContext& context)
     auto* model = modelComponent ? modelComponent->GetModelResource() : nullptr;
     if (!m_animationComponent || !model) return;
 
-    m_idleClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_idle.anim.fbx");
-    m_walkClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_walk.anim.fbx");
-    m_jumpPoseClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_jump_pose.anim.fbx");
-    m_slashClipIndex = FindOrLoadClip(model, "asset/Model/enemy_a_slash.anim.fbx");
+    const std::string prefix = m_modelB ? "asset/Model/enemy_b_" : "asset/Model/enemy_a_";
+    m_idleClipIndex = FindOrLoadClip(model, prefix + "idle.anim.fbx");
+    m_walkClipIndex = FindOrLoadClip(model, prefix + "walk.anim.fbx");
+    if (m_modelB) {
+        m_shotClipIndex = FindOrLoadClip(model, prefix + "shot.anim.fbx");
+    }
+    else {
+        m_jumpPoseClipIndex = FindOrLoadClip(model, prefix + "jump_pose.anim.fbx");
+        m_slashClipIndex = FindOrLoadClip(model, prefix + "slash.anim.fbx");
+    }
 
     PlayMainAnimation(Animation::Idle);
 }
@@ -103,9 +109,16 @@ void EnemyAnimationController::PlayMainAnimation(Animation animation)
 
 void EnemyAnimationController::PlayCombatAnimation(Animation animation, float playbackSpeed)
 {
+    if (!m_animationComponent) return;
+    m_combatAnimationStopTask.Finish();
     m_inCombatAnimation = true;
 
     switch (animation) {
+        case Animation::Shot: {
+            if (m_shotClipIndex < 0) { m_inCombatAnimation = false; return; }
+            m_animationComponent->PlayAnimation(m_shotClipIndex, playbackSpeed, false, true, 0.05f);
+            break;
+        }
         case Animation::JumpPose: {
             // ジャンプはループ再生
             m_animationComponent->PlayAnimation(m_jumpPoseClipIndex, playbackSpeed, true, true, 0.1f);
@@ -124,6 +137,12 @@ void EnemyAnimationController::PlayCombatAnimation(Animation animation, float pl
 
 void EnemyAnimationController::StopCombatAnimation(float duration)
 {
+    if (duration <= 0.0f) {
+        m_combatAnimationStopTask.Finish();
+        m_inCombatAnimation = false;
+        PlayMainAnimation(m_currentMainAnimation);
+        return;
+    }
     m_combatAnimationStopTask.m_waitDuration = duration;
     m_combatAnimationStopTask.m_callback = [this]() {
         // Combatアニメーションが終了したら、メインアニメーションに戻す

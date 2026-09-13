@@ -214,6 +214,8 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateRangedEnemyPrefab(
     if (!prefab.enemy) return prefab;
 
     prefab.enemy->SetName("RangedEnemy");
+    prefab.enemy->GetComponent<ModelComponent>()->SetModelResource(
+        MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
     if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
         behavior->SetupAttackType(EnemyAttackType::Ranged);
     }
@@ -249,6 +251,8 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverRangedEnemyPrefab(
     if (!prefab.enemy) return prefab;
 
     prefab.enemy->SetName("HoverRangedEnemy");
+    prefab.enemy->GetComponent<ModelComponent>()->SetModelResource(
+        MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
     if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
         behavior->SetupAttackType(EnemyAttackType::Ranged);
     }

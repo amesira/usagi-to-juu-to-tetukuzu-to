@@ -31,11 +31,6 @@ class EnemyMeleeAttackCombat : public EnemyAttackCombat {
     DirectX::XMFLOAT3 m_landingPosition = {};
     DirectX::XMFLOAT3 m_jumpVelocity = {};
 
-public:
-    /*EnemyMeleeAttackPhase GetMeleePhase() const { return m_phase; }
-    const DirectX::XMFLOAT3& GetJumpStartPosition() const { return m_jumpStartPosition; }
-    const DirectX::XMFLOAT3& GetLandingPosition() const { return m_landingPosition; }*/
-
 protected:
     void BeginWindup(EnemyContext& context) override;
     void EndWindup(EnemyContext& context) override;
