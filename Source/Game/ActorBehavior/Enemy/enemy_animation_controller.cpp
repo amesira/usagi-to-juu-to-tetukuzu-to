@@ -154,6 +154,9 @@ void EnemyAnimationController::StopCombatAnimation(float duration)
 
 void EnemyAnimationController::Finalize()
 {
+    m_combatAnimationStopTask.Finish();
+    m_combatAnimationStopTask.m_callback = nullptr;
+    m_inCombatAnimation = false;
     m_animationComponent = nullptr;
     m_idleClipIndex = -1;
     m_walkClipIndex = -1;

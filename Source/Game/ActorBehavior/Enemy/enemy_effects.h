@@ -15,6 +15,8 @@ private:
 public:
     void Initialize(class GameObject* owner);
     void Update(float deltaTime);
+    void Stop();
+    void Finalize();
 
     void PlayHitEffects(
         const DirectX::XMFLOAT3& hitPosition,

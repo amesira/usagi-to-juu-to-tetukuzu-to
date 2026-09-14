@@ -24,6 +24,21 @@ void EnemyEffects::Initialize(GameObject* owner)
         EffectAttachmentDesc{ .target = m_transform });
 }
 
+void EnemyEffects::Stop()
+{
+    m_hitEffect.Stop();
+    if (m_blinkerBehavior) m_blinkerBehavior->Reset();
+    m_isFlashing = false;
+}
+void EnemyEffects::Finalize()
+{
+    Stop();
+    m_hitEffect.Destroy();
+    m_transform = nullptr;
+    m_blinkerBehavior = nullptr;
+    m_scene = nullptr;
+}
+
 void EnemyEffects::Update(float)
 {
     if (m_isFlashing && m_blinkerBehavior && !m_blinkerBehavior->IsFlashing()) {

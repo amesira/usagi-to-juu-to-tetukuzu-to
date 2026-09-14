@@ -90,6 +90,7 @@ public:
             unsigned int id = m_gameObjectIDs[i];
             // 指定されたGameObjectIDと一致したら削除
             if (id == gameObjectID) {
+                m_components[i].NotifyDestroy();
                 // 空きスロットとして管理リストに追加
                 m_freeIndices.push_back(i);
 

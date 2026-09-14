@@ -21,6 +21,7 @@
 /// @brief 移動エフェクトを再生する
 void EnemyMoveEffects::Initialize(EnemyMoveContext& context)
 {
+    m_stopped = false;
     if (!context.owner || !context.transform || !context.settingsAsset) return;
 
     GameObject* enemy = context.owner;
@@ -37,11 +38,21 @@ void EnemyMoveEffects::Initialize(EnemyMoveContext& context)
             },
         });
     m_isRunDustParticleActive = false;
-    m_runDustEffectRate = m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance;
+    if (auto* particles = m_runDustEffect.GetParticleSystem()) {
+        m_runDustEffectRate = particles->Emission().rateOverDistance;
+    }
+}
+
+void EnemyMoveEffects::Stop()
+{
+    m_stopped = true;
+    m_runDustEffect.Stop();
+    m_isRunDustParticleActive = false;
 }
 
 void EnemyMoveEffects::Finalize()
 {
+    Stop();
     m_runDustEffect.Destroy();
     m_runDustEffect.Reset();
     m_isRunDustParticleActive = false;
@@ -50,6 +61,7 @@ void EnemyMoveEffects::Finalize()
 /// @brief 移動エフェクトの更新処理を行う
 void EnemyMoveEffects::UpdateEffects(EnemyMoveContext& context, float deltaTime)
 {
+    if (m_stopped) return;
     if (context.runtimeState.isGrounded) {
         SetRunDustParticleActive(true);
     }

@@ -63,6 +63,12 @@ public:
     virtual void   Draw() override = 0;
 
     void Reset() {
+        // Finalize resources before clearing owners or any component pool.
+        for (auto& obj : m_gameObjects) {
+            for (auto& pool : m_componentPools) {
+                if (auto* component = pool->GetComponentInterface(obj.GetID())) component->NotifyDestroy();
+            }
+        }
         m_gameObjects.clear();
         m_gameObjects.reserve(MAX_GAMEOBJECTS);
         m_componentPools.clear();
@@ -103,6 +109,13 @@ public:
 
     // GameObjectの破棄
     void    CollectDestroyedGameObjects() {
+        // Notify first, then remove. Cleanup may also schedule attached effects for destruction.
+        for (auto& obj : m_gameObjects) {
+            if (!obj.m_isDestroy) continue;
+            for (auto& pool : m_componentPools) {
+                if (auto* component = pool->GetComponentInterface(obj.GetID())) component->NotifyDestroy();
+            }
+        }
         for (int i = 0; i < m_gameObjects.size(); i++) {
             GameObject& obj = m_gameObjects[i];
             if (!obj.m_isDestroy)continue;

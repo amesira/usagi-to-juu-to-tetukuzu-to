@@ -26,6 +26,7 @@ private:
 
 public:
     void Initialize(EnemyContext& context, const EnemyMoveSettingsAsset* settingsAsset);
+    void StopEffects() { m_effects.Stop(); }
     void Finalize();
     void UpdateMove(EnemyContext& context, const EnemyMoveIntent& intent, float deltaTime);
 

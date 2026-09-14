@@ -36,6 +36,9 @@ enum class EnemyDeathReason { Defeated, WaveCleanup };
 class EnemyBehavior : public BehaviorComponent {
 private:
     bool m_registeredEntityToMetaAI = false;
+    bool m_initialized = false;
+    bool m_deathHandled = false;
+    bool m_finalized = false;
 
     EnemyContext m_context;
     bool m_isElite = false;
@@ -67,6 +70,7 @@ public:
     EnemyBehavior() = default;
     ~EnemyBehavior() override = default;
 
+    void OnDestroy() override;
     void Start() override;
     void Update() override;
     void RequestWaveCleanup();
@@ -106,6 +110,7 @@ public:
         const HitReceiver::HitResult& hitResult);
 
 private:
+    void HandleDeath();
     void UpdateTargetState();
 
 };

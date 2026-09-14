@@ -25,6 +25,41 @@
 
 using namespace HitReceiver;
 
+void EnemyBehavior::HandleDeath()
+{
+    if (!m_initialized || m_deathHandled) return;
+    m_deathHandled = true;
+    m_combatTree.Cancel(m_context);
+    m_motions.Stop();
+    m_moveBehavior.StopEffects();
+    m_effects.Stop();
+    if (m_context.health) m_context.health->SetUiActive(false);
+    if (m_context.hitReceiver) m_context.hitReceiver->CancelKnockback();
+    if (auto* aiWorld = Game::EnemyAIWorld()) {
+        if (aiWorld == m_context.aiWorld && GetOwner()) {
+            aiWorld->CancelAttackRequest(static_cast<int>(GetOwner()->GetID()));
+            aiWorld->GetMetaAI().UnregisterEnemy(GetOwner()->GetID());
+        }
+    }
+    m_registeredEntityToMetaAI = false;
+}
+
+void EnemyBehavior::OnDestroy()
+{
+    if (!m_initialized || m_finalized) return;
+    m_finalized = true;
+    HandleDeath();
+    if (m_context.hitReceiver) m_context.hitReceiver->SetOnHitCallback(nullptr);
+    m_combatTree.Finalize(m_context);
+    m_conditionMachine.Finalize(m_context);
+    m_moveBehavior.Finalize();
+    m_locomotionController.Finalize();
+    m_animationController.Finalize();
+    m_effects.Finalize();
+    m_context = {};
+    m_initialized = false;
+}
+
 void EnemyBehavior::Start()
 {
     GameObject* owner = GetOwner();
@@ -87,6 +122,7 @@ void EnemyBehavior::Start()
     UpdateTargetState();
     m_conditionMachine.Initialize(m_context);
 
+    m_initialized = true;
     // 敵個体をMetaAIに登録する
     auto* aiWorld = Game::EnemyAIWorld();
     if (aiWorld && aiWorld->GetEnable() && aiWorld->IsInitialized()) {
@@ -102,10 +138,11 @@ void EnemyBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
 
+    if (m_context.health && m_context.health->IsDead()) HandleDeath();
     m_effects.Update(deltaTime);
     m_motions.Update(deltaTime);
 
-    if (!m_registeredEntityToMetaAI) {
+    if (!m_deathHandled && !m_registeredEntityToMetaAI) {
         auto* aiWorld = Game::EnemyAIWorld();
         if (aiWorld && aiWorld->GetEnable() && aiWorld->IsInitialized()) {
             aiWorld->GetMetaAI().RegisterEnemy(GetOwner());
@@ -171,8 +208,7 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
         if (m_deathReason == EnemyDeathReason::Defeated) {
             if (auto* wave = Game::Wave()) wave->NotifyEnemyDefeated(GetOwner()->GetID());
         }
-        m_motions.Stop();
-        m_moveBehavior.Finalize();
+        HandleDeath();
         return;
     }
 
@@ -205,12 +241,11 @@ void EnemyBehavior::RequestWaveCleanup()
     if (!health || health->IsDead()) return;
     // Mark before triggering death, so cleanup can never be credited as a hit.
     m_deathReason = EnemyDeathReason::WaveCleanup;
-    m_motions.Stop();
-    m_combatTree.Cancel(m_context);
-    m_moveBehavior.Finalize();
+    // Common death handling runs after setting health below.
     if (m_context.hitReceiver) m_context.hitReceiver->SetEnable(false);
     if (auto* collider = owner->GetComponent<CapsuleColliderComponent>()) collider->SetEnable(false);
     health->SetHealth(0);
+    HandleDeath();
     health->SetUiActive(false);
     m_conditionMachine.Update(m_context, 0);
 }
