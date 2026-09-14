@@ -7,8 +7,8 @@
 #include <cmath>
 namespace GameAudioSettings {
 struct Data {
-    std::string titleBgm, battleBgm, resultBgm;
-    std::string shotgun, dualPistols, slashBurst, slashBurst2;
+    std::string titleBgm, battleBgm, battleBgm2, battleBgm3, resultBgm;
+    std::string shotgun, shotgunAim, dualPistols, slashBurst, slashBurst2;
     std::string charge, chargeComplete;
     std::string playerRun, playerJump, playerLand;
     std::string enemyShot, enemySlash;
@@ -22,11 +22,14 @@ inline const auto& GetSchema() {
         MakeHeaderField("BGM"),
         MakeField("titleBgm", "Title BGM (PCM WAV)", &Data::titleBgm),
         MakeField("battleBgm", "Battle BGM (PCM WAV)", &Data::battleBgm),
+        MakeField("battleBgm2", "Battle BGM 2 (PCM WAV)", &Data::battleBgm2),
+        MakeField("battleBgm3", "Battle BGM 3 (PCM WAV)", &Data::battleBgm3),
         MakeField("resultBgm", "Result BGM (PCM WAV)", &Data::resultBgm),
 
         // === SE ===
         MakeHeaderField("SE"),
         MakeField("shotgun", "Shotgun", &Data::shotgun),
+        MakeField("shotgunAim", "Shotgun Aim", &Data::shotgunAim),
         MakeField("dualPistols", "Dual Pistols", &Data::dualPistols),
         MakeField("slashBurst", "Slash Burst", &Data::slashBurst),
         MakeField("slashBurst2", "Slash Burst 2", &Data::slashBurst2),

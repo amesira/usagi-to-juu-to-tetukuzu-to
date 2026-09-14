@@ -9,11 +9,14 @@ enum class GameBgm {
     None, 
     Title,
     Battle,
+    Battle2,
+    Battle3,
     Result,
 };
 
 enum class GameSe { 
     Shotgun, 
+    ShotgunAim,
     DualPistols, 
     SlashBurst,
     SlashBurst2,
@@ -45,7 +48,7 @@ class GameAudioControllerBehavior : public BehaviorComponent {
 private:
     const GameAudioSettingsAsset* m_settingsAsset = nullptr;
 
-    std::array<int, 3> m_bgmIds{-1, -1, -1};
+    std::array<int, 5> m_bgmIds{-1, -1, -1, -1, -1};
     std::array<int, static_cast<size_t>(GameSe::MAX)> m_seIds;
 
     GameBgm m_requested = GameBgm::None, m_current = GameBgm::None;

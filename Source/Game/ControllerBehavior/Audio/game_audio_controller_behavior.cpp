@@ -25,7 +25,9 @@ int GameAudioControllerBehavior::CurrentBgmId() const {
     switch (m_current) {
     case GameBgm::Title: return m_bgmIds[0];
     case GameBgm::Battle: return m_bgmIds[1];
-    case GameBgm::Result: return m_bgmIds[2];
+    case GameBgm::Battle2: return m_bgmIds[2];
+    case GameBgm::Battle3: return m_bgmIds[3];
+    case GameBgm::Result: return m_bgmIds[4];
     default: return -1;
     }
 }
@@ -47,7 +49,7 @@ void GameAudioControllerBehavior::Reload() {
     m_bgmIds = {load(s.titleBgm), load(s.battleBgm), load(s.resultBgm)};
     // Keep this list in GameSe order. The size check detects missing entries.
     const int seIds[] = {
-        load(s.shotgun), load(s.dualPistols), load(s.slashBurst), load(s.slashBurst2),
+        load(s.shotgun),load(s.shotgunAim), load(s.dualPistols), load(s.slashBurst), load(s.slashBurst2),
         load(s.charge), load(s.chargeComplete),
         load(s.playerRun), load(s.playerJump), load(s.playerLand),
         load(s.enemyShot), load(s.enemySlash),
