@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Result/game_result.h"
 #include <DirectXMath.h>
 
 #include "Engine/Asset/DataAsset/data_asset.h"
@@ -17,6 +18,7 @@ namespace ResultControllerSettings {
 
     struct Data {
         ResultTextObject resultTextObject;
+        ResultScoring::Settings scoring;
     };
 
     inline const auto& GetResultTextObjectSchema() {
@@ -31,10 +33,22 @@ namespace ResultControllerSettings {
         return schema;
     }
 
+    inline const auto& GetScoringSchema() {
+        static const auto schema = FieldSchema{
+            MakeField("completeBonus", "completeBonus", &ResultScoring::Settings::completeBonus,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("timeLimit", "timeLimit", &ResultScoring::Settings::timeLimit,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("pointsPerSecond", "pointsPerSecond", &ResultScoring::Settings::pointsPerSecond,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("rank2", "rank2", &ResultScoring::Settings::rank2,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("rank3", "rank3", &ResultScoring::Settings::rank3,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("rank4", "rank4", &ResultScoring::Settings::rank4,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+            MakeField("rank5", "rank5", &ResultScoring::Settings::rank5,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000})
+        }; return schema;
+    }
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
             MakeStructField("resultTextObject", "Result Text Object", 
-                &Data::resultTextObject, GetResultTextObjectSchema(), DefaultFieldOptions{})
+                &Data::resultTextObject, GetResultTextObjectSchema(), DefaultFieldOptions{}),
+            MakeStructField("scoring", "Scoring", &Data::scoring, GetScoringSchema(), DefaultFieldOptions{})
         };
         return schema;
     }

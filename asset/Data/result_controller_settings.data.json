@@ -1,24 +1,33 @@
 {
-    "data": {
-        "resultTextObject": {
-            "position": [
-                20.0,
-                50.0,
-                35.0
-            ],
-            "rotation": [
-                45.0,
-                -0.6000000238418579,
-                0.0
-            ],
-            "scale": [
-                20.0,
-                20.0,
-                20.0
-            ]
-        }
+  "data": {
+    "resultTextObject": {
+      "position": [
+        20.0,
+        50.0,
+        35.0
+      ],
+      "rotation": [
+        45.0,
+        -0.6000000238418579,
+        0.0
+      ],
+      "scale": [
+        20.0,
+        20.0,
+        20.0
+      ]
     },
-    "formatVersion": 0,
-    "name": "result_controller_settings.data",
-    "type": "ResultControllerSettingsAsset"
+    "scoring": {
+      "rank2": 200,
+      "rank5": 1800,
+      "pointsPerSecond": 5,
+      "rank3": 500,
+      "timeLimit": 300,
+      "completeBonus": 500,
+      "rank4": 1000
+    }
+  },
+  "formatVersion": 0,
+  "name": "result_controller_settings.data",
+  "type": "ResultControllerSettingsAsset"
 }

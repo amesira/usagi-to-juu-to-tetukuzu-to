@@ -1,0 +1,55 @@
+#pragma once
+#include "Game/PresBehavior/UI/ui_layout_settings.h"
+#include "Engine/Asset/DataAsset/data_asset.h"
+#include "Engine/Asset/DataAsset/data_asset_type_id.h"
+#include "Engine/Editor/Schema/field_editor.h"
+namespace ResultUiSettings {
+struct Data {
+ UiLayoutSettings::GroupPlacement placement = {{0.68f,0.40f},{0,0}};
+ UiLayoutSettings::PerspectiveSettings perspective;
+ UiLayoutSettings::ChromaticEchoSettings chromaticEcho;
+ UiLayoutSettings::WidgetTransform gauge = {{0,0},{360,20},0}, label = {{-280,0},{0.65f,0.65f},0}, status = {{260,0},{0.65f,0.65f},0}, summary = {{0,0},{0.8f,0.8f},0};
+ DirectX::XMFLOAT3 textColor = {1,1,1}, clearColor = {0.5f,1,0.7f}, failColor = {1,0.5f,0.5f}, selectedColor = {1,1,0.5f};
+ float rowSpacing = 55, smoothTime = 0.35f, statusWait = 0.5f, countDuration = 1.2f, rankWait = 0.8f;
+ int fontSize = 32;
+ bool applyPerspective = true, applyChromaticEcho = true;
+};
+inline const auto& GetSchema() {
+ using namespace UiLayoutSettings;
+ static const auto schema = FieldSchema{
+ MakeStructField("placement","placement",&Data::placement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("perspective","perspective",&Data::perspective,GetPerspectiveSchema(),DefaultFieldOptions{}),
+ MakeStructField("chromaticEcho","chromaticEcho",&Data::chromaticEcho,GetEchoSchema(),DefaultFieldOptions{}),
+ MakeStructField("gauge","gauge",&Data::gauge,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeStructField("label","label",&Data::label,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeStructField("status","status",&Data::status,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeStructField("summary","summary",&Data::summary,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeField("textColor","textColor",&Data::textColor,ColorFieldOptions{}),
+ MakeField("clearColor","clearColor",&Data::clearColor,ColorFieldOptions{}),
+ MakeField("failColor","failColor",&Data::failColor,ColorFieldOptions{}),
+ MakeField("selectedColor","selectedColor",&Data::selectedColor,ColorFieldOptions{}),
+ MakeField("rowSpacing","rowSpacing",&Data::rowSpacing,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("smoothTime","smoothTime",&Data::smoothTime,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("statusWait","statusWait",&Data::statusWait,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("countDuration","countDuration",&Data::countDuration,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("rankWait","rankWait",&Data::rankWait,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("fontSize","fontSize",&Data::fontSize,DragFieldOptions{.dragSpeed=0.1f, .minValue=0, .maxValue=1000000}),
+ MakeField("applyPerspective","applyPerspective",&Data::applyPerspective),
+ MakeField("applyChromaticEcho","applyChromaticEcho",&Data::applyChromaticEcho)
+ }; return schema;
+}
+}
+class ResultUiSettingsAsset : public DataAsset {
+    ResultUiSettings::Data m_data;
+public:
+    ResultUiSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<ResultUiSettingsAsset>(), "ResultUiSettingsAsset", 0) {}
+    const ResultUiSettings::Data& GetData() const { return m_data; }
+    std::unique_ptr<DataAsset> CreateDefaultInstance() const override { return std::make_unique<ResultUiSettingsAsset>(); }
+    nlohmann::json SerializeData() const override { return FieldSerialization::SerializeFields(m_data, ResultUiSettings::GetSchema()); }
+    bool DeserializeDataToApply(const nlohmann::json& json) override {
+        auto loaded = m_data;
+        if (!FieldSerialization::DeserializeFields(json, loaded, ResultUiSettings::GetSchema())) return false;
+        m_data = loaded; return true;
+    }
+    bool DrawDataOnEditor() override { return FieldEditor::DrawFields(m_data, ResultUiSettings::GetSchema()); }
+};

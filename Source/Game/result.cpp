@@ -41,7 +41,8 @@ void ResultScene::Initialize()
         DATA_LOADER->GetAsset<ResultControllerSettingsAsset>("asset/Data/result_controller_settings.data.json", true));
     GameObject* resultUi = CreateGameObject();
     resultUi->SetName("ResultUi");
-    resultUi->AddComponent<ResultUiBehavior>();
+    resultUi->AddComponent<ResultUiBehavior>()->Setup(
+        DATA_LOADER->GetAsset<ResultUiSettingsAsset>("asset/Data/result_ui_settings.data.json", true));
     controller->AddComponent<GameAudioControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<GameAudioSettingsAsset>("asset/Data/game_audio_settings.data.json", true), GameBgm::Result);
     controller->AddComponent<GameFeedbackController>();
@@ -50,6 +51,8 @@ void ResultScene::Initialize()
         DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/stage_decoration_settings.data.json", true));
+
+
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });

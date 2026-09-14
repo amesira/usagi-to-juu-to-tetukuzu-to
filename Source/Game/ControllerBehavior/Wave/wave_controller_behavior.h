@@ -43,6 +43,7 @@ class WaveControllerBehavior : public BehaviorComponent {
     };
     WaveSettings m_settings;
     WaveProgress m_progress;
+    bool m_resultSaved = false;
     std::vector<SpawnedEnemy> m_enemies;
     std::array<std::string, 4> m_definitionPaths = {{
         "asset/Data/enemy_ground_melee.definition.data.json",

@@ -34,6 +34,7 @@ void WaveControllerBehavior::Start()
         return;
     }
     GameControllerLocator::s_waveController = this;
+    GameResultStore::lastRun = {};
     // エディタのAsset型登録もGetAssetで行われる。欠落時に別種の初期値を保存しない。
     for (const auto& path : m_definitionPaths) DATA_LOADER->GetAsset<EnemyDefinitionAsset>(path);
 
@@ -252,7 +253,10 @@ void WaveControllerBehavior::Update()
         if (auto* health = object.GetComponent<HealthBehavior>()) playerDead = health->IsDead();
         break;
     }
-    if (playerDead) m_progress.state = WaveProgress::State::GameOver;
+    if (playerDead && m_progress.state != WaveProgress::State::Complete && m_progress.state != WaveProgress::State::GameOver) {
+        m_progress.RecordCurrentWave(false);
+        m_progress.state = WaveProgress::State::GameOver;
+    }
 
     const bool ready = hasPlayer && aiWorld && aiWorld->GetEnable()
         && aiWorld->IsInitialized() && aiWorld->GetMetaAI().HasPlayer();
@@ -260,6 +264,15 @@ void WaveControllerBehavior::Update()
     const auto previousState = m_progress.state;
     const int previousWave = m_progress.waveNumber;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
+    if (m_progress.state == WaveProgress::State::Complete || m_progress.state == WaveProgress::State::GameOver) {
+        if (!m_resultSaved) {
+            GameResultStore::lastRun = {m_progress.results, m_progress.elapsedTime, m_progress.state == WaveProgress::State::Complete};
+            m_resultSaved = true;
+            StopAllEnemies(scene, aiWorld);
+        }
+        EngineServiceLocator::ChangeSceneWithFade(SceneManager::SceneID::Result);
+        return;
+    }
 
     if (m_progress.waveNumber != previousWave) {
         if (auto* audio = Game::Audio()) {

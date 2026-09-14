@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include "Game/ControllerBehavior/Result/game_result.h"
 
 // エンジンに依存しないウェーブ進行。生成・破棄はControllerが担当する。
 struct WaveSettings {
@@ -26,6 +27,14 @@ public:
     int targetPoints = 0;
     float remainingTime = 0.0f;
     float elapsedTime = 0.0f;
+    std::vector<WaveResult> results;
+
+    void RecordCurrentWave(bool cleared) {
+        if (waveNumber <= 0) return;
+        WaveResult result{waveNumber, wavePoints, targetPoints, cleared};
+        if (!results.empty() && results.back().waveNumber == waveNumber) results.back() = result;
+        else results.push_back(result);
+    }
 
 private:
     bool m_cleanupIssued = false;
@@ -52,12 +61,14 @@ public:
                 m_cleanupRemaining = (std::max)(m_cleanupRemaining - deltaTime, 0.0f);
                 if (!m_cleanupIssued || remainingEnemies > 0) return;
                 if (waveNumber >= (std::max)(settings.waveCount, 1)) {
+                    RecordCurrentWave(true);
                     state = State::Complete;
                     remainingTime = 0;
                     return;
                 }
             }
             if (worldReady && remainingTime <= 0.0f) {
+                if (state == State::Intermission) RecordCurrentWave(true);
                 ++waveNumber;
                 wavePoints = 0;
                 targetPoints = (std::max)(settings.firstTargetPoints +

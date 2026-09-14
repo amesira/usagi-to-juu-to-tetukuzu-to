@@ -1,0 +1,115 @@
+{
+    "data": {
+        "applyChromaticEcho": true,
+        "applyPerspective": true,
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "enabled": false,
+            "offsetDistance": 0.0,
+            "opacity": 0.20000000298023224,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
+        "clearColor": [
+            0.5,
+            1.0,
+            0.699999988079071
+        ],
+        "countDuration": 1.2000000476837158,
+        "failColor": [
+            1.0,
+            0.5,
+            0.5
+        ],
+        "fontSize": 32,
+        "gauge": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                360.0,
+                20.0
+            ]
+        },
+        "label": {
+            "position": [
+                -280.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.6499999761581421,
+                0.6499999761581421
+            ]
+        },
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 12.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "placement": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.6800000071525574,
+                0.4000000059604645
+            ]
+        },
+        "rankWait": 0.800000011920929,
+        "rowSpacing": 55.0,
+        "selectedColor": [
+            1.0,
+            1.0,
+            0.5
+        ],
+        "smoothTime": 0.3499999940395355,
+        "status": {
+            "position": [
+                260.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.6499999761581421,
+                0.6499999761581421
+            ]
+        },
+        "statusWait": 0.5,
+        "summary": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "textColor": [
+            1.0,
+            1.0,
+            1.0
+        ]
+    },
+    "formatVersion": 0,
+    "name": "result_ui_settings.data",
+    "type": "ResultUiSettingsAsset"
+}

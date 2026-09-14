@@ -10,6 +10,8 @@ private:
     int m_settingsAssetRivision = -1;
 
     class TransformComponent* m_resultTextTransform = nullptr;
+    class ResultUiBehavior* m_resultUi = nullptr;
+    bool m_leaving = false;
 
 public:
     void Setup(const ResultControllerSettingsAsset* settings) { m_settings = settings; }
