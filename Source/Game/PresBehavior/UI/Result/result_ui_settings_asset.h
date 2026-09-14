@@ -5,7 +5,11 @@
 #include "Engine/Editor/Schema/field_editor.h"
 namespace ResultUiSettings {
 struct Data {
- UiLayoutSettings::GroupPlacement placement = {{0.68f,0.40f},{0,0}};
+ UiLayoutSettings::GroupPlacement wavePlacement = {{0.68f,0.40f},{0,0}};
+ UiLayoutSettings::GroupPlacement scorePlacement = {{0.68f,0.70f},{0,0}}, rankPlacement = {{0.68f,0.87f},{0,0}}, menuPlacement = {{0.68f,0.95f},{0,0}};
+ UiLayoutSettings::WidgetTransform title = {{-160,0},{0.8f,0.8f},0}, retry = {{160,0},{0.8f,0.8f},0}, selection = {{0,0},{300,52},0};
+ DirectX::XMFLOAT3 selectionColor = {0.2f,0.35f,0.55f};
+ float selectionOpacity = 0.8f, selectionMoveDuration = 0.15f;
  UiLayoutSettings::PerspectiveSettings perspective;
  UiLayoutSettings::ChromaticEchoSettings chromaticEcho;
  UiLayoutSettings::WidgetTransform gauge = {{0,0},{360,20},0}, label = {{-280,0},{0.65f,0.65f},0}, status = {{260,0},{0.65f,0.65f},0}, summary = {{0,0},{0.8f,0.8f},0};
@@ -17,7 +21,16 @@ struct Data {
 inline const auto& GetSchema() {
  using namespace UiLayoutSettings;
  static const auto schema = FieldSchema{
- MakeStructField("placement","placement",&Data::placement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("wavePlacement","wavePlacement",&Data::wavePlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("scorePlacement","scorePlacement",&Data::scorePlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("rankPlacement","rankPlacement",&Data::rankPlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("menuPlacement","menuPlacement",&Data::menuPlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
+ MakeStructField("title","title",&Data::title,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeStructField("retry","retry",&Data::retry,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeStructField("selection","selection",&Data::selection,GetWidgetTransformSchema(),DefaultFieldOptions{}),
+ MakeField("selectionColor","Selection Color",&Data::selectionColor,ColorFieldOptions{}),
+ MakeField("selectionOpacity","Selection Opacity",&Data::selectionOpacity,DragFieldOptions{.dragSpeed=0.01f,.minValue=0,.maxValue=1}),
+ MakeField("selectionMoveDuration","Selection Move Duration",&Data::selectionMoveDuration,DragFieldOptions{.dragSpeed=0.01f,.minValue=0,.maxValue=10}),
  MakeStructField("perspective","perspective",&Data::perspective,GetPerspectiveSchema(),DefaultFieldOptions{}),
  MakeStructField("chromaticEcho","chromaticEcho",&Data::chromaticEcho,GetEchoSchema(),DefaultFieldOptions{}),
  MakeStructField("gauge","gauge",&Data::gauge,GetWidgetTransformSchema(),DefaultFieldOptions{}),

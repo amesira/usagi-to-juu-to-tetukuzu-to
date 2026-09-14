@@ -3,6 +3,7 @@
 #include "result_ui_settings_asset.h"
 #include "Game/ControllerBehavior/Result/game_result.h"
 #include "Game/PresBehavior/UI/ui_handle.h"
+#include "Game/PresBehavior/UI/Title/title_ui_presentation.h"
 class ResultUiBehavior : public BehaviorComponent {
 private:
      struct Row { 
@@ -16,7 +17,8 @@ private:
      GameResult m_result = {};
      ResultScoring::Score m_score;
      std::vector<Row> m_rows;
-     UiHandle m_total, m_complete, m_time, m_rank, m_title, m_retry;
+     UiHandle m_total, m_complete, m_time, m_rank, m_title, m_retry, m_selectionBackground;
+     TitleUiSelectionMotion m_selectionMotion;
      Phase m_phase = Phase::Waves;
      size_t m_row = 0;
      float m_age = 0;
@@ -26,6 +28,7 @@ private:
      DirectX::XMFLOAT2 m_screen = {};
 
      void ApplyLayout();
+     void ApplySelectionPosition();
      void Advance(Phase phase) { m_phase = phase; m_age = 0; }
 
 public:

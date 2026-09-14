@@ -1,5 +1,6 @@
 #include "Game/ControllerBehavior/Wave/wave_progress.h"
 #include "Game/PresBehavior/UI/Result/result_ui_settings_asset.h"
+#include "Game/PresBehavior/UI/Title/title_ui_presentation.h"
 #include <cassert>
 #include <fstream>
 
@@ -25,6 +26,22 @@ int main(int argc, char**) {
     auto json=FieldSerialization::SerializeFields(data, ResultUiSettings::GetSchema());
     assert(json.contains("perspective") && json.contains("chromaticEcho"));
     assert(FieldSerialization::DeserializeFields(json, data, ResultUiSettings::GetSchema()));
+    std::ifstream currentFile("asset/Data/result_ui_settings.data.json");
+    auto currentJson = nlohmann::json::parse(currentFile);
+    assert(FieldSerialization::DeserializeFields(currentJson.at("data"), data, ResultUiSettings::GetSchema()));
+    const auto scoreCenter = UiLayoutSettings::ResolveGroupPosition(data.scorePlacement, {1920,1080});
+    data.wavePlacement.position.x += 100;
+    const auto sameScoreCenter = UiLayoutSettings::ResolveGroupPosition(data.scorePlacement, {1920,1080});
+    assert(scoreCenter.x == sameScoreCenter.x && scoreCenter.y == sameScoreCenter.y);
+    assert(data.title.position.x < data.retry.position.x);
+    TitleUiSelectionMotion motion;
+    motion.MoveTo(data.title.position, 0);
+    motion.MoveTo(data.retry.position, 0.2f);
+    motion.Update(0.1f);
+    assert(motion.GetPosition().x > data.title.position.x && motion.GetPosition().x < data.retry.position.x);
+    motion.MoveTo(data.title.position, 0.2f);
+    motion.Update(0.2f);
+    assert(motion.GetPosition().x == data.title.position.x);
     if (argc > 1) { std::ofstream file("asset/Data/result_ui_settings.data.json");
     file << nlohmann::json{{"data",json},{"formatVersion",0},{"name","result_ui_settings.data"},{"type","ResultUiSettingsAsset"}}.dump(4); }
 }

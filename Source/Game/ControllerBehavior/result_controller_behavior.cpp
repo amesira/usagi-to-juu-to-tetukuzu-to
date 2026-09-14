@@ -53,8 +53,10 @@ void ResultControllerBehavior::Update()
     }
     if (m_leaving || !m_resultUi || !m_resultUi->IsMenuReady()) return;
     int selection = m_resultUi->GetSelection();
-    if (Keyboard_IsKeyDownTrigger(KK_UP) || Keyboard_IsKeyDownTrigger(KK_DOWN)) {
-        selection = 1 - selection;
+    const int previousSelection = selection;
+    if (Keyboard_IsKeyDownTrigger(KK_LEFT)) selection = 0;
+    if (Keyboard_IsKeyDownTrigger(KK_RIGHT)) selection = 1;
+    if (selection != previousSelection) {
         m_resultUi->SetSelection(selection);
         if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuMove);
     }

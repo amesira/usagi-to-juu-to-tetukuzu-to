@@ -12,77 +12,126 @@
                 0.0,
                 0.0
             ],
-            "enabled": false,
-            "offsetDistance": 0.0,
-            "opacity": 0.20000000298023224,
+            "enabled": true,
+            "offsetDistance": 0.5,
+            "opacity": 0.5,
             "orderInLayerOffset": -10,
             "scale": 1.003000020980835
         },
         "clearColor": [
-            0.5,
-            1.0,
-            0.699999988079071
+            0.0042552947998046875,
+            0.9618650674819946,
+            1.0
         ],
         "countDuration": 1.2000000476837158,
         "failColor": [
             1.0,
-            0.5,
-            0.5
+            0.0,
+            0.0
         ],
         "fontSize": 32,
         "gauge": {
             "position": [
-                0.0,
-                0.0
+                19.0,
+                -10.0
             ],
             "rotationDegrees": 0.0,
             "size": [
-                360.0,
+                400.0,
                 20.0
             ]
         },
         "label": {
             "position": [
-                -280.0,
+                -304.0,
                 0.0
             ],
             "rotationDegrees": 0.0,
             "size": [
                 0.6499999761581421,
                 0.6499999761581421
+            ]
+        },
+        "menuPlacement": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.800000011920929,
+                0.8999999761581421
             ]
         },
         "perspective": {
             "cameraDistance": 1200.0,
             "enabled": true,
             "maxTiltDegrees": 20.0,
-            "tiltDegrees": 12.0,
+            "tiltDegrees": 22.0,
             "vanishingPoint": [
                 0.5,
                 0.5
             ]
         },
-        "placement": {
+        "rankPlacement": {
             "position": [
                 0.0,
                 0.0
             ],
             "screenAnchor": [
-                0.6800000071525574,
-                0.4000000059604645
+                0.699999988079071,
+                0.6499999761581421
             ]
         },
         "rankWait": 0.800000011920929,
-        "rowSpacing": 55.0,
+        "retry": {
+            "position": [
+                160.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "rowSpacing": 70.0,
+        "scorePlacement": {
+            "position": [
+                500.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.0,
+                0.699999988079071
+            ]
+        },
         "selectedColor": [
-            1.0,
-            1.0,
-            0.5
+            0.0,
+            0.9361703395843506,
+            1.0
         ],
+        "selection": {
+            "position": [
+                0.0,
+                -10.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                300.0,
+                52.0
+            ]
+        },
+        "selectionColor": [
+            0.13309191167354584,
+            0.1695115864276886,
+            0.3191489577293396
+        ],
+        "selectionMoveDuration": 0.15000000596046448,
+        "selectionOpacity": 0.800000011920929,
         "smoothTime": 0.3499999940395355,
         "status": {
             "position": [
-                260.0,
+                354.0,
                 0.0
             ],
             "rotationDegrees": 0.0,
@@ -91,7 +140,7 @@
                 0.6499999761581421
             ]
         },
-        "statusWait": 0.5,
+        "statusWait": 0.10000000149011612,
         "summary": {
             "position": [
                 0.0,
@@ -107,7 +156,28 @@
             1.0,
             1.0,
             1.0
-        ]
+        ],
+        "title": {
+            "position": [
+                -160.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "wavePlacement": {
+            "position": [
+                500.0,
+                -240.0
+            ],
+            "screenAnchor": [
+                0.0,
+                0.6000000238418579
+            ]
+        }
     },
     "formatVersion": 0,
     "name": "result_ui_settings.data",

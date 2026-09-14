@@ -50,61 +50,83 @@ void ResultUiBehavior::Start() {
           m_rows.push_back(row);
      }
      m_total = createText(); m_complete = createText(); m_time = createText(); m_rank = createText(); m_title = createText(); m_retry = createText();
+     m_selectionBackground = UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp");
      Text(m_title,"タイトルへ戻る"); Text(m_retry,"もう一度");
-     for (auto handle : {m_total,m_complete,m_time,m_rank,m_title,m_retry}) handle.SetActive(false);
+     for (auto handle : {m_total,m_complete,m_time,m_rank,m_title,m_retry,m_selectionBackground}) handle.SetActive(false);
      m_created = true; ApplyLayout();
      if (m_rows.empty()) Advance(Phase::Total);
 }
 void ResultUiBehavior::ApplyLayout() {
-     m_settings = m_asset ? m_asset->GetData() : ResultUiSettings::Data{};
-     m_screen = {static_cast<float>(Direct3D_GetBackBufferWidth()),static_cast<float>(Direct3D_GetBackBufferHeight())};
-     const auto center = UiLayoutSettings::ResolveGroupPosition(m_settings.placement,m_screen);
-     auto perspective = m_settings.perspective;
-     perspective.enabled = perspective.enabled && m_settings.applyPerspective;
-     const auto presentation = UiPerspective::MakeTransform(perspective,center,center,m_screen);
-     auto echoSettings = m_settings.chromaticEcho;
-     echoSettings.enabled = echoSettings.enabled && m_settings.applyChromaticEcho;
-     const auto echo = UiLayoutSettings::ResolveChromaticEcho(echoSettings,perspective.vanishingPoint,m_settings.placement.screenAnchor,m_screen);
-     const float spacing = std::isfinite(m_settings.rowSpacing) ? (std::max)(1.0f,m_settings.rowSpacing) : 55;
-     auto layout = [&](UiHandle handle, const UiLayoutSettings::WidgetTransform& transform, float y) {
-      handle.SetPosition(center.x+transform.position.x,center.y+transform.position.y+y);
-      handle.SetSize(transform.size.x,transform.size.y);
-      if (auto* rect = handle.GetRectTransform()) {
-       rect->SetPosition({center.x+transform.position.x,center.y+transform.position.y+y,120});
-       rect->SetRotation({0,0,DirectX::XMConvertToRadians(transform.rotationDegrees)});
-       rect->SetPresentationTransform(presentation); rect->SetChromaticEcho(echo);
-      }
-      handle.SetColor(m_settings.textColor);
-      if (auto* text = handle.GetText()) text->SetFontSize(std::clamp(m_settings.fontSize,1,256));
-     };
-     for (size_t i=0;i<m_rows.size();++i) {
-      auto& row=m_rows[i]; const float y=spacing*static_cast<float>(i);
-      layout(row.label,m_settings.label,y); layout(row.gauge,m_settings.gauge,y); layout(row.status,m_settings.status,y);
-      row.status.SetColor(m_result.waves[i].cleared ? m_settings.clearColor : m_settings.failColor);
-     }
-     const float y=spacing*static_cast<float>(m_rows.size()+1);
-     layout(m_total,m_settings.summary,y);
-     layout(m_complete,m_settings.summary,y+spacing);
-     layout(m_time,m_settings.summary,y+spacing*2);
-     layout(m_rank,m_settings.summary,y+spacing*(m_result.completed?3:1));
-     layout(m_title,m_settings.summary,y+spacing*(m_result.completed?4:2));
-     layout(m_retry,m_settings.summary,y+spacing*(m_result.completed?5:3));
-     m_revision = m_asset ? m_asset->GetRevision() : 0;
-     SetSelection(m_selection);
+    m_settings = m_asset ? m_asset->GetData() : ResultUiSettings::Data{};
+    m_screen = {static_cast<float>(Direct3D_GetBackBufferWidth()), static_cast<float>(Direct3D_GetBackBufferHeight())};
+    const float spacing = std::isfinite(m_settings.rowSpacing) ? (std::max)(1.0f, m_settings.rowSpacing) : 55;
+    auto layout = [&](UiHandle handle, const UiLayoutSettings::WidgetTransform& transform,
+                      const UiLayoutSettings::GroupPlacement& placement, float y = 0, float layer = 120) {
+        const auto center = UiLayoutSettings::ResolveGroupPosition(placement, m_screen);
+        auto perspective = m_settings.perspective;
+        perspective.enabled = perspective.enabled && m_settings.applyPerspective;
+        const auto presentation = UiPerspective::MakeTransform(perspective, center, center, m_screen);
+        auto echoSettings = m_settings.chromaticEcho;
+        echoSettings.enabled = echoSettings.enabled && m_settings.applyChromaticEcho;
+        const auto echo = UiLayoutSettings::ResolveChromaticEcho(echoSettings, perspective.vanishingPoint, placement.screenAnchor, m_screen);
+        handle.SetSize(transform.size.x, transform.size.y);
+        if (auto* rect = handle.GetRectTransform()) {
+            rect->SetPosition({center.x + transform.position.x, center.y + transform.position.y + y, layer});
+            rect->SetRotation({0, 0, DirectX::XMConvertToRadians(transform.rotationDegrees)});
+            rect->SetPresentationTransform(presentation);
+            rect->SetChromaticEcho(echo);
+        }
+        handle.SetColor(m_settings.textColor);
+        if (auto* text = handle.GetText()) text->SetFontSize(std::clamp(m_settings.fontSize, 1, 256));
+    };
+    for (size_t i = 0; i < m_rows.size(); ++i) {
+        auto& row = m_rows[i];
+        const float y = spacing * static_cast<float>(i);
+        layout(row.label, m_settings.label, m_settings.wavePlacement, y);
+        layout(row.gauge, m_settings.gauge, m_settings.wavePlacement, y);
+        layout(row.status, m_settings.status, m_settings.wavePlacement, y);
+        row.status.SetColor(m_result.waves[i].cleared ? m_settings.clearColor : m_settings.failColor);
+    }
+    layout(m_total, m_settings.summary, m_settings.scorePlacement);
+    layout(m_complete, m_settings.summary, m_settings.scorePlacement, spacing);
+    layout(m_time, m_settings.summary, m_settings.scorePlacement, spacing * 2);
+    layout(m_rank, m_settings.summary, m_settings.rankPlacement);
+    layout(m_title, m_settings.title, m_settings.menuPlacement);
+    layout(m_retry, m_settings.retry, m_settings.menuPlacement);
+    layout(m_selectionBackground, m_settings.selection, m_settings.menuPlacement, 0, 119);
+    m_selectionBackground.SetColor(m_settings.selectionColor);
+    m_selectionBackground.SetAlpha(std::isfinite(m_settings.selectionOpacity) ? std::clamp(m_settings.selectionOpacity, 0.0f, 1.0f) : 0.8f);
+    m_revision = m_asset ? m_asset->GetRevision() : 0;
+    const auto target = m_selection == 0 ? m_settings.title.position : m_settings.retry.position;
+    m_selectionMotion.MoveTo({target.x + m_settings.selection.position.x, target.y + m_settings.selection.position.y}, 0);
+    ApplySelectionPosition();
+    SetSelection(m_selection);
+}
+
+void ResultUiBehavior::ApplySelectionPosition() {
+    const auto center = UiLayoutSettings::ResolveGroupPosition(m_settings.menuPlacement, m_screen);
+    const auto offset = m_selectionMotion.GetPosition();
+    m_selectionBackground.SetPosition(center.x + offset.x, center.y + offset.y);
 }
 
 void ResultUiBehavior::SetSelection(int selection) {
-     m_selection = std::clamp(selection,0,1);
-     m_title.SetColor(m_selection==0?m_settings.selectedColor:m_settings.textColor);
-     m_retry.SetColor(m_selection==1?m_settings.selectedColor:m_settings.textColor);
-     Text(m_title,m_selection==0?"▶ タイトルへ戻る":"タイトルへ戻る");
-     Text(m_retry,m_selection==1?"▶ もう一度":"もう一度");
+    const int next = std::clamp(selection, 0, 1);
+    if (next != m_selection) {
+        const auto target = next == 0 ? m_settings.title.position : m_settings.retry.position;
+        m_selectionMotion.MoveTo({target.x + m_settings.selection.position.x, target.y + m_settings.selection.position.y}, m_settings.selectionMoveDuration);
+    }
+    m_selection = next;
+    m_title.SetColor(m_selection == 0 ? m_settings.selectedColor : m_settings.textColor);
+    m_retry.SetColor(m_selection == 1 ? m_settings.selectedColor : m_settings.textColor);
+    Text(m_title, "タイトルへ戻る");
+    Text(m_retry, "もう一度");
 }
-
 void ResultUiBehavior::Update() {
      if (!m_created) { Start(); if (!m_created) return; }
      if (m_revision!=(m_asset?m_asset->GetRevision():0) || m_screen.x!=Direct3D_GetBackBufferWidth() || m_screen.y!=Direct3D_GetBackBufferHeight()) ApplyLayout();
      const float dt=Duration(FPS_GetUnscaledDeltaTime()); m_age+=dt;
+     m_selectionMotion.Update(dt);
+     ApplySelectionPosition();
      const float duration=Duration(m_settings.countDuration);
      const float t=duration>0?std::clamp(m_age/duration,0.0f,1.0f):1;
      const double eased=static_cast<double>(t*t*(3-2*t));
@@ -137,15 +159,15 @@ void ResultUiBehavior::Update() {
       if(t>=1)Advance(Phase::Rank);break;
      case Phase::Rank:
       total(m_score.total);m_rank.SetActive(true);Text(m_rank,"評価  "+std::to_string(m_score.rank)+" / 5");
-      if(m_age>=Duration(m_settings.rankWait)){Advance(Phase::Menu);m_title.SetActive(true);m_retry.SetActive(true);}break;
+      if(m_age>=Duration(m_settings.rankWait)){Advance(Phase::Menu);m_title.SetActive(true);m_retry.SetActive(true);m_selectionBackground.SetActive(true);}break;
      case Phase::Menu:break;
      }
 }
 void ResultUiBehavior::DestroyWidgets() {
      for(auto& row:m_rows)for(auto handle:{row.label,row.gauge,row.status})handle.Destroy();
      m_rows.clear();
-     for(auto handle:{m_total,m_complete,m_time,m_rank,m_title,m_retry})handle.Destroy();
-     m_total={};m_complete={};m_time={};m_rank={};m_title={};m_retry={};m_created=false;
+     for(auto handle:{m_total,m_complete,m_time,m_rank,m_title,m_retry,m_selectionBackground})handle.Destroy();
+     m_total={};m_complete={};m_time={};m_rank={};m_title={};m_retry={};m_selectionBackground={};m_selectionMotion={};m_created=false;
 }
 void ResultUiBehavior::DrawComponentInspector() {
      ImGui::Text("Result phase: %d | Wave row: %d",static_cast<int>(m_phase),static_cast<int>(m_row));
