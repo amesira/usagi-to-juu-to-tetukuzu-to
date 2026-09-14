@@ -654,6 +654,7 @@
     <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_blend.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_settings_asset.h" />
     <ClInclude Include="Source\Engine\Device\keyboard.h" />
     <ClInclude Include="Source\Engine\Device\mouse.h" />
     <ClInclude Include="Source\Engine\Core\processor.h" />

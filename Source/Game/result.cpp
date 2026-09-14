@@ -37,7 +37,8 @@ void ResultScene::Initialize()
 
     GameObject* controller = CreateGameObject();
     controller->SetName("ResultController");
-    controller->AddComponent<ResultControllerBehavior>();
+    controller->AddComponent<ResultControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<ResultControllerSettingsAsset>("asset/Data/result_controller_settings.data.json", true));
     GameObject* resultUi = CreateGameObject();
     resultUi->SetName("ResultUi");
     resultUi->AddComponent<ResultUiBehavior>();
