@@ -8,7 +8,7 @@ class TitleControllerBehavior : public BehaviorComponent {
 private:
     class TitleUiBehavior* m_titleUi = nullptr;
     class PlayerUiBehavior* m_playerUi = nullptr;
-    class TitleCameraBehavior* m_camera = nullptr;
+    class OverviewCameraBehavior* m_camera = nullptr;
     int m_selectedMenu = 0;
     enum class State { Menu, ExitConfirm, QuitRequested, StartingGame, EnteringPractice, Practice };
     bool m_exitYesSelected = false;

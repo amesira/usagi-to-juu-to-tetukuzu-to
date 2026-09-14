@@ -213,7 +213,7 @@
       <Filter>Sources\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
-    <ClCompile Include="Source\Game\PresBehavior\Camera\title_camera_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\result_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp">
@@ -574,9 +574,9 @@
     </ClInclude>
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_phase_motion.h" />
     <ClInclude Include="Source\Engine\Core\scene_transition.h" />
-    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_behavior.h" />
-    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />
-    <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_blend.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_blend.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Component\behavior_component.h">

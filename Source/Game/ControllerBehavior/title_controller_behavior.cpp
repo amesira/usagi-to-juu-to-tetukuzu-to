@@ -7,7 +7,7 @@
 #include "Engine/engine_service_locator.h"
 #include "Game/PresBehavior/UI/Title/title_ui_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
-#include "Game/PresBehavior/Camera/title_camera_behavior.h"
+#include "Game/PresBehavior/Camera/overview_camera_behavior.h"
 #include "External/ImGui/imgui.h"
 
 void TitleControllerBehavior::Start()
@@ -15,7 +15,7 @@ void TitleControllerBehavior::Start()
     auto* scene = GetOwner()->GetScene();
     if (auto* object = scene->GetGameObjectByName("TitleUi")) m_titleUi = object->GetComponent<TitleUiBehavior>();
     if (auto* object = scene->GetGameObjectByName("Player")) m_playerUi = object->GetComponent<PlayerUiBehavior>();
-    if (auto* object = scene->GetGameObjectByName("TitleViewCamera")) m_camera = object->GetComponent<TitleCameraBehavior>();
+    if (auto* object = scene->GetGameObjectByName("TitleViewCamera")) m_camera = object->GetComponent<OverviewCameraBehavior>();
     if (m_playerUi) m_playerUi->SetVisible(false);
 }
 
@@ -38,7 +38,7 @@ void TitleControllerBehavior::Update()
         return;
     }
     if (m_state == State::EnteringPractice) {
-        if (m_camera && m_camera->GetMode() == TitleCameraBehavior::Mode::FollowingTps) {
+        if (m_camera && m_camera->GetMode() == OverviewCameraBehavior::Mode::FollowingTps) {
             m_state = State::Practice;
             if (m_playerUi) m_playerUi->SetVisible(true);
         }
@@ -91,7 +91,7 @@ void TitleControllerBehavior::DrawComponentInspector()
 
 void TitleControllerBehavior::EnterPractice()
 {
-    if (m_state != State::Menu || !m_camera || !m_camera->BeginPractice()) return;
+    if (m_state != State::Menu || !m_camera || !m_camera->BeginTpsFollow()) return;
     if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuConfirm);
     m_state = State::EnteringPractice;
     if (m_titleUi) {
@@ -106,7 +106,7 @@ void TitleControllerBehavior::ReturnToTitle()
     if (m_state == State::QuitRequested || m_state == State::StartingGame) return;
     if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuCancel);
     m_state = State::Menu;
-    if (m_camera) m_camera->ReturnToTitle();
+    if (m_camera) m_camera->ReturnToOverview();
     if (m_titleUi) {
         m_titleUi->SetVisible(true);
         m_titleUi->SetExitPopupVisible(false);

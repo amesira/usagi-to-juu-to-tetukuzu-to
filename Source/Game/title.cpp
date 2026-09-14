@@ -7,7 +7,7 @@
 #include "Game/ControllerBehavior/title_controller_behavior.h"
 #include "Game/PresBehavior/UI/Title/title_ui_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
-#include "Game/PresBehavior/Camera/title_camera_behavior.h"
+#include "Game/PresBehavior/Camera/overview_camera_behavior.h"
 #include "Engine/Component/camera_component.h"
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
@@ -59,8 +59,8 @@ void TitleScene::Initialize()
 
     GameObject* viewCamera = EnvironmentFactory::CreateCamera(this, {0,45,-25}, {0,0,10});
     viewCamera->SetName("TitleViewCamera");
-    viewCamera->AddComponent<TitleCameraBehavior>()->Setup(
-        DATA_LOADER->GetAsset<TitleCameraSettingsAsset>("asset/Data/title_camera_settings.data.json", true));
+    viewCamera->AddComponent<OverviewCameraBehavior>()->Setup(
+        DATA_LOADER->GetAsset<OverviewCameraSettingsAsset>("asset/Data/title_camera_settings.data.json", true));
 
     // プレイヤープレハブ生成
     PrefabFactory::PlayerPrefab playerPrefab = PrefabFactory::CreatePlayerPrefab(this, { 0.0f,10.0f,10.0f });

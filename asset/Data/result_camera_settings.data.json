@@ -1,19 +1,19 @@
 {
     "data": {
         "blendDuration": 1.2000000476837158,
-        "fovDegrees": 50.0,
+        "fovDegrees": 100.0,
         "lookAt": [
-            -10.0,
-            6.0,
-            20.0
+            0.0,
+            20.0,
+            10.0
         ],
         "position": [
-            5.0,
-            14.0,
+            10.0,
+            10.0,
             0.0
         ]
     },
     "formatVersion": 0,
-    "name": "title_camera_settings.data",
+    "name": "result_camera_settings.data",
     "type": "OverviewCameraSettingsAsset"
 }

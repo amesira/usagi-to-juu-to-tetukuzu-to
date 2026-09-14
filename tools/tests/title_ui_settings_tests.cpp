@@ -1,7 +1,7 @@
 #include "Game/PresBehavior/UI/Title/title_ui_settings_asset.h"
 #include "Game/PresBehavior/UI/Title/title_ui_presentation.h"
-#include "Game/PresBehavior/Camera/title_camera_blend.h"
-#include "Game/PresBehavior/Camera/title_camera_settings_asset.h"
+#include "Game/PresBehavior/Camera/overview_camera_blend.h"
+#include "Game/PresBehavior/Camera/overview_camera_settings_asset.h"
 #include "Engine/Component/camera_component.h"
 #include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
 #include "Game/PresBehavior/UI/Player/player_ui_perspective.h"
@@ -10,7 +10,7 @@
 #include <iostream>
 
 int main(int argc, char**) {
-    TitleCameraBlend blend;
+    OverviewCameraBlend blend;
     blend.Start({{0,40,-20},{0,0,0},60}, 1);
     auto pose = blend.Update({{0,10,-10},{0,5,0},80},0.5f);
     assert(pose.position.y == 25 && pose.fov == 70 && !blend.IsComplete());
@@ -26,8 +26,8 @@ int main(int argc, char**) {
     assert(!camera.GetRenderEnabled() && camera.GetEnable());
     std::ifstream cameraFile("asset/Data/title_camera_settings.data.json");
     const auto cameraJson = nlohmann::json::parse(cameraFile);
-    TitleCameraSettings::Data cameraSettings;
-    assert(FieldSerialization::DeserializeFields(cameraJson.at("data"),cameraSettings,TitleCameraSettings::GetSchema()));
+    OverviewCameraSettings::Data cameraSettings;
+    assert(FieldSerialization::DeserializeFields(cameraJson.at("data"),cameraSettings,OverviewCameraSettings::GetSchema()));
     assert(cameraSettings.blendDuration > 0 && cameraSettings.position.y > cameraSettings.lookAt.y);
     TitleUiSettings::Data data;
     const auto saved = FieldSerialization::SerializeFields(data, TitleUiSettings::GetSchema());

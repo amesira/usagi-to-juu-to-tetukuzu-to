@@ -3,19 +3,19 @@
 #include <algorithm>
 #include <cmath>
 
-struct TitleCameraPose {
+struct OverviewCameraPose {
     DirectX::XMFLOAT3 position = {}, lookAt = {};
     float fov = 60;
 };
-class TitleCameraBlend {
-    TitleCameraPose m_start;
+class OverviewCameraBlend {
+    OverviewCameraPose m_start;
     float m_elapsed = 0, m_duration = 0;
 public:
-    void Start(const TitleCameraPose& start, float duration) {
+    void Start(const OverviewCameraPose& start, float duration) {
         m_start = start; m_elapsed = 0;
         m_duration = std::isfinite(duration) ? (std::max)(duration, 0.0f) : 0;
     }
-    TitleCameraPose Update(const TitleCameraPose& target, float deltaTime) {
+    OverviewCameraPose Update(const OverviewCameraPose& target, float deltaTime) {
         if (std::isfinite(deltaTime) && deltaTime > 0) m_elapsed = (std::min)(m_elapsed + deltaTime, m_duration);
         if (IsComplete()) return target;
         float t = m_elapsed / m_duration;
