@@ -13,7 +13,7 @@
         "aimTransitionTime": 0.05000000074505806,
         "bulletDamage": 30.0,
         "bulletLifetime": 3.0,
-        "bulletSpawnForwardOffset": 1.0,
+        "bulletSpawnForwardOffset": 1.5,
         "chargeCompleteEffectOffset": [
             1.0,
             1.2999999523162842,

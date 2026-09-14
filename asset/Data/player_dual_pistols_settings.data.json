@@ -4,7 +4,7 @@
         "bulletDamage": 10.0,
         "bulletLifetime": 3.0,
         "bulletRadius": 0.30000001192092896,
-        "bulletSpawnForwardOffset": 0.20000000298023224,
+        "bulletSpawnForwardOffset": 1.5,
         "bulletSpeed": 150.0,
         "chainTime": 0.20000000298023224,
         "endTime": 0.4000000059604645,

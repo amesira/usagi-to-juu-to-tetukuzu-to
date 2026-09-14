@@ -12,7 +12,7 @@ class PlayerUiRemainingLife {
 private:
     PlayerUi::WidgetGroup* m_group = nullptr;
     PlayerUiWidgetElement m_gauge;
-    float m_fillAmount = 1;
+    float m_fillAmount = 0;
 
 public:
     void ApplyColors(const DirectX::XMFLOAT3& color2);

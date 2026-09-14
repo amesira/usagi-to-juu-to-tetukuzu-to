@@ -112,6 +112,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
             context.settings().aimTransitionTime,
             context.settings().aimRadialBlurHoldTime
         );
+        Game::Audio()->PlaySe(GameSe::ShotgunAim);
         break;
     }
     case EffectsType::AimExit: {
@@ -121,6 +122,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
             context.settings().aimTransitionTime,
             context.settings().aimRadialBlurHoldTime
         );
+        Game::Audio()->PlaySe(GameSe::ShotgunAim);
         break;
     }
     // === チャージ関連のエフェクト ===

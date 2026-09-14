@@ -46,7 +46,7 @@ void GameAudioControllerBehavior::Reload() {
         else { ++failed; OutputDebugStringW((L"Cannot load PCM WAV: " + wide + L"\n").c_str()); }
         return id;
     };
-    m_bgmIds = {load(s.titleBgm), load(s.battleBgm), load(s.resultBgm)};
+    m_bgmIds = {load(s.titleBgm), load(s.battleBgm), load(s.battleBgm2), load(s.battleBgm3), load(s.resultBgm)};
     // Keep this list in GameSe order. The size check detects missing entries.
     const int seIds[] = {
         load(s.shotgun),load(s.shotgunAim), load(s.dualPistols), load(s.slashBurst), load(s.slashBurst2),

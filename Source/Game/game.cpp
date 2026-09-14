@@ -40,6 +40,8 @@
 #include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Game/PresBehavior/UI/Wave/wave_ui_behavior.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+
 #include "Engine/Graphics/texture_repository.h"
 
 // ゲームシーン初期化処理
@@ -89,6 +91,10 @@ void GameScene::Initialize()
 // ゲームシーン終了処理
 void GameScene::Finalize()
 {
+    if (auto* audio = GameControllerLocator::Audio()) {
+        audio->StopBgm();
+    }
+
     std::vector<GameObject>& gameObjects = this->GetGameObjects();
     for (GameObject& obj : gameObjects) {
         obj.Destroy();

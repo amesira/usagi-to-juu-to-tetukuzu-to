@@ -258,7 +258,15 @@ void WaveControllerBehavior::Update()
         && aiWorld->IsInitialized() && aiWorld->GetMetaAI().HasPlayer();
 
     const auto previousState = m_progress.state;
+    const int previousWave = m_progress.waveNumber;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
+
+    if (m_progress.waveNumber != previousWave) {
+        if (auto* audio = Game::Audio()) {
+            if (m_progress.waveNumber == 3) audio->SetBgm(GameBgm::Battle2);
+            else if (m_progress.waveNumber == 5) audio->SetBgm(GameBgm::Battle3);
+        }
+    }
 
     if (m_progress.ShouldCleanupEnemies()) {
         CleanupRemainingEnemies(scene, aiWorld);

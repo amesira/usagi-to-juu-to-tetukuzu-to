@@ -151,7 +151,7 @@ void PlayerDualPistolsEffects::PlayEffects(PlayerDualPistolsContext& context, Ef
             break;
         }
         case EffectsType::BurstHit: {
-            Game::GameFeedback()->ChangeFOVTemporary(55.0f, 0.05f, 0.01f);
+            Game::GameFeedback()->ChangeFOVTemporary(65.0f, 0.05f, 0.01f);
             Game::CustomPostEffect()->PlayEffect(CustomPostEffectType::RadialBlur, 0.3f, 0.05f, 0.01f);
             break;
         }
