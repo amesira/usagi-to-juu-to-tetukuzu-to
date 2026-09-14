@@ -8,6 +8,7 @@
 #pragma once
 #include <DirectXMath.h>
 #include "Game/PresBehavior/attached_effect_handle.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 
 struct PlayerShotgunContext;
 
@@ -28,6 +29,8 @@ private:
     AttachedEffectHandle m_chargeEffect;
     AttachedEffectHandle m_chargeCompleteEffect;
     AttachedEffectHandle m_muzzleFlashEffect;
+
+    AudioLoopHandle m_chargeLoopSe;
 
     bool m_initialized = false;
 

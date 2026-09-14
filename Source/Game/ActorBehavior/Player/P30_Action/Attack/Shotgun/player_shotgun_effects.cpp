@@ -18,6 +18,7 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 
 #include <filesystem>
 
@@ -132,6 +133,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
             context.settings().chargeStartTransitionTime,
             0.0f
         );
+        m_chargeLoopSe = Game::Audio()->StartLoopSe(GameSe::Charge);
         break;
     }
     case EffectsType::ResetCharge: {
@@ -140,10 +142,12 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         Game::CustomPostEffect()->PlayEffect(
             CustomPostEffectType::MonoMask, 0.0f, context.settings().chargeResetTransitionTime, 0.0f
         );
+        Game::Audio()->StopLoopSe(m_chargeLoopSe);
         break;
     }
     case EffectsType::ChargeComplete: {
         m_chargeCompleteEffect.Play();
+        Game::Audio()->PlaySe(GameSe::ChargeComplete);
         break;
     }
     // === 発射関連のエフェクト ===
@@ -151,6 +155,7 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         m_chargeEffect.Stop();
         m_muzzleFlashEffect.Play();
         Game::GameFeedback()->PlayCameraShake(0.2f, 1.0f);
+        Game::Audio()->PlaySe(GameSe::Shotgun);
         break;
     }
     default: break;

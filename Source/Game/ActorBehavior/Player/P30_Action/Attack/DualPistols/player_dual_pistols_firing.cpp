@@ -55,5 +55,4 @@ void PlayerDualPistolsFiring::Fire(
     bulletDesc.damage = settings.bulletDamage;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
-    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::DualPistols);
 }

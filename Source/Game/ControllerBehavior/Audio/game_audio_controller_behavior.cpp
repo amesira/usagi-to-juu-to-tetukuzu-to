@@ -22,7 +22,12 @@ void GameAudioControllerBehavior::ReleaseSounds() {
 }
 float GameAudioControllerBehavior::FadeDuration() const { return m_settingsAsset ? m_settingsAsset->GetData().fadeDuration : 0; }
 int GameAudioControllerBehavior::CurrentBgmId() const {
-    return m_current == GameBgm::Title ? m_bgmIds[0] : m_current == GameBgm::Battle ? m_bgmIds[1] : -1;
+    switch (m_current) {
+    case GameBgm::Title: return m_bgmIds[0];
+    case GameBgm::Battle: return m_bgmIds[1];
+    case GameBgm::Result: return m_bgmIds[2];
+    default: return -1;
+    }
 }
 void GameAudioControllerBehavior::Reload() {
     ReleaseSounds(); m_fade = {};
@@ -39,8 +44,18 @@ void GameAudioControllerBehavior::Reload() {
         else { ++failed; OutputDebugStringW((L"Cannot load PCM WAV: " + wide + L"\n").c_str()); }
         return id;
     };
-    m_bgmIds = {load(s.titleBgm), load(s.battleBgm)};
-    m_seIds = {load(s.shotgun), load(s.dualPistols), load(s.playerHit), load(s.enemyHit), load(s.menuMove), load(s.menuConfirm), load(s.menuCancel)};
+    m_bgmIds = {load(s.titleBgm), load(s.battleBgm), load(s.resultBgm)};
+    // Keep this list in GameSe order. The size check detects missing entries.
+    const int seIds[] = {
+        load(s.shotgun), load(s.dualPistols), load(s.slashBurst), load(s.slashBurst2),
+        load(s.charge), load(s.chargeComplete),
+        load(s.playerRun), load(s.playerJump), load(s.playerLand),
+        load(s.enemyShot), load(s.enemySlash),
+        load(s.playerHit), load(s.enemyHit), load(s.recovery), load(s.getItem),
+        load(s.menuMove), load(s.menuConfirm), load(s.menuCancel)
+    };
+    static_assert(std::size(seIds) == static_cast<size_t>(GameSe::MAX));
+    std::copy(std::begin(seIds), std::end(seIds), m_seIds.begin());
     m_status = "Loaded: " + std::to_string(loaded) + " / Failed: " + std::to_string(failed);
     if (!IsAudioInitialized()) m_status += " (audio device unavailable)";
     StartRequestedBgm(); ApplyVolumes();
@@ -61,6 +76,15 @@ void GameAudioControllerBehavior::SetBgm(GameBgm bgm) {
 bool GameAudioControllerBehavior::PlaySe(GameSe se) {
     const auto index = static_cast<size_t>(se);
     return GetEnable() && index < m_seIds.size() && PlayAudioOneShot(m_seIds[index], m_seVolume);
+}
+AudioLoopHandle GameAudioControllerBehavior::StartLoopSe(GameSe se) {
+    const auto index = static_cast<size_t>(se);
+    if (!GetEnable() || index >= m_seIds.size()) return InvalidAudioLoopHandle;
+    return StartAudioLoop(m_seIds[index], m_seVolume);
+}
+void GameAudioControllerBehavior::StopLoopSe(AudioLoopHandle handle) {
+    // Stopping is allowed even when this controller has been disabled.
+    StopAudioLoop(handle);
 }
 void GameAudioControllerBehavior::ApplyVolumes() {
     SetMasterAudioVolume(m_masterVolume);
@@ -83,14 +107,6 @@ void GameAudioControllerBehavior::DrawComponentInspector() {
         ImGui::SliderFloat("Master Volume", &m_masterVolume, 0, 1);
         ImGui::SliderFloat("BGM Volume", &m_bgmVolume, 0, 1);
         ImGui::SliderFloat("SE Volume", &m_seVolume, 0, 1);
-        if (ImGui::Button("Reload Audio")) Reload();
-        if (ImGui::Button("Title BGM")) SetBgm(GameBgm::Title);
-        ImGui::SameLine(); if (ImGui::Button("Battle BGM")) SetBgm(GameBgm::Battle);
-        ImGui::SameLine(); if (ImGui::Button("Stop BGM")) StopBgm();
-        const char* labels[] = {"Shotgun", "Dual Pistols", "Player Hit", "Enemy Hit", "Menu Move", "Menu Confirm", "Menu Cancel"};
-        for (size_t i = 0; i < m_seIds.size(); ++i) {
-            ImGui::PushID(static_cast<int>(i)); if (ImGui::Button(labels[i])) PlaySe(static_cast<GameSe>(i)); ImGui::PopID();
-        }
     }
     BehaviorDetailView::EndSection();
 }

@@ -16,6 +16,7 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 
 #include <filesystem>
 
@@ -118,29 +119,39 @@ void PlayerDualPistolsEffects::PlayEffects(PlayerDualPistolsContext& context, Ef
     switch (effectType) {
         case EffectsType::FireLeft: {
             PlayMuzzleFlashEffect(context, 0);
-            Game::GameFeedback()->PlayCameraShake(0.1f, 0.1f);
             break;
         }
         case EffectsType::FireRight: {
             PlayMuzzleFlashEffect(context, 1);
+            break;
+        }
+        case EffectsType::RapidFire: {
             Game::GameFeedback()->PlayCameraShake(0.1f, 0.1f);
+            Game::Audio()->PlaySe(GameSe::DualPistols);
             break;
         }
         case EffectsType::SlashBurst1: {
             m_slashBurstEffect1.Play();
+            Game::Audio()->PlaySe(GameSe::SlashBurst);
+            Game::Audio()->PlaySe(GameSe::DualPistols);
             break;
         }
         case EffectsType::SlashBurst2: {
             m_slashBurstEffect2.Play();
+            Game::Audio()->PlaySe(GameSe::SlashBurst);
+            Game::Audio()->PlaySe(GameSe::DualPistols);
             break;
         }
         case EffectsType::SlashBurst3: {
             m_slashBurstEffect3[0].Play();
             m_slashBurstEffect3[1].Play();
+            Game::Audio()->PlaySe(GameSe::SlashBurst2);
+            Game::Audio()->PlaySe(GameSe::DualPistols);
+            Game::GameFeedback()->PlayCameraShake(1.0f, 0.1f);
             break;
         }
         case EffectsType::BurstHit: {
-            Game::GameFeedback()->PlayCameraShake(1.0f, 0.1f);
+            Game::GameFeedback()->ChangeFOVTemporary(55.0f, 0.05f, 0.01f);
             Game::CustomPostEffect()->PlayEffect(CustomPostEffectType::RadialBlur, 0.3f, 0.05f, 0.01f);
             break;
         }

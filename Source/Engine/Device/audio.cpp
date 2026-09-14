@@ -10,9 +10,12 @@
 #pragma comment(lib, "ole32.lib")
 namespace {
 constexpr size_t MaxSounds = 100, MaxVoices = 16;
+struct LoopVoice { AudioLoopHandle handle; IXAudio2SourceVoice* voice; };
+AudioLoopHandle nextLoopHandle = 1;
 struct Sound {
     AudioWave::Data data;
     std::vector<IXAudio2SourceVoice*> voices;
+    std::vector<LoopVoice> loops;
     size_t nextVoice = 0;
     bool loaded = false;
 };
@@ -82,11 +85,14 @@ int LoadAudio(const wchar_t* path) {
 void UnloadAudio(int index) {
     auto* sound = Get(index); if (!sound) return;
     for (auto* voice : sound->voices) voice->DestroyVoice();
+    for (auto& loop : sound->loops) loop.voice->DestroyVoice();
     *sound = Sound{};
 }
 void StopAudio(int index) {
     auto* sound = Get(index); if (!sound) return;
     for (auto* voice : sound->voices) { voice->Stop(); voice->FlushSourceBuffers(); }
+    for (auto& loop : sound->loops) loop.voice->DestroyVoice();
+    sound->loops.clear();
 }
 void PlayAudio(int index, bool loop) {
     auto* sound = Get(index); if (!sound) return;
@@ -106,11 +112,40 @@ bool PlayAudioOneShot(int index, float volume) {
     }
     return Submit(*sound, voice, false, volume);
 }
+AudioLoopHandle StartAudioLoop(int index, float volume) {
+    auto* sound = Get(index);
+    if (!sound || !engine || sound->loops.size() >= MaxVoices || nextLoopHandle == 0) return InvalidAudioLoopHandle;
+    IXAudio2SourceVoice* voice = nullptr;
+    if (FAILED(engine->CreateSourceVoice(&voice, &sound->data.format))) return InvalidAudioLoopHandle;
+    if (!Submit(*sound, voice, true, volume)) { voice->DestroyVoice(); return InvalidAudioLoopHandle; }
+    const auto handle = nextLoopHandle++;
+    sound->loops.push_back({handle, voice});
+    return handle;
+}
+void StopAudioLoop(AudioLoopHandle handle) {
+    if (!handle) return;
+    for (auto& sound : sounds) {
+        auto it = std::find_if(sound.loops.begin(), sound.loops.end(), [handle](const LoopVoice& loop) { return loop.handle == handle; });
+        if (it == sound.loops.end()) continue;
+        it->voice->DestroyVoice(); sound.loops.erase(it); return;
+    }
+}
+bool IsAudioLoopPlaying(AudioLoopHandle handle) {
+    if (!handle) return false;
+    for (const auto& sound : sounds) for (const auto& loop : sound.loops) if (loop.handle == handle) return Playing(loop.voice);
+    return false;
+}
 void SetAudioVolume(int index, float volume) {
-    if (auto* sound = Get(index)) for (auto* voice : sound->voices) voice->SetVolume(Volume(volume));
+    if (auto* sound = Get(index)) {
+        for (auto* voice : sound->voices) voice->SetVolume(Volume(volume));
+        for (auto& loop : sound->loops) loop.voice->SetVolume(Volume(volume));
+    }
 }
 void SetMasterAudioVolume(float volume) { if (output) output->SetVolume(Volume(volume)); }
 bool IsAudioPlaying(int index) {
-    if (auto* sound = Get(index)) return std::any_of(sound->voices.begin(), sound->voices.end(), Playing);
+    if (auto* sound = Get(index)) {
+        return std::any_of(sound->voices.begin(), sound->voices.end(), Playing)
+            || std::any_of(sound->loops.begin(), sound->loops.end(), [](const LoopVoice& loop) { return Playing(loop.voice); });
+    }
     return false;
 }

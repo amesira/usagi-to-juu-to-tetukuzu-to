@@ -17,6 +17,7 @@ public:
     enum class EffectsType {
         FireLeft,
         FireRight,
+        RapidFire,
         SlashBurst1,
         SlashBurst2,
         SlashBurst3,

@@ -7,21 +7,46 @@
 #include <cmath>
 namespace GameAudioSettings {
 struct Data {
-    std::string titleBgm, battleBgm;
-    std::string shotgun, dualPistols, playerHit, enemyHit, menuMove, menuConfirm, menuCancel;
+    std::string titleBgm, battleBgm, resultBgm;
+    std::string shotgun, dualPistols, slashBurst, slashBurst2;
+    std::string charge, chargeComplete;
+    std::string playerRun, playerJump, playerLand;
+    std::string enemyShot, enemySlash;
+    std::string playerHit, enemyHit, recovery, getItem;
+    std::string menuMove, menuConfirm, menuCancel;
     float masterVolume = 1, bgmVolume = .5f, seVolume = 1, fadeDuration = .5f;
 };
 inline const auto& GetSchema() {
     static const auto schema = FieldSchema{
+        // === BGM ===
+        MakeHeaderField("BGM"),
         MakeField("titleBgm", "Title BGM (PCM WAV)", &Data::titleBgm),
         MakeField("battleBgm", "Battle BGM (PCM WAV)", &Data::battleBgm),
+        MakeField("resultBgm", "Result BGM (PCM WAV)", &Data::resultBgm),
+
+        // === SE ===
+        MakeHeaderField("SE"),
         MakeField("shotgun", "Shotgun", &Data::shotgun),
         MakeField("dualPistols", "Dual Pistols", &Data::dualPistols),
+        MakeField("slashBurst", "Slash Burst", &Data::slashBurst),
+        MakeField("slashBurst2", "Slash Burst 2", &Data::slashBurst2),
+        MakeField("charge", "Charge", &Data::charge),
+        MakeField("chargeComplete", "Charge Complete", &Data::chargeComplete),
+        MakeField("playerRun", "Player Run", &Data::playerRun),
+        MakeField("playerJump", "Player Jump", &Data::playerJump),
+        MakeField("playerLand", "Player Land", &Data::playerLand),
+        MakeField("enemyShot", "Enemy Shot", &Data::enemyShot),
+        MakeField("enemySlash", "Enemy Slash", &Data::enemySlash),
         MakeField("playerHit", "Player Hit", &Data::playerHit),
         MakeField("enemyHit", "Enemy Hit", &Data::enemyHit),
+        MakeField("recovery", "Recovery", &Data::recovery),
+        MakeField("getItem", "Get Item", &Data::getItem),
         MakeField("menuMove", "Menu Move", &Data::menuMove),
         MakeField("menuConfirm", "Menu Confirm", &Data::menuConfirm),
         MakeField("menuCancel", "Menu Cancel", &Data::menuCancel),
+        
+        // === Volume ===
+        MakeHeaderField("Volume"),
         MakeField("masterVolume", "Master Volume", &Data::masterVolume, DragFieldOptions{.dragSpeed=.01f, .minValue=0, .maxValue=1}),
         MakeField("bgmVolume", "BGM Volume", &Data::bgmVolume, DragFieldOptions{.dragSpeed=.01f, .minValue=0, .maxValue=1}),
         MakeField("seVolume", "SE Volume", &Data::seVolume, DragFieldOptions{.dragSpeed=.01f, .minValue=0, .maxValue=1}),

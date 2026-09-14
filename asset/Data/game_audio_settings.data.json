@@ -1,8 +1,31 @@
 {
-    "type": "GameAudioSettingsAsset", "formatVersion": 0, "name": "game_audio_settings.data",
     "data": {
-        "titleBgm": "", "battleBgm": "", "shotgun": "", "dualPistols": "",
-        "playerHit": "", "enemyHit": "", "menuMove": "", "menuConfirm": "", "menuCancel": "",
-        "masterVolume": 1.0, "bgmVolume": 0.5, "seVolume": 1.0, "fadeDuration": 0.5
-    }
+        "battleBgm": "",
+        "bgmVolume": 0.5,
+        "dualPistols": "asset/Audio/se_player_dual_pistols.wav",
+        "enemyHit": "",
+        "enemyShot": "",
+        "enemySlash": "",
+        "fadeDuration": 0.5,
+        "getItem": "",
+        "masterVolume": 1.0,
+        "menuCancel": "",
+        "menuConfirm": "",
+        "menuMove": "",
+        "playerHit": "",
+        "playerJump": "",
+        "playerLand": "",
+        "playerRun": "",
+        "recovery": "",
+        "resultBgm": "",
+        "seVolume": 1.0,
+        "shotgun": "",
+        "slashBurst": "asset/Audio/se_player_slash_1.wav",
+        "slashBurst2": "asset/Audio/se_player_slash_2.wav",
+        "this_is_header_field": null,
+        "titleBgm": ""
+    },
+    "formatVersion": 0,
+    "name": "game_audio_settings.data",
+    "type": "GameAudioSettingsAsset"
 }

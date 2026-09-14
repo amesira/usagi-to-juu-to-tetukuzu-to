@@ -51,6 +51,12 @@ int main() {
         PlayAudio(id, true); StopAudio(id); SetAudioVolume(id, 1); UnloadAudio(id);
         assert(!PlayAudioOneShot(id) && !IsAudioPlaying(id));
     }
+    assert(StartAudioLoop(-1) == InvalidAudioLoopHandle);
+    assert(StartAudioLoop(0) == InvalidAudioLoopHandle);
+    StopAudioLoop(InvalidAudioLoopHandle);
+    StopAudioLoop(12345);
+    StopAudioLoop(12345);
+    assert(!IsAudioLoopPlaying(12345));
     UninitAudio(); SetMasterAudioVolume(1);
     std::cout << "audio_tests passed\n";
 }

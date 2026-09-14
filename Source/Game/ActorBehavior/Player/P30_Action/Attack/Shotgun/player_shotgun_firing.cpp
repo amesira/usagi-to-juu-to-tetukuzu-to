@@ -56,7 +56,6 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
     bulletDesc.damage = settings.bulletDamage * (1.0f + chargeRate * (settings.chargeDamageMultiplier - 1.0f));
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
-    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::Shotgun);
 
     context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::Fire);
 }

@@ -84,6 +84,7 @@ void PlayerDualPistolsRapidFire::Update(PlayerDualPistolsContext& context, float
             }
             context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::FireRight);
         }
+        context.effects.PlayEffects(context, PlayerDualPistolsEffects::EffectsType::RapidFire);
     }
 
     // アニメーション更新
