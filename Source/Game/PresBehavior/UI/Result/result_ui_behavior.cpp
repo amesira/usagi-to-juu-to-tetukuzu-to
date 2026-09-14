@@ -27,14 +27,14 @@ void ResultUiBehavior::Start() {
     if (m_created || !m_hasResult || !GetOwner() || !GetOwner()->GetScene()) return;
 
     // テスト実装
-    m_result.waves.resize(5);
+    /*m_result.waves.resize(5);
     m_result.waves[0] = { 1, 50, 50, true };
     m_result.waves[1] = { 2, 50, 50, true };
     m_result.waves[2] = { 3, 50, 50, true };
     m_result.waves[3] = { 4, 50, 50, true };
     m_result.waves[4] = { 5, 50, 50, true };
     m_result.elapsedTime = 120.0f;
-    m_result.completed = true;
+    m_result.completed = true;*/
 
      auto* scene = GetOwner()->GetScene();
      auto createText = [&] { return UiFactory::CreateUiTextHandle(scene,u8""); };
@@ -43,7 +43,8 @@ void ResultUiBehavior::Start() {
           row.label = createText();
           row.status = createText();
 
-          row.gauge = UiFactory::CreateUiSliderHandle(scene,{0.08f,0.1f,0.14f,1},{0.5f,0.8f,1,1},0);
+          const auto& settings = m_asset ? m_asset->GetData() : m_settings;
+          row.gauge = UiFactory::CreateUiSliderHandle(scene,settings.gaugeBgColor,settings.gaugeFillColor,0);
           
           Text(row.label,"WAVE " + std::to_string(wave.waveNumber) + "  " + std::to_string(wave.points) + " / " + std::to_string(wave.targetPoints));
           row.label.SetActive(false); row.gauge.SetActive(false); row.status.SetActive(false);
@@ -84,6 +85,10 @@ void ResultUiBehavior::ApplyLayout() {
         const float y = spacing * static_cast<float>(i);
         layout(row.label, m_settings.label, m_settings.wavePlacement, y);
         layout(row.gauge, m_settings.gauge, m_settings.wavePlacement, y);
+        if (auto* gauge = row.gauge.GetSlider()) {
+            gauge->SetBgColor(m_settings.gaugeBgColor);
+            gauge->SetFillColor(m_settings.gaugeFillColor);
+        }
         layout(row.status, m_settings.status, m_settings.wavePlacement, y);
         row.status.SetColor(m_result.waves[i].cleared ? m_settings.clearColor : m_settings.failColor);
     }
@@ -101,6 +106,38 @@ void ResultUiBehavior::ApplyLayout() {
     m_selectionMotion.MoveTo({target.x + m_settings.selection.position.x, target.y + m_settings.selection.position.y}, 0);
     ApplySelectionPosition();
     SetSelection(m_selection);
+    // Layout has restored the unshaken positions, including after a resize.
+    for (auto& shake : m_shakes) {
+        if (auto* rect = shake.handle.GetRectTransform()) {
+            const auto position = rect->GetPosition();
+            shake.origin = {position.x, position.y};
+        }
+    }
+}
+
+void ResultUiBehavior::ShowWithShake(UiHandle handle) {
+    auto* object = handle.GetGameObject();
+    if (!object || object->GetActive()) return;
+    handle.SetActive(true);
+    if (auto* rect = handle.GetRectTransform()) {
+        const auto position = rect->GetPosition();
+        m_shakes.push_back({handle, {position.x, position.y}, 0});
+    }
+}
+
+void ResultUiBehavior::UpdateShakes(float dt) {
+    const float duration = Duration(m_settings.shakeDuration);
+    const float amplitude = Duration(m_settings.shakeAmplitude);
+    const float frequency = Duration(m_settings.shakeFrequency);
+    for (auto& shake : m_shakes) {
+        shake.age += dt;
+        const float envelope = duration > 0 ? std::clamp(1 - shake.age / duration, 0.0f, 1.0f) : 0;
+        const float phase = shake.age * frequency * DirectX::XM_2PI;
+        const float x = std::cos(phase) * amplitude * envelope;
+        const float y = std::sin(phase * 1.3f) * amplitude * envelope * 0.5f;
+        shake.handle.SetPosition(shake.origin.x + x, shake.origin.y + y);
+    }
+    std::erase_if(m_shakes, [&](const Shake& shake) { return !shake.handle.IsValid() || shake.age >= duration; });
 }
 
 void ResultUiBehavior::ApplySelectionPosition() {
@@ -131,7 +168,7 @@ void ResultUiBehavior::Update() {
      const float t=duration>0?std::clamp(m_age/duration,0.0f,1.0f):1;
      const double eased=static_cast<double>(t*t*(3-2*t));
      auto count=[&](int from,int to){return t>=1?to:ResultScoring::ClampScore(from+(static_cast<double>(to)-from)*eased);};
-     auto total=[&](int value){m_total.SetActive(true);Text(m_total,"累計ポイント  " + std::to_string(value));};
+     auto total=[&](int value){ShowWithShake(m_total);Text(m_total,"累計ポイント  " + std::to_string(value));};
      switch (m_phase) {
      case Phase::Waves: {
       if (m_row>=m_rows.size()) { Advance(Phase::Total); break; }
@@ -140,7 +177,7 @@ void ResultUiBehavior::Update() {
       const float target=std::clamp(static_cast<float>(wave.points)/(std::max)(1,wave.targetPoints),0.0f,1.0f);
       row.fill=MiMath::SmoothDamp(row.fill,target,row.velocity,(std::max)(0.0001f,Duration(m_settings.smoothTime)),dt);
       const bool done=std::abs(row.fill-target)<0.0001f || m_age>(std::max)(1.0f,Duration(m_settings.smoothTime)*12);
-      if (done) {row.fill=target;row.velocity=0;row.status.SetActive(true);Text(row.status,wave.cleared?"クリア！":"失敗…");Advance(Phase::Status);}
+      if (done) {row.fill=target;row.velocity=0;ShowWithShake(row.status);Text(row.status,wave.cleared?"クリア！":"失敗…");Advance(Phase::Status);}
       if(auto* gauge=row.gauge.GetSlider())gauge->SetValue(row.fill);
       break;
      }
@@ -150,20 +187,22 @@ void ResultUiBehavior::Update() {
       total(count(0,m_score.base));
       if(t>=1)Advance(m_result.completed?Phase::CompleteBonus:Phase::Rank);break;
      case Phase::CompleteBonus:
-      m_complete.SetActive(true);Text(m_complete,"コンプリートボーナス  +"+std::to_string(m_score.completeBonus));
+      ShowWithShake(m_complete);Text(m_complete,"コンプリートボーナス  +"+std::to_string(m_score.completeBonus));
       total(count(m_score.base,ResultScoring::ClampScore(static_cast<double>(m_score.base)+m_score.completeBonus)));
       if(t>=1)Advance(Phase::TimeBonus);break;
      case Phase::TimeBonus:
-      m_time.SetActive(true);Text(m_time,"タイムボーナス  +"+std::to_string(m_score.timeBonus));
+      ShowWithShake(m_time);Text(m_time,"タイムボーナス  +"+std::to_string(m_score.timeBonus));
       total(count(ResultScoring::ClampScore(static_cast<double>(m_score.base)+m_score.completeBonus),m_score.total));
       if(t>=1)Advance(Phase::Rank);break;
      case Phase::Rank:
-      total(m_score.total);m_rank.SetActive(true);Text(m_rank,"評価  "+std::to_string(m_score.rank)+" / 5");
+      total(m_score.total);ShowWithShake(m_rank);Text(m_rank,"評価  "+std::to_string(m_score.rank)+" / 5");
       if(m_age>=Duration(m_settings.rankWait)){Advance(Phase::Menu);m_title.SetActive(true);m_retry.SetActive(true);m_selectionBackground.SetActive(true);}break;
      case Phase::Menu:break;
      }
+     UpdateShakes(dt);
 }
 void ResultUiBehavior::DestroyWidgets() {
+     m_shakes.clear();
      for(auto& row:m_rows)for(auto handle:{row.label,row.gauge,row.status})handle.Destroy();
      m_rows.clear();
      for(auto handle:{m_total,m_complete,m_time,m_rank,m_title,m_retry,m_selectionBackground})handle.Destroy();

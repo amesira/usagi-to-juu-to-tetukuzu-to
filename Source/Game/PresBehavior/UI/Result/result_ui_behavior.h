@@ -19,6 +19,12 @@ private:
      std::vector<Row> m_rows;
      UiHandle m_total, m_complete, m_time, m_rank, m_title, m_retry, m_selectionBackground;
      TitleUiSelectionMotion m_selectionMotion;
+     struct Shake {
+         UiHandle handle;
+         DirectX::XMFLOAT2 origin;
+         float age = 0;
+     };
+     std::vector<Shake> m_shakes;
      Phase m_phase = Phase::Waves;
      size_t m_row = 0;
      float m_age = 0;
@@ -29,6 +35,8 @@ private:
 
      void ApplyLayout();
      void ApplySelectionPosition();
+     void ShowWithShake(UiHandle handle);
+     void UpdateShakes(float dt);
      void Advance(Phase phase) { m_phase = phase; m_age = 0; }
 
 public:

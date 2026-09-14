@@ -5,6 +5,8 @@
 #include "Engine/Editor/Schema/field_editor.h"
 namespace ResultUiSettings {
 struct Data {
+ DirectX::XMFLOAT4 gaugeBgColor = {0.08f,0.1f,0.14f,1.0f};
+ DirectX::XMFLOAT4 gaugeFillColor = {0.5f,0.8f,1.0f,1.0f};
  UiLayoutSettings::GroupPlacement wavePlacement = {{0.68f,0.40f},{0,0}};
  UiLayoutSettings::GroupPlacement scorePlacement = {{0.68f,0.70f},{0,0}}, rankPlacement = {{0.68f,0.87f},{0,0}}, menuPlacement = {{0.68f,0.95f},{0,0}};
  UiLayoutSettings::WidgetTransform title = {{-160,0},{0.8f,0.8f},0}, retry = {{160,0},{0.8f,0.8f},0}, selection = {{0,0},{300,52},0};
@@ -16,11 +18,17 @@ struct Data {
  DirectX::XMFLOAT3 textColor = {1,1,1}, clearColor = {0.5f,1,0.7f}, failColor = {1,0.5f,0.5f}, selectedColor = {1,1,0.5f};
  float rowSpacing = 55, smoothTime = 0.35f, statusWait = 0.5f, countDuration = 1.2f, rankWait = 0.8f;
  int fontSize = 32;
+ float shakeAmplitude = 3.0f, shakeDuration = 0.25f, shakeFrequency = 24.0f;
  bool applyPerspective = true, applyChromaticEcho = true;
 };
 inline const auto& GetSchema() {
  using namespace UiLayoutSettings;
  static const auto schema = FieldSchema{
+ MakeField("shakeAmplitude","Shake Amplitude (px)",&Data::shakeAmplitude,DragFieldOptions{.dragSpeed=0.1f,.minValue=0,.maxValue=100}),
+ MakeField("shakeDuration","Shake Duration (s)",&Data::shakeDuration,DragFieldOptions{.dragSpeed=0.01f,.minValue=0,.maxValue=10}),
+ MakeField("shakeFrequency","Shake Frequency (Hz)",&Data::shakeFrequency,DragFieldOptions{.dragSpeed=0.1f,.minValue=0,.maxValue=100}),
+ MakeField("gaugeBgColor","Gauge Bg Color",&Data::gaugeBgColor,ColorFieldOptions{}),
+ MakeField("gaugeFillColor","Gauge Fill Color",&Data::gaugeFillColor,ColorFieldOptions{}),
  MakeStructField("wavePlacement","wavePlacement",&Data::wavePlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
  MakeStructField("scorePlacement","scorePlacement",&Data::scorePlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),
  MakeStructField("rankPlacement","rankPlacement",&Data::rankPlacement,GetGroupPlacementSchema(),DefaultFieldOptions{}),

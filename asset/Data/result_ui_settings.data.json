@@ -8,20 +8,20 @@
                 0.5
             ],
             "color": [
-                1.0,
+                0.49361705780029297,
                 0.0,
-                0.0
+                1.0
             ],
             "enabled": true,
-            "offsetDistance": 0.5,
+            "offsetDistance": 1.0,
             "opacity": 0.5,
             "orderInLayerOffset": -10,
-            "scale": 1.003000020980835
+            "scale": 1.0049999952316284
         },
         "clearColor": [
             0.0042552947998046875,
-            0.9618650674819946,
-            1.0
+            1.0,
+            0.9872884154319763
         ],
         "countDuration": 1.2000000476837158,
         "failColor": [
@@ -32,19 +32,31 @@
         "fontSize": 32,
         "gauge": {
             "position": [
-                19.0,
+                -18.0,
                 -10.0
             ],
             "rotationDegrees": 0.0,
             "size": [
-                400.0,
-                20.0
+                600.0,
+                15.0
             ]
         },
+        "gaugeBgColor": [
+            0.07999999821186066,
+            0.10000000149011612,
+            0.14000000059604645,
+            1.0
+        ],
+        "gaugeFillColor": [
+            0.04255318641662598,
+            0.6210956573486328,
+            1.0,
+            1.0
+        ],
         "label": {
             "position": [
-                -304.0,
-                0.0
+                0.0,
+                -22.0
             ],
             "rotationDegrees": 0.0,
             "size": [
@@ -106,9 +118,9 @@
             ]
         },
         "selectedColor": [
-            0.0,
-            0.9361703395843506,
-            1.0
+            1.0,
+            0.9446808099746704,
+            0.0
         ],
         "selection": {
             "position": [
@@ -122,13 +134,16 @@
             ]
         },
         "selectionColor": [
-            0.13309191167354584,
-            0.1695115864276886,
-            0.3191489577293396
+            0.7744680643081665,
+            0.16786569356918335,
+            0.09886825084686279
         ],
         "selectionMoveDuration": 0.15000000596046448,
-        "selectionOpacity": 0.800000011920929,
-        "smoothTime": 0.3499999940395355,
+        "selectionOpacity": 0.5,
+        "shakeAmplitude": 10.0,
+        "shakeDuration": 0.25,
+        "shakeFrequency": 24.0,
+        "smoothTime": 0.10000000149011612,
         "status": {
             "position": [
                 354.0,
@@ -140,7 +155,7 @@
                 0.6499999761581421
             ]
         },
-        "statusWait": 0.10000000149011612,
+        "statusWait": 0.05000000074505806,
         "summary": {
             "position": [
                 0.0,
@@ -171,7 +186,7 @@
         "wavePlacement": {
             "position": [
                 500.0,
-                -240.0
+                -282.0
             ],
             "screenAnchor": [
                 0.0,
