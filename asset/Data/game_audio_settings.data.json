@@ -1,0 +1,8 @@
+{
+    "type": "GameAudioSettingsAsset", "formatVersion": 0, "name": "game_audio_settings.data",
+    "data": {
+        "titleBgm": "", "battleBgm": "", "shotgun": "", "dualPistols": "",
+        "playerHit": "", "enemyHit": "", "menuMove": "", "menuConfirm": "", "menuCancel": "",
+        "masterVolume": 1.0, "bgmVolume": 0.5, "seVolume": 1.0, "fadeDuration": 0.5
+    }
+}

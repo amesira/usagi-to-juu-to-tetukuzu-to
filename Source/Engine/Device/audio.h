@@ -1,16 +1,13 @@
 #pragma once
-
-#include <xaudio2.h>
-
-void InitAudio();   // サウンドの初期化
-void UninitAudio(); // サウンドの終了処理
-
-int LoadAudio(const wchar_t* FileName);    // サウンドデータ読み込み
-void UnloadAudio(int Index);            // サウンドデータ解放
-void PlayAudio(int Index, bool Loop = false);   // サウンドデータ再生
-
-// 使い方
-// static int g_BgmID = NULL;
-//
-// g_BgmID = LoadAudio("asset\\Audio\\title.wav);
-// PlayAudio(g_BgmID, true);
+// PCM WAV data is retained until UnloadAudio. Invalid IDs are ignored safely.
+void InitAudio();
+void UninitAudio();
+bool IsAudioInitialized();
+int LoadAudio(const wchar_t* fileName);
+void UnloadAudio(int index);
+void PlayAudio(int index, bool loop = false); // Restart playback; intended for BGM.
+bool PlayAudioOneShot(int index, float volume = 1.0f); // Up to 16 overlapping voices per sound.
+void StopAudio(int index);
+void SetAudioVolume(int index, float volume);
+void SetMasterAudioVolume(float volume);
+bool IsAudioPlaying(int index);

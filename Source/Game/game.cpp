@@ -32,6 +32,7 @@
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
@@ -61,6 +62,8 @@ void GameScene::Initialize()
     GameObject* gameControllerObj = this->CreateGameObject();
     gameControllerObj->SetName("GameController");
     gameControllerObj->AddComponent<TransformComponent>();
+    gameControllerObj->AddComponent<GameAudioControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<GameAudioSettingsAsset>("asset/Data/game_audio_settings.data.json", true), GameBgm::Battle);
     gameControllerObj->AddComponent<GameFeedbackController>();
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();

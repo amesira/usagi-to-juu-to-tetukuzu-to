@@ -1,3 +1,5 @@
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
 //===================================================
 // File  ：_/DualPistols/player_dual_pistols_firing.cpp
 // Date  ：2026/08/28
@@ -53,4 +55,5 @@ void PlayerDualPistolsFiring::Fire(
     bulletDesc.damage = settings.bulletDamage;
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::DualPistols);
 }

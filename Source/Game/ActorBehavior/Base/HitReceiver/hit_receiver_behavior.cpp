@@ -1,3 +1,5 @@
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
 //===================================================
 // File  ：_/Base/HitReceiver/hit_receiver_behavior.h
 // Date  ：2026/09/02
@@ -53,6 +55,11 @@ HitResult HitReceiverBehavior::ReceiveHit(const HitData& hitData)
     HitResult result = m_damageReceiver.ReceiveDamage(hitData);
     if (!result.WasAccepted()) {
         return result;
+    }
+
+    if (auto* audio = Game::Audio()) {
+        if (GetOwner()->GetTag() == "Player") audio->PlaySe(GameSe::PlayerHit);
+        else if (GetOwner()->GetTag() == "Enemy") audio->PlaySe(GameSe::EnemyHit);
     }
 
     // ヒットリアクション、ノックバック開始処理

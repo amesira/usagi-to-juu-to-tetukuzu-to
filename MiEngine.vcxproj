@@ -235,6 +235,7 @@
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
     <ClCompile Include="Source\Engine\Processor\animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Device\audio.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Processor\behavior_processor.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\camera_control_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\transform_constraint_behavior.cpp" />
@@ -1147,5 +1148,11 @@
   <ItemGroup>
     <ClInclude Include="Source\Engine\Component\ui_chromatic_echo.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_chromatic_echo_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Device\audio_wave.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\audio_fade.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_settings_asset.h" />
   </ItemGroup>
 </Project>

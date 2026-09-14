@@ -1,3 +1,5 @@
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
 #include "title_controller_behavior.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
@@ -30,6 +32,7 @@ void TitleControllerBehavior::Update()
         if (Keyboard_IsKeyDownTrigger(KK_RIGHT)) m_exitYesSelected = false;
         if (m_titleUi && previousSelection != m_exitYesSelected) {
             m_titleUi->SetExitConfirmationSelection(m_exitYesSelected);
+            if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuMove);
         }
         if (Keyboard_IsKeyDownTrigger(KK_ENTER)) ConfirmExitSelection();
         return;
@@ -47,8 +50,10 @@ void TitleControllerBehavior::Update()
         return;
     }
     if (!m_titleUi) return;
+    const int previousMenu = m_selectedMenu;
     if (Keyboard_IsKeyDownTrigger(KK_UP)) m_selectedMenu = (m_selectedMenu + 2) % 3;
     if (Keyboard_IsKeyDownTrigger(KK_DOWN)) m_selectedMenu = (m_selectedMenu + 1) % 3;
+    if (previousMenu != m_selectedMenu) { if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuMove); }
     m_titleUi->SetSelectedMenu(static_cast<TitleUi::MenuItem>(m_selectedMenu));
     if (Keyboard_IsKeyDownTrigger(KK_ENTER)) {
         if (m_selectedMenu == 0) EnterPractice();
@@ -87,6 +92,7 @@ void TitleControllerBehavior::DrawComponentInspector()
 void TitleControllerBehavior::EnterPractice()
 {
     if (m_state != State::Menu || !m_camera || !m_camera->BeginPractice()) return;
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuConfirm);
     m_state = State::EnteringPractice;
     if (m_titleUi) {
         m_titleUi->SetVisible(false);
@@ -98,6 +104,7 @@ void TitleControllerBehavior::EnterPractice()
 void TitleControllerBehavior::ReturnToTitle()
 {
     if (m_state == State::QuitRequested || m_state == State::StartingGame) return;
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuCancel);
     m_state = State::Menu;
     if (m_camera) m_camera->ReturnToTitle();
     if (m_titleUi) {
@@ -111,6 +118,7 @@ void TitleControllerBehavior::StartGame()
 {
     if (m_state != State::Menu) return;
     if (EngineServiceLocator::ChangeSceneWithFade(SceneManager::SceneID::Game)) {
+        if (auto* audio = Game::Audio()) { audio->PlaySe(GameSe::MenuConfirm); audio->StopBgm(); }
         m_state = State::StartingGame;
     }
 }
@@ -118,6 +126,7 @@ void TitleControllerBehavior::StartGame()
 void TitleControllerBehavior::OpenExitConfirmation()
 {
     if (m_state != State::Menu || !m_titleUi) return;
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuConfirm);
     m_selectedMenu = 2;
     m_exitYesSelected = false;
     m_state = State::ExitConfirm;
@@ -129,6 +138,7 @@ void TitleControllerBehavior::OpenExitConfirmation()
 void TitleControllerBehavior::CancelExitConfirmation()
 {
     if (m_state != State::ExitConfirm) return;
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuCancel);
     m_state = State::Menu;
     if (m_titleUi) m_titleUi->SetExitPopupVisible(false);
 }
@@ -140,6 +150,7 @@ void TitleControllerBehavior::ConfirmExitSelection()
         CancelExitConfirmation();
         return;
     }
+    if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuConfirm);
     m_state = State::QuitRequested;
     EngineServiceLocator::RequestQuit();
 }

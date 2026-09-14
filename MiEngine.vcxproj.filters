@@ -1141,4 +1141,11 @@
     <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_settings_asset.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_resolver.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.cpp" />
+    <ClInclude Include="Source\Engine\Device\audio_wave.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\audio_fade.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_settings_asset.h" />
+  </ItemGroup>
 </Project>

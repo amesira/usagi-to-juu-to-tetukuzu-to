@@ -14,8 +14,12 @@ class WaveControllerBehavior;
 class StageDecorationControllerBehavior;
 class StageBoundsControllerBehavior;
 
+class GameAudioControllerBehavior;
+
 class GameControllerLocator {
 private:
+    friend class GameAudioControllerBehavior;
+    static inline GameAudioControllerBehavior* s_audioController = nullptr;
     friend class GameFeedbackController;
     friend class CustomPostEffectController;
     friend class EnemyAIWorldController;
@@ -31,6 +35,7 @@ private:
     static inline StageBoundsControllerBehavior* s_stageBoundsController = nullptr;
 
 public:
+    static GameAudioControllerBehavior* Audio() { return s_audioController; }
     static StageBoundsControllerBehavior* StageBounds() { return s_stageBoundsController; }
     static StageDecorationControllerBehavior* StageDecoration() { return s_stageDecorationController; }
     static WaveControllerBehavior* Wave() { return s_waveController; }

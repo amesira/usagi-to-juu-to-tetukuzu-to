@@ -12,6 +12,7 @@
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
 #include "Game/Factory/environment_factory.h"
@@ -39,6 +40,8 @@ void TitleScene::Initialize()
     titleUi->SetName("TitleUi");
     titleUi->AddComponent<TitleUiBehavior>()->Setup(
         DATA_LOADER->GetAsset<TitleUiSettingsAsset>("asset/Data/title_ui_settings.data.json", true));
+    controller->AddComponent<GameAudioControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<GameAudioSettingsAsset>("asset/Data/game_audio_settings.data.json", true), GameBgm::Title);
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
     controller->AddComponent<StageBoundsControllerBehavior>()->Setup(
