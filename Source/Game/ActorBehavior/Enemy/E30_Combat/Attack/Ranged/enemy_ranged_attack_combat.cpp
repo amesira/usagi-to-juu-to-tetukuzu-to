@@ -15,6 +15,9 @@
 #include "Game/Factory/projectile_factory.h"
 #include "Utility/mi_math.h"
 
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
+
 namespace {
     constexpr CollisionLayerMask ENEMY_BULLET_HIT_LAYER_MASK =
         COLLISION_LAYER_MASK_ALL
@@ -110,6 +113,9 @@ void EnemyRangedAttackCombat::FireShot(
 {
     FireFromBone(context, m_leftMuzzleBoneIndex, targetPosition);
     FireFromBone(context, m_rightMuzzleBoneIndex, targetPosition);
+
+    // 効果音再生
+    Game::Audio()->PlaySe(GameSe::EnemyShot);
 }
 
 void EnemyRangedAttackCombat::Cancel(EnemyContext& context)

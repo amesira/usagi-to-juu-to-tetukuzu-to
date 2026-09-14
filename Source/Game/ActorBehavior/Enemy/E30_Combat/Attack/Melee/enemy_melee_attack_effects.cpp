@@ -5,6 +5,9 @@
 
 #include "Game/ActorBehavior/Enemy/E30_Combat/Attack/enemy_attack_context.h"
 
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
+
 void EnemyMeleeAttackEffects::Initialize(const EnemyAttackContext& context)
 {
     if (!context.scene || !context.transform || context.settings().slashEffectAssetPath.empty()) return;
@@ -30,6 +33,7 @@ void EnemyMeleeAttackEffects::PlayEffects(EffectsType type)
     switch (type) {
     case EffectsType::Slash:{
         m_slashEffect.Play();
+        Game::Audio()->PlaySe(GameSe::EnemySlash);
         break;
     }
     default: break;

@@ -7,6 +7,9 @@
 #include "Game/Factory/render_effect_factory.h"
 #include "Utility/mi_math.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+
 void EnemyEffects::Initialize(GameObject* owner)
 {
     if (!owner) return;
@@ -57,6 +60,8 @@ void EnemyEffects::PlayHitEffects(
             .color = color
         });
     }
+
+    Game::Audio()->PlaySe(GameSe::EnemyHit);
 }
 
 void EnemyEffects::PlayFlashBlinkerEffect()

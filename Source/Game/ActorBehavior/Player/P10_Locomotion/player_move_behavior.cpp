@@ -76,10 +76,16 @@ void PlayerMoveBehavior::UpdateMove(PlayerContext& context, const PlayerInput& i
         return;
     }
 
+    bool isGrounded = CheckGrounded();
     m_context.runtimeState.m_isGrounded = CheckGrounded();
     m_context.runtimeState.m_desiredPosition = m_context.transform->GetPosition();
     if (moveIntent.forceMoveIntent.isActive) {
         m_context.runtimeState.m_desiredPosition = moveIntent.forceMoveIntent.targetPosition;
+    }
+
+    // 着地エフェクトの再生判定
+    if (!isGrounded && m_context.runtimeState.m_isGrounded) {
+        m_context.moveEffects.PlayEffects(m_context, PlayerMoveEffects::EffectsType::Land);
     }
 
     // === ジャンプ要求 ===

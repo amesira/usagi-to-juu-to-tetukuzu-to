@@ -21,6 +21,7 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/Wave/wave_controller_behavior.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 
 using namespace HitReceiver;
 
@@ -171,6 +172,7 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
             if (auto* wave = Game::Wave()) wave->NotifyEnemyDefeated(GetOwner()->GetID());
         }
         m_motions.Stop();
+        m_moveBehavior.Finalize();
         return;
     }
 
@@ -205,6 +207,7 @@ void EnemyBehavior::RequestWaveCleanup()
     m_deathReason = EnemyDeathReason::WaveCleanup;
     m_motions.Stop();
     m_combatTree.Cancel(m_context);
+    m_moveBehavior.Finalize();
     if (m_context.hitReceiver) m_context.hitReceiver->SetEnable(false);
     if (auto* collider = owner->GetComponent<CapsuleColliderComponent>()) collider->SetEnable(false);
     health->SetHealth(0);

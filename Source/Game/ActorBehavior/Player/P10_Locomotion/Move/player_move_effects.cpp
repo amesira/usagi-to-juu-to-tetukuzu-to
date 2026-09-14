@@ -20,6 +20,9 @@
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_intent.h"
 #include "Game/ActorBehavior/Player/P10_Locomotion/player_move_behavior.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+
 /// @brief 移動エフェクトを再生する
 void PlayerMoveEffects::Initialize(PlayerMoveContext& context)
 {
@@ -38,7 +41,7 @@ void PlayerMoveEffects::Initialize(PlayerMoveContext& context)
                 .position = settings.positionOffset,
             },
         });
-    m_isRunDustParticleActive = false;
+    m_isRunEffectActive = false;
     m_runDustEffectRate = m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance;
 }
 
@@ -46,7 +49,7 @@ void PlayerMoveEffects::Finalize()
 {
     m_runDustEffect.Destroy();
     m_runDustEffect.Reset();
-    m_isRunDustParticleActive = false;
+    m_isRunEffectActive = false;
 }
 
 void PlayerMoveEffects::PlayEffects(PlayerMoveContext& context, EffectsType effectType)
@@ -54,20 +57,13 @@ void PlayerMoveEffects::PlayEffects(PlayerMoveContext& context, EffectsType effe
     switch (effectType) {
     case EffectsType::Jump: {
         PlayJumpEffect(context);
+        Game::Audio()->PlaySe(GameSe::PlayerJump);
         break;
         }
     case EffectsType::Land: {
-
+        Game::Audio()->PlaySe(GameSe::PlayerLand);
         break;
         }
-    case EffectsType::IsUpward: {
-
-        break;
-    }
-    case EffectsType::IsDownward: {
-
-        break;
-    }
         default: break;
     }
 }
@@ -75,30 +71,42 @@ void PlayerMoveEffects::PlayEffects(PlayerMoveContext& context, EffectsType effe
 /// @brief 移動エフェクトの更新処理を行う
 void PlayerMoveEffects::UpdateEffects(PlayerMoveContext& context, float deltaTime)
 {
-    if (context.runtimeState.m_isGrounded) {
-        SetRunDustParticleActive(true);
+    float speed = MiMath::Length(context.runtimeState.m_controlVelocity);
+    if (context.runtimeState.m_isGrounded && speed >= 0.1f) {
+        SetRunEffectActive(true);
     }
     else {
-        SetRunDustParticleActive(false);
+        SetRunEffectActive(false);
     }
 }
 
 // ------------
 
-/// @brief 走行時の砂埃パーティクルの有効/無効を設定する
-void PlayerMoveEffects::SetRunDustParticleActive(bool active)
+/// @brief 走行時エフェクトの有効/無効を設定する
+/// @param active 
+void PlayerMoveEffects::SetRunEffectActive(bool active)
 {
-    if (m_isRunDustParticleActive == active) return;
-    if (!m_runDustEffect.IsValid()) return;
+    if (m_isRunEffectActive == active) return;
+
+    if (m_runDustEffect.IsValid()) {
+        if (active) {
+            m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = m_runDustEffectRate;
+            m_runDustEffect.Play();
+        }
+        else {
+            m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = 0.0f;
+        }
+    }
 
     if (active) {
-        m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = m_runDustEffectRate;
-        m_runDustEffect.Play();
+        m_runLoopSeHandle = Game::Audio()->StartLoopSe(GameSe::PlayerRun);
     }
     else {
-        m_runDustEffect.GetParticleSystem()->Emission().rateOverDistance = 0.0f;
+        Game::Audio()->StopLoopSe(m_runLoopSeHandle);
+        m_runLoopSeHandle = -1;
     }
-    m_isRunDustParticleActive = active;
+
+    m_isRunEffectActive = active;
 }
 
 void PlayerMoveEffects::PlayJumpEffect(PlayerMoveContext& context)

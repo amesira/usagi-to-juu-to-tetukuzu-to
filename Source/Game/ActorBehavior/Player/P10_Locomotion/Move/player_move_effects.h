@@ -20,9 +20,11 @@ public:
     };
 
 private:
+    bool m_isRunEffectActive = false;
+
     AttachedEffectHandle m_runDustEffect;
-    bool m_isRunDustParticleActive = false;
     float m_runDustEffectRate = 0.0f;
+    int m_runLoopSeHandle = -1;
 
     std::vector<EffectHandle> m_jumpEffects;
 
@@ -34,7 +36,7 @@ public:
     void UpdateEffects(struct PlayerMoveContext& context, float deltaTime);
 
 private:
-    void SetRunDustParticleActive(bool active);
+    void SetRunEffectActive(bool active);
     void PlayJumpEffect(struct PlayerMoveContext& context);
 
 };
