@@ -230,6 +230,30 @@ PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyFromDefinition(
     return prefab;
 }
 
+GameObject* PrefabFactory::CreateModelObject(IScene* scene, const char* modelPath, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling)
+{
+    GameObject* modelObject = scene->CreateGameObject();
+    if (!modelObject) return nullptr;
+
+    modelObject->SetName("ModelObject");
+    modelObject->SetTag("ModelObject");
+
+    auto* transform = modelObject->AddComponent<TransformComponent>();
+    auto* model = modelObject->AddComponent<ModelComponent>();
+
+    transform->SetPosition(position);
+    transform->SetEulerAngle(rotation);
+    transform->SetScaling(scaling);
+
+    if (ModelResource* modelResource = MODEL_REPOSITORY->GetModel(modelPath)) {
+        model->SetModelResource(modelResource);
+        return modelObject;
+    }
+    modelObject->Destroy();
+
+    return nullptr;
+}
+
 PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const XMFLOAT3& position)
 {
     GameObject* enemy = scene->CreateGameObject();

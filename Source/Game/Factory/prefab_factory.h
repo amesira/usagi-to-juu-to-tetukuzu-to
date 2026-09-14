@@ -37,4 +37,12 @@ namespace PrefabFactory
         IScene* scene,
         const XMFLOAT3& position);
     EnemyPrefab CreateEnemyFromDefinition(IScene* scene, const XMFLOAT3& position, const EnemyDefinition::Data& definition);
+
+    // 純粋なモデルオブジェクトを生成する関数
+    GameObject* CreateModelObject(
+        IScene* scene,
+        const char* modelPath,
+        const XMFLOAT3& position,
+        const XMFLOAT3& rotation,
+        const XMFLOAT3& scaling);
 }

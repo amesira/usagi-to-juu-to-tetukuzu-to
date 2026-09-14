@@ -7,6 +7,10 @@ class ResultControllerBehavior : public BehaviorComponent {
 private:
     const ResultControllerSettingsAsset* m_settings = nullptr;
     const ResultControllerSettings::Data& Settings() const;
+    int m_settingsAssetRivision = -1;
+
+    class TransformComponent* m_resultTextTransform = nullptr;
+
 public:
     void Setup(const ResultControllerSettingsAsset* settings) { m_settings = settings; }
     void Start() override;
