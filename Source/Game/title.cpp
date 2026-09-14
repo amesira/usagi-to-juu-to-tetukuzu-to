@@ -15,6 +15,8 @@
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
+#include "Game/ControllerBehavior/game_controller_locator.h"
+
 #include "Game/Factory/environment_factory.h"
 #include "Game/Factory/prefab_factory.h"
 
@@ -55,7 +57,6 @@ void TitleScene::Initialize()
     camera->SetName("MainCamera");
     camera->GetComponent<CameraComponent>()->SetRenderEnabled(false);
 
-    // Only this camera renders. MainCamera continues updating TPS controls.
     GameObject* viewCamera = EnvironmentFactory::CreateCamera(this, {0,45,-25}, {0,0,10});
     viewCamera->SetName("TitleViewCamera");
     viewCamera->AddComponent<TitleCameraBehavior>()->Setup(
@@ -70,10 +71,19 @@ void TitleScene::Initialize()
     // かかしプレハブ生成
     PrefabFactory::CreateTrainingDummyPrefab(this, { 10.0f, 7.5f, 5.0f });
 
+    // BGM再生
+    if (auto* audioController = Game::Audio()) {
+        audioController->SetBgm(GameBgm::Title);
+    }
+
 }
 
 void TitleScene::Finalize()
 {
+    if (auto* audioController = Game::Audio()) {
+        audioController->StopBgm();
+    }
+
     for (GameObject& object : GetGameObjects()) {
         object.Destroy();
     }

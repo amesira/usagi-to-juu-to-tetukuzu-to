@@ -17,6 +17,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+
 WaveControllerBehavior::~WaveControllerBehavior()
 {
     if (GameControllerLocator::s_waveController == this)
@@ -34,13 +36,20 @@ void WaveControllerBehavior::Start()
     GameControllerLocator::s_waveController = this;
     // エディタのAsset型登録もGetAssetで行われる。欠落時に別種の初期値を保存しない。
     for (const auto& path : m_definitionPaths) DATA_LOADER->GetAsset<EnemyDefinitionAsset>(path);
+
+    // 最初のBGMを再生
+    if (auto* audio = GameControllerLocator::Audio()) {
+        audio->SetBgm(GameBgm::Battle);
+    }
 }
 
 void WaveControllerBehavior::NotifyEnemyDefeated(unsigned int id)
 {
     if (Game::Wave() != this || !GetEnable() || !GetOwner()) return;
+
     auto* scene = GetOwner()->GetScene();
     if (!scene) return;
+
     auto* object = scene->GetGameObjectByID(id);
     for (auto& enemy : m_enemies) {
         if (enemy.id != id || enemy.credited || !object || object->GetName() != enemy.name) continue;
@@ -225,12 +234,16 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
 void WaveControllerBehavior::Update()
 {
     if (Game::Wave() != this || !GetOwner()) return;
+
     auto* scene = GetOwner()->GetScene();
     if (!scene) return;
+
     const float deltaTime = FPS_GetDeltaTime();
     if (!std::isfinite(deltaTime) || deltaTime < 0.0f) return;
+
     auto* aiWorld = Game::EnemyAIWorld();
     CollectEnemies(scene, aiWorld, deltaTime);
+
     bool playerDead = false;
     bool hasPlayer = false;
     for (auto& object : scene->GetGameObjects()) {
@@ -240,8 +253,10 @@ void WaveControllerBehavior::Update()
         break;
     }
     if (playerDead) m_progress.state = WaveProgress::State::GameOver;
+
     const bool ready = hasPlayer && aiWorld && aiWorld->GetEnable()
         && aiWorld->IsInitialized() && aiWorld->GetMetaAI().HasPlayer();
+
     const auto previousState = m_progress.state;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
 
@@ -250,8 +265,10 @@ void WaveControllerBehavior::Update()
     }
     if (m_progress.state != WaveProgress::State::Battle || !ready) return;
     if (previousState != WaveProgress::State::Battle) m_spawnTimer = 0.0f;
+
     m_spawnTimer = (std::max)(m_spawnTimer - deltaTime, 0.0f);
     if (m_spawnTimer > 0.0f) return;
+
     // 同期生成は1フレーム1体まで。死体も含めたシーン全体の敵数を制限する。
     if (CountSceneEnemies(scene) >= std::clamp(m_settings.maxConcurrentEnemies, 1, 10)) return;
     TrySpawnEnemy(scene, *aiWorld);
