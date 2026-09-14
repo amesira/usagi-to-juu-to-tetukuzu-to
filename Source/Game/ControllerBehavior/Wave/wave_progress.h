@@ -25,6 +25,8 @@ public:
     int totalScore = 0;
     int targetPoints = 0;
     float remainingTime = 0.0f;
+    float elapsedTime = 0.0f;
+
 private:
     bool m_cleanupIssued = false;
     float m_cleanupRemaining = 0;
@@ -63,6 +65,9 @@ public:
                 state = State::Battle;
                 m_cleanupIssued = false;
             }
+        }
+        if (state == State::Battle) {
+            elapsedTime += deltaTime;
         }
     }
 

@@ -7,7 +7,9 @@
 #include <cstdint>
 
 class WaveControllerBehavior;
+
 class WaveUiBehavior : public BehaviorComponent {
+private:
     struct Popup {
         UiHandle handle;
         DirectX::XMFLOAT3 origin = {};
@@ -18,10 +20,13 @@ class WaveUiBehavior : public BehaviorComponent {
     };
     const WaveUiSettingsAsset* m_settingsAsset = nullptr;
     WaveUiSettings::Data m_settings;
-    WaveUiWidget m_number, m_points, m_phase;
+
+    WaveUiWidget m_number, m_points, m_phase, m_timer;
     WaveUiPhaseMotion m_phaseMotion;
+
     std::array<Popup, 24> m_popups;
     size_t m_nextPopup = 0;
+
     bool m_created = false;
     bool m_dirty = true;
     std::uint64_t m_revision = 0, m_eventCursor = 0;
@@ -29,15 +34,18 @@ class WaveUiBehavior : public BehaviorComponent {
     const WaveControllerBehavior* m_controller = nullptr;
     WaveProgress::State m_lastState = WaveProgress::State::WaitingForWorld;
     int m_lastWave = -1, m_lastPoints = -1;
+
 public:
     void Setup(const WaveUiSettingsAsset* settings) { m_settingsAsset = settings; m_dirty = true; }
     void Start() override;
     void Update() override;
     void DrawComponentInspector() override;
     void DestroyWidgets();
+
 private:
     void ApplyLayout();
     void ApplyPhaseMotion();
     void SpawnPopup(int points, DirectX::XMFLOAT3 position);
     void UpdatePopups(float dt);
+
 };

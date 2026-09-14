@@ -14,6 +14,7 @@ void WaveUiBehavior::Start()
     m_number.Initialize(scene, "WaveUi.Number");
     m_points.Initialize(scene, "WaveUi.Points", true);
     m_phase.Initialize(scene, "WaveUi.Phase");
+    m_timer.Initialize(scene, "WaveUi.Timer");
     m_created = true;
     ApplyLayout();
 }
@@ -27,9 +28,11 @@ void WaveUiBehavior::ApplyLayout()
     m_points.ApplyLayout(m_settings.points.text, m_screen);
     m_points.ApplyGauge(m_settings.points);
     m_phase.ApplyLayout(m_settings.phase, m_screen);
+    m_timer.ApplyLayout(m_settings.timer, m_screen);
     m_number.ApplyPresentation(m_settings, m_screen);
     m_points.ApplyPresentation(m_settings, m_screen);
     m_phase.ApplyPresentation(m_settings, m_screen);
+    m_timer.ApplyPresentation(m_settings, m_screen);
     m_revision = m_settingsAsset ? m_settingsAsset->GetRevision() : 0;
     m_dirty = false;
 }
@@ -60,6 +63,11 @@ void WaveUiBehavior::Update()
         m_number.SetText("WAVE " + std::to_string(progress.waveNumber) + " / " + std::to_string(controller->GetWaveCount()));
         m_points.SetText(std::to_string(progress.wavePoints) + " / " + std::to_string(progress.targetPoints) + "  合計 " + std::to_string(progress.totalScore));
         m_points.SetFill(progress.targetPoints > 0 ? static_cast<float>(progress.wavePoints) / progress.targetPoints : 0);
+        
+        std::ostringstream oss;
+        oss << std::fixed << std::setprecision(2) << progress.elapsedTime;
+        m_timer.SetText(oss.str());
+        
         const int seconds = static_cast<int>(std::ceil(progress.remainingTime));
         std::string phase;
         switch (progress.state) {

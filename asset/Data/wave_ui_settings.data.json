@@ -165,7 +165,38 @@
         "popupRiseDistance": 1.5,
         "popupScale": 1.5,
         "pulseDuration": 0.10000000149011612,
-        "pulseScale": 1.5
+        "pulseScale": 1.5,
+        "timer": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 26,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.2999999523162842,
+                    1.2999999523162842
+                ]
+            },
+            "placement": {
+                "position": [
+                    126.0,
+                    109.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    0.0
+                ]
+            }
+        }
     },
     "formatVersion": 0,
     "name": "wave_ui_settings.data",

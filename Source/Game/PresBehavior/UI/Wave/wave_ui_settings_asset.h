@@ -26,6 +26,7 @@ namespace WaveUiSettings {
         WidgetSettings number;
         PointsSettings points;
         WidgetSettings phase;
+        WidgetSettings timer;
         UiLayoutSettings::GroupPlacement phasePlacementB = {{0.5f, 0}, {0, 165}};
         DirectX::XMFLOAT2 phaseScaleB = {0.35f, 0.35f}; // Absolute text XY scale, like phase.label.size.
         float phaseMoveDelay = 1.0f;
@@ -74,6 +75,7 @@ namespace WaveUiSettings {
             MakeStructField("number", "Wave Number", &Data::number, GetWidgetSchema(), DefaultFieldOptions{}),
             MakeStructField("points", "Points", &Data::points, GetPointsSchema(), DefaultFieldOptions{}),
             MakeStructField("phase", "Phase", &Data::phase, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("timer", "Timer", &Data::timer, GetWidgetSchema(), DefaultFieldOptions{}),
             MakeStructField("phasePlacementB", "Phase Placement B", &Data::phasePlacementB, UiLayoutSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
             MakeField("phaseScaleB", "Phase Text XY Scale B", &Data::phaseScaleB, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=100}),
             MakeField("phaseMoveDelay", "Phase Move Delay (s)", &Data::phaseMoveDelay, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=30}),
