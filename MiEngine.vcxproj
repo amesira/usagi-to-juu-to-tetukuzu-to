@@ -142,6 +142,7 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
@@ -288,9 +289,11 @@
     <ClCompile Include="Source\Engine\Device\mi_fps.cpp" />
     <ClCompile Include="Source\Game\game.cpp" />
     <ClCompile Include="Source\Game\title.cpp" />
+    <ClCompile Include="Source\Game\result.cpp" />
     <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\title_camera_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\result_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Core\game_object.h" />
     <ClCompile Include="Source\Engine\Device\keyboard.cpp" />
     <ClCompile Include="Source\Engine\Component\collider_component.cpp" />
@@ -332,6 +335,7 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
@@ -642,12 +646,14 @@
     <ClInclude Include="Source\Engine\Device\direct3d.h" />
     <ClInclude Include="Source\Game\game.h" />
     <ClInclude Include="Source\Game\title.h" />
+    <ClInclude Include="Source\Game\result.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_phase_motion.h" />
     <ClInclude Include="Source\Engine\Core\scene_transition.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_blend.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Device\keyboard.h" />
     <ClInclude Include="Source\Engine\Device\mouse.h" />
     <ClInclude Include="Source\Engine\Core\processor.h" />

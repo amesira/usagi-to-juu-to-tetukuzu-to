@@ -10,6 +10,7 @@
 
 #include "Game/game.h"
 #include "Game/title.h"
+#include "Game/result.h"
 #include "Engine/Device/mi_fps.h"
 
 // シーン管理の初期化
@@ -61,14 +62,14 @@ void SceneManager::Draw()
 
 void SceneManager::ChangeScene(SceneID sceneId)
 {
-    if (m_transition.IsActive() || (sceneId != SceneID::Title && sceneId != SceneID::Game)) return;
+    if (m_transition.IsActive() || (sceneId != SceneID::Title && sceneId != SceneID::Game && sceneId != SceneID::Result)) return;
     // 次のシーンをセット
     m_nextScene = sceneId;
 }
 
 bool SceneManager::ChangeSceneWithFade(SceneID sceneId, float outDuration, float inDuration)
 {
-    if ((sceneId != SceneID::Title && sceneId != SceneID::Game)
+    if ((sceneId != SceneID::Title && sceneId != SceneID::Game && sceneId != SceneID::Result)
         || sceneId == m_currentScene || m_nextScene != m_currentScene || m_transition.IsActive()) return false;
     if (!m_transition.Start(outDuration, inDuration)) return false;
     m_nextScene = sceneId;
@@ -102,6 +103,9 @@ void SceneManager::LoadScene(SceneID sceneId)
             break;
         case SceneID::Game:
             m_pScene = new GameScene();
+            break;
+        case SceneID::Result:
+            m_pScene = new ResultScene();
             break;
         default:
             m_pScene = nullptr;

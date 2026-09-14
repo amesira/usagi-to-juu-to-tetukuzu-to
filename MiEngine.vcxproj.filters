@@ -150,6 +150,7 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.cpp" />
@@ -205,12 +206,16 @@
     <ClCompile Include="Source\Game\game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\result.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
     <ClCompile Include="Source\Game\title.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\Camera\title_camera_behavior.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\result_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
@@ -461,6 +466,7 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
     <ClInclude Include="Source\Engine\Component\image_component.h">
       <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
@@ -560,6 +566,9 @@
     <ClInclude Include="Source\Game\game.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Game\result.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Game\title.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
@@ -569,6 +578,7 @@
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_settings_asset.h" />
     <ClInclude Include="Source\Game\PresBehavior\Camera\title_camera_blend.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
     <ClInclude Include="Source\Engine\Component\behavior_component.h">
       <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
