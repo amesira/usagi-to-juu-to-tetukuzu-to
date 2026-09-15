@@ -60,7 +60,7 @@
             "billboardMode": "View",
             "blendMode": "Additive",
             "sortByDistance": true,
-            "texturePath": "asset/Texture/white.bmp",
+            "texturePath": "",
             "uvRect": [
                 0.0,
                 0.0,
