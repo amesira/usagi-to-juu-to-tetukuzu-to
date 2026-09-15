@@ -26,10 +26,13 @@ private:
     AttackCoordinatorSystem m_attackCoordinator;
 
     bool m_isInitialized = false;
+    bool m_attackCoordinatorEnabled = true;
 
 public:
     EnemyAIWorldController() = default;
     ~EnemyAIWorldController() override;
+
+    void Setup(bool attackCoordinatorEnabled) { m_attackCoordinatorEnabled = attackCoordinatorEnabled; }
 
     void Start() override;
     void Update() override;
@@ -38,13 +41,13 @@ public:
     bool IsInitialized() const { return m_isInitialized; }
 
     bool RequestAttack(const AttackCoordinatorSystem::AttackRequest& request) {
-        return m_isInitialized && GetEnable() && m_attackCoordinator.RequestAttack(request);
+        return m_attackCoordinatorEnabled && m_isInitialized && GetEnable() && m_attackCoordinator.RequestAttack(request);
     }
     bool CanAttack(int enemyId) const {
-        return m_isInitialized && GetEnable() && m_attackCoordinator.CanAttack(enemyId);
+        return m_attackCoordinatorEnabled && m_isInitialized && GetEnable() && m_attackCoordinator.CanAttack(enemyId);
     }
     bool ConsumeAttackRequest(int enemyId) {
-        return m_isInitialized && GetEnable() && m_attackCoordinator.ConsumeAttackRequest(enemyId);
+        return m_attackCoordinatorEnabled && m_isInitialized && GetEnable() && m_attackCoordinator.ConsumeAttackRequest(enemyId);
     }
     bool FinishAttack(int enemyId) { return m_attackCoordinator.FinishAttack(enemyId); }
     bool CancelAttackRequest(int enemyId) { return m_attackCoordinator.CancelAttackRequest(enemyId); }

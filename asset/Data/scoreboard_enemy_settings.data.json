@@ -1,0 +1,26 @@
+{
+    "data": {
+        "agentSettingsPath": "asset/Data/enemy_ai_agent_settings.data.json",
+        "boardOffset": [0.0, 2.5, 0.0],
+        "emissiveIntensity": 2.0,
+        "highScoreSpawn": [-6.0, 2.0, 5.0],
+        "modelPath": "asset/Model/enemy_a_model.fbx",
+        "modelScale": 1.0,
+        "moveSpeed": 3.0,
+        "panelColor": [0.03, 0.03, 0.05, 0.85],
+        "panelScale": [4.0, 1.4, 1.0],
+        "previousScoreSpawn": [6.0, 2.0, 5.0],
+        "rankAColor": [1.0, 0.75, 0.12, 1.0],
+        "rankBColor": [0.75, 0.8, 0.85, 1.0],
+        "rankCColor": [0.75, 0.35, 0.12, 1.0],
+        "rankDColor": [0.45, 0.45, 0.45, 1.0],
+        "rankSColor": [0.35, 0.95, 1.0, 1.0],
+        "repathInterval": 0.5,
+        "stopDistance": 3.0,
+        "textColor": [1.0, 1.0, 1.0, 1.0],
+        "waypointReachDistance": 0.35
+    },
+    "formatVersion": 0,
+    "name": "scoreboard_enemy_settings.data",
+    "type": "ScoreboardEnemySettingsAsset"
+}
