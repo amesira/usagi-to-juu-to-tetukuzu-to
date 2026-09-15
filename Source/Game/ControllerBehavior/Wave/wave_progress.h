@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <cmath>
+#include <DirectXMath.h>
 #include "Game/ControllerBehavior/Result/game_result.h"
 
 // エンジンに依存しないウェーブ進行。生成・破棄はControllerが担当する。
@@ -20,6 +21,8 @@ struct WaveSettings {
     float waveClearSlowScale = 0.2f;
     float waveClearSlowBlendDuration = 0.5f;
     float waveClearSlowHoldDuration = 1.0f;
+    DirectX::XMFLOAT3 wave3RimLightColor = {1.0f, 0.72f, 0.18f};
+    DirectX::XMFLOAT3 wave5RimLightColor = {1.0f, 0.15f, 0.08f};
 };
 
 class WaveProgress {

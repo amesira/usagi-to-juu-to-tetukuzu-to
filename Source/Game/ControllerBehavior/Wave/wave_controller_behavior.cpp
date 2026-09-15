@@ -338,6 +338,14 @@ void WaveControllerBehavior::Update()
             if (m_progress.waveNumber == 3) audio->SetBgm(GameBgm::Battle2);
             else if (m_progress.waveNumber == 5) audio->SetBgm(GameBgm::Battle3);
         }
+
+        auto& rimLight = scene->GetEnvironmentAsset().GetData().lighting.rimLight;
+        if (m_progress.waveNumber == 3) {
+            rimLight.color = m_settings.wave3RimLightColor;
+        }
+        else if (m_progress.waveNumber == 5) {
+            rimLight.color = m_settings.wave5RimLightColor;
+        }
     }
 
     if (m_progress.ShouldCleanupEnemies()) {
@@ -412,6 +420,8 @@ void WaveControllerBehavior::DrawComponentInspector()
         ImGui::SliderFloat("Wave Clear Slow Scale", &m_settings.waveClearSlowScale, 0.0f, 1.0f);
         ImGui::SliderFloat("Wave Clear Slow Blend", &m_settings.waveClearSlowBlendDuration, 0.0f, 2.0f);
         ImGui::SliderFloat("Wave Clear Slow Hold", &m_settings.waveClearSlowHoldDuration, 0.0f, 5.0f);
+        ImGui::ColorEdit3("Wave 3 Rim Light", &m_settings.wave3RimLightColor.x);
+        ImGui::ColorEdit3("Wave 5+ Rim Light", &m_settings.wave5RimLightColor.x);
         if (ImGui::TreeNode("Spawn Points (XZ; Y resolved from navigation)")) {
             for (size_t i = 0; i < m_spawnPoints.size(); ++i) {
                 ImGui::PushID(static_cast<int>(i));
