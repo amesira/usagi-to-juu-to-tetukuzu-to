@@ -1127,7 +1127,13 @@
     <None Include="External\ImGui\imgui.ini" />
     <None Include="Source\Game\Factory\ui_factory.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_settings_asset.h" />
+  </ItemGroup>  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>

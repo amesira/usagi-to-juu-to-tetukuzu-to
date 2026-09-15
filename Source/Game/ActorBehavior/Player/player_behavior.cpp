@@ -24,6 +24,7 @@
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/game_pause_controller_behavior.h"
 #include "Game/PresBehavior/Camera/camera_control_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 
@@ -134,6 +135,7 @@ void PlayerBehavior::Start()
 
 void PlayerBehavior::Update()
 {
+    if (auto* pause = Game::Pause(); pause && pause->IsOpen()) return;
     const float deltaTime = FPS_GetDeltaTime();
 
     SyncHealthUi();

@@ -39,6 +39,8 @@
 #include "Game/ControllerBehavior/StageDecoration/stage_decoration_controller_behavior.h"
 #include "Game/ControllerBehavior/StageBounds/stage_bounds_controller_behavior.h"
 #include "Game/PresBehavior/UI/Wave/wave_ui_behavior.h"
+#include "Game/PresBehavior/UI/GamePause/game_pause_ui_behavior.h"
+#include "Game/ControllerBehavior/game_pause_controller_behavior.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 
@@ -70,6 +72,7 @@ void GameScene::Initialize()
     gameControllerObj->AddComponent<CustomPostEffectController>();
     gameControllerObj->AddComponent<EnemyAIWorldController>();
     gameControllerObj->AddComponent<WaveControllerBehavior>();
+    gameControllerObj->AddComponent<GamePauseControllerBehavior>();
     gameControllerObj->AddComponent<StageBoundsControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     gameControllerObj->AddComponent<StageDecorationControllerBehavior>()->Setup(
@@ -78,6 +81,10 @@ void GameScene::Initialize()
     waveUiObject->SetName("WaveUi");
     waveUiObject->AddComponent<WaveUiBehavior>()->Setup(
         DATA_LOADER->GetAsset<WaveUiSettingsAsset>("asset/Data/wave_ui_settings.data.json", true));
+    auto* pauseUiObject = this->CreateGameObject();
+    pauseUiObject->SetName("GamePauseUi");
+    pauseUiObject->AddComponent<GamePauseUiBehavior>()->Setup(
+        DATA_LOADER->GetAsset<GamePauseUiSettingsAsset>("asset/Data/game_pause_ui_settings.data.json", true));
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });

@@ -5,6 +5,8 @@
 // Date  ：2026/04/08
 //===================================================
 #include "camera_control_behavior.h"
+#include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/game_pause_controller_behavior.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
@@ -91,6 +93,7 @@ void CameraControlBehavior::ApplyCurrentSettings()
 
 void CameraControlBehavior::Update()
 {
+    if (auto* pause = Game::Pause(); pause && pause->IsOpen()) return;
     if (m_context.settingsAsset == nullptr) return;
     float deltaTime = FPS_GetUnscaledDeltaTime();
 
@@ -266,6 +269,7 @@ void CameraControlBehavior::SetCameraInputEnabled(bool enabled)
     if (enabled) {
         // 相対座標モードではカーソルが非表示になり、ゲームウィンドウ内に固定される。
         Mouse_SetMode(Mouse_PositionMode::MOUSE_POSITION_MODE_RELATIVE);
+        Mouse_SetVisible(false);
     }
     else {
         // 相対座標モードへ移る直前の位置へカーソルを戻す。

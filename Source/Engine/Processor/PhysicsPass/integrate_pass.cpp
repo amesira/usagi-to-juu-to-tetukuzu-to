@@ -32,6 +32,7 @@ void IntegratePass::Finalize()
 void IntegratePass::Process(IScene* pScene)
 {
     float deltaTime = FPS_GetDeltaTime();
+    if (deltaTime <= 0.0f)return;
 
     auto* rigidbodyPool = pScene->GetComponentPool<RigidbodyComponent>();
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();

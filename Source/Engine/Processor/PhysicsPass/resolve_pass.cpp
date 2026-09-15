@@ -36,6 +36,7 @@ void ResolvePass::Finalize()
 void ResolvePass::Process(IScene* pScene)
 {
     float deltaTime = FPS_GetDeltaTime();
+    if (deltaTime <= 0.0f)return;
 
     auto* transformPool = pScene->GetComponentPool<TransformComponent>();
     auto* rigidbodyPool = pScene->GetComponentPool<RigidbodyComponent>();
