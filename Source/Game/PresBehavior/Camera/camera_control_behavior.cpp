@@ -9,6 +9,7 @@
 #include "Game/ControllerBehavior/game_pause_controller_behavior.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
+#include "Engine/Core/build_config.h"
 
 #include <algorithm>
 
@@ -108,8 +109,12 @@ void CameraControlBehavior::Update()
     // カメラエフェクトタスクの更新
     m_context.cameraEffect.UpdateCameraEffectTasks(m_context, deltaTime);
 
+#if MI_GAME_BUILD
+
+#else
     // 入力の有効・無効を切り替える操作を処理
     UpdateCameraInputActivation();
+#endif
 
     CameraRuntimeState& state = m_context.runtimeState;
     const CameraSettings::Data& settings = m_context.settings();

@@ -9,6 +9,8 @@
 
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
+#include "Engine/Core/build_config.h"
+
 #include "Engine/engine_service_locator.h"
 #include "Engine/Device/keyboard.h"
 #include "Engine/Device/mi_fps.h"
@@ -160,16 +162,20 @@ void PlayerBehavior::Update()
         }
     }
 
+#if MI_GAME_BUILD
+    m_input = UpdateInput();
+#else
     if (Keyboard_IsKeyDownTrigger(KK_F1)) {
         m_isInputEnabled = !m_isInputEnabled;
     }
-
     if (m_isInputEnabled) {
         m_input = UpdateInput();
     }
     else {
         m_input = {};
     }
+#endif
+    
     m_context.animationController->BeginFrame();
 
     m_context.conditionMachine->Update(m_context, m_input);

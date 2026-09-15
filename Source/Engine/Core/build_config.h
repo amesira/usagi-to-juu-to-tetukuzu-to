@@ -9,5 +9,5 @@
 // 1: ゲーム画面のみを表示する
 // プロジェクトのプリプロセッサ定義から上書きすることもできます。
 #ifndef MI_GAME_BUILD
-#define MI_GAME_BUILD 0
+#define MI_GAME_BUILD 1
 #endif
