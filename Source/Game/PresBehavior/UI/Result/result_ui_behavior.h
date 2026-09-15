@@ -10,14 +10,15 @@ private:
          UiHandle label, gauge, status; 
          float fill = 0, velocity = 0; 
      };
-     enum class Phase { Waves, Status, Total, CompleteBonus, TimeBonus, Rank, Menu };
+     enum class Phase { Waves, Status, Total, CompleteBonus, TimeBonus, Rank, RankReward, Menu };
      const ResultUiSettingsAsset* m_asset = nullptr;
      ResultUiSettings::Data m_settings;
 
      GameResult m_result = {};
      ResultScoring::Score m_score;
      std::vector<Row> m_rows;
-     UiHandle m_total, m_complete, m_time, m_rank, m_title, m_retry, m_selectionBackground;
+     UiHandle m_total, m_complete, m_time, m_rank, m_rankRewardMaterial, m_rankRewardSuffix;
+     UiHandle m_title, m_retry, m_selectionBackground;
      TitleUiSelectionMotion m_selectionMotion;
      struct Shake {
          UiHandle handle;

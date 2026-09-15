@@ -14,6 +14,28 @@
 namespace {
     void Text(UiHandle handle, const std::string& value) { if (auto* text = handle.GetText()) text->SetText(value); }
     float Duration(float value) { return std::isfinite(value) ? (std::max)(0.0f,value) : 0; }
+    const char* RankLetter(int rank) {
+        constexpr const char* letters[] = {"D", "D", "C", "B", "A", "S"};
+        return letters[std::clamp(rank, 1, 5)];
+    }
+    DirectX::XMFLOAT3 RankColor(const ResultUiSettings::Data& settings, int rank) {
+        switch (std::clamp(rank, 1, 5)) {
+        case 5: return settings.rankSColor;
+        case 4: return settings.rankAColor;
+        case 3: return settings.rankBColor;
+        case 2: return settings.rankCColor;
+        default: return settings.rankDColor;
+        }
+    }
+    const std::string& RankRewardMaterial(const ResultUiSettings::Data& settings, int rank) {
+        switch (std::clamp(rank, 1, 5)) {
+        case 5: return settings.rankSRewardText;
+        case 4: return settings.rankARewardText;
+        case 3: return settings.rankBRewardText;
+        case 2: return settings.rankCRewardText;
+        default: return settings.rankDRewardText;
+        }
+    }
 }
 void ResultUiBehavior::SetResult(const GameResult& result, const ResultScoring::Score& score) {
      DestroyWidgets();
@@ -25,16 +47,6 @@ void ResultUiBehavior::SetResult(const GameResult& result, const ResultScoring::
 }
 void ResultUiBehavior::Start() {
     if (m_created || !m_hasResult || !GetOwner() || !GetOwner()->GetScene()) return;
-
-    // テスト実装
-    /*m_result.waves.resize(5);
-    m_result.waves[0] = { 1, 50, 50, true };
-    m_result.waves[1] = { 2, 50, 50, true };
-    m_result.waves[2] = { 3, 50, 50, true };
-    m_result.waves[3] = { 4, 50, 50, true };
-    m_result.waves[4] = { 5, 50, 50, true };
-    m_result.elapsedTime = 120.0f;
-    m_result.completed = true;*/
 
      auto* scene = GetOwner()->GetScene();
      auto createText = [&] { return UiFactory::CreateUiTextHandle(scene,u8""); };
@@ -50,10 +62,12 @@ void ResultUiBehavior::Start() {
           row.label.SetActive(false); row.gauge.SetActive(false); row.status.SetActive(false);
           m_rows.push_back(row);
      }
-     m_total = createText(); m_complete = createText(); m_time = createText(); m_rank = createText(); m_title = createText(); m_retry = createText();
+     m_total = createText(); m_complete = createText(); m_time = createText(); m_rank = createText();
+     m_rankRewardMaterial = createText(); m_rankRewardSuffix = createText();
+     m_title = createText(); m_retry = createText();
      m_selectionBackground = UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp");
      Text(m_title,"タイトルへ戻る"); Text(m_retry,"もう一度");
-     for (auto handle : {m_total,m_complete,m_time,m_rank,m_title,m_retry,m_selectionBackground}) handle.SetActive(false);
+     for (auto handle : {m_total,m_complete,m_time,m_rank,m_rankRewardMaterial,m_rankRewardSuffix,m_title,m_retry,m_selectionBackground}) handle.SetActive(false);
      m_created = true; ApplyLayout();
      if (m_rows.empty()) Advance(Phase::Total);
 }
@@ -95,7 +109,12 @@ void ResultUiBehavior::ApplyLayout() {
     layout(m_total, m_settings.summary, m_settings.scorePlacement);
     layout(m_complete, m_settings.summary, m_settings.scorePlacement, spacing);
     layout(m_time, m_settings.summary, m_settings.scorePlacement, spacing * 2);
-    layout(m_rank, m_settings.summary, m_settings.rankPlacement);
+    layout(m_rank, m_settings.rank, m_settings.rankPlacement);
+    layout(m_rankRewardMaterial, m_settings.rankRewardMaterial, m_settings.rankPlacement);
+    layout(m_rankRewardSuffix, m_settings.rankRewardSuffix, m_settings.rankPlacement);
+    const auto rankColor = RankColor(m_settings, m_score.rank);
+    m_rank.SetColor(rankColor);
+    m_rankRewardMaterial.SetColor(rankColor);
     layout(m_title, m_settings.title, m_settings.menuPlacement);
     layout(m_retry, m_settings.retry, m_settings.menuPlacement);
     layout(m_selectionBackground, m_settings.selection, m_settings.menuPlacement, 0, 119);
@@ -195,8 +214,16 @@ void ResultUiBehavior::Update() {
       total(count(ResultScoring::ClampScore(static_cast<double>(m_score.base)+m_score.completeBonus),m_score.total));
       if(t>=1)Advance(Phase::Rank);break;
      case Phase::Rank:
-      total(m_score.total);ShowWithShake(m_rank);Text(m_rank,"評価  "+std::to_string(m_score.rank)+" / 5");
-      if(m_age>=Duration(m_settings.rankWait)){Advance(Phase::Menu);m_title.SetActive(true);m_retry.SetActive(true);m_selectionBackground.SetActive(true);}break;
+      total(m_score.total);ShowWithShake(m_rank);Text(m_rank,RankLetter(m_score.rank));
+      m_rank.SetColor(RankColor(m_settings,m_score.rank));
+      if(m_age>=Duration(m_settings.rankWait)) Advance(Phase::RankReward);break;
+     case Phase::RankReward:
+      ShowWithShake(m_rankRewardMaterial);ShowWithShake(m_rankRewardSuffix);
+      Text(m_rankRewardMaterial,RankRewardMaterial(m_settings,m_score.rank));
+      Text(m_rankRewardSuffix,m_settings.rankRewardSuffixText);
+      m_rankRewardMaterial.SetColor(RankColor(m_settings,m_score.rank));
+      m_rankRewardSuffix.SetColor(m_settings.textColor);
+      if(m_age>=Duration(m_settings.rankRewardWait)){Advance(Phase::Menu);m_title.SetActive(true);m_retry.SetActive(true);m_selectionBackground.SetActive(true);}break;
      case Phase::Menu:break;
      }
      UpdateShakes(dt);
@@ -205,8 +232,9 @@ void ResultUiBehavior::DestroyWidgets() {
      m_shakes.clear();
      for(auto& row:m_rows)for(auto handle:{row.label,row.gauge,row.status})handle.Destroy();
      m_rows.clear();
-     for(auto handle:{m_total,m_complete,m_time,m_rank,m_title,m_retry,m_selectionBackground})handle.Destroy();
-     m_total={};m_complete={};m_time={};m_rank={};m_title={};m_retry={};m_selectionBackground={};m_selectionMotion={};m_created=false;
+     for(auto handle:{m_total,m_complete,m_time,m_rank,m_rankRewardMaterial,m_rankRewardSuffix,m_title,m_retry,m_selectionBackground})handle.Destroy();
+     m_total={};m_complete={};m_time={};m_rank={};m_rankRewardMaterial={};m_rankRewardSuffix={};
+     m_title={};m_retry={};m_selectionBackground={};m_selectionMotion={};m_created=false;
 }
 void ResultUiBehavior::DrawComponentInspector() {
      ImGui::Text("Result phase: %d | Wave row: %d",static_cast<int>(m_phase),static_cast<int>(m_row));

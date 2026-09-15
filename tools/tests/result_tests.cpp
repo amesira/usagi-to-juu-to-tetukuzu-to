@@ -25,6 +25,11 @@ int main(int argc, char**) {
     ResultUiSettings::Data data;
     auto json=FieldSerialization::SerializeFields(data, ResultUiSettings::GetSchema());
     assert(json.contains("perspective") && json.contains("chromaticEcho"));
+    assert(json.contains("rankSColor") && json.contains("rankDColor"));
+    assert(json.contains("rankRewardMaterial") && json.contains("rankRewardSuffix"));
+    assert(data.rankSRewardText == "ダイヤ" && data.rankCRewardText == "銅");
+    assert(data.rankRewardSuffixText == "の鉄屑を贈呈！");
+    assert(data.rankDRewardText == "ただ");
     assert(FieldSerialization::DeserializeFields(json, data, ResultUiSettings::GetSchema()));
     std::ifstream currentFile("asset/Data/result_ui_settings.data.json");
     auto currentJson = nlohmann::json::parse(currentFile);
