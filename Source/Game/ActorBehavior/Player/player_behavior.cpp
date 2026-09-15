@@ -267,6 +267,7 @@ void PlayerBehavior::OnHitReceived(
     const HitReceiver::HitData& hitData,
     const HitReceiver::HitResult& hitResult)
 {
+    // === プレイヤー死亡演出 ===
     if (hitResult.killed) {
         if (auto* feedback = Game::GameFeedback()) {
             feedback->PlayCameraShake(3.0f, 1.0f);
@@ -275,13 +276,20 @@ void PlayerBehavior::OnHitReceived(
                 { 1.0f, 0.0f, 0.0f, 0.45f },
                 0.05f);
             auto crackFlash = feedback->ChangeFlash(
-                L"asset/Texture/crack.png",
+                L"asset/Texture/cracks.png",
                 { 1.0f, 1.0f, 1.0f, 0.5f },
                 0.05f);
+        }
+        if (m_context.uiBehavior) {
+            m_context.uiBehavior->PlayShakeWidgetGroup(
+                PlayerUi::WidgetGroupID::HealthBar,
+                10.0f,
+                5.0f);
         }
         return;
     }
 
+    // === プレイヤー被弾演出 ===
     if (auto* feedback = Game::GameFeedback()) {
         feedback->PlayCameraShake(1.0f, 0.2f);
         auto redFlash = feedback->PlayFlash(
@@ -290,9 +298,17 @@ void PlayerBehavior::OnHitReceived(
             0.05f,
             0.08f);
         auto crackFlash = feedback->PlayFlash(
-            L"asset/Texture/crack.png",
-            { 1.0f, 1.0f, 1.0f, 0.3f },
+            L"asset/Texture/cracks.png",
+            { 1.0f, 1.0f, 1.0f, 0.5f },
             0.05f,
             0.08f);
+    }
+
+    // UIシェイク
+    if (m_context.uiBehavior) {
+        m_context.uiBehavior->PlayShakeWidgetGroup(
+            PlayerUi::WidgetGroupID::HealthBar,
+            10.0f,
+            0.5f);
     }
 }

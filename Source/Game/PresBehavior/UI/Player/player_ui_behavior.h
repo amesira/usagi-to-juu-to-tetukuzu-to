@@ -71,6 +71,10 @@ public:
         m_layoutDirty = true;
     }
 
+    void PlayShakeWidgetGroup(PlayerUi::WidgetGroupID groupID, float intensity, float duration) {
+        m_presentation.ShakeWidgetGroup(m_context, groupID, intensity, duration);
+    }
+
 private:
     void UpdateRuntimeState();
     void CreateWidgets();
