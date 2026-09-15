@@ -15,6 +15,13 @@ private: friend class MiEngine;
     static inline MiEngine* s_engineInstance = nullptr;
 
 public:
+    static bool ChangeSceneWithFade(SceneManager::SceneID sceneId, float outDuration = 0.4f, float inDuration = 0.4f) {
+        return s_engineInstance && s_engineInstance->GetGameWorld().GetSceneManager().ChangeSceneWithFade(sceneId, outDuration, inDuration);
+    }
+    static void RequestQuit() {
+        if (s_engineInstance) s_engineInstance->RequestQuit();
+    }
+
     // デバッグログの追加
     static void AddLogMessage(const std::string& message) {
         if (s_engineInstance) {
@@ -26,11 +33,14 @@ public:
     static ResourceManager* GetResourceManager() {
         return s_engineInstance ? &s_engineInstance->GetResourceManager() : nullptr;
     }
-    static ModelRepository* GetModelRepository() {
+    static ModelRepository* ModelRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetModelRepository() : nullptr;
     }
     static TextureRepository* GetTextureRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetTextureRepository() : nullptr;
+    }
+    static FontRepository* GetFontRepository() {
+        return s_engineInstance ? s_engineInstance->GetResourceManager().GetFontRepository() : nullptr;
     }
     static MaterialRepository* GetMaterialRepository() {
         return s_engineInstance ? s_engineInstance->GetResourceManager().GetMaterialRepository() : nullptr;
@@ -40,7 +50,7 @@ public:
     }
 
     // ShaderManagerへのアクセス
-    static ShaderManager* GetShaderManager() {
+    static ShaderManager* Shader() {
         return s_engineInstance ? &s_engineInstance->GetShaderManager() : nullptr;
     }
     static void BindShader(ShaderBase shaderBase) {
@@ -68,6 +78,35 @@ public:
             s_engineInstance->GetShaderManager().BindCameraCB(cameraData);
         }
     }
+
+    // AssetManagerへのアクセス
+    static AssetManager* Asset() {
+        return s_engineInstance ? &s_engineInstance->GetAssetManager() : nullptr;
+    }
+    static ParticleSystemAssetLoader* ParticleLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().ParticleAssetLoader() : nullptr;
+    }
+    static DataAssetLoader* DataLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().DataAssetLoader() : nullptr;
+    }
+    static MeshEffectAssetLoader* MeshEffectLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().MeshEffectAssetLoader() : nullptr;
+    }
+    static EnvironmentAssetLoader* EnvironmentLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().EnvironmentAssetLoader() : nullptr;
+    }
+    static LevelAssetLoader* LevelLoader() {
+        return s_engineInstance ? s_engineInstance->GetAssetManager().LevelAssetLoader() : nullptr;
+    }
 };
+
+using Engine = EngineServiceLocator;
+
+#define MODEL_REPOSITORY EngineServiceLocator::ModelRepository()
+#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
+#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
+
+#define DATA_LOADER EngineServiceLocator::DataLoader()
 
 #endif // ENGINE_SERVICE_LOCATOR_H

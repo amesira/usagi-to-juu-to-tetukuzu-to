@@ -13,12 +13,12 @@ using namespace DirectX;
 #include <wrl/client.h>
 using Microsoft::WRL::ComPtr;
 
-#include <string>
+#include <filesystem>
 
 // テクスチャリソース
 class TextureResource {
 public:
-    std::wstring name;
+    std::filesystem::path sourcePath;
     ComPtr<ID3D11ShaderResourceView> texture;
 };
 

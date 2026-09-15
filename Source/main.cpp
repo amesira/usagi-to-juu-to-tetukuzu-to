@@ -127,15 +127,17 @@ int APIENTRY WinMain(HINSTANCE hInstance,  // このプログラムを表す情�
                 mousecopy();
             }
         }
-    }while (msg.message != WM_QUIT); // プログラム終了でなければループ
+    }while (msg.message != WM_QUIT && !engine.IsQuitRequested());
 
     //----------------------------------------------------
 	// 終了処理
 	//----------------------------------------------------
     engine.Finalize();
+    // In-game confirmation already approved quitting; bypass WM_CLOSE's dialog.
+    if (IsWindow(hWnd)) DestroyWindow(hWnd);
 
     // 終了する
-    return (int)msg.wParam;
+    return engine.IsQuitRequested() ? 0 : (int)msg.wParam;
 }
 
 //===================================================

@@ -1,0 +1,80 @@
+//---------------------------------------------------
+// File  ：_/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h
+// Date  ：2026/09/09
+// Author：Miu Kitamura
+// 
+// ・シーン共有AIの所有・初期化・更新を管理するBehavior。
+// ・敵個体の状態や行動選択は、個体側のBehaviorで管理する。
+//---------------------------------------------------
+#ifndef ENEMY_AI_CONTROLLER_H
+#define ENEMY_AI_CONTROLLER_H
+#include "Engine/Component/behavior_component.h"
+
+#include "enemy_ai_world_context.h"
+#include "meta_ai.h"
+#include "navigation_system.h"
+#include "tactical_query_system.h"
+#include "attack_coordinator_system.h"
+
+class EnemyAIWorldController : public BehaviorComponent {
+private:
+    EnemyAIWorldContext m_context;
+
+    MetaAI m_metaAI;
+    NavigationSystem m_navigation;
+    TacticalQuerySystem m_tacticalQuery;
+    AttackCoordinatorSystem m_attackCoordinator;
+
+    bool m_isInitialized = false;
+
+public:
+    EnemyAIWorldController() = default;
+    ~EnemyAIWorldController() override;
+
+    void Start() override;
+    void Update() override;
+    void DrawComponentInspector() override;
+
+    bool IsInitialized() const { return m_isInitialized; }
+
+    bool RequestAttack(const AttackCoordinatorSystem::AttackRequest& request) {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.RequestAttack(request);
+    }
+    bool CanAttack(int enemyId) const {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.CanAttack(enemyId);
+    }
+    bool ConsumeAttackRequest(int enemyId) {
+        return m_isInitialized && GetEnable() && m_attackCoordinator.ConsumeAttackRequest(enemyId);
+    }
+    bool FinishAttack(int enemyId) { return m_attackCoordinator.FinishAttack(enemyId); }
+    bool CancelAttackRequest(int enemyId) { return m_attackCoordinator.CancelAttackRequest(enemyId); }
+
+    // 個体側へWorldContextを公開せず、経路探索の窓口を提供する
+    // ここでSmoothPathまで行なってしまう
+    EnemyAiWorld::PathQueryResult FindPath(
+        const DirectX::XMFLOAT3& start,
+        const DirectX::XMFLOAT3& goal, 
+        const EnemyAiAgent::NavigationAgentSettings& agent,
+        const int enemyId = -1) {
+        if (!m_isInitialized) return {};
+
+        EnemyAiWorld::PathQueryResult result = m_navigation.FindPath(m_context, start, goal, agent, enemyId);
+        if (result.status == EnemyAiWorld::PathQueryStatus::Success) {
+            m_navigation.SmoothPath(m_context, agent, result.path, enemyId);
+        }
+        return result;
+    }
+
+    // === AIシステムの参照取得 ===
+    MetaAI& GetMetaAI() { return m_metaAI; }
+    const MetaAI& GetMetaAI() const { return m_metaAI; }
+    NavigationSystem& GetNavigationSystem() { return m_navigation; }
+    const NavigationSystem& GetNavigationSystem() const { return m_navigation; }
+    TacticalQuerySystem& GetTacticalQuerySystem() { return m_tacticalQuery; }
+    const TacticalQuerySystem& GetTacticalQuerySystem() const { return m_tacticalQuery; }
+    AttackCoordinatorSystem& GetAttackCoordinatorSystem() { return m_attackCoordinator; }
+    const AttackCoordinatorSystem& GetAttackCoordinatorSystem() const { return m_attackCoordinator; }
+
+};
+
+#endif // ENEMY_AI_CONTROLLER_H

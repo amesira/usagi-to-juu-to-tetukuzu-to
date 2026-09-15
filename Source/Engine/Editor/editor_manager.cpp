@@ -1,111 +1,225 @@
 //===================================================
-// editor_manager.cpp
-// 
+// File  ：Engine/Editor/editor_manager.cpp
+// Date  ：2026/07/21
 // Author：Miu Kitamura
-// Date  ：2026/04/30
+// 
+// ・エディターの管理クラス
+// ・Engineから呼び出され、エディターの初期化、描画、終了処理を行う
 //===================================================
 #include "editor_manager.h"
+#include "Engine/Core/build_config.h"
 
-// EditorManagerの初期化
 void EditorManager::Initialize(HWND hWnd)
 {
-    m_imguiManager.Initialize(hWnd);
+    m_imguiBackend.Initialize(hWnd);
 
-    // EditorContextの初期化
-    m_editorContext.displayX = 1920.0f;
-    m_editorContext.displayY = 1080.0f;
-
-    // Tabエリアの初期化
-    EditorTabArea& centerArea = m_tabAreas[static_cast<int>(EditorAreaID::CenterScreen)];
-    centerArea.areaName = "CenterArea";
-    centerArea.areaRect = { 0.0f, 0.04f, 0.6f, 0.6f };
-    centerArea.AddWindow(&m_sceneViewWindow, "Scene");
-    centerArea.AddWindow(&m_gameViewWindow, "Game");
-    centerArea.AddWindow(&m_canvasViewWindow, "Canvas");
-
-    EditorTabArea& rightArea1 = m_tabAreas[static_cast<int>(EditorAreaID::Right01)];
-    rightArea1.areaName = "Right1";
-    rightArea1.areaRect = { 0.6f, 0.04f, 0.2f, 0.96f };
-    rightArea1.AddWindow(&m_hierarchyViewWindow, "Hierarchy");
-
-    EditorTabArea& rightArea2 = m_tabAreas[static_cast<int>(EditorAreaID::Right02)];
-    rightArea2.areaName = "Right2";
-    rightArea2.areaRect = { 0.8f, 0.04f, 0.2f, 0.96f };
-    rightArea2.AddWindow(&m_inspectorViewWindow, "Inspector");
-    rightArea2.AddWindow(&m_settingsViewWindow, "Settings");
-
-    EditorTabArea& bottomArea = m_tabAreas[static_cast<int>(EditorAreaID::Bottom)];
-    bottomArea.areaName = "Bottom";
-    bottomArea.areaRect = { 0.0f, 0.64f, 0.6f, 0.36f };
-    bottomArea.AddWindow(&m_debugViewWindow, "Debug");
-    bottomArea.AddWindow(&m_sceneViewWindow, "Scene Mini");
-    bottomArea.AddWindow(&m_gameViewWindow, "Game Mini");
-
-    EditorTabArea& topArea = m_tabAreas[static_cast<int>(EditorAreaID::Top)];
-    topArea.singleTabMode = true;
-    topArea.areaName = "Top";
-    topArea.areaRect = { 0.0f, 0.0f, 1.0f, 0.04f };
-    topArea.AddWindow(&m_toolBarWindow, "Toolbar");
-
+    m_toolBarWindow.SetWindowManager(&m_windowManager);
+    RegisterWindows();
 }
 
-// EditorManagerの終了処理
 void EditorManager::Finalize()
 {
-    m_imguiManager.Finalize();
+    m_particleSystemEditorWindow.OnWindowClosed();
+    m_meshEffectEditorWindow.OnWindowClosed();
+    m_imguiBackend.Finalize();
 }
 
 // EditorManagerの描画処理
 void EditorManager::Render()
 {
-    m_imguiManager.BeginFrame();
+    m_imguiBackend.BeginFrame();
 
-    // 各エリアのタブを描画
-    for (int i = 0; i < static_cast<int>(EditorAreaID::MAX); ++i) {
-        EditorTabArea& area = m_tabAreas[i];
-        if (area.tabs.empty()) continue;
+    // Main Viewを最初に描画し、各ツールをその上へ重ねる。
+#if MI_GAME_BUILD
+    m_editorContext.mainViewMode = EditorContext::MainViewMode::Game;
+    DrawMainView();
+#else
+    DrawMainView();
+    DrawToolbar();
+    SyncWindowLifecycle();
 
-        // タブエリアの位置とサイズを設定
-        ImGui::SetNextWindowPos({ m_editorContext.displayX * area.areaRect[0], m_editorContext.displayY * area.areaRect[1] });
-        ImGui::SetNextWindowSize({ m_editorContext.displayX * area.areaRect[2], m_editorContext.displayY * area.areaRect[3]});
+    if (m_editorContext.toolbarExpanded) {
+        m_windowManager.DrawAll();
+    }
+#endif
 
-        // タブエリアの描画
-        ImGui::Begin(area.areaName.c_str(), nullptr,
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_NoResize |
-            ImGuiWindowFlags_NoCollapse |
-            ImGuiWindowFlags_NoTitleBar);
+    m_imguiBackend.EndFrame();
+}
 
-        // タブが1つだけの場合はタブ表示を省略して直接ウィンドウを描画
-        if (area.singleTabMode) {
-            IImguiWindow* window = area.tabs[0];
-            if (window) {
-                window->Draw();
-            }
-            ImGui::End();
-            continue;
-        }
+/// @brief シーン破棄時に呼び出す
+void EditorManager::OnSceneDestroyed()
+{
+    m_levelEditorWindow.OnSceneDestroyed();
+    m_particleSystemEditorWindow.OnSceneDestroyed();
+    m_meshEffectEditorWindow.OnSceneDestroyed();
+}
 
-        // タブの描画
-        if (ImGui::BeginTabBar(area.areaName.c_str())) {
-            ImVec2 avail = ImGui::GetContentRegionAvail();
+void EditorManager::RegisterWindows()
+{
+    m_windowManager.Register(
+        EditorWindowId::LevelEditor,
+        &m_levelEditorWindow,
+        "Level Editor",
+        "LevelEditor",
+        true,
+        { 20.0f, 80.0f },
+        { 900.0f, 700.0f });
 
-            for (size_t tabIndex = 0; tabIndex < area.tabs.size(); tabIndex++) {
-                if (ImGui::BeginTabItem(area.tabNames[tabIndex].c_str())) {
-                    IImguiWindow* window = area.tabs[tabIndex];
-                    if (window) {
-                        ImGui::BeginChild(area.tabNames[tabIndex].c_str(), avail, false);
-                        window->Draw();
-                        ImGui::EndChild();
-                    }
-                    ImGui::EndTabItem();
-                }
-            }
-        }
-        ImGui::EndTabBar();
+    m_windowManager.Register(
+        EditorWindowId::Debug,
+        &m_debugViewWindow,
+        "Debug",
+        "DebugView",
+        false,
+        { 360.0f, 760.0f },
+        { 900.0f, 280.0f });
 
-        ImGui::End();
+    m_windowManager.Register(
+        EditorWindowId::GameView,
+        &m_gameViewWindow,
+        "Game View",
+        "FloatingGameView",
+        false,
+        { 380.0f, 120.0f },
+        { 800.0f, 450.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::SceneView,
+        &m_sceneViewWindow,
+        "Scene View",
+        "FloatingSceneView",
+        false,
+        { 420.0f, 150.0f },
+        { 800.0f, 450.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::CanvasView,
+        &m_canvasViewWindow,
+        "Canvas View",
+        "FloatingCanvasView",
+        false,
+        { 460.0f, 180.0f },
+        { 800.0f, 450.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::Settings,
+        &m_settingsViewWindow,
+        "Settings",
+        "SettingsView",
+        false,
+        { 1200.0f, 100.0f },
+        { 340.0f, 650.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::ParticleSystemEditor,
+        &m_particleSystemEditorWindow,
+        "Particle System Editor",
+        "ParticleSystemEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::DataEditor,
+        &m_dataEditorWindow,
+        "Data Editor",
+        "DataEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
+
+    m_windowManager.Register(
+        EditorWindowId::MeshEffectEditor,
+        &m_meshEffectEditorWindow,
+        "Mesh Effect Editor",
+        "MeshEffectEditor",
+        false,
+        { 120.0f, 80.0f },
+        { 1600.0f, 850.0f });
+}
+
+void EditorManager::SyncWindowLifecycle()
+{
+    if (!m_windowManager.IsOpen(EditorWindowId::ParticleSystemEditor))
+    {
+        m_particleSystemEditorWindow.OnWindowClosed();
     }
 
-    m_imguiManager.EndFrame();
+    if (!m_windowManager.IsOpen(EditorWindowId::DataEditor))
+    {
+        m_dataEditorWindow.OnWindowClosed();
+    }
+
+    if (!m_windowManager.IsOpen(EditorWindowId::MeshEffectEditor))
+    {
+        m_meshEffectEditorWindow.OnWindowClosed();
+    }
+}
+
+/// @brief エディターのメインビューを描画する
+void EditorManager::DrawMainView()
+{
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+#if MI_GAME_BUILD
+    // ツールバーを表示しないため、ビューポート全体をGame Viewとして使用する。
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+#else
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+#endif
+
+    constexpr ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+    if (ImGui::Begin("Main View###MainView", nullptr, flags))
+    {
+        switch (m_editorContext.mainViewMode)
+        {
+        case EditorContext::MainViewMode::Game:
+            m_gameViewWindow.Draw();
+            break;
+
+        case EditorContext::MainViewMode::Scene:
+            m_sceneViewWindow.Draw();
+            break;
+        }
+    }
+    ImGui::End();
+    ImGui::PopStyleVar();
+}
+
+/// @brief エディターのツールバーを描画する
+void EditorManager::DrawToolbar()
+{
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    const float toolbarHeight = m_editorContext.toolbarExpanded ? 48.0f : 30.0f;
+
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize({ viewport->WorkSize.x, toolbarHeight });
+    ImGui::SetNextWindowBgAlpha(0.94f);
+
+    constexpr ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 6.0f, 4.0f });
+    if (ImGui::Begin("Toolbar###MainToolbar", nullptr, flags))
+    {
+        m_toolBarWindow.Draw();
+    }
+    ImGui::End();
+    ImGui::PopStyleVar();
 }

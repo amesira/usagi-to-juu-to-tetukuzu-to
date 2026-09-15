@@ -1,186 +1,151 @@
-
-#include <d3d11.h>
-#include <DirectXMath.h>
-using namespace DirectX;
-#include "direct3d.h"
-#include "keyboard.h"
-
 #include "audio.h"
-
-
-
-
-
-
-static IXAudio2* g_Xaudio{};
-static IXAudio2MasteringVoice* g_MasteringVoice{};
-
-
-void InitAudio()
-{
-	// XAudio生成
-	XAudio2Create(&g_Xaudio, 0);
-
-	// マスタリングボイス生成
-	g_Xaudio->CreateMasteringVoice(&g_MasteringVoice);
-}
-
-
-void UninitAudio()
-{
-	g_MasteringVoice->DestroyVoice();
-	g_Xaudio->Release();
-}
-
-
-
-
-
-
-
-
-
-struct AUDIO
-{
-	IXAudio2SourceVoice*	SourceVoice{};
-	BYTE*					SoundData{};
-
-	int						Length{};
-	int						PlayLength{};
+#include "audio_wave.h"
+#include <xaudio2.h>
+#include <array>
+#include <algorithm>
+#include <cmath>
+#include <filesystem>
+#include <fstream>
+#pragma comment(lib, "xaudio2.lib")
+#pragma comment(lib, "ole32.lib")
+namespace {
+constexpr size_t MaxSounds = 100, MaxVoices = 16;
+struct LoopVoice { AudioLoopHandle handle; IXAudio2SourceVoice* voice; };
+AudioLoopHandle nextLoopHandle = 1;
+struct Sound {
+    AudioWave::Data data;
+    std::vector<IXAudio2SourceVoice*> voices;
+    std::vector<LoopVoice> loops;
+    size_t nextVoice = 0;
+    bool loaded = false;
 };
-
-#define AUDIO_MAX 100
-static AUDIO g_Audio[AUDIO_MAX]{};
-
-
-
-int LoadAudio(const wchar_t *FileName)
-{
-	int index = -1;
-
-	for (int i = 0; i < AUDIO_MAX; i++)
-	{
-		if (g_Audio[i].SourceVoice == nullptr)
-		{
-			index = i;
-			break;
-		}
-	}
-
-	if (index == -1)
-		return -1;
-
-
-
-
-	// サウンドデータ読込
-	WAVEFORMATEX wfx = { 0 };
-
-	{
-		HMMIO hmmio = NULL;
-		MMIOINFO mmioinfo = { 0 };
-		MMCKINFO riffchunkinfo = { 0 };
-		MMCKINFO datachunkinfo = { 0 };
-		MMCKINFO mmckinfo = { 0 };
-		UINT32 buflen;
-		LONG readlen;
-
-
-		hmmio = mmioOpen((LPWSTR)FileName, &mmioinfo, MMIO_READ);
-		assert(hmmio);
-
-		riffchunkinfo.fccType = mmioFOURCC('W', 'A', 'V', 'E');
-		mmioDescend(hmmio, &riffchunkinfo, NULL, MMIO_FINDRIFF);
-
-		mmckinfo.ckid = mmioFOURCC('f', 'm', 't', ' ');
-		mmioDescend(hmmio, &mmckinfo, &riffchunkinfo, MMIO_FINDCHUNK);
-
-		if (mmckinfo.cksize >= sizeof(WAVEFORMATEX))
-		{
-			mmioRead(hmmio, (HPSTR)&wfx, sizeof(wfx));
-		}
-		else
-		{
-			PCMWAVEFORMAT pcmwf = { 0 };
-			mmioRead(hmmio, (HPSTR)&pcmwf, sizeof(pcmwf));
-			memset(&wfx, 0x00, sizeof(wfx));
-			memcpy(&wfx, &pcmwf, sizeof(pcmwf));
-			wfx.cbSize = 0;
-		}
-		mmioAscend(hmmio, &mmckinfo, 0);
-
-		datachunkinfo.ckid = mmioFOURCC('d', 'a', 't', 'a');
-		mmioDescend(hmmio, &datachunkinfo, &riffchunkinfo, MMIO_FINDCHUNK);
-
-
-
-		buflen = datachunkinfo.cksize;
-		g_Audio[index].SoundData = new unsigned char[buflen];
-		readlen = mmioRead(hmmio, (HPSTR)g_Audio[index].SoundData, buflen);
-
-
-		g_Audio[index].Length = readlen;
-		g_Audio[index].PlayLength = readlen / wfx.nBlockAlign;
-
-
-		mmioClose(hmmio, 0);
-	}
-
-
-	// サウンドソース生成
-	g_Xaudio->CreateSourceVoice(&g_Audio[index].SourceVoice, &wfx);
-	assert(g_Audio[index].SourceVoice);
-
-
-	return index;
+std::array<Sound, MaxSounds> sounds;
+IXAudio2* engine = nullptr;
+IXAudio2MasteringVoice* output = nullptr;
+bool ownsCom = false;
+float Volume(float value) { return std::isfinite(value) ? std::clamp(value, 0.0f, 1.0f) : 0.0f; }
+Sound* Get(int index) { return index >= 0 && index < int(MaxSounds) && sounds[index].loaded ? &sounds[index] : nullptr; }
+IXAudio2SourceVoice* CreateVoice(Sound& sound) {
+    IXAudio2SourceVoice* voice = nullptr;
+    if (!engine || FAILED(engine->CreateSourceVoice(&voice, &sound.data.format))) return nullptr;
+    sound.voices.push_back(voice); return voice;
 }
-
-
-
-
-void UnloadAudio(int Index)
-{
-	g_Audio[Index].SourceVoice->Stop();
-	g_Audio[Index].SourceVoice->DestroyVoice();
-
-	delete[] g_Audio[Index].SoundData;
-	g_Audio[Index].SoundData = nullptr;
+bool Playing(IXAudio2SourceVoice* voice) {
+    XAUDIO2_VOICE_STATE state{}; voice->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);
+    return state.BuffersQueued != 0;
 }
-
-
-
-
-
-void PlayAudio(int Index, bool Loop)
-{
-	g_Audio[Index].SourceVoice->Stop();
-	g_Audio[Index].SourceVoice->FlushSourceBuffers();
-
-
-	// バッファ設定
-	XAUDIO2_BUFFER bufinfo;
-
-	memset(&bufinfo, 0x00, sizeof(bufinfo));
-	bufinfo.AudioBytes = g_Audio[Index].Length;
-	bufinfo.pAudioData = g_Audio[Index].SoundData;
-	bufinfo.PlayBegin = 0;
-	bufinfo.PlayLength = g_Audio[Index].PlayLength;
-
-	// ループ設定
-	if (Loop)
-	{
-		bufinfo.LoopBegin = 0;
-		bufinfo.LoopLength = g_Audio[Index].PlayLength;
-		bufinfo.LoopCount = XAUDIO2_LOOP_INFINITE;
-	}
-
-	g_Audio[Index].SourceVoice->SubmitSourceBuffer(&bufinfo, NULL);
-
-
-	// 再生
-	g_Audio[Index].SourceVoice->Start();
-
+bool Submit(Sound& sound, IXAudio2SourceVoice* voice, bool loop, float volume) {
+    if (!voice) return false;
+    voice->Stop(); voice->FlushSourceBuffers();
+    voice->SetVolume(Volume(volume));
+    XAUDIO2_BUFFER buffer{};
+    buffer.Flags = XAUDIO2_END_OF_STREAM;
+    buffer.AudioBytes = static_cast<UINT32>(sound.data.samples.size());
+    buffer.pAudioData = sound.data.samples.data();
+    if (loop) buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
+    if (FAILED(voice->SubmitSourceBuffer(&buffer))) return false;
+    if (FAILED(voice->Start())) { voice->FlushSourceBuffers(); return false; }
+    return true;
 }
-
-
-
+}
+void InitAudio() {
+    if (engine) return;
+    const HRESULT com = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    ownsCom = SUCCEEDED(com);
+    if (FAILED(com) && com != RPC_E_CHANGED_MODE) return;
+    if (FAILED(XAudio2Create(&engine)) || FAILED(engine->CreateMasteringVoice(&output))) {
+        UninitAudio(); OutputDebugStringW(L"Audio initialization failed.\n");
+    }
+}
+void UninitAudio() {
+    for (int i = 0; i < int(MaxSounds); ++i) UnloadAudio(i);
+    if (output) { output->DestroyVoice(); output = nullptr; }
+    if (engine) { engine->Release(); engine = nullptr; }
+    if (ownsCom) { CoUninitialize(); ownsCom = false; }
+}
+bool IsAudioInitialized() { return engine && output; }
+int LoadAudio(const wchar_t* path) {
+    if (!IsAudioInitialized() || !path || !*path) return -1;
+    auto it = std::find_if(sounds.begin(), sounds.end(), [](const Sound& s) { return !s.loaded; });
+    if (it == sounds.end()) return -1;
+    std::ifstream file(std::filesystem::path(path), std::ios::binary | std::ios::ate);
+    if (!file) return -1;
+    const auto size = file.tellg();
+    if (size < 12 || size > 256 * 1024 * 1024) return -1;
+    std::vector<BYTE> bytes(static_cast<size_t>(size));
+    file.seekg(0);
+    if (!file.read(reinterpret_cast<char*>(bytes.data()), static_cast<std::streamsize>(bytes.size()))) return -1;
+    AudioWave::Data data;
+    if (!AudioWave::Parse(bytes, data)) return -1;
+    it->data = std::move(data);
+    if (!CreateVoice(*it)) { *it = Sound{}; return -1; }
+    it->loaded = true;
+    return static_cast<int>(it - sounds.begin());
+}
+void UnloadAudio(int index) {
+    auto* sound = Get(index); if (!sound) return;
+    for (auto* voice : sound->voices) voice->DestroyVoice();
+    for (auto& loop : sound->loops) loop.voice->DestroyVoice();
+    *sound = Sound{};
+}
+void StopAudio(int index) {
+    auto* sound = Get(index); if (!sound) return;
+    for (auto* voice : sound->voices) { voice->Stop(); voice->FlushSourceBuffers(); }
+    for (auto& loop : sound->loops) loop.voice->DestroyVoice();
+    sound->loops.clear();
+}
+void PlayAudio(int index, bool loop) {
+    auto* sound = Get(index); if (!sound) return;
+    StopAudio(index);
+    // Preserve the caller's BGM volume when restarting.
+    float volume = 1; sound->voices.front()->GetVolume(&volume);
+    Submit(*sound, sound->voices.front(), loop, volume);
+}
+bool PlayAudioOneShot(int index, float volume) {
+    auto* sound = Get(index); if (!sound) return false;
+    auto idle = std::find_if(sound->voices.begin(), sound->voices.end(), [](auto* v) { return !Playing(v); });
+    IXAudio2SourceVoice* voice = idle != sound->voices.end() ? *idle : nullptr;
+    if (!voice && sound->voices.size() < MaxVoices) voice = CreateVoice(*sound);
+    // At the cap, recycle voices in order rather than allocating without a limit.
+    if (!voice && !sound->voices.empty()) {
+        voice = sound->voices[sound->nextVoice++ % sound->voices.size()];
+    }
+    return Submit(*sound, voice, false, volume);
+}
+AudioLoopHandle StartAudioLoop(int index, float volume) {
+    auto* sound = Get(index);
+    if (!sound || !engine || sound->loops.size() >= MaxVoices || nextLoopHandle == 0) return InvalidAudioLoopHandle;
+    IXAudio2SourceVoice* voice = nullptr;
+    if (FAILED(engine->CreateSourceVoice(&voice, &sound->data.format))) return InvalidAudioLoopHandle;
+    if (!Submit(*sound, voice, true, volume)) { voice->DestroyVoice(); return InvalidAudioLoopHandle; }
+    const auto handle = nextLoopHandle++;
+    sound->loops.push_back({handle, voice});
+    return handle;
+}
+void StopAudioLoop(AudioLoopHandle handle) {
+    if (!handle) return;
+    for (auto& sound : sounds) {
+        auto it = std::find_if(sound.loops.begin(), sound.loops.end(), [handle](const LoopVoice& loop) { return loop.handle == handle; });
+        if (it == sound.loops.end()) continue;
+        it->voice->DestroyVoice(); sound.loops.erase(it); return;
+    }
+}
+bool IsAudioLoopPlaying(AudioLoopHandle handle) {
+    if (!handle) return false;
+    for (const auto& sound : sounds) for (const auto& loop : sound.loops) if (loop.handle == handle) return Playing(loop.voice);
+    return false;
+}
+void SetAudioVolume(int index, float volume) {
+    if (auto* sound = Get(index)) {
+        for (auto* voice : sound->voices) voice->SetVolume(Volume(volume));
+        for (auto& loop : sound->loops) loop.voice->SetVolume(Volume(volume));
+    }
+}
+void SetMasterAudioVolume(float volume) { if (output) output->SetVolume(Volume(volume)); }
+bool IsAudioPlaying(int index) {
+    if (auto* sound = Get(index)) {
+        return std::any_of(sound->voices.begin(), sound->voices.end(), Playing)
+            || std::any_of(sound->loops.begin(), sound->loops.end(), [](const LoopVoice& loop) { return Playing(loop.voice); });
+    }
+    return false;
+}

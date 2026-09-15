@@ -1,0 +1,19 @@
+{
+    "data": {
+        "colliderCenter": [
+            0.0,
+            1.2000000476837158,
+            0.0
+        ],
+        "colliderHeight": 2.4000000953674316,
+        "colliderRadius": 0.5,
+        "scaling": [
+            0.800000011920929,
+            0.800000011920929,
+            0.800000011920929
+        ]
+    },
+    "formatVersion": 0,
+    "name": "player_prefab_settings.data",
+    "type": "PlayerPrefabSettingsAsset"
+}

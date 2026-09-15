@@ -5,6 +5,7 @@
 // Date  ：2026/03/19
 //===================================================
 #include "model_repository.h"
+#include "model_texture_path.h"
 
 #include <memory>
 #include "Utility/mi_string.h"
@@ -14,7 +15,6 @@
 #include <algorithm>
 
 #include "Engine/engine_service_locator.h"
-
 
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
@@ -39,6 +39,7 @@ void ModelRepository::Initialize()
 
     // スキニングCBをスキンメッシュ用シェーダーに登録
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedLit)], m_skinningCB);
+    SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SkinnedUnlit)], m_skinningCB);
 
 }
 
@@ -53,24 +54,26 @@ void ModelRepository::Finalize()
 }
 
 // モデルの取得。キャッシュに無い場合は読み込む。
-ModelResource* ModelRepository::GetModel(const std::string& filePath)
+ModelResource* ModelRepository::GetModel(const std::filesystem::path& filePath)
 {
+    const auto cacheKey = filePath.lexically_normal();
     // キャッシュを確認
-    auto it = m_modelCache.find(filePath);
+    auto it = m_modelCache.find(cacheKey);
     if (it != m_modelCache.end())
     {
         return it->second.get();
     }
 
     // キャッシュに無い場合は読み込む
-    return LoadModel(filePath);
+    return LoadModel(cacheKey);
 }
 
 // アニメーションの読み込み
-int ModelRepository::LoadAnimation(ModelResource* model, const std::string& filePath)
+int ModelRepository::LoadAnimation(ModelResource* model, const std::filesystem::path& filePath)
 {
+    const std::string importPath = filePath.generic_string();
     const aiScene* scene = aiImportFile(
-        filePath.c_str(),
+        importPath.c_str(),
         aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
 
     // 読み込みエラーチェック
@@ -149,21 +152,24 @@ void ModelRepository::BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix)
 //------------------------------------
 
 // モデルの読み込み
-ModelResource* ModelRepository::LoadModel(const std::string& filePath)
+ModelResource* ModelRepository::LoadModel(const std::filesystem::path& filePath)
 {
+    const auto cacheKey = filePath.lexically_normal();
+    const std::string importPath = cacheKey.generic_string();
     const aiScene* scene = aiImportFile(
-        filePath.c_str(), 
-        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate);
+        importPath.c_str(),
+        aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_ConvertToLeftHanded | aiProcess_Triangulate
+       );
 
     // 読み込みエラーチェック
     if (scene == nullptr) return nullptr;
 
     // モデルリソースを作成してキャッシュに追加
-    m_modelCache[filePath] = std::make_unique<ModelResource>();
-    ModelResource* model = m_modelCache[filePath].get();
+    m_modelCache[cacheKey] = std::make_unique<ModelResource>();
+    ModelResource* model = m_modelCache[cacheKey].get();
 
     // モデルリソースにシーンデータを格納
-    model->filePath = filePath;
+    model->filePath = cacheKey;
     model->AiScene = scene;
     model->meshes.reserve(scene->mNumMeshes);
     model->materialResources.resize(scene->mNumMaterials);
@@ -281,8 +287,8 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
 
         // マテリアルリソースの生成
         {
-            MaterialResource material = CreateMaterialResource(mat);
-            material.name = filePath + "_mat%" + mat->GetName().C_Str();
+            MaterialResource material = CreateMaterialResource(mat, cacheKey);
+            material.name = cacheKey.generic_string() + "_mat%" + mat->GetName().C_Str();
             if (isSkinnedMesh) {
                 material.shaderProgram = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::SkinnedLit);
             }
@@ -349,9 +355,13 @@ ModelResource* ModelRepository::LoadModel(const std::string& filePath)
         }
         else { 
             // ルートボーンの場合
-            // memo: mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
+            // mRootNodeがRootBoneとは限らないため、親インデックスが存在しないボーンをルートとみなす
             model->rootBoneIndex = i;
-            model->rootParentCorrection = XMMatrixInverse(nullptr, model->defaultPose.localTransforms[i]);
+           
+            const XMMATRIX rootLocal = model->defaultPose.localTransforms[i];
+            const XMMATRIX rootGlobal = model->defaultPose.globalTransforms[i];
+
+            model->rootParentCorrection = XMMatrixInverse(nullptr, rootLocal) * rootGlobal;
         }
     }
 
@@ -381,7 +391,7 @@ void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* me
     {
         vertices[v].position = XMFLOAT3(mesh->mVertices[v].x, mesh->mVertices[v].y, mesh->mVertices[v].z);
         if (mesh->mTextureCoords[0] != nullptr) {
-        vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
+            vertices[v].texCoord = XMFLOAT2(mesh->mTextureCoords[0][v].x, mesh->mTextureCoords[0][v].y);
         }
         else {
             vertices[v].texCoord = XMFLOAT2(0.0f, 0.0f);
@@ -440,7 +450,6 @@ void ModelRepository::SetModelVertexInfo(ModelVertex* vertices, const aiMesh* me
             v0.binormal = MiMath::Add(v0.binormal, biTangent);
             v1.binormal = MiMath::Add(v1.binormal, biTangent);
             v2.binormal = MiMath::Add(v2.binormal, biTangent);
-
         }
     }
 
@@ -477,13 +486,19 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
                 unsigned int boneIndex = boneNameToIndex.at(mesh->mBones[b]->mName.C_Str());
                 float weight = mesh->mBones[b]->mWeights[w].mWeight;
                 
-                // 自分より小さい重みを持つスロットを探し、そこにボーンインデックスと重みを挿入
-                int arrayIndex = std::find_if(boneWeights.begin(), boneWeights.end(), [weight](float w) { return w < weight; }) - boneWeights.begin();
-                if (arrayIndex < 4) {
-                    boneIndices[arrayIndex] = boneIndex;
-                    boneWeights[arrayIndex] = weight;
+                // 
+                for (unsigned int i = 0; i < 4; i++) {
+                    if (weight > boneWeights[i]) {
+                        // 挿入位置を見つけたら、後ろの要素をシフトして挿入
+                        for (int j = 3; j > i; j--) {
+                            boneIndices[j] = boneIndices[j - 1];
+                            boneWeights[j] = boneWeights[j - 1];
+                        }
+                        boneIndices[i] = boneIndex;
+                        boneWeights[i] = weight;
+                        break;
+                    }
                 }
-                
             }
         }
 
@@ -491,6 +506,10 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
         float totalWeight = 0.0f;
         for (int i = 0; i < 4; i++) {
             totalWeight += boneWeights[i];
+        }
+
+        if (totalWeight <= 0.0f) {
+            totalWeight = 1.0f; // 重みが0の場合は1で割ることで正規化を回避
         }
 
         for (int i = 0; i < 4; i++) {
@@ -555,11 +574,11 @@ void ModelRepository::SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, co
 }
 
 // aiMaterialからMaterialResourceを作成
-MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
+MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat, const std::filesystem::path& modelPath)
 {
     XMFLOAT4 albedoColor = { 1.0f,1.0f,1.0f,1.0f };
-    std::wstring albedoTexturePath;
-    std::wstring normalTexturePath;
+    std::filesystem::path albedoTexturePath;
+    std::filesystem::path normalTexturePath;
 
     // マテリアルからベースカラーを取得
     {
@@ -579,7 +598,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (AI_SUCCESS == mat->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) ||
             AI_SUCCESS == mat->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
         {
-            albedoTexturePath = MiString::ToWString(texturePath.C_Str());
+            albedoTexturePath = ModelTexturePath::ResolveExternal(modelPath, texturePath.C_Str());
         }
     }
 
@@ -591,7 +610,7 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (AI_SUCCESS == mat->GetTexture(aiTextureType_NORMALS, 0, &texturePath) ||
             AI_SUCCESS == mat->GetTexture(aiTextureType_HEIGHT, 0, &texturePath))
         {
-            normalTexturePath = MiString::ToWString(texturePath.C_Str());
+            normalTexturePath = ModelTexturePath::ResolveExternal(modelPath, texturePath.C_Str());
         }
     }
 
@@ -605,16 +624,13 @@ MaterialResource ModelRepository::CreateMaterialResource(aiMaterial* mat)
         if (!albedoTexturePath.empty()) {
             material.albedoTexture = TEXTURE_REPOSITORY->GetTextureResource(albedoTexturePath);
         }
-        if (!normalTexturePath.empty()) {
-            material.normalTexture = TEXTURE_REPOSITORY->GetTextureResource(normalTexturePath);
-        }
     }
 
     return material;
 }
 
 // モデルの解放
-void ModelRepository::ReleaseModel(const std::string& filePath)
+void ModelRepository::ReleaseModel(const std::filesystem::path& filePath)
 {
     ModelResource* model = GetModel(filePath);
     if (model)

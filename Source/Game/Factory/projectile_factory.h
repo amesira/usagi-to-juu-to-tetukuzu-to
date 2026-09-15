@@ -1,6 +1,9 @@
 // projectile_factory.h
 #pragma once
 #include <DirectXMath.h>
+#include <filesystem>
+#include "Engine/Core/game_object_layer.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
 
 #include <string>
 
@@ -12,45 +15,26 @@ class TextureResource;
 
 namespace ProjectileFactory
 {
-    // 弾の生成に必要な情報をまとめた構造体
     struct BulletCreateDesc {
         XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };
         XMFLOAT3 velocity = { 0.0f, 0.0f, 1.0f };
         float radius = 0.25f;
         float lifeTime = 3.0f;
-        int layerMask = -1;
+        CollisionLayerMask layerMask = COLLISION_LAYER_MASK_ALL;
+        GameObject* attacker = nullptr;
+        float damage = 10.0f;
+        HitReceiver::AttackType attackType = HitReceiver::AttackType::Shot;
 
         const char* modelPath = "asset\\Model\\bullet.fbx";
         const char* materialName = "BulletHologramMaterial";
     };
-
-    // ミサイル弾の生成に必要な情報をまとめた構造体
-    struct MissileCreateDesc {
-        XMFLOAT3 startPosition = {0.0f, 0.0f, 0.0f};
-        XMFLOAT3 controlPoint1 = {0.0f, 0.0f, 0.0f};
-        XMFLOAT3 controlPoint2 = { 0.0f, 0.0f, 0.0f };
-        XMFLOAT3 targetPosition = { 0.0f, 0.0f, 0.0f };
-
-        float radius = 0.5f;
-        float duration = 1.0f;
-        int layerMask = -1;
-
-        const char* modelPath = "asset\\Model\\bullet.fbx";
-        const char* materialName = "BulletHologramMaterial";
+    struct DamageNumberCreateDesc {
+        XMFLOAT3 position = { 0.0f, 0.0f, 0.0f };
+        float damage = 1.0f;
+        XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        const std::filesystem::path fontPath = "asset/Font/Makinas-4-Square.otf";
     };
 
-    struct BezierLinePreviewCreateDesc {
-        const char* name = "BezierLinePreview";
-        float lineWidth = 0.08f;
-        XMFLOAT4 lineColor = { 0.35f, 0.85f, 1.0f, 0.7f };
-        int sampleCount = 24;
-        bool visibleOnCreate = false;
-    };
-
-    // 弾の生成
     GameObject* CreateBullet(IScene* scene, const BulletCreateDesc& desc);
-
-    // ミサイル弾の生成
-    GameObject* CreateMissile(IScene* scene, const MissileCreateDesc& desc);
-    GameObject* CreateBezierLinePreview(IScene* scene, const BezierLinePreviewCreateDesc& desc = {});
+    GameObject* CreateDamageNumber(IScene* scene, const DamageNumberCreateDesc& desc);
 }

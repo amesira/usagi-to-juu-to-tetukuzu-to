@@ -1,0 +1,64 @@
+{
+    "data": {
+        "agentPath": "asset/Data/enemy_ai_agent_settings.data.json",
+        "approachPath": "asset/Data/enemy_approach_settings.data.json",
+        "attackPath": "asset/Data/enemy_attack_settings.data.json",
+        "defeatPoints": 25,
+        "destroyEffectOffset": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "destroyEffectPath": "asset/Particle/explosion.particle.json",
+        "destroyEffectScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "displayName": "elite_ground_melee",
+        "hover": false,
+        "isElite": true,
+        "material1": {
+            "baseColor": [
+                0.42978721857070923,
+                0.0,
+                0.3401721119880676,
+                1.0
+            ],
+            "emissiveColor": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "emissiveIntensity": 0.0,
+            "metallic": 1.0,
+            "roughness": 0.5,
+            "targetMaterialName": "Body"
+        },
+        "material2": {
+            "baseColor": [
+                0.9531912803649902,
+                0.0,
+                1.0,
+                1.0
+            ],
+            "emissiveColor": [
+                0.7812339067459106,
+                0.029999971389770508,
+                1.0
+            ],
+            "emissiveIntensity": 2.0,
+            "metallic": 1.0,
+            "roughness": 1.0,
+            "targetMaterialName": "Gear.003"
+        },
+        "maxHealth": 300.0,
+        "movePath": "asset/Data/enemy_move_settings.data.json",
+        "playDestroyEffectOnWaveCleanup": true,
+        "ranged": false,
+        "scale": 2.5
+    },
+    "formatVersion": 0,
+    "name": "enemy_elite_ground_melee.definition.data",
+    "type": "EnemyDefinitionAsset"
+}

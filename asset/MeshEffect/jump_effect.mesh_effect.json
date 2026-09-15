@@ -1,0 +1,166 @@
+{
+    "data": {
+        "flipbook": {
+            "enabled": true,
+            "frameCount": 8,
+            "framePerSecond": 30.0,
+            "playbackMode": "Once",
+            "startFrame": 0,
+            "tileX": 3,
+            "tileY": 3,
+            "timeMode": "Duration"
+        },
+        "fresnel": {
+            "color": [
+                0.04878056049346924,
+                1.0,
+                0.0,
+                1.0
+            ],
+            "enabled": false,
+            "intensity": 10.0,
+            "threshold": 0.0
+        },
+        "gradient": {
+            "enabled": false,
+            "gradientDirection": [
+                0.0,
+                1.0
+            ],
+            "gradientEndColor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "gradientEndPosition": 1.0,
+            "gradientOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    }
+                ]
+            },
+            "gradientStartColor": [
+                1.0,
+                1.0,
+                1.0,
+                0.0
+            ],
+            "gradientStartPosition": 0.20000000298023224
+        },
+        "main": {
+            "duration": 0.5,
+            "loop": false,
+            "playOnAwake": true,
+            "simulationSpeed": 1.0
+        },
+        "renderer": {
+            "billboardMode": "None",
+            "blendMode": "AlphaBlend",
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "intensity": 1.0,
+            "modelPath": "asset/Model/EffectModel/cylinder_A.fbx",
+            "samplerMode": "Wrap",
+            "textureMappingMode": "MeshUV",
+            "texturePath": "asset/Texture/EffectTexture/impact_spritesheet.png",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "scroll": {
+            "enabled": true,
+            "offset": [
+                0.0,
+                0.0
+            ],
+            "scrollSpeed": [
+                0.0,
+                0.0
+            ],
+            "tiling": [
+                3.0,
+                1.0
+            ]
+        },
+        "transform": {
+            "enabled": true,
+            "rotationOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 0.0,
+                        "valueY": 0.0,
+                        "valueZ": 0.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueX": 0.0,
+                        "valueY": 0.0,
+                        "valueZ": 0.0
+                    }
+                ]
+            },
+            "scaleOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueX": 1.2000000476837158,
+                        "valueY": 1.0,
+                        "valueZ": 1.2000000476837158
+                    }
+                ]
+            }
+        },
+        "wave": {
+            "amplitudeOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 1.0
+                    }
+                ]
+            },
+            "direction": [
+                0.0,
+                1.0
+            ],
+            "enabled": false,
+            "frequency": 1.0,
+            "speed": 1.0,
+            "type": "Vertex"
+        }
+    },
+    "formatVersion": 1,
+    "name": "jump_effect.mesh_effect",
+    "type": "MeshEffect"
+}

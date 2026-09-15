@@ -7,26 +7,55 @@
 #ifndef GAME_CONTROLLER_LOCATOR_H
 #define GAME_CONTROLLER_LOCATOR_H
 
-class GameEffectController;
+class GameFeedbackController;
 class CustomPostEffectController;
+class EnemyAIWorldController;
+class WaveControllerBehavior;
+class StageDecorationControllerBehavior;
+class StageBoundsControllerBehavior;
+class GamePauseControllerBehavior;
+
+class GameAudioControllerBehavior;
 
 class GameControllerLocator {
 private:
-    friend class GameEffectController;
+    friend class GameAudioControllerBehavior;
+    static inline GameAudioControllerBehavior* s_audioController = nullptr;
+    friend class GameFeedbackController;
     friend class CustomPostEffectController;
+    friend class EnemyAIWorldController;
+    friend class WaveControllerBehavior;
+    friend class StageDecorationControllerBehavior;
+    friend class StageBoundsControllerBehavior;
+    friend class GamePauseControllerBehavior;
 
-    static inline GameEffectController* s_gameEffectController = nullptr;
+    static inline GameFeedbackController* s_gameEffectController = nullptr;
     static inline CustomPostEffectController* s_customPostEffectController = nullptr;
+    static inline EnemyAIWorldController* s_enemyAIController = nullptr;
+    static inline WaveControllerBehavior* s_waveController = nullptr;
+    static inline StageDecorationControllerBehavior* s_stageDecorationController = nullptr;
+    static inline StageBoundsControllerBehavior* s_stageBoundsController = nullptr;
+    static inline GamePauseControllerBehavior* s_pauseController = nullptr;
 
 public:
-    static GameEffectController* GetGameEffectController() {
+    static GameAudioControllerBehavior* Audio() { return s_audioController; }
+    static StageBoundsControllerBehavior* StageBounds() { return s_stageBoundsController; }
+    static StageDecorationControllerBehavior* StageDecoration() { return s_stageDecorationController; }
+    static WaveControllerBehavior* Wave() { return s_waveController; }
+    static GamePauseControllerBehavior* Pause() { return s_pauseController; }
+    static EnemyAIWorldController* EnemyAIWorld() {
+        return s_enemyAIController;
+    }
+
+    static GameFeedbackController* GameFeedback() {
         return s_gameEffectController;
     }
 
-    static CustomPostEffectController* GetCustomPostEffectController() {
+    static CustomPostEffectController* CustomPostEffect() {
         return s_customPostEffectController;
     }
-
 };
+
+using Game = GameControllerLocator;
 
 #endif // GAME_CONTROLLER_LOCATOR_H

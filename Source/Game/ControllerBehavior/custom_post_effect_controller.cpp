@@ -8,10 +8,7 @@
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Core/game_object.h"
 
-#include "Engine/Editor/EditorWindow/imgui_window_interface.h"
-#include "Engine/Editor/EditorWindow/inspector_view_window.h"
-
-#include "Engine/Settings/scene_settings.h"
+#include "Engine/Editor/LevelEditor/behavior_detail_view.h"
 
 #include <algorithm>
 
@@ -20,35 +17,25 @@
 #include "game_controller_locator.h"
 #include "Utility/debug_ostream.h"
 
-CustomPostEffectController::CustomPostEffectController()
-{
-    s_instanceCount++;
-
-    if (s_instanceCount > 1) {
-        hal::dout << "Warning: CustomPostEffectController has multiple instances. Only one instance is expected." << std::endl;
-        this->SetEnable(false);
-    }
-    else {
-        GameControllerLocator::s_customPostEffectController = this;
-    }
-
-    m_state.Reset();
-    m_state.radialBlur.sampleCount = 4; // デフォルトのサンプル数を設定
-    m_state.monoMask.monoColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f); // デフォルトのモノクロ色を設定
-}
-
 CustomPostEffectController::~CustomPostEffectController()
 {
     if (GameControllerLocator::s_customPostEffectController == this) {
         GameControllerLocator::s_customPostEffectController = nullptr;
     }
-
-    s_instanceCount--;
 }
 
 void CustomPostEffectController::Start()
 {
+    auto* current = GameControllerLocator::s_customPostEffectController;
+    if (current && current != this && current->GetEnable()) {
+        SetEnable(false);
+        return;
+    }
+    GameControllerLocator::s_customPostEffectController = this;
 
+    m_state.Reset();
+    m_state.radialBlur.sampleCount = 4; // デフォルトのサンプル数を設定
+    m_state.monoMask.monoColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f); // デフォルトのモノクロ色を設定
 }
 
 void CustomPostEffectController::Update()
@@ -78,14 +65,13 @@ void CustomPostEffectController::Update()
     // カスタムポストエフェクト状態の更新
     IScene* scene = GetOwner()->GetScene();
     if (scene) {
-        SceneSettings& sceneSettings = scene->GetSceneSettings();
-        sceneSettings.GetPostProcessSettings().m_customPostEffectState = m_state;
+        scene->GetPostEffectState() = m_state;
     }
 }
 
 void CustomPostEffectController::DrawComponentInspector()
 {
-    if (InspectorViewWindow::BeginComponentSection(this, "Custom Post Effect Controller")) {
+    if (BehaviorDetailView::BeginSection(this, "Custom Post Effect Controller")) {
         if (ImGui::TreeNode("Radial Blur")) {
             ImGui::DragInt("Sample Count", &m_state.radialBlur.sampleCount, 1.0f, 1, 64);
             ImGui::DragFloat("Strength", &m_state.radialBlur.strength, 0.01f, 0.0f, 1.0f);
@@ -143,7 +129,7 @@ void CustomPostEffectController::DrawComponentInspector()
         }
     }
 
-    InspectorViewWindow::EndComponentSection();
+    BehaviorDetailView::EndSection();
 }
 
 // ポストエフェクトの再生

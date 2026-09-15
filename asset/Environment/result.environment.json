@@ -1,0 +1,93 @@
+{
+    "data": {
+        "lighting": {
+            "cubicColorLight": {
+                "backColor": [
+                    0.0,
+                    1.0,
+                    0.9361701011657715
+                ],
+                "downColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "enabled": false,
+                "frontColor": [
+                    1.0,
+                    0.612765908241272,
+                    0.0
+                ],
+                "intensity": 0.30000001192092896,
+                "leftColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rightColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "upColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "directionalLight": {
+                "ambientColor": [
+                    0.548936128616333,
+                    0.548936128616333,
+                    0.548936128616333
+                ],
+                "color": [
+                    0.5531914830207825,
+                    0.5531914830207825,
+                    0.5531914830207825
+                ],
+                "direction": [
+                    0.05000000074505806,
+                    -1.0,
+                    -0.5
+                ],
+                "enabled": true,
+                "intensity": 4.699999809265137
+            },
+            "hemisphereLight": {
+                "enabled": true,
+                "groundColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "intensity": 0.6000000238418579,
+                "skyColor": [
+                    0.0,
+                    0.0,
+                    0.0
+                ]
+            },
+            "rimLight": {
+                "color": [
+                    0.59606160521507263,
+                    0.6382979154586792,
+                    0.2989770889282227
+                ],
+                "enabled": true,
+                "intensity": 3.0,
+                "threshold": 0.699999988079071
+            }
+        },
+        "postProcess": {
+            "bloom": {
+                "enabled": true,
+                "intensity": 0.25,
+                "threshold": 2.0
+            }
+        }
+    },
+    "formatVersion": 1,
+    "name": "Default Environment",
+    "type": "Environment"
+}

@@ -1,0 +1,115 @@
+{
+    "data": {
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 0.0,
+            "rateOverTime": 30.0
+        },
+        "main": {
+            "duration": 0.5,
+            "gravity": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "loop": false,
+            "playOnAwake": true,
+            "simulationSpace": "Local",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    0.8983739614486694,
+                    0.8478704690933228,
+                    0.20815978944301605,
+                    1.0
+                ],
+                "colorMax": [
+                    0.0,
+                    0.08264374732971191,
+                    0.6936169862747192,
+                    1.0
+                ],
+                "colorMin": [
+                    0.0,
+                    0.9361703395843506,
+                    1.0,
+                    1.0
+                ],
+                "randomBetweenTwoColors": true
+            },
+            "startLifetime": {
+                "constant": 1.0,
+                "constantMax": 5.0,
+                "constantMin": 5.0,
+                "randomBetweenTwoConstants": false
+            },
+            "startSize": {
+                "constant": 2.0999999046325684,
+                "constantMax": 1.0,
+                "constantMin": 1.0,
+                "randomBetweenTwoConstants": false
+            },
+            "startSpeed": {
+                "constant": 9.600000381469727,
+                "constantMax": 5.0,
+                "constantMin": 5.0,
+                "randomBetweenTwoConstants": false
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "Additive",
+            "sortByDistance": true,
+            "texturePath": "asset/Texture/pika_effect_sheet.png",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 1.0
+            },
+            "enabled": true,
+            "randomDirectionAmount": 0.0,
+            "sphere": {
+                "emitFromShell": false,
+                "radius": 1.0
+            },
+            "type": "Sphere"
+        },
+        "sizeOverLifetime": {
+            "enabled": false,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 1.0
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": true,
+            "frameCount": 11,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 11,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "burst.particle",
+    "type": "ParticleSystem"
+}

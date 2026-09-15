@@ -1,0 +1,13 @@
+{
+    "type": "ParticleSystem",
+    "formatVersion": 1,
+    "name": "generic_particle",
+    "data": {
+        "main": {"duration": 3.0, "loop": true, "playOnAwake": true, "startLifetime": {"randomBetweenTwoConstants": true, "constant": 1.2, "constantMin": 0.8, "constantMax": 1.8}, "startSpeed": {"randomBetweenTwoConstants": true, "constant": 1.5, "constantMin": 0.8, "constantMax": 2.4}, "startSize": {"randomBetweenTwoConstants": true, "constant": 0.35, "constantMin": 0.2, "constantMax": 0.65}, "startColor": {"randomBetweenTwoColors": true, "color": [1.0, 1.0, 1.0, 1.0], "colorMin": [1.0, 0.45, 0.12, 0.85], "colorMax": [1.0, 0.95, 0.35, 0.45]}, "gravity": [0.0, -0.25, 0.0], "simulationSpeed": 1.0, "simulationSpace": "World"},
+        "emission": {"enabled": true, "rateOverTime": 24.0, "rateOverDistance": 0.0},
+        "shape": {"enabled": true, "type": "Cone", "sphere": {"radius": 1.0, "emitFromShell": false}, "cone": {"angle": 0.7853981633974483, "radius": 0.35, "length": 5.0, "emitFromBase": true}, "randomDirectionAmount": 0.2},
+        "sizeOverLifetime": {"enabled": true, "size": {"keys": [{"time": 0.0, "value": 0.35}, {"time": 0.25, "value": 1.0}, {"time": 1.0, "value": 0.0}]}},
+        "textureSheetAnimation": {"enabled": false, "tileX": 1, "tileY": 1, "startFrame": 0, "frameCount": 1, "timeMode": "Lifetime", "framePerSecond": 30.0, "loop": true},
+        "renderer": {"texturePath": "asset/Texture/white.bmp", "uvRect": [0.0, 0.0, 1.0, 1.0], "billboardMode": "View", "blendMode": "Additive", "sortByDistance": true}
+    }
+}

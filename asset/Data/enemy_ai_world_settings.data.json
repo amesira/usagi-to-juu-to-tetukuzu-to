@@ -1,0 +1,29 @@
+{
+    "data": {
+        "attackCoordinator": {
+            "attackInterval": 0.20000000298023224,
+            "maxConcurrentAttacks": 4,
+            "permissionLifetime": 2.0
+        },
+        "navigationGrid": {
+            "cellCountX": 55,
+            "cellCountZ": 45,
+            "cellSize": 1.5,
+            "center": [
+                0.0,
+                0.0
+            ],
+            "rayBottomPosition": -20.0,
+            "rayTopPosition": 20.0,
+            "slopeThreshold": 10.0
+        },
+        "tactical": {
+            "enemyDensityCostWeight": 2.0,
+            "enemyInfluenceRadiusMultiplier": 5.0,
+            "updateInterval": 0.5
+        }
+    },
+    "formatVersion": 0,
+    "name": "enemy_ai_world_settings.data",
+    "type": "EnemyAiWorldSettingsAsset"
+}

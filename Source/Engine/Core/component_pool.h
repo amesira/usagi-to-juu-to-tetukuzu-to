@@ -28,20 +28,37 @@ private:
     // GameObjectのIDリスト
     // ・m_componentsとインデックスを対応させる
     std::vector<unsigned int>   m_gameObjectIDs = {};
+    // GameObjectIDからComponentへのマッピング
+    std::vector<unsigned int>   m_gameObjectIDsToComponents = {};
 
     // 空きスロット管理用リスト
     std::vector<size_t>         m_freeIndices = {};
+
 
 public:
     ComponentPool() : IComponentPool(ComponentTypeID::getTypeID<T>(), ComponentTypeID::getBaseTypeID<T>()) {
         m_components.reserve(COMPONENTS_MAX);
         m_gameObjectIDs.reserve(COMPONENTS_MAX);
+        m_gameObjectIDsToComponents.resize(COMPONENTS_MAX, UINT_FAST16_MAX);
         m_freeIndices.clear();
     }
 
     // Componentを生成してComponentPoolに追加
     // ・pGameObject: Componentを所有するGameObjectへのポインタ
     T*      Create(unsigned int gameObjectID) {
+        if (gameObjectID >= m_gameObjectIDsToComponents.size()) {
+            return nullptr;
+        }
+
+        // 1つのGameObjectに同じ型のComponentを複数追加することは禁止する。
+        // 重複を許すとIDからComponentへのマッピングが後から追加した要素で
+        // 上書きされ、削除時に片方だけがPoolへ残る原因になる。
+        const unsigned int existingIndex = m_gameObjectIDsToComponents[gameObjectID];
+        if (existingIndex != UINT_FAST16_MAX) {
+            assert(false && "A component of the same type already exists on this GameObject.");
+            return nullptr;
+        }
+
         assert(m_components.size() < COMPONENTS_MAX && "ComponentPool has reached its maximum capacity.");
         
         // 空きスロットがあればそこを利用
@@ -51,11 +68,13 @@ public:
             m_freeIndices.pop_back();
             m_components[index] = T();
             m_gameObjectIDs[index] = gameObjectID;
+            m_gameObjectIDsToComponents[gameObjectID] = index;
             return &m_components[index];
         }
 
         m_components.emplace_back();
         m_gameObjectIDs.push_back(gameObjectID);
+        m_gameObjectIDsToComponents[gameObjectID] = m_components.size() - 1;
 
         return &m_components.back();
     }
@@ -63,16 +82,21 @@ public:
     // ComponentPoolからComponentを削除
     // ・gameObjectID: 削除するComponentを所有するGameObjectのID
     void    Remove(unsigned int gameObjectID) override {
+        if (gameObjectID >= m_gameObjectIDsToComponents.size()) {
+            return;
+        }
+
         for (int i = 0; i < m_components.size(); i++) {
             unsigned int id = m_gameObjectIDs[i];
             // 指定されたGameObjectIDと一致したら削除
             if (id == gameObjectID) {
+                m_components[i].NotifyDestroy();
                 // 空きスロットとして管理リストに追加
                 m_freeIndices.push_back(i);
 
                 m_components[i].SetEnable(false); // 無効化しておく
                 m_gameObjectIDs[i] = UINT_FAST16_MAX; // 無効なIDにしておく
-
+                m_gameObjectIDsToComponents[gameObjectID] = UINT_FAST16_MAX; // 無効なインデックスにしておく
                 return;
             }
         }
@@ -81,11 +105,10 @@ public:
     // GameObjectIDからComponentを取得
     // ・gameObjectID: 取得するComponentを所有するGameObjectのID
     T*  GetByGameObjectID(unsigned int gameObjectID) {
-        for (int i = 0; i < m_components.size(); i++) {
-            unsigned int id = m_gameObjectIDs[i];
-            // 指定されたGameObjectIDと一致したらComponentを返す
-            if (id == gameObjectID) {
-                return &m_components[i];
+        if (gameObjectID < m_gameObjectIDsToComponents.size()) {
+            size_t index = m_gameObjectIDsToComponents[gameObjectID];
+            if (index != UINT_FAST16_MAX && index < m_components.size()) {
+                return &m_components[index];
             }
         }
         return nullptr;

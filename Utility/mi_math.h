@@ -137,6 +137,16 @@ namespace MiMath
         };
     }
 
+    inline XMFLOAT3 HorizontalNormalize(const XMFLOAT3& v) {
+        float length = sqrtf(v.x * v.x + v.z * v.z);
+        if (length == 0.0f) return XMFLOAT3(0.0f, 0.0f, 0.0f);
+        return {
+            v.x / length,
+            0.0f,
+            v.z / length
+        };
+    }
+
     // ２つのベクトル間の角度を計算する（ラジアン）
     inline float Angle(const XMVECTOR& from, const XMVECTOR& to) {
         XMVECTOR vf = XMVector3Normalize(from);
@@ -225,6 +235,22 @@ namespace MiMath
         XMFLOAT4 q;
         XMStoreFloat4(&q, XMQuaternionRotationRollPitchYaw(euler.x, euler.y, euler.z));
         return q;
+    }
+
+    inline XMFLOAT4 LookRotation(const XMFLOAT3& forward, const XMFLOAT3& up) {
+        XMVECTOR f = XMVector3Normalize(XMLoadFloat3(&forward));
+        XMVECTOR u = XMVector3Normalize(XMLoadFloat3(&up));
+        XMVECTOR r = XMVector3Normalize(XMVector3Cross(u, f));
+        u = XMVector3Cross(f, r);
+        XMMATRIX rotationMatrix = {
+            r,
+            u,
+            f,
+            XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f)
+        };
+        XMFLOAT4 quaternion;
+        XMStoreFloat4(&quaternion, XMQuaternionRotationMatrix(rotationMatrix));
+        return quaternion;
     }
 
     inline XMFLOAT4 Slerp(const XMFLOAT4& current, const XMFLOAT4& target, float t) {

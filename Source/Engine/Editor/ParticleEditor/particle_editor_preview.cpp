@@ -1,0 +1,155 @@
+//===================================================
+// File  ：Engine/Editor/ParticleEditor/particle_editor_preview.cpp
+// Date  ：2026/07/26
+// Author：Miu Kitamura
+// 
+// ・ParticleEditorのプレビューを管理するクラス
+//===================================================
+#include "particle_editor_preview.h"
+
+#include "Engine/Editor/editor_context.h"
+#include "Engine/Core/game_object.h"
+#include "Engine/Core/scene_interface.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Graphics/texture_repository.h"
+#include "Engine/engine_service_locator.h"
+#include "Utility/mi_string.h"
+
+
+namespace
+{
+    constexpr const char* PreviewObjectName = "__ParticleEditorPreview__";
+
+    #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+}
+
+ParticleEditorPreview::ParticleEditorPreview(EditorContext* editorContext)
+    : m_editorContext(editorContext)
+{
+    m_processor.Initialize();
+}
+
+ParticleEditorPreview::~ParticleEditorPreview()
+{
+    m_processor.Finalize();
+}
+
+/// @brief プレビュー用のパーティクルシステムを作成する
+bool ParticleEditorPreview::GeneratePreviewObject(const ParticleSystemDesc& desc)
+{
+    // EditorContextが有効で、シーンが存在する場合のみプレビューオブジェクトを生成する
+    if (!m_editorContext || !m_editorContext->scene) return false;
+
+    if (m_scene != m_editorContext->scene || !m_particleSystem)
+    {
+        // 既存のプレビューオブジェクトが存在する場合は破棄する
+        Cleanup();
+        m_scene = m_editorContext->scene;
+
+        // === プレビュー用のGameObjectを生成する ===
+        GameObject* object = m_scene->CreateGameObject();
+        if (!object) return false;
+
+        // プレビュー用オブジェクトの設定
+        object->SetName(PreviewObjectName);
+        object->AddComponent<TransformComponent>();
+        m_particleSystem = object->AddComponent<ParticleSystemComponent>();
+        if (!m_particleSystem)
+        {
+            object->Destroy();
+            return false;
+        }
+
+        Apply(desc, true); // 初期設定を適用して再生を開始する
+    }
+    return true;
+}
+
+/// @brief プレビュー用のパーティクルシステムに設定を適用する
+void ParticleEditorPreview::Apply(const ParticleSystemDesc& desc, bool restart)
+{
+    if (!m_particleSystem) return;
+    m_particleSystem->GetDesc() = desc;
+
+    // 再生タイミングはEditor側で制御するため、PlayOnAwakeは無効化する
+    m_particleSystem->Main().playOnAwake = false;
+
+    // === テクスチャリソースの設定 ===
+    auto& renderer = m_particleSystem->Renderer();
+    renderer.textureResource = nullptr;
+    if (!renderer.texturePath.empty()) {
+        if (TEXTURE_REPOSITORY) {
+            renderer.textureResource = TEXTURE_REPOSITORY->GetTextureResource(MiString::ToWString(renderer.texturePath));
+        }
+    }
+    m_particleSystem->SetTextureResource(renderer.textureResource);
+
+    // restart要求の処理
+    if (restart) Play();
+}
+
+/// @brief プレビュー用のパーティクルシステムを更新する
+void ParticleEditorPreview::Update()
+{
+    if (!m_particleSystem) return;
+    if (!m_particleSystem->IsPlaying()) return;
+
+    // === EditorモードがEditの場合のみ、ParticleSystemProcessorを使用してパーティクルシステムを更新する ===
+    // FIX: ここにProcessorの更新を持たせるべきかは、もう少し考えた方が良いかも
+    if (m_editorContext->currentEditorMode == EditorContext::EditorMode::Edit)
+    {
+        m_processor.Process(m_scene);
+    }
+}
+
+/// @brief プレビュー用のオブジェクトを破棄する
+void ParticleEditorPreview::Cleanup()
+{
+    if (m_particleSystem)
+    {
+        if (GameObject* object = m_scene->GetGameObjectByID(m_particleSystem->GetOwner()->GetID()))
+        {
+            object->SetActive(false);
+            object->Destroy();
+        }
+    }
+
+    m_particleSystem = nullptr;
+}
+
+/// @brief シーンリロード時の処理
+void ParticleEditorPreview::OnSceneDestroyed()
+{
+    m_scene = nullptr;
+    m_particleSystem = nullptr;
+}
+
+#pragma region ParticleSystemComponentの関数のラッパー
+void ParticleEditorPreview::Play()
+{
+    if (m_particleSystem) m_particleSystem->Play();
+}
+
+void ParticleEditorPreview::Pause()
+{
+    if (m_particleSystem) m_particleSystem->Pause();
+}
+
+void ParticleEditorPreview::Stop()
+{
+    if (m_particleSystem) m_particleSystem->Stop();
+}
+
+bool ParticleEditorPreview::IsPlaying() const
+{
+    if (!m_particleSystem) return false;
+    return m_particleSystem->IsPlaying();
+}
+
+int ParticleEditorPreview::GetParticleCount() const
+{
+    if (!m_particleSystem) return -1;
+    return m_particleSystem->Particles().size();
+}
+#pragma endregion

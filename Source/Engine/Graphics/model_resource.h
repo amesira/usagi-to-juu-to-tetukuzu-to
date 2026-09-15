@@ -7,6 +7,7 @@
 #ifndef MODEL_RESOURCE_H
 #define MODEL_RESOURCE_H
 #include <string>
+#include <filesystem>
 
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
@@ -66,7 +67,7 @@ struct SkeletonPose {
 // アニメーションクリップのデータ
 struct AnimationClip {
     std::string name;
-    std::string filePath;
+    std::filesystem::path filePath;
     unsigned int index;
 
     float duration;         // アニメーションの長さ（秒）
@@ -94,7 +95,7 @@ private: friend class ModelRepository;
     const aiScene* AiScene = nullptr;
 
 public:
-    std::string filePath;
+    std::filesystem::path filePath;
 
     // 頂点の種類
     enum class VertexType {

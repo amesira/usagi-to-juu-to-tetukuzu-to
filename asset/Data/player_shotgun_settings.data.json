@@ -1,0 +1,50 @@
+{
+    "data": {
+        "aimBlendDownFullDirectionY": -0.30000001192092896,
+        "aimBlendDownStartDirectionY": -0.10000000149011612,
+        "aimBlendUpFullDirectionY": 0.5,
+        "aimBlendUpStartDirectionY": -0.10000000149011612,
+        "aimEnterRadialBlurStrength": 0.4000000059604645,
+        "aimExitRadialBlurStrength": 0.30000001192092896,
+        "aimJumpPowerMultiplier": 0.800000011920929,
+        "aimMaxDistance": 1000.0,
+        "aimRadialBlurHoldTime": 0.019999999552965164,
+        "aimSpeedMultiplier": 0.6000000238418579,
+        "aimTransitionTime": 0.05000000074505806,
+        "bulletDamage": 30.0,
+        "bulletLifetime": 3.0,
+        "bulletSpawnForwardOffset": 1.5,
+        "chargeCompleteEffectOffset": [
+            1.0,
+            1.2999999523162842,
+            0.0
+        ],
+        "chargeCompleteEffectScale": 2.5,
+        "chargeDamageMultiplier": 4.0,
+        "chargeEffectOffset": [
+            1.0,
+            1.2999999523162842,
+            0.0
+        ],
+        "chargeFOV": 58.0,
+        "chargeMonoMaskStrength": 0.6000000238418579,
+        "chargeResetTransitionTime": 0.20000000298023224,
+        "chargeStartDelay": 0.10000000149011612,
+        "chargeStartTransitionTime": 1.0,
+        "chargeTime": 1.2999999523162842,
+        "maxBulletRadius": 0.75,
+        "maxBulletSpeed": 300.0,
+        "minBulletRadius": 0.30000001192092896,
+        "minBulletSpeed": 200.0,
+        "muzzleFlashEffectOffset": [
+            1.0,
+            1.0,
+            0.0
+        ],
+        "recoveryTime": 0.30000001192092896,
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "player_shotgun_settings.data",
+    "type": "PlayerShotgunSettingsAsset"
+}

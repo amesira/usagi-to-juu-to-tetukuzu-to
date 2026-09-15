@@ -8,16 +8,18 @@
 #define GAME_WORLD_H
 #include "./Manager/scene_manager.h"
 
-#include "Engine/Framework/Processor/physics_processor.h"
-#include "Engine/Framework/Processor/behavior_processor.h"
-#include "Engine/Framework/Processor/camera_processor.h"
-#include "Engine/Framework/Processor/render_processor.h"
-#include "Engine/Framework/Processor/animation_processor.h"
-#include "Engine/Framework/Processor/sprite_animation_processor.h"
-#include "Engine/Framework/Processor/particle_system_processor.h"
+#include "Engine/Processor/physics_processor.h"
+#include "Engine/Processor/behavior_processor.h"
+#include "Engine/Processor/camera_processor.h"
+#include "Engine/Processor/render_processor.h"
+#include "Engine/Processor/animation_processor.h"
+#include "Engine/Processor/sprite_animation_processor.h"
+#include "Engine/Processor/particle_system_processor.h"
+#include "Engine/Processor/mesh_effect_processor.h"
 
 #include <vector>
 #include "Engine/render_view.h"
+#include "Engine/Editor/scene_view_camera_state.h"
 
 class GameWorld {
 private:
@@ -29,16 +31,19 @@ private:
     AnimationProcessor m_animationProcessor;
     SpriteAnimationProcessor m_spriteAnimationProcessor;
     ParticleSystemProcessor m_particleSystemProcessor;
+    MeshEffectProcessor m_meshEffectProcessor;
     BehaviorProcessor  m_behaviorProcessor;
 
-    std::vector<RenderView> m_renderViews;
+    std::vector<RenderView> m_gameRenderViews; // ゲーム用RenderView群
+    RenderView m_sceneRenderView; // シーン用RenderView
+    RenderView m_canvasRenderView; // UI描画用RenderView
+    SceneViewCameraState m_sceneViewCamera;
+
     CameraProcessor    m_cameraProcessor;
     RenderProcessor    m_renderProcessor;
 
     // RenderViewインデックス
-    int m_mainSceneRenderViewIndex = 0; // メインシーン用RenderViewのインデックス
-    int m_mainGameRenderViewIndex = 1;  // メインゲーム用RenderViewのインデックス
-    int m_canvasRenderViewIndex = 2;    // UI描画用RenderViewのインデックス
+    int m_mainGameRenderViewIndex = 0;  // メインゲーム用RenderViewのインデックス
 
 public:
     void Initialize();
@@ -49,14 +54,15 @@ public:
     // SceneManagerへのアクセス
     SceneManager& GetSceneManager() { return m_sceneManager; }
     // RenderViewへのアクセス
-    std::vector<RenderView>& GetRenderViews() { return m_renderViews; }
-    RenderView& GetMainSceneRenderView() { return m_renderViews[m_mainSceneRenderViewIndex]; }
-    RenderView& GetMainGameRenderView() { return m_renderViews[m_mainGameRenderViewIndex]; }
-    RenderView& GetCanvasRenderView() { return m_renderViews[m_canvasRenderViewIndex]; }
+    std::vector<RenderView>& GetGameRenderViews() { return m_gameRenderViews; }
+    RenderView& GetSceneRenderView() { return m_sceneRenderView; }
+    RenderView& GetGameRenderView() { return m_gameRenderViews[m_mainGameRenderViewIndex]; }
+    RenderView& GetCanvasRenderView() { return m_canvasRenderView; }
+    SceneViewCameraState& GetSceneViewCamera() { return m_sceneViewCamera; }
 
 private:
     // SceneRenderViewの設定
-    void SetSceneRenderView(IScene* scene, int sceneRenderViewIndex);
+    void SetSceneRenderView(IScene* scene);
 
 };
 

@@ -1,0 +1,178 @@
+{
+    "data": {
+        "objects": [
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/sky_sphere.fbx",
+                "name": "SkyS",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "rotationDegrees": [
+                    90.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationEnabled": false,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Unlit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    80.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    -45.0,
+                    50.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    50.0,
+                    -60.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": -30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_bar.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rotationDegrees": [
+                    -20.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationEnabled": true,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            },
+            {
+                "enabled": true,
+                "modelPath": "asset/Model/field_acce_b.fbx",
+                "name": "Decoration",
+                "position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotationAxis": [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                "rotationDegrees": [
+                    90.0,
+                    180.0,
+                    0.0
+                ],
+                "rotationEnabled": false,
+                "rotationSpeedDegrees": 30.0,
+                "scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "shader": "Lit"
+            }
+        ],
+        "useUnscaledTime": false
+    },
+    "formatVersion": 0,
+    "name": "stage_decoration_settings.data",
+    "type": "StageDecorationSettingsAsset"
+}

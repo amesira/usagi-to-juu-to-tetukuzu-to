@@ -58,9 +58,6 @@ public:
 
     // === テクスチャ ===
     TextureResource* albedoTexture = nullptr;   // アルベドテクスチャ
-    TextureResource* normalTexture = nullptr;   // 法線マップテクスチャ（未実装）
-    TextureResource* emissiveTexture = nullptr; // 発光テクスチャ（未実装）
-    TextureResource* aoTexture = nullptr;       // アンビエントオクルージョンテクスチャ（未実装）
 
     // === UV ===
     XMFLOAT2 uvTiling = { 1,1 };    // UVのループ数（未実装）
@@ -106,6 +103,8 @@ class MaterialInstance {
 public:
     // マテリアルリソースへのポインタ
     MaterialResource* materialResource = nullptr;
+    bool isOverrideShaderProgram = false;
+    ShaderProgramResource* overrideShaderProgram = nullptr;
 
     // オーバーライド設定
     bool isOverrideAlbedoTexture = false;
@@ -115,6 +114,10 @@ public:
     bool isOverrideEmissive = false;
     XMFLOAT3 overrideEmissiveColor = { 0,0,0 };
     float overrideEmissiveIntensity = 1.0f;
+    bool isOverrideMetallic = false;
+    float overrideMetallic = 0.0f;
+    bool isOverrideRoughness = false;
+    float overrideRoughness = 1.0f;
 
     // カスタムプロパティのオーバーライド設定
     bool isOverrideCustomProperties[MaterialResource::CUSTOM_PROPERTY_COUNT] = { false };

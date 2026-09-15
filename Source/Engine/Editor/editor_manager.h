@@ -1,98 +1,84 @@
 //---------------------------------------------------
-// editor_manager.h
-// 
+// File  ：Engine/Editor/editor_manager.h
+// Date  ：2026/07/21
 // Author：Miu Kitamura
-// Date  ：2026/04/30
+// 
+// ・エディターの管理クラス
+// ・Engineから呼び出され、エディターの初期化、描画、終了処理を行う
 //---------------------------------------------------
-#ifndef EDITOR_MANAGER_H
-#define EDITOR_MANAGER_H
-#include <array>
-#include <vector>
-#include <string>
+#pragma once
 
-#include "mi_imgui_manager.h"
+#include "editor_imgui_backend.h"
 #include "editor_context.h"
+#include "editor_window_manager.h"
 
-#include "./EditorWindow/hierarchy_view_window.h"
-#include "./EditorWindow/inspector_view_window.h"
-#include "./EditorWindow/scene_view_window.h"
-#include "./EditorWindow/tool_bar_window.h"
-#include "./EditorWindow/debug_view_window.h"
-#include "./EditorWindow/settings_view_window.h"
-#include "./EditorWindow/game_view_window.h"
-#include "./EditorWindow/canvas_view_window.h"
+#include "LevelEditor/level_editor_window.h"
+#include "BaseEditor/scene_view_window.h"
+#include "BaseEditor/tool_bar_window.h"
+#include "BaseEditor/debug_view_window.h"
+#include "BaseEditor/settings_view_window.h"
+#include "BaseEditor/game_view_window.h"
+#include "BaseEditor/canvas_view_window.h"
+#include "ParticleEditor/particle_system_editor_window.h"
+#include "MeshEffectEditor/mesh_effect_editor_window.h"
+#include "DataEditor/data_editor_window.h"
 
-// タブエリアの構造体
-struct EditorTabArea {
-    // タブが１つの場合はタブ表示を省略して直接ウィンドウを表示する
-    bool singleTabMode = false;
-
-    // エリアの名前
-    std::string areaName = "Default";
-
-    // x, y, width, height（スクリーンサイズを基準とした割合で指定）
-    std::array<float, 4> areaRect = { 0.0f, 0.0f, 1.0f, 1.0f };
-
-    // タブの状態管理
-    int activeTabIndex = 0;         // 現在アクティブなタブのインデックス
-    std::vector<IImguiWindow*> tabs;// タブに表示するウィンドウのリスト
-    std::vector<std::string> tabNames;   // タブの名前リスト（UI表示用）
-
-    void AddWindow(IImguiWindow* tab, std::string tabName) {
-        tabs.push_back(tab);
-        tabNames.push_back(tabName);
-    }
-};
-
-// エディタ内の主要なエリアID
-enum class EditorAreaID {
-    CenterScreen = 0,   // 中央のメインエリア
-    Bottom,             // 下部のエリア（ログやコンソールなど）
-    Right01,            // 右側のエリア1（Hierarchyなど）
-    Right02,            // 右側のエリア2（Inspector、Settingsなど）
-    Top,                // 上部のエリア（ツールバーなど）
-    MAX,
-};
-
-// エディタ全体の管理クラス
 class EditorManager {
 private:
-    MiImguiManager  m_imguiManager;     // ImGuiウィンドウの管理
-    EditorContext   m_editorContext;    // エディタ全体の状態管理
+    // エディターのコンテキスト情報
+    EditorContext       m_editorContext;
 
-    HierarchyViewWindow m_hierarchyViewWindow;  // GameObjectの階層表示ウィンドウ
-    InspectorViewWindow m_inspectorViewWindow;  // 選択GameObjectの詳細表示ウィンドウ
-    SceneViewWindow     m_sceneViewWindow;      // シーンの3D表示ウィンドウ
-    ToolBarWindow       m_toolBarWindow;        // ツールバーウィンドウ（上部のメニューやボタンなど）
-    DebugViewWindow     m_debugViewWindow;      // デバッグ情報表示ウィンドウ
-    SettingsViewWindow  m_settingsViewWindow;   // 設定表示ウィンドウ
-    GameViewWindow      m_gameViewWindow;       // ゲームプレイ中の表示ウィンドウ
-    CanvasViewWindow    m_canvasViewWindow;     // UIなどのオーバーレイ表示ウィンドウ
+    // === バックエンドとウィンドウ管理 ===
+    EditorImGuiBackend  m_imguiBackend;
+    EditorWindowManager m_windowManager;
 
-    EditorTabArea m_tabAreas[static_cast<int>(EditorAreaID::MAX)]; // 各エリアのタブ管理
+    // === 各ウィンドウ ===
+    LevelEditorWindow m_levelEditorWindow;
+
+    ToolBarWindow       m_toolBarWindow;        // ツールバーウィンドウ
+    DebugViewWindow     m_debugViewWindow;      // デバッグウィンドウ
+    SettingsViewWindow  m_settingsViewWindow;   // 設定ウィンドウ
+
+    SceneViewWindow     m_sceneViewWindow;      // SceneViewウィンドウ
+    GameViewWindow      m_gameViewWindow;       // GameViewウィンドウ
+    CanvasViewWindow    m_canvasViewWindow;     // CanvasViewウィンドウ
+
+    ParticleSystemEditorWindow m_particleSystemEditorWindow;
+    MeshEffectEditorWindow m_meshEffectEditorWindow;
+    DataEditorWindow m_dataEditorWindow;
 
 public:
     EditorManager()
-        : m_hierarchyViewWindow(&m_editorContext)
-        , m_inspectorViewWindow(&m_editorContext)
+        : m_levelEditorWindow(&m_editorContext)
         , m_sceneViewWindow(&m_editorContext)
         , m_toolBarWindow(&m_editorContext)
         , m_debugViewWindow(&m_editorContext)
         , m_settingsViewWindow(&m_editorContext)
         , m_gameViewWindow(&m_editorContext)
         , m_canvasViewWindow(&m_editorContext)
+        , m_particleSystemEditorWindow(&m_editorContext)
+        , m_meshEffectEditorWindow(&m_editorContext)
+        , m_dataEditorWindow(&m_editorContext)
     {
-
     }
-    ~EditorManager() = default;
 
+    /// @brief エディターを初期化する
     void Initialize(HWND hWnd);
+    /// @brief エディターを終了する
     void Finalize();
+    /// @brief エディターを描画する
     void Render();
 
-    // EditorContextへのアクセス
+    /// @brief エディターのコンテキスト情報を取得する
     EditorContext& GetEditorContext() { return m_editorContext; }
 
-};
+    /// @brief シーン破棄時に呼び出す
+    void OnSceneDestroyed();
 
-#endif // EDITOR_MANAGER_H
+private:
+    void RegisterWindows();
+    void DrawMainView();
+    void DrawToolbar();
+    void SyncWindowLifecycle();
+
+};

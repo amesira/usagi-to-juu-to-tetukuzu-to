@@ -6,12 +6,10 @@
 //---------------------------------------------------
 #ifndef CUSTOM_POST_EFFECT_CONTROLLER_H
 #define CUSTOM_POST_EFFECT_CONTROLLER_H
-#include "Engine/Framework/Component/behavior_component.h"
-#include "Engine/Framework/Processor/RenderPass/PostEffect/custom_post_effect.h"
-
+#include "Engine/Component/behavior_component.h"
 #include "Engine/Core/GamePlay/tween_task.h"
 
-#include "Engine/Settings/post_process_settings.h"
+#include "Engine/Core/scene_post_effect_state.h"
 
 // カスタムポストエフェクトの種類
 enum class CustomPostEffectType {
@@ -23,8 +21,6 @@ enum class CustomPostEffectType {
 
 class CustomPostEffectController : public BehaviorComponent {
 private:
-    static inline int s_instanceCount = 0;
-
     // ポストエフェクトの状態
     CustomPostEffectState m_state = {};
 
@@ -32,7 +28,7 @@ private:
     FloatTweenTask m_changeIntensityTask[static_cast<int>(CustomPostEffectType::MAX)];
 
 public:
-    CustomPostEffectController();
+    CustomPostEffectController() = default;
     ~CustomPostEffectController();
 
     void Start() override;

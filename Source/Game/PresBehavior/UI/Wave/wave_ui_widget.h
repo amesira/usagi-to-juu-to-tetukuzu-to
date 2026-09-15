@@ -1,0 +1,97 @@
+#pragma once
+#include "wave_ui_settings_asset.h"
+#include "Game/PresBehavior/UI/Player/player_ui_widget_element.h"
+#include "Game/Factory/ui_factory.h"
+#include "Utility/mi_math.h"
+#include "Game/PresBehavior/UI/ui_perspective.h"
+
+// PlayerUiと同じグループ中心＋要素オフセットで配置する、ウェーブ用ウィジェット。
+class WaveUiWidget {
+    PlayerUi::WidgetGroup m_group;
+    PlayerUiWidgetElement m_label;
+    PlayerUiWidgetElement m_gauge;
+    WaveUiSettings::WidgetSettings m_settings;
+    DirectX::XMFLOAT2 m_labelSize = {1,1};
+    DirectX::XMFLOAT2 m_screenAnchor = {0.5f,0.5f};
+    std::string m_lastText;
+    bool m_hasGauge = false;
+    float m_pulseRemaining = 0;
+    float m_targetFill = 0;
+    float m_displayFill = 0;
+    float m_fillVelocity = 0;
+public:
+    void Initialize(IScene* scene, const char* name, bool gauge = false) {
+        m_label.Register(m_group, UiFactory::CreateUiTextHandle(scene, u8""), name, 110);
+        m_hasGauge = gauge;
+        if (gauge) m_gauge.Register(m_group, UiFactory::CreateUiSliderHandle(scene, {0.08f, 0.1f, 0.14f, 1}, {1, 1, 1, 1}, 0), "WaveUi.PointGauge", 109);
+    }
+    void ApplyLayout(const WaveUiSettings::WidgetSettings& settings, DirectX::XMFLOAT2 screen) {
+        m_settings = settings;
+        m_labelSize = settings.label.size;
+        m_screenAnchor = settings.placement.screenAnchor;
+        m_group.currentCenterPosition = UiLayoutSettings::ResolveGroupPosition(settings.placement, screen);
+        m_group.originalCenterPosition = m_group.currentCenterPosition;
+        m_label.ApplyLayout(m_group, settings.label);
+        m_label.handle.SetColor(settings.color);
+        if (auto* text = m_label.handle.GetText()) text->SetFontSize(settings.fontSize);
+    }
+    void ApplyGauge(const WaveUiSettings::PointsSettings& settings) {
+        if (!m_hasGauge) return;
+        m_gauge.ApplyLayout(m_group, settings.gauge);
+        if (auto* gauge = m_gauge.handle.GetSlider()) gauge->SetFillColor({settings.gaugeColor.x, settings.gaugeColor.y, settings.gaugeColor.z, 1});
+    }
+    void SetText(const std::string& value) {
+        if (value == m_lastText) return;
+        m_lastText = value;
+        if (auto* text = m_label.handle.GetText()) text->SetText(value);
+    }
+    // Call after both label and gauge layout so they share one projection origin.
+    void ApplyPresentation(const WaveUiSettings::Data& settings, DirectX::XMFLOAT2 screen) {
+        auto perspective = settings.perspective;
+        perspective.enabled = perspective.enabled && m_settings.applyPerspective;
+        const auto transform = UiPerspective::MakeTransform(perspective,
+            m_group.originalCenterPosition, m_group.currentCenterPosition, screen);
+        auto echoSettings = settings.chromaticEcho;
+        echoSettings.enabled = echoSettings.enabled && m_settings.applyChromaticEcho;
+        const auto echo = UiLayoutSettings::ResolveChromaticEcho(echoSettings,
+            perspective.vanishingPoint, m_screenAnchor, screen);
+        for (const auto& handle : m_group.widgets) {
+            if (auto* rect = handle.GetRectTransform()) {
+                rect->SetPresentationTransform(transform);
+                rect->SetChromaticEcho(echo);
+            }
+        }
+    }
+    void SetFill(float value) { m_targetFill = std::isfinite(value) ? std::clamp(value, 0.0f, 1.0f) : 0; }
+    void ApplyAnimatedLayout(const UiLayoutSettings::GroupPlacement& placement,
+        DirectX::XMFLOAT2 labelSize, DirectX::XMFLOAT2 screen) {
+        m_screenAnchor = placement.screenAnchor;
+        m_labelSize = labelSize;
+        m_group.currentCenterPosition = UiLayoutSettings::ResolveGroupPosition(placement, screen);
+        m_group.originalCenterPosition = m_group.currentCenterPosition;
+        for (size_t i = 0; i < m_group.widgets.size(); ++i) {
+            const auto offset = m_group.offsetPositions[i];
+            m_group.widgets[i].SetPosition(m_group.currentCenterPosition.x + offset.x,
+                m_group.currentCenterPosition.y + offset.y);
+        }
+    }
+    void Pulse(float duration) { m_pulseRemaining = duration; }
+    void Update(float dt, const WaveUiSettings::Data& settings) {
+        if (m_hasGauge && std::isfinite(dt) && dt > 0) {
+            m_displayFill = MiMath::SmoothDamp(m_displayFill, m_targetFill,
+                m_fillVelocity, settings.points.gaugeSmoothTime, dt);
+            m_displayFill = std::clamp(m_displayFill, 0.0f, 1.0f);
+            if (std::abs(m_displayFill - m_targetFill) < 0.0001f && std::abs(m_fillVelocity) < 0.0001f) {
+                m_displayFill = m_targetFill;
+                m_fillVelocity = 0;
+            }
+            if (auto* gauge = m_gauge.handle.GetSlider()) gauge->SetValue(m_displayFill);
+        }
+        m_pulseRemaining = (std::max)(0.0f, m_pulseRemaining - dt);
+        const float t = settings.pulseDuration > 0 ? std::clamp(m_pulseRemaining / settings.pulseDuration, 0.0f, 1.0f) : 0;
+        const float scale = 1 + (settings.pulseScale - 1) * std::sin(t * DirectX::XM_PI);
+        m_label.handle.SetSize(m_labelSize.x * scale, m_labelSize.y * scale);
+    }
+    void SetActive(bool active) { for (auto& handle : m_group.widgets) handle.SetActive(active); }
+    void Destroy() { for (auto& handle : m_group.widgets) handle.Destroy(); *this = {}; }
+};

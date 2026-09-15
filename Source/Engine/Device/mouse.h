@@ -50,6 +50,7 @@ void Mouse_Initialize(HWND window);
 void Mouse_Finalize(void);
 
 // マウスの状態を取得する
+// 相対座標モードでは、取得した移動量がこの呼び出しで消費される
 void Mouse_GetState(Mouse_State* pState);
 
 // 累積したマウススクロールホイール値をリセットする

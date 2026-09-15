@@ -1,0 +1,29 @@
+{
+    "data": {
+        "colliderCenter": [
+            0.0,
+            2.5,
+            0.0
+        ],
+        "colliderHeight": 5.0,
+        "colliderRadius": 1.0,
+        "friction": [
+            0.8999999761581421,
+            0.9900000095367432,
+            0.8999999761581421
+        ],
+        "gravityScale": -9.800000190734863,
+        "mass": 2.0,
+        "maxHealth": 10000000.0,
+        "modelAssetPath": "asset/Model/kakashi.fbx",
+        "scaling": [
+            1.5,
+            1.5,
+            1.5
+        ],
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "training_dummy_prefab_settings.data",
+    "type": "TrainingDummyPrefabSettingsAsset"
+}

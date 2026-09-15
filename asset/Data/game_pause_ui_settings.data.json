@@ -1,0 +1,129 @@
+{
+    "data": {
+        "applyChromaticEcho": false,
+        "applyPerspective": false,
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                1.0,
+                0.0,
+                0.0
+            ],
+            "enabled": false,
+            "offsetDistance": 0.0,
+            "opacity": 0.20000000298023224,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
+        "dimmerOpacity": 0.6499999761581421,
+        "fontSize": 32,
+        "message": {
+            "position": [
+                0.0,
+                -50.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                1.0,
+                1.0
+            ]
+        },
+        "messageText": "タイトルへ戻りますか？",
+        "no": {
+            "position": [
+                130.0,
+                65.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                1.0,
+                1.0
+            ]
+        },
+        "noText": "いいえ",
+        "panel": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                640.0,
+                260.0
+            ]
+        },
+        "panelColor": [
+            0.07999999821186066,
+            0.10000000149011612,
+            0.15000000596046448
+        ],
+        "panelImagePath": "asset/Texture/white.bmp",
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 12.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "placement": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.5,
+                0.5
+            ]
+        },
+        "selectedTextColor": [
+            1.0,
+            1.0,
+            0.0
+        ],
+        "selection": {
+            "position": [
+                0.0,
+                -10.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                180.0,
+                52.0
+            ]
+        },
+        "selectionColor": [
+            0.10268901288509369,
+            0.15533599257469177,
+            0.2255319356918335
+        ],
+        "selectionImagePath": "asset/Texture/white.bmp",
+        "selectionMoveDuration": 0.15000000596046448,
+        "selectionOpacity": 0.800000011920929,
+        "textColor": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "yes": {
+            "position": [
+                -130.0,
+                65.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                1.0,
+                1.0
+            ]
+        },
+        "yesText": "はい"
+    },
+    "formatVersion": 0,
+    "name": "game_pause_ui_settings.data",
+    "type": "GamePauseUiSettingsAsset"
+}

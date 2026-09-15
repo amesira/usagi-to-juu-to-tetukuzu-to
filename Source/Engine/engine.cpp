@@ -11,6 +11,7 @@
 #include "Engine/Device/mi_fps.h"
 
 #include "Engine/Core/scene_interface.h"
+#include "Engine/Core/build_config.h"
 
 #include "Utility/debug_renderer.h"
 
@@ -34,14 +35,28 @@ bool MiEngine::Initialize(HWND hWnd)
     FPS_Initialize(hWnd);
     m_resourceManager.Initialize();
     m_shaderManager.Initialize(pDevice, pContext);
+    m_assetManager.Initialize();
     DebugRenderer_Initialize();
-
-    // GameWorldの初期化
-    m_gameWorld.Initialize();
 
     // Editorの初期化
     m_editorManager.Initialize(hWnd);
     m_editorContext = &(m_editorManager.GetEditorContext());
+
+#if MI_GAME_BUILD
+    // ゲームビルドでは起動直後からゲームを更新し、Game Viewだけを表示する。
+    m_editorContext->currentEditorMode = EditorContext::EditorMode::Play;
+    m_editorContext->mainViewMode = EditorContext::MainViewMode::Game;
+    m_editorContext->toolbarExpanded = false;
+#endif
+
+    // GameWorldの初期化
+    m_gameWorld.Initialize();
+    m_gameWorld.GetSceneManager().SetBeforeSceneRelease([this]() {
+        m_editorContext->selectedObject = nullptr;
+        m_editorContext->scene = nullptr;
+        m_editorContext->environmentAsset = nullptr;
+        m_editorManager.OnSceneDestroyed();
+    });
 
     return true;
 }
@@ -54,6 +69,7 @@ void MiEngine::Finalize()
 
     m_resourceManager.Finalize();
     m_shaderManager.Finalize();
+    m_assetManager.Finalize();
     UninitAudio();
     Direct3D_Finalize();
     DebugRenderer_Finalize();
@@ -86,16 +102,21 @@ void MiEngine::Update()
     if (m_editorContext->triggerSceneReload) {
         m_editorContext->triggerSceneReload = false;
         m_gameWorld.GetSceneManager().ReloadScene();
-        m_editorContext->selectedObject = nullptr; // 選択オブジェクトをリセット
+
     }
 
     // デバッグ描画のバッファリセット
     DebugRenderer_ResetBuffer();
 
+    // ゲームビルドではエディターのモードにかかわらずGameWorldを更新する。
+#if MI_GAME_BUILD
+    m_gameWorld.Update();
+#else
     // PlayモードのときのみGameWorldを更新
     if (m_editorContext->currentEditorMode == EditorContext::EditorMode::Play) {
         m_gameWorld.Update();
     }
+#endif
 }
 
 // MiEngineの描画処理
@@ -109,11 +130,13 @@ void MiEngine::Render()
     // Editorの描画処理
     IScene* scene = m_gameWorld.GetSceneManager().GetCurrentScene();
     m_editorContext->scene = scene;
-    m_editorContext->sceneSettings = &(scene->GetSceneSettings());
-    m_editorContext->sceneRenderView = &m_gameWorld.GetMainSceneRenderView();
-    m_editorContext->gameRenderView = &m_gameWorld.GetMainGameRenderView();
+    m_editorContext->environmentAsset = &(scene->GetEnvironmentAsset());
+    m_editorContext->sceneViewCamera = &m_gameWorld.GetSceneViewCamera();
+    m_editorContext->sceneRenderView = &m_gameWorld.GetSceneRenderView();
+    m_editorContext->gameRenderView = &m_gameWorld.GetGameRenderView();
     m_editorContext->canvasRenderView = &m_gameWorld.GetCanvasRenderView();
     m_editorManager.Render();
 
     Direct3D_Present();
+    m_gameWorld.GetSceneManager().NotifyFramePresented();
 }

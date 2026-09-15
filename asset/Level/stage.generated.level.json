@@ -1,0 +1,594 @@
+{
+    "data": {
+        "objects": [
+            {
+                "collider": {
+                    "boxSize": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "None"
+                },
+                "collisionLayer": "Default",
+                "id": "stage_visual",
+                "modelPath": "asset/Level/Stage.fbx",
+                "name": "Stage",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotationDegrees": [
+                        90.0,
+                        180.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        79.83541870117188,
+                        6.020467281341553,
+                        59.70077133178711
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0001",
+                "modelPath": "",
+                "name": "StageCollider_1",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        26.788246154785156,
+                        6.020467281341553,
+                        28.061141967773438
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0002",
+                "modelPath": "",
+                "name": "StageCollider_2",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -26.37444496154785,
+                        4.213168144226074,
+                        16.117599487304688
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        31.942577362060547,
+                        6.020467281341553,
+                        11.882109642028809
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0003",
+                "modelPath": "",
+                "name": "StageCollider_3",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        2.1346774101257324,
+                        4.213168144226074,
+                        8.253015518188477
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        15.548413276672363,
+                        6.020467281341553,
+                        12.82874584197998
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0004",
+                "modelPath": "",
+                "name": "StageCollider_4",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        10.198217391967773,
+                        4.213168144226074,
+                        -4.105617046356201
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        15.656898498535156,
+                        2.4901654720306396,
+                        10.418020248413086
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0005",
+                "modelPath": "",
+                "name": "StageCollider_5",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        10.102314949035645,
+                        4.168342590332031,
+                        -24.89838981628418
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        7.873976707458496,
+                        2.5433428287506104,
+                        5.359889507293701
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0006",
+                "modelPath": "",
+                "name": "StageCollider_6",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -1.6009330749511719,
+                        3.9767227172851563,
+                        -27.263511657714844
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        7.873976707458496,
+                        0.9891065359115601,
+                        15.287664413452148
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0007",
+                "modelPath": "",
+                "name": "StageCollider_7",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -1.6009330749511719,
+                        3.578540563583374,
+                        -17.306041717529297
+                    ],
+                    "rotationDegrees": [
+                        8.361124992370605,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        13.000346183776855,
+                        1.4602488279342651,
+                        19.62660026550293
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0008",
+                "modelPath": "",
+                "name": "StageCollider_8",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -33.448829650878906,
+                        3.6370060443878174,
+                        -20.08302116394043
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        13.087409019470215,
+                        1.4602489471435547,
+                        12.919014930725098
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0009",
+                "modelPath": "",
+                "name": "StageCollider_9",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -33.29723358154297,
+                        5.047987461090088,
+                        -3.9274284839630127
+                    ],
+                    "rotationDegrees": [
+                        -13.347259521484375,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        15.548413276672363,
+                        1.4547690153121948,
+                        10.098265647888184
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0010",
+                "modelPath": "",
+                "name": "StageCollider_10",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        10.198217391967773,
+                        5.576740264892578,
+                        -14.638315200805664
+                    ],
+                    "rotationDegrees": [
+                        -10.540696144104004,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        12.06975269317627,
+                        2.4901652336120605,
+                        10.418020248413086
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0011",
+                "modelPath": "",
+                "name": "StageCollider_11",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        23.228958129882813,
+                        2.858625650405884,
+                        -24.89838981628418
+                    ],
+                    "rotationDegrees": [
+                        1.8250975131195446e-07,
+                        1.66633822118456e-06,
+                        -12.501093864440918
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        26.788246154785156,
+                        6.020467281341553,
+                        17.83625602722168
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0012",
+                "modelPath": "",
+                "name": "StageCollider_12",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -0.7540831565856934,
+                        1.531173825263977,
+                        21.149995803833008
+                    ],
+                    "rotationDegrees": [
+                        1.5616700466125621e-07,
+                        1.5427319794980576e-06,
+                        -11.560458183288574
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        13.747934341430664,
+                        1.4602488279342651,
+                        19.62660026550293
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0013",
+                "modelPath": "",
+                "name": "StageCollider_13",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -20.21377944946289,
+                        2.9202990531921387,
+                        -20.08302116394043
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        -5.990069389343262
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            {
+                "collider": {
+                    "boxSize": [
+                        13.000346183776855,
+                        1.4602488279342651,
+                        19.62660026550293
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "stage_collider_0014",
+                "modelPath": "",
+                "name": "StageCollider_14",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        -20.025718688964844,
+                        3.6370060443878174,
+                        -0.5300801992416382
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            }
+        ]
+    },
+    "formatVersion": 1,
+    "name": "stage.generated",
+    "type": "Level"
+}

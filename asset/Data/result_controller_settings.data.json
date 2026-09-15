@@ -1,0 +1,33 @@
+{
+    "data": {
+        "resultTextObject": {
+            "position": [
+                3.5999999046325684,
+                50.0,
+                11.300000190734863
+            ],
+            "rotation": [
+                45.0,
+                -0.800000011920929,
+                0.0
+            ],
+            "scale": [
+                20.0,
+                20.0,
+                20.0
+            ]
+        },
+        "scoring": {
+            "completeBonus": 500,
+            "pointsPerSecond": 5.0,
+            "rank2": 200,
+            "rank3": 500,
+            "rank4": 1000,
+            "rank5": 1800,
+            "timeLimit": 300.0
+        }
+    },
+    "formatVersion": 0,
+    "name": "result_controller_settings.data",
+    "type": "ResultControllerSettingsAsset"
+}

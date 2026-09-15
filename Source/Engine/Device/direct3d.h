@@ -67,6 +67,14 @@ enum RASTERIZERSTATE {
 };
 void SetRasterizerState(RASTERIZERSTATE state);
 
+enum SAMPLERSTATE {
+    SAMPLERSTATE_POINT_WRAP,
+    SAMPLERSTATE_POINT_CLAMP,
+    SAMPLERSTATE_LINEAR_CLAMP,
+    SAMPLERSTATE_MAX,
+};
+void SetSamplerState(SAMPLERSTATE state);
+
 // スナップショット用シーンテクスチャSRVの作成
 void Direct3D_CreateSnapshotSceneSRV(ID3D11ShaderResourceView** snapshotSrv, ID3D11Texture2D** fromTex);
 
@@ -81,12 +89,15 @@ void Direct3D_CreateColorBuffer(
     ID3D11RenderTargetView** rtv, 
     ID3D11ShaderResourceView** srv,
     unsigned int width = 1920,
-    unsigned int height = 1080);
+    unsigned int height = 1080,
+    DXGI_FORMAT format = DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 // シーン用デプステンシルの作成・解放
 void Direct3D_CreateDepthBuffer(
     ID3D11Texture2D** tex, 
     ID3D11DepthStencilView** dsv, 
-    ID3D11ShaderResourceView** srv);
+    ID3D11ShaderResourceView** srv,
+    unsigned int width = 1920,
+    unsigned int height = 1080);
 
 #endif

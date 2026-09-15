@@ -18,11 +18,19 @@ class GameObject;
 class Component {
 private:
     bool        m_enable = true;
+    bool        m_destroyNotified = false;
     GameObject* m_pOwner = nullptr;
 
 public:
     Component() = default;
     virtual ~Component() = default;
+    // Called before removal, while the owner's other components still exist.
+    virtual void OnDestroy() {}
+    void NotifyDestroy() {
+        if (m_destroyNotified) return;
+        m_destroyNotified = true;
+        OnDestroy();
+    }
 
     // Componentのオーナー取得
     GameObject* GetOwner() const{ return m_pOwner; }

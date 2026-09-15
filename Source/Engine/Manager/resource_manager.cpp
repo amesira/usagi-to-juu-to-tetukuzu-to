@@ -10,6 +10,7 @@
 void ResourceManager::Initialize() 
 {
     m_textureRepository.Initialize();
+    m_fontRepository.Initialize(Direct3D_GetDevice(), Direct3D_GetDeviceContext());
 
     m_shaderRepository.Initialize();
     m_materialRepository.Initialize();
@@ -21,6 +22,7 @@ void ResourceManager::Initialize()
 void ResourceManager::Finalize() 
 {
     m_textureRepository.Finalize();
+    m_fontRepository.Finalize();
 
     m_shaderRepository.Finalize();
     m_materialRepository.Finalize();

@@ -32,11 +32,6 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     col = g_Material.baseColor * g_AlbedoTexture.Sample(g_SamplerState, uv);
     if (col.a <= 0.01f) discard;
     
-    // 法線マップを使用して法線を変換
-    //float3 normalMap = g_NormalTexture.Sample(g_SamplerState, ps_in.texcoord).xyz;
-    //normalMap = normalMap * 2.0f - 1.0f;
-    //ps_in.normal = ps_in.tangent * normalMap.x + ps_in.binormal * normalMap.y + ps_in.normal * normalMap.z;
-    
     // ライトの影響を加算
     if (g_EnableLighting != 0)
     {
@@ -58,6 +53,7 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
         
         col.rgb += CalcRimLight(ps_in.normal.xyz, ps_in.posW.xyz, g_EyePosition.xyz); // リムライトを加算
         col.rgb += CalcHemiLight(ps_in.normal.xyz); // 半球ライトを加算
+        col.rgb += CalcCubicColorLight(ps_in.normal.xyz);
     }
     
     // エミッシブカラーを加算
@@ -68,12 +64,11 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     float2 shadowUV = CalcShadowUV(lightSpacePos);
     
     float depthInLightSpace = lightSpacePos.z / lightSpacePos.w;
-    float depthInShadowMap = g_ShadowMap.Sample(g_SamplerState, shadowUV).r;
+    float depthInShadowMap = GetShadowDepth(shadowUV, depthInLightSpace);
+    float t = depthInShadowMap * depthInShadowMap;
+    t = saturate(t);
     
-    float bias = 0.001f;
-    if (depthInLightSpace > depthInShadowMap + bias){
-       col.rgb *= 0.5f;
-    }
+    col.rgb = lerp(col.rgb, col.rgb * float3(2.0, 2.0, 2.0), 1.0f - t); // シャドウの影響を減算（0.5倍にする）
     
     return col;
 }

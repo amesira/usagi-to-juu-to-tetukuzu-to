@@ -1,0 +1,18 @@
+{
+    "data": {
+        "maxPathFailures": 1,
+        "minProgressDistance": 0.10000000149011612,
+        "minRepathInterval": 0.30000001192092896,
+        "moveSpeedMultiplier": 1.0,
+        "pathRetryInterval": 1.0,
+        "repathInterval": 1.0,
+        "restartDistanceMargin": 0.30000001192092896,
+        "stopDistance": 4.0,
+        "stuckCheckInterval": 1.0,
+        "targetMoveThreshold": 0.5,
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "enemy_approach_settings.data",
+    "type": "EnemyApproachSettingsAsset"
+}

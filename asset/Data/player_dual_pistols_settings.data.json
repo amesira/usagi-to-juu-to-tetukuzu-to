@@ -1,0 +1,97 @@
+{
+    "data": {
+        "aimMaxDistance": 1000.0,
+        "bulletDamage": 10.0,
+        "bulletLifetime": 3.0,
+        "bulletRadius": 0.30000001192092896,
+        "bulletSpawnForwardOffset": 1.5,
+        "bulletSpeed": 150.0,
+        "chainTime": 0.20000000298023224,
+        "endTime": 0.4000000059604645,
+        "finalStepMoveDistance": 6.0,
+        "finalStepMoveDuration": 0.30000001192092896,
+        "fireTime": 0.15000000596046448,
+        "inputBufferStartTime": 0.15000000596046448,
+        "rapidFireAimBlendDownFullDirectionY": -0.5,
+        "rapidFireAimBlendDownStartDirectionY": -0.4000000059604645,
+        "rapidFireAimBlendUpFullDirectionY": 0.30000001192092896,
+        "rapidFireAimBlendUpStartDirectionY": -0.10000000149011612,
+        "rapidFireInterval": 0.10000000149011612,
+        "rapidFireJumpPowerMultiplier": 0.800000011920929,
+        "rapidFireMoveSpeedMultiplier": 0.699999988079071,
+        "slashBurst1Effect": {
+            "position": [
+                0.0,
+                1.0,
+                0.5
+            ],
+            "rotation": [
+                0.0,
+                135.0,
+                135.0
+            ]
+        },
+        "slashBurst2Effect": {
+            "position": [
+                0.0,
+                1.0,
+                0.5
+            ],
+            "rotation": [
+                0.0,
+                225.0,
+                45.0
+            ]
+        },
+        "slashBurst3LeftEffect": {
+            "position": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "rotation": [
+                15.0,
+                45.0,
+                180.0
+            ]
+        },
+        "slashBurst3RightEffect": {
+            "position": [
+                0.0,
+                1.0,
+                0.0
+            ],
+            "rotation": [
+                -15.0,
+                -135.0,
+                180.0
+            ]
+        },
+        "slashBurstDamage": 35.0,
+        "slashBurstDamageAreaLocalOffset": [
+            0.0,
+            0.0,
+            0.5
+        ],
+        "slashBurstDamageAreaSize": [
+            4.0,
+            2.5,
+            4.0
+        ],
+        "slashBurstEffectAssetPath": "asset/MeshEffect/player_slash_burst_1_effect.mesh_effect.json",
+        "slashBurstEffectScale": 2.5,
+        "slashBurstFireDuration": 0.25,
+        "slashBurstFireInterval": 0.05000000074505806,
+        "slashBurstKnockbackDistance": 7.0,
+        "slashBurstKnockbackDuration": 0.5,
+        "slashBurstKnockbackStartMargin": 0.5,
+        "slashBurstMaxKnockbackDistanceFromPlayer": 10.0,
+        "startRapidFireDelay": 0.10000000149011612,
+        "stepMoveDistance": 3.0,
+        "stepMoveDuration": 0.20000000298023224,
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "player_dual_pistols_settings.data",
+    "type": "PlayerDualPistolsSettingsAsset"
+}

@@ -1,0 +1,217 @@
+//===================================================
+// render_processor.cpp [描画制御プロセッサー]
+// 
+// ・描画の制御を行うプロセッサー
+// 
+// Author：Miu Kitamura
+// Date  ：2026/03/10
+//===================================================
+#include "render_processor.h"
+
+#include "Engine/Device/direct3d.h"
+#include "Engine/engine_service_locator.h"
+
+#include "Utility/debug_renderer.h"
+
+// 描画制御プロセッサーの初期化
+void RenderProcessor::Initialize()
+{
+    m_pDevice = Direct3D_GetDevice();
+    m_pContext = Direct3D_GetDeviceContext();
+
+    m_lightingPass.Initialize(m_pDevice, m_pContext);
+    m_shadowMapPass.Initialize(m_pDevice, m_pContext);
+    m_skyboxPass.Initialize(m_pDevice, m_pContext);
+    m_opaqueRenderPass.Initialize(m_pDevice, m_pContext);
+    m_uiRenderPass.Initialize(m_pDevice, m_pContext);
+    m_decalRenderPass.Initialize(m_pDevice, m_pContext);
+    m_transparentRenderPass.Initialize(m_pDevice, m_pContext);
+    m_maskRenderPass.Initialize(m_pDevice, m_pContext);
+    m_postEffectPass.Initialize(m_pDevice, m_pContext);
+    D3D11_BLEND_DESC fade = {};
+    auto& target = fade.RenderTarget[0];
+    target.BlendEnable = TRUE;
+    target.SrcBlend = D3D11_BLEND_ZERO;
+    target.DestBlend = D3D11_BLEND_INV_BLEND_FACTOR;
+    target.BlendOp = D3D11_BLEND_OP_ADD;
+    target.SrcBlendAlpha = D3D11_BLEND_ZERO;
+    target.DestBlendAlpha = D3D11_BLEND_ONE;
+    target.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    target.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    if (FAILED(m_pDevice->CreateBlendState(&fade, m_blackFadeBlend.GetAddressOf()))) {
+        EngineServiceLocator::AddLogMessage("Failed to create black fade blend state.");
+    }
+}
+
+// 描画制御プロセッサーの終了処理
+void RenderProcessor::Finalize()
+{
+    m_blackFadeBlend.Reset();
+    m_lightingPass.Finalize();
+    m_opaqueRenderPass.Finalize();
+    m_uiRenderPass.Finalize();
+    m_decalRenderPass.Finalize();
+    m_transparentRenderPass.Finalize();
+    m_maskRenderPass.Finalize();
+    m_shadowMapPass.Finalize();
+    m_skyboxPass.Finalize();
+    m_postEffectPass.Finalize();
+}
+
+// 描画制御プロセッサーの処理
+void RenderProcessor::Process(IScene* pScene)
+{
+    if (!m_renderView) return; // RenderViewがバインドされていない場合は処理しない
+
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+
+    // 1.ライト設定パス
+    if (m_renderView->enableLighting) {
+        m_lightingPass.Process(pScene, *m_renderView);
+    }
+
+    // 2.シャドウマップパス
+    if (m_renderView->enableShadowMap) {
+        m_shadowMapPass.UnbindShadowTexture();
+        m_shadowMapPass.UnbindShadowSampler();
+
+        Direct3D_SetViewport(m_shadowMapPass.GetShadowMapSize(), m_shadowMapPass.GetShadowMapSize());
+        Direct3D_ClearSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
+        Direct3D_SetSceneTarget(nullptr, m_shadowMapPass.GetDepthStencilView());
+
+        m_lightingPass.BindLightCB(false);
+        m_shadowMapPass.SetLightDirection(m_lightingPass.GetDirectionalLightDirection()); // ライトの方向は適当
+        m_shadowMapPass.Process(pScene, *m_renderView);
+    }
+
+    //----------------------------------- Scene描画開始
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+    Direct3D_ClearSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+
+    Bind3DCameraCB(m_renderView);
+
+    // 3.スカイボックスパス
+    //m_skyboxPass.Process(pScene, *m_renderView);
+
+    if (m_renderView->enable3D){
+        //----------------------------------- 3Dオブジェクト描画
+        m_lightingPass.BindLightCB(m_renderView->enableLighting);
+
+        if (m_renderView->enableShadowMap) {
+            m_shadowMapPass.BindShadowCB();
+            m_shadowMapPass.BindShadowTexture();
+            m_shadowMapPass.BindShadowSampler();
+        }
+
+        // 不透明物体
+        m_opaqueRenderPass.Process(pScene, *m_renderView);
+
+        // Overlay物体（デカール、ライン、トレイルなど）
+        {
+            Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
+
+            m_decalRenderPass.Process(pScene, *m_renderView);
+
+            m_decalRenderPass.UnbindDepthTexture();
+        }
+
+        // 透明物体
+        Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+        m_transparentRenderPass.Process(pScene, *m_renderView);
+
+        m_maskRenderPass.Process(pScene, *m_renderView);
+
+        if (m_renderView->enableUI) {
+            m_lightingPass.BindLightCB(false);
+            Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+            Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+            m_uiRenderPass.Process3D(pScene, *m_renderView);
+        }
+    }
+
+    if (m_renderView->enableDebugDraw) {
+        // デバッグ描画
+        Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+        Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+        m_lightingPass.BindLightCB(false);
+        m_decalRenderPass.CollectDebugDraw(pScene);
+        DebugRenderer_DrawFlush(m_renderView->viewMatrix, m_renderView->projectionMatrix);
+    }
+
+    //----------------------------------- 2Dオブジェクト描画
+
+    Bind2DCameraCB(m_renderView);
+    m_lightingPass.BindLightCB(false);
+
+    // 5.PostEffect描画
+    if (m_renderView->enablePostEffect) {
+        Direct3D_ClearSceneTarget(m_renderView->postEffectRTV.Get(), nullptr);
+        m_postEffectPass.Process(pScene, *m_renderView);
+
+        Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), m_renderView->depthBufferDSV.Get());
+        EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+        SetBlendState(BLENDSTATE_NONE);
+        SetDepthState(DEPTHSTATE_DISABLE);
+        m_pContext->PSSetShaderResources(0, 1, m_renderView->postEffectSRV.GetAddressOf());
+        m_pContext->Draw(3, 0); // フルスクリーン三角形を描画
+    }
+
+    // 6.2DScreen描画
+    if (m_renderView->enableUI) {
+        SetBlendState(BLENDSTATE_NONE);
+        SetDepthState(DEPTHSTATE_DISABLE);
+        m_uiRenderPass.Process(pScene, *m_renderView);
+    }
+}
+
+// 3D描画時のカメラCBバインド
+void RenderProcessor::DrawBlackFade(float alpha)
+{
+    if (!m_renderView || !m_blackFadeBlend || alpha <= 0) return;
+    auto* texture = TEXTURE_REPOSITORY->GetTextureResource("asset/Texture/white.bmp");
+    if (!texture) return;
+
+    Direct3D_SetViewport(m_renderView->screenWidth, m_renderView->screenHeight);
+    Direct3D_SetSceneTarget(m_renderView->colorBufferRTV.Get(), nullptr);
+    EngineServiceLocator::BindShader(ShaderBase::FullScreen);
+
+    SetDepthState(DEPTHSTATE_DISABLE);
+    SetRasterizerState(RASTERIZERSTATE_CULL_NONE);
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+
+    // RGB = destination * (1-alpha), independent of the source texture color.
+    const float factor[] = {alpha, alpha, alpha, alpha};
+    m_pContext->OMSetBlendState(m_blackFadeBlend.Get(), factor, 0xffffffff);
+    m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pContext->GSSetShader(nullptr, nullptr, 0);
+    m_pContext->PSSetShaderResources(0, 1, texture->texture.GetAddressOf());
+    m_pContext->Draw(3, 0);
+
+    ID3D11ShaderResourceView* empty = nullptr;
+    m_pContext->PSSetShaderResources(0, 1, &empty);
+    SetBlendState(BLENDSTATE_NONE);
+    SetRasterizerState(RASTERIZERSTATE_CULL_BACK);
+}
+
+void RenderProcessor::Bind3DCameraCB(const RenderView* view)
+{
+    EngineServiceLocator::UpdateCameraCB({
+        view->viewMatrix,
+        view->projectionMatrix,
+        XMFLOAT4(view->eyePosition.x, view->eyePosition.y, view->eyePosition.z, 1.0f)
+        });
+}
+
+// 2D描画時のカメラCBバインド
+void RenderProcessor::Bind2DCameraCB(const RenderView* view)
+{
+    const float SCREEN_WIDTH = Direct3D_GetBackBufferWidth();
+    const float SCREEN_HEIGHT = Direct3D_GetBackBufferHeight();
+
+    EngineServiceLocator::UpdateCameraCB({
+        XMMatrixIdentity(),
+        XMMatrixOrthographicOffCenterLH(0.0f, SCREEN_WIDTH, SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f),
+        XMFLOAT4(0.0f, 0.0f, -1.0f, 1.0f) // カメラの位置は適当（UIはワールド座標と同じなので）
+        });
+}

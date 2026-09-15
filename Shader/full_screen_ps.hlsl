@@ -17,7 +17,5 @@ struct PS_INPUT
 // main関数
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float4 col =  g_Texture.Sample(g_SamplerState, ps_in.texcoord);
-    //if (col.a <= 0.01f) discard;
-    return col;
+    return g_Texture.Sample(g_SamplerState, ps_in.texcoord);
 }

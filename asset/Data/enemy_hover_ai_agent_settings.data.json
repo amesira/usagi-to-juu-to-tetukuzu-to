@@ -1,0 +1,12 @@
+{
+    "data": {
+        "navigationAgent": {
+            "maxSlopeDegrees": 89.0,
+            "maxStepHeight": 10.0,
+            "radius": 1.0
+        }
+    },
+    "formatVersion": 0,
+    "name": "enemy_hover_ai_agent_settings.data",
+    "type": "EnemyAiAgentSettingsAsset"
+}

@@ -9,17 +9,14 @@
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/line_renderer_component.h"
-#include "Engine/Framework/Component/transform_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/particle_system_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/text_component.h"
 
-#include "Game/Behavior/BulletBehavior/bullet_behavior.h"
-#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
-#include "Game/Behavior/BulletBehavior/missile_behavior.h"
-#include "Game/Behavior/BaseBehavior/hit_stop_behavior.h"
-#include "Game/Behavior/BaseBehavior/shake_object_behavior.h"
-#include "Game/Behavior/BaseBehavior/blinker_behavior.h"
+#include "Game/ActorBehavior/Bullet/bullet_behavior.h"
+#include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
+#include "Game/PresBehavior/UI/damage_number_behavior.h"
 
 #include "Engine/Graphics/material_repository.h"
 #include "Engine/Graphics/model_repository.h"
@@ -29,13 +26,12 @@
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_math.h"
 
-#define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
-#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
-#define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
-#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+#include "Game/Factory/render_effect_factory.h"
 
 namespace
 {
+    const std::filesystem::path BULLET_PARTICLE_PATH = "asset//Particle//bullet_trail.particle.json";
+
     // ホログラムシェーダーの取得または生成
     ShaderProgramResource* GetOrCreateHologramShader(const ProjectileFactory::BulletCreateDesc& desc)
     {
@@ -72,7 +68,7 @@ namespace
         }
         generated = true;
         
-        XMFLOAT4 hologramColor = { 0.35f, 0.85f, 1.0f, 0.75f };
+        XMFLOAT4 hologramColor = { 0.85f, 0.55f, 1.0f, 0.75f };
         float hologramIntensity = 7.0f;
 
         MaterialResource material = {};
@@ -112,46 +108,7 @@ namespace
             materialSlot.materialResource = bulletMaterial;
         }
     }
-
-    // パーティクルコンポーネントのセットアップ
-    void SetupBulletParticle(ParticleSystemComponent* particleSystem, const ProjectileFactory::BulletCreateDesc& desc)
-    {
-        if (!particleSystem) return;
-
-        particleSystem->Main().loop = true;
-        particleSystem->Main().playOnAwake = true;
-        particleSystem->Main().startLifetime = { false, 0.5f, 0.5f, 0.5f };
-        particleSystem->Main().startSpeed = { false, 0.0f, 0.0f, 0.0f };
-        particleSystem->Main().startSize = { false, desc.radius * 0.8f, desc.radius * 0.8f, desc.radius * 0.8f };
-        particleSystem->Main().startColor = { false, {0.6f, 0.2f, 0.3f, 0.5f}, {0.4f, 0.5f, 0.5f, 0.8f}};
-
-        particleSystem->Main().simulationSpace = ParticleSystemComponent::SimulationSpace::World;
-
-        particleSystem->Emission().enabled = true;
-        particleSystem->Emission().rateOverTime = 60.0f;
-        particleSystem->Emission().rateOverDistance = 0.0f;
-
-        particleSystem->Shape().enabled = true;
-        particleSystem->Shape().type = ParticleSystemComponent::ShapeType::Sphere;
-        particleSystem->Shape().sphere.radius = desc.radius;
-        particleSystem->Shape().sphere.emitFromShell = true;
-        particleSystem->Shape().randomDirectionAmount = 1.0f;
-
-        particleSystem->SizeOverLifetime().enabled = true;
-        particleSystem->SizeOverLifetime().size.keys = {
-            { 0.0f, 1.0f },
-            { 1.0f, 0.0f },
-        };
-
-        particleSystem->Renderer().blendMode = ParticleSystemComponent::BlendMode::Additive;
-        particleSystem->Renderer().billboardMode = ParticleSystemComponent::BillboardMode::View;
-
-        if (TEXTURE_REPOSITORY) {
-            particleSystem->Renderer().textureResource = TEXTURE_REPOSITORY->GetTextureResource(L"asset/Texture/white.bmp");
-        }
-    }
 }
-
 // 弾の生成
 GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDesc& desc)
 {
@@ -160,19 +117,20 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     GameObject* bullet = scene->CreateGameObject();
     bullet->SetName("Bullet");
     bullet->SetRenderLayer(RenderLayer::Bullet);
+    if (!bullet) return nullptr;
 
     TransformComponent* transform = bullet->AddComponent<TransformComponent>();
+    if (!transform) return nullptr;
+
     ModelComponent* modelComponent = bullet->AddComponent<ModelComponent>();
     ParticleSystemComponent* particleSystem = bullet->AddComponent<ParticleSystemComponent>();
 
     BulletBehavior* bulletBehavior = bullet->AddComponent<BulletBehavior>();
     
-    bullet->AddComponent<HitStopBehavior>();
-    bullet->AddComponent<ShakeObjectBehavior>();
     bullet->AddComponent<BlinkerBehavior>();
 
     transform->SetPosition(desc.position);
-    transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
+    transform->SetScaling({ desc.radius * 2.5f, desc.radius * 2.5f, desc.radius * 2.5f });
 
     // 弾の進行方向に合わせて回転を設定
     XMFLOAT3 forward = MiMath::Multiply(desc.velocity, -1.0f);
@@ -181,83 +139,40 @@ GameObject* ProjectileFactory::CreateBullet(IScene* scene, const BulletCreateDes
     transform->SetRotation(rotation);
 
     SetupBulletModel(modelComponent, desc);
-    SetupBulletParticle(particleSystem, desc);
 
-    bulletBehavior->Initialize(desc.velocity, desc.radius, desc.lifeTime, desc.layerMask);
+    if (!RenderEffectFactory::ApplyParticleAsset(particleSystem, BULLET_PARTICLE_PATH)) {
+        EngineServiceLocator::AddLogMessage(
+            "Failed to load particle asset: " + BULLET_PARTICLE_PATH.generic_string());
+    }
+
+    bulletBehavior->Initialize(
+        desc.velocity,
+        desc.radius,
+        desc.lifeTime,
+        desc.layerMask,
+        desc.attacker,
+        desc.damage,
+        desc.attackType);
 
     return bullet;
 }
 
-// ミサイル弾の生成
-GameObject* ProjectileFactory::CreateMissile(IScene* scene, const MissileCreateDesc& desc)
+GameObject* ProjectileFactory::CreateDamageNumber(IScene* scene, const DamageNumberCreateDesc& desc)
 {
-    if (!scene) return nullptr;
+    GameObject* damageNumber = scene->CreateGameObject();
+    damageNumber->SetName("DamageNumber");
+    damageNumber->SetRenderLayer(RenderLayer::Default);
 
-    GameObject* missile = scene->CreateGameObject();
-    missile->SetName("Missile");
-    missile->SetRenderLayer(RenderLayer::Bullet);
+    TransformComponent* transform = damageNumber->AddComponent<TransformComponent>();
+    transform->SetPosition(desc.position);
+    
+    TextComponent* textComponent = damageNumber->AddComponent<TextComponent>();
+    textComponent->SetCenter(true);
+    textComponent->SetFontPath(desc.fontPath);
+    textComponent->SetFontSize(42);
 
-    TransformComponent* transform = missile->AddComponent<TransformComponent>();
-    ModelComponent* modelComponent = missile->AddComponent<ModelComponent>();
-    ParticleSystemComponent* particleSystem = missile->AddComponent<ParticleSystemComponent>();
-    MissileBehavior* missileBehavior = missile->AddComponent<MissileBehavior>();
+    DamageNumberBehavior* behavior = damageNumber->AddComponent<DamageNumberBehavior>();
+    behavior->Show(desc.damage, desc.position, desc.color);
 
-    missile->AddComponent<HitStopBehavior>();
-    missile->AddComponent<ShakeObjectBehavior>();
-    missile->AddComponent<BlinkerBehavior>();
-
-    transform->SetPosition(desc.startPosition);
-    transform->SetScaling({ desc.radius * 2.0f, desc.radius * 2.0f, desc.radius * 2.0f });
-
-    XMFLOAT3 initialDirection = MiMath::Subtract(desc.controlPoint1, desc.startPosition);
-    if (MiMath::Length(initialDirection) <= 0.0001f) {
-        initialDirection = MiMath::Subtract(desc.targetPosition, desc.startPosition);
-    }
-    if (MiMath::Length(initialDirection) > 0.0001f) {
-        XMFLOAT3 forward = MiMath::Multiply(MiMath::Normalize(initialDirection), -1.0f);
-        XMFLOAT4 rotation = MiMath::QuaternionFromDirection(forward, { 0.0f, 1.0f, 0.0f });
-        transform->SetRotation(rotation);
-    }
-
-    BulletCreateDesc visualDesc;
-    visualDesc.position = desc.startPosition;
-    visualDesc.radius = desc.radius;
-    visualDesc.modelPath = desc.modelPath;
-    visualDesc.materialName = desc.materialName;
-
-    SetupBulletModel(modelComponent, visualDesc);
-    SetupBulletParticle(particleSystem, visualDesc);
-
-    missileBehavior->Initialize(
-        desc.startPosition,
-        desc.controlPoint1,
-        desc.controlPoint2,
-        desc.targetPosition,
-        desc.duration,
-        desc.radius,
-        desc.layerMask);
-
-    return missile;
-}
-
-GameObject* ProjectileFactory::CreateBezierLinePreview(IScene* scene, const BezierLinePreviewCreateDesc& desc)
-{
-    if (!scene) return nullptr;
-
-    GameObject* previewLine = scene->CreateGameObject();
-    previewLine->SetName(desc.name ? desc.name : "BezierLinePreview");
-    previewLine->SetRenderLayer(RenderLayer::Particle);
-
-    previewLine->AddComponent<TransformComponent>();
-
-    LineRendererComponent* lineRenderer = previewLine->AddComponent<LineRendererComponent>();
-    lineRenderer->SetLineType(LineRendererComponent::LineType::LineStrip);
-    lineRenderer->SetLineWidth(desc.lineWidth);
-    lineRenderer->SetLineColor(desc.lineColor);
-    lineRenderer->SetEnable(desc.visibleOnCreate);
-
-    BezierLinePreviewBehavior* previewBehavior = previewLine->AddComponent<BezierLinePreviewBehavior>();
-    previewBehavior->SetSampleCount(desc.sampleCount);
-
-    return previewLine;
+    return damageNumber;
 }

@@ -1,12 +1,12 @@
 // type_id.h
 // 型ごとに一意なIDを生成するためのユーティリティ
-#ifndef TYPE_ID_H
-#define TYPE_ID_H
+#ifndef COMPONENT_TYPE_ID_H
+#define COMPONENT_TYPE_ID_H
 
 #include "component.h"
 
-#include "Engine/Framework/Component/collider_component.h"
-#include "Engine/Framework/Component/behavior_component.h"
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/behavior_component.h"
 
 class ComponentTypeID {
 private:

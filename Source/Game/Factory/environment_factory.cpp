@@ -9,12 +9,12 @@
 #include "Engine/Core/scene_base.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/light_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/light_component.h"
 
 // behavior
-#include "Game/Behavior/camera_control_behavior.h"
+#include "Game/PresBehavior/Camera/camera_control_behavior.h"
 
 #include "Engine/engine_service_locator.h"
 
@@ -51,30 +51,8 @@ bool EnvironmentFactory::AttachCameraControl(GameObject* camera)
 
 // ----------------------------------------------------------- Light
 
-// DirectionalLight生成
-GameObject* EnvironmentFactory::CreateDirectionalLight(SceneBase* scene, const XMFLOAT4& direction, const XMFLOAT4& diffuse, const XMFLOAT4& ambient)
-{
-    GameObject* obj = scene->CreateGameObject();
-    obj->SetName("DirectionalLight");
-
-    // component生成・登録
-    TransformComponent* transform = obj->AddComponent<TransformComponent>();
-    LightComponent* lightComp = obj->AddComponent<LightComponent>();
-
-    // component設定
-    lightComp->SetLightType(LightComponent::LightType::Directional);
-
-    lightComp->SetDirection(direction);
-    lightComp->SetDiffuse(diffuse);
-    lightComp->SetAmbient(ambient);
-
-    lightComp->SetIntensity(1.0f);
-
-    return obj;
-}
-
 // PointLight生成
-GameObject* EnvironmentFactory::CreatePointLight(SceneBase* scene, const XMFLOAT4& diffuse, float range)
+GameObject* EnvironmentFactory::CreatePointLight(IScene* scene, const XMFLOAT4& diffuse, float range)
 {
     GameObject* obj = scene->CreateGameObject();
     obj->SetName("PointLight");

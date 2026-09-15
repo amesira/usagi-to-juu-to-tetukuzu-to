@@ -51,18 +51,17 @@ void MaterialRepository::Initialize()
     SHADER_REPOSITORY->AddConstantBufferToShaderProgram(SHADER_BASE_NAMES[static_cast<size_t>(ShaderBase::SpriteUnlit)], m_customPropertyCB);
 
     // デフォルトテクスチャの作成
-    m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_albedo.png");
-    m_defaultNormalTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\default_normal.png");
-    m_defaultEmissiveTexture = m_defaultAlbedoTexture;
-    m_defaultAOTexture = m_defaultAlbedoTexture;
+    m_defaultAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource(L"asset\\Texture\\TestField.png");
 
     // デフォルトマテリアルの作成
     MaterialResource defaultMaterial;
     defaultMaterial.name = "default";
     defaultMaterial.albedoTexture = m_defaultAlbedoTexture;
-    defaultMaterial.normalTexture = m_defaultNormalTexture;
-    defaultMaterial.emissiveTexture = m_defaultEmissiveTexture;
-    defaultMaterial.aoTexture = m_defaultAOTexture;
+    defaultMaterial.baseColor = { 0.5f, 0.5f, 0.5f, 0.5f };
+    defaultMaterial.metallic = 0.0f;
+    defaultMaterial.roughness = 1.0f;
+    defaultMaterial.emissiveColor = { 0.0f, 0.0f, 0.0f };
+    defaultMaterial.emissiveIntensity = 0.0f;
     GenerateMaterial(defaultMaterial);
 }
 
@@ -89,17 +88,17 @@ MaterialResource* MaterialRepository::GenerateMaterial(const MaterialResource& m
 }
 
 // マテリアルの取得。キャッシュに無い場合は読み込む。
-MaterialResource* MaterialRepository::GetMaterial(const std::string& filePath)
+MaterialResource* MaterialRepository::GetMaterial(const std::string& materialName)
 {
     // キャッシュを確認
-    auto it = m_materialCache.find(filePath);
+    auto it = m_materialCache.find(materialName);
     if (it != m_materialCache.end())
     {
         return it->second.get();
     }
 
     // キャッシュに無い場合は読み込む
-    return LoadMaterial(filePath);
+    return LoadMaterial(materialName);
 }
 
 // マテリアルのバインド
@@ -120,18 +119,6 @@ void MaterialRepository::BindMaterialTexture(const MaterialResource& material)
     m_pContext->PSSetShaderResources(0, 1, material.albedoTexture ?
         material.albedoTexture->texture.GetAddressOf() :
         m_defaultAlbedoTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(1, 1, material.normalTexture ?
-        material.normalTexture->texture.GetAddressOf() :
-        m_defaultNormalTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(2, 1, material.emissiveTexture ?
-        material.emissiveTexture->texture.GetAddressOf() :
-        m_defaultEmissiveTexture->texture.GetAddressOf());
-
-    m_pContext->PSSetShaderResources(3, 1, material.aoTexture ?
-        material.aoTexture->texture.GetAddressOf() :
-        m_defaultAOTexture->texture.GetAddressOf());
 }
 
 void MaterialRepository::BindMaterialTexture(const MaterialInstance& materialInstance)
@@ -179,19 +166,19 @@ void MaterialRepository::BindCustomTextures(TextureResource** customTextures)
 //-------------------------------------
 
 // マテリアルの読み込み
-MaterialResource* MaterialRepository::LoadMaterial(const std::string& filePath)
+MaterialResource* MaterialRepository::LoadMaterial(const std::string& materialName)
 {
-    m_materialCache[filePath] = std::make_unique<MaterialResource>();
-    MaterialResource* materialResource = m_materialCache[filePath].get();
-    materialResource->name = filePath;
+    m_materialCache[materialName] = std::make_unique<MaterialResource>();
+    MaterialResource* materialResource = m_materialCache[materialName].get();
+    materialResource->name = materialName;
 
     return materialResource;
 }
 
 // マテリアルの解放
-void MaterialRepository::ReleaseMaterial(const std::string& filePath)
+void MaterialRepository::ReleaseMaterial(const std::string& materialName)
 {
-    auto it = m_materialCache.find(filePath);
+    auto it = m_materialCache.find(materialName);
     if (it != m_materialCache.end())
     {
         // ComPtrが自動的にリソースを解放するので、特になし

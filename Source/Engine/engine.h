@@ -12,16 +12,20 @@
 #include "Engine/Editor/editor_manager.h"
 #include "Engine/Manager/resource_manager.h"
 #include "Engine/Manager/shader_manager.h"
+#include "Engine/Manager/asset_manager.h"
 
 class MiEngine {
 private:
     bool m_isRunning = false;
+    bool m_quitRequested = false;
 
     EditorManager   m_editorManager;
     EditorContext*  m_editorContext;
 
     ResourceManager m_resourceManager;
     ShaderManager   m_shaderManager;
+
+    AssetManager    m_assetManager;
 
     // Renderer* m_pRenderer;
     // InputSystem* m_pInputSystem;
@@ -40,6 +44,8 @@ public:
     bool Initialize(HWND hWnd);
     void Finalize();
     bool RunOneFrame();
+    void RequestQuit() { m_quitRequested = true; }
+    bool IsQuitRequested() const { return m_quitRequested; }
 
 private:
     void Update();
@@ -49,11 +55,14 @@ private:
 public:
     // GameWorldへのアクセス
     const GameWorld& GetGameWorld() const { return m_gameWorld; }
+    GameWorld& GetGameWorld() { return m_gameWorld; }
 
     // ResourceManagerへのアクセス
     ResourceManager& GetResourceManager() { return m_resourceManager; }
     // ShaderManagerへのアクセス
     ShaderManager& GetShaderManager() { return m_shaderManager; }
+    // AssetManagerへのアクセス
+    AssetManager& GetAssetManager() { return m_assetManager; }
 
     // EditorContextへのアクセス
     void AddLogMessage(const std::string& message) {

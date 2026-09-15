@@ -1,0 +1,204 @@
+{
+    "data": {
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                0.0,
+                1.0,
+                0.9361701011657715
+            ],
+            "enabled": true,
+            "offsetDistance": 0.10000000149011612,
+            "opacity": 0.5,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
+        "number": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 26,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    -150.0,
+                    100.0
+                ],
+                "screenAnchor": [
+                    1.0,
+                    0.0
+                ]
+            }
+        },
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 22.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "phase": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 92,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "screenAnchor": [
+                    0.5,
+                    0.5
+                ]
+            }
+        },
+        "phaseMoveDelay": 1.0,
+        "phaseMoveDuration": 0.4000000059604645,
+        "phasePlacementB": {
+            "position": [
+                0.0,
+                180.0
+            ],
+            "screenAnchor": [
+                0.5,
+                0.0
+            ]
+        },
+        "phaseScaleB": [
+            0.3499999940395355,
+            0.3499999940395355
+        ],
+        "points": {
+            "gauge": {
+                "position": [
+                    0.0,
+                    30.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1200.0,
+                    30.0
+                ]
+            },
+            "gaugeColor": [
+                0.9106382727622986,
+                0.9067632555961609,
+                0.0
+            ],
+            "gaugeSmoothTime": 0.05000000074505806,
+            "text": {
+                "applyChromaticEcho": true,
+                "applyPerspective": true,
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "fontSize": 22,
+                "label": {
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        1.0,
+                        1.0
+                    ]
+                },
+                "placement": {
+                    "position": [
+                        0.0,
+                        100.0
+                    ],
+                    "screenAnchor": [
+                        0.5,
+                        0.0
+                    ]
+                }
+            }
+        },
+        "popupColor": [
+            1.0,
+            0.9702127575874329,
+            0.0
+        ],
+        "popupDuration": 0.800000011920929,
+        "popupEnabled": true,
+        "popupHeightOffset": 3.0,
+        "popupRiseDistance": 1.5,
+        "popupScale": 1.5,
+        "pulseDuration": 0.10000000149011612,
+        "pulseScale": 1.5,
+        "timer": {
+            "applyChromaticEcho": true,
+            "applyPerspective": true,
+            "color": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "fontSize": 26,
+            "label": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.2999999523162842,
+                    1.2999999523162842
+                ]
+            },
+            "placement": {
+                "position": [
+                    126.0,
+                    109.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    },
+    "formatVersion": 0,
+    "name": "wave_ui_settings.data",
+    "type": "WaveUiSettingsAsset"
+}

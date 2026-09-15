@@ -7,23 +7,23 @@
 #include "factory.h"
 
 // component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/collider_component.h"
-#include "Engine/Framework/Component/rigidbody_component.h"
-#include "Engine/Framework/Component/rect_transform_component.h"
-#include "Engine/Framework/Component/text_component.h"
-#include "Engine/Framework/Component/image_component.h"
-#include "Engine/Framework/Component/model_component.h"
-#include "Engine/Framework/Component/camera_component.h"
-#include "Engine/Framework/Component/light_component.h"
-#include "Engine/Framework/Component/slider_component.h"
-#include "Engine/Framework/Component/joint_component.h"
-#include "Engine/Framework/Component/joint_group_component.h"
-#include "Engine/Framework/Component/animation_component.h"
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/rect_transform_component.h"
+#include "Engine/Component/text_component.h"
+#include "Engine/Component/image_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/camera_component.h"
+#include "Engine/Component/light_component.h"
+#include "Engine/Component/slider_component.h"
+#include "Engine/Component/joint_component.h"
+#include "Engine/Component/joint_group_component.h"
+#include "Engine/Component/animation_component.h"
 
 #include "Engine/engine_service_locator.h"
 #define MATERIAL_REPOSITORY EngineServiceLocator::GetMaterialRepository()
-#define MODEL_REPOSITORY EngineServiceLocator::GetModelRepository()
+#define MODEL_REPOSITORY EngineServiceLocator::ModelRepository()
 #define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
 #define SHADER_REPOSITORY EngineServiceLocator::GetShaderRepository()
 
@@ -46,7 +46,7 @@ void Factory::CreateBox(GameObject* cube, DirectX::XMFLOAT3 position, DirectX::X
         scaling.z * 2.0f
         });
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
 
     auto& materialSlots = modelComp->GetMaterialSlots();
@@ -67,7 +67,7 @@ void Factory::CreateModel(GameObject* obj, const char* modelPath, XMFLOAT3 posit
     // component設定
     transform->SetPosition(position);
     transform->SetScaling(scaling);
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
 }
 
@@ -82,7 +82,7 @@ void Factory::CreateAnimationModel(GameObject* obj, const char* modelPath, XMFLO
     transform->SetPosition(position);
     transform->SetScaling(scaling);
 
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel(modelPath);
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel(modelPath);
     modelComp->SetModelResource(modelResource);
 
     const char* clipPath = animationPath != nullptr ? animationPath : modelPath;
@@ -161,6 +161,7 @@ void Factory::CreateJointGroup(GameObject* jointGroup, XMFLOAT3 startPosition, X
 void Factory::CreateField(GameObject* field, DirectX::XMFLOAT3 position, DirectX::XMFLOAT3 rotation, DirectX::XMFLOAT3 scaling, DirectX::XMFLOAT4 color)
 {
     field->SetName("Field");
+    field->SetCollisionLayer(CollisionLayer::Field);
 
     // component生成・登録
     TransformComponent* transform = field->AddComponent<TransformComponent>();
@@ -178,7 +179,7 @@ void Factory::CreateField(GameObject* field, DirectX::XMFLOAT3 position, DirectX
         });
 
     // モデルはキューブを使用する
-    ModelResource* modelResource = EngineServiceLocator::GetModelRepository()->GetModel("asset\\Model\\cube.fbx");
+    ModelResource* modelResource = EngineServiceLocator::ModelRepository()->GetModel("asset\\Model\\cube.fbx");
     modelComp->SetModelResource(modelResource);
 
     // テクスチャ設定

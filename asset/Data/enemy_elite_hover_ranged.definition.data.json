@@ -1,0 +1,64 @@
+{
+    "data": {
+        "agentPath": "asset/Data/enemy_hover_ai_agent_settings.data.json",
+        "approachPath": "asset/Data/enemy_hover_approach_settings.data.json",
+        "attackPath": "asset/Data/enemy_hover_attack_settings.data.json",
+        "defeatPoints": 30,
+        "destroyEffectOffset": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "destroyEffectPath": "asset/Particle/explosion.particle.json",
+        "destroyEffectScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "displayName": "elite_hover_ranged",
+        "hover": true,
+        "isElite": true,
+        "material1": {
+            "baseColor": [
+                0.0,
+                0.548936128616333,
+                0.44382065534591675,
+                1.0
+            ],
+            "emissiveColor": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "emissiveIntensity": 0.0,
+            "metallic": 1.0,
+            "roughness": 0.5,
+            "targetMaterialName": "Body"
+        },
+        "material2": {
+            "baseColor": [
+                0.0,
+                0.8085107803344727,
+                1.0,
+                1.0
+            ],
+            "emissiveColor": [
+                0.029999971389770508,
+                1.0,
+                0.5170637965202332
+            ],
+            "emissiveIntensity": 2.0,
+            "metallic": 1.0,
+            "roughness": 1.0,
+            "targetMaterialName": "Gear.003"
+        },
+        "maxHealth": 300.0,
+        "movePath": "asset/Data/enemy_hover_move_settings.data.json",
+        "playDestroyEffectOnWaveCleanup": true,
+        "ranged": true,
+        "scale": 2.5
+    },
+    "formatVersion": 0,
+    "name": "enemy_elite_hover_ranged.definition.data",
+    "type": "EnemyDefinitionAsset"
+}

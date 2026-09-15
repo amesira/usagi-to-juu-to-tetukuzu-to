@@ -8,7 +8,6 @@
 #include "Utility/debug_renderer.h"
 #include "Engine/engine_service_locator.h"
 #include "Engine/Core/scene_interface.h"
-#include "Engine/Settings/scene_settings.h"
 
 // GameWorldの初期化
 void GameWorld::Initialize()
@@ -21,25 +20,38 @@ void GameWorld::Initialize()
     m_animationProcessor.Initialize();
     m_spriteAnimationProcessor.Initialize();
     m_particleSystemProcessor.Initialize();
+    m_meshEffectProcessor.Initialize();
     m_behaviorProcessor.Initialize();
     m_cameraProcessor.Initialize();
     m_renderProcessor.Initialize();
 
     // RenderViewの初期化
-    m_renderViews.resize(8);
-    for (RenderView& view : m_renderViews) {
-        view.Initialize();
+    m_gameRenderViews.resize(4); // 最大4つのゲーム用RenderViewを確保
+    for (RenderView& view : m_gameRenderViews) {
+        view.Initialize(1920, 1080);
     }
+    m_sceneRenderView.Initialize(1280, 720);
+    m_canvasRenderView.Initialize(1280, 720);
 }
 
 // GameWorldの終了処理
 void GameWorld::Finalize()
 {
+    if (ParticleSystemAssetLoader* loader =
+        EngineServiceLocator::ParticleLoader()) {
+        loader->SetReloadCallback({});
+    }
+    if (MeshEffectAssetLoader* loader =
+        EngineServiceLocator::MeshEffectLoader()) {
+        loader->SetReloadCallback({});
+    }
+
     // Processor群の終了処理
     m_physicsProcessor.Finalize();
     m_animationProcessor.Finalize();
     m_spriteAnimationProcessor.Finalize();
     m_particleSystemProcessor.Finalize();
+    m_meshEffectProcessor.Finalize();
     m_behaviorProcessor.Finalize();
     m_cameraProcessor.Finalize();
     m_renderProcessor.Finalize();
@@ -48,7 +60,7 @@ void GameWorld::Finalize()
     m_sceneManager.Finalize();
 
     // RenderViewの解放
-    m_renderViews.clear();
+    m_gameRenderViews.clear();
 }
 
 // GameWorldの更新処理
@@ -63,6 +75,7 @@ void GameWorld::Update()
     m_animationProcessor.Process(scene); // アニメーション制御プロセッサー処理
     m_spriteAnimationProcessor.Process(scene); // スプライトアニメーション制御プロセッサー処理
     m_particleSystemProcessor.Process(scene);
+    m_meshEffectProcessor.Process(scene);
     m_behaviorProcessor.Process(scene); // Behavior制御プロセッサー処理
 }
 
@@ -75,24 +88,36 @@ void GameWorld::Render()
     m_physicsProcessor.CollectDebugDraw(scene);
 
     // RenderViewの無効化
-    for (RenderView& view : m_renderViews) {
+    for (RenderView& view : m_gameRenderViews) {
         view.enabled = false;
     }
 
     // カメラ設定・描画情報の取得
     m_cameraProcessor.Process(scene);
-    m_cameraProcessor.SetRenderViews(m_renderViews);
+    m_cameraProcessor.SetRenderViews(m_gameRenderViews);
     m_mainGameRenderViewIndex = 0;
 
     // シーンカメラの描画情報をRenderViewに反映
-    SetSceneRenderView(scene, m_cameraProcessor.GetCameraCounter());
+    SetSceneRenderView(scene);
     
     // 描画制御プロセッサー処理
-    for (int i = 0; i < m_renderViews.size(); i++) {
-        if (!m_renderViews[i].enabled) continue;
+    for (int i = 0; i < m_gameRenderViews.size(); i++) {
+        if (!m_gameRenderViews[i].enabled) continue;
 
-        RenderView& view = m_renderViews[i];
+        RenderView& view = m_gameRenderViews[i];
+        //view.enableDebugDraw = true; // デバッグ描画を有効化
         m_renderProcessor.BindRenderView(&view);
+        m_renderProcessor.Process(scene);
+        m_renderProcessor.DrawBlackFade(m_sceneManager.GetTransition().GetAlpha());
+    }
+
+    if (m_sceneRenderView.enabled) {
+        m_renderProcessor.BindRenderView(&m_sceneRenderView);
+        m_renderProcessor.Process(scene);
+    }
+
+    if (m_canvasRenderView.enabled) {
+        m_renderProcessor.BindRenderView(&m_canvasRenderView);
         m_renderProcessor.Process(scene);
     }
 }
@@ -100,49 +125,42 @@ void GameWorld::Render()
 // -------------------------------- private
 
 // シーンカメラの描画情報をRenderViewに反映
-void GameWorld::SetSceneRenderView(IScene* scene, int sceneRenderViewIndex)
+void GameWorld::SetSceneRenderView(IScene* scene)
 {
     // シーンカメラの描画情報をRenderViewに反映
-    SceneSettings& sceneSettings = scene->GetSceneSettings();
-    sceneSettings.UpdateCameraSettings();
-    const SceneCameraSettings& sceneCameraSettings = sceneSettings.GetCameraSettings();
+    const SceneViewCameraState& sceneCamera = m_sceneViewCamera;
 
-    // シーン全体のレンダリング設定をRenderViewに反映
-    int sceneViewIndex = sceneRenderViewIndex;
-    if (sceneViewIndex >= m_renderViews.size()) {
-        return;
-    }
-
-    RenderView& view = m_renderViews[sceneViewIndex];
-    m_mainSceneRenderViewIndex = sceneViewIndex;
     {
-        view.enabled = true;
+        RenderView& sceneView = m_sceneRenderView;
+        sceneView.enabled = true;
 
-        view.viewMatrix = sceneCameraSettings.GetViewMatrix();
-        view.projectionMatrix = sceneCameraSettings.GetProjectionMatrix();
-        view.eyePosition = sceneCameraSettings.GetPosition();
-        view.aspectRatio = sceneCameraSettings.GetAspect();
+        sceneView.viewMatrix = sceneCamera.GetViewMatrix();
+        sceneView.projectionMatrix = sceneCamera.GetProjectionMatrix();
+        sceneView.eyePosition = sceneCamera.position;
+        sceneView.aspectRatio = sceneCamera.aspect;
 
-        view.enable3D = true;
-        view.enableLighting = true;
-        view.enablePostEffect = true;
-        view.enableUI = false;
-        view.enableDebugDraw = true;
-    }
-    sceneViewIndex++;
-    if (sceneViewIndex >= m_renderViews.size()) {
-        return;
+        sceneView.enable3D = true;
+        sceneView.enableLighting = true;
+        sceneView.enableShadowMap = false;
+        sceneView.enablePostEffect = false;
+        sceneView.enableUI = false;
+        sceneView.enableDebugDraw = true;
     }
 
-    // Canvas用のRenderViewを有効化
-    RenderView& canvasView = m_renderViews[sceneViewIndex];
-    m_canvasRenderViewIndex = sceneViewIndex;
     {
+        RenderView& canvasView = m_canvasRenderView;
         canvasView.enabled = true;
+
+        canvasView.viewMatrix = {};
+        canvasView.projectionMatrix = {};
+        canvasView.eyePosition = {};
+        canvasView.aspectRatio = sceneCamera.aspect;
 
         canvasView.enable3D = false;
         canvasView.enableLighting = false;
+        canvasView.enableShadowMap = false;
         canvasView.enablePostEffect = false;
         canvasView.enableUI = true;
+        canvasView.enableDebugDraw = false;
     }
 }

@@ -15,6 +15,7 @@ namespace ShaderDefinitions {
 
         None,
 
+        DebugLine,
         MAX,
     };
 
@@ -42,9 +43,13 @@ namespace ShaderDefinitions {
         XMFLOAT4 boneWeights;
     };
 
-    struct UiVertex {
+    struct DebugLineVertex {
         XMFLOAT3 position;
         XMFLOAT4 color;
+    };
+
+    struct UiVertex {
+        XMFLOAT3 position;
         XMFLOAT2 texCoord;
     };
 
@@ -65,18 +70,27 @@ namespace ShaderDefinitions {
         XMFLOAT4 color;
         XMFLOAT4 uvRect;
     };
+
+    struct UiInstanceData {
+        XMMATRIX world;
+        XMFLOAT4 color;
+        XMFLOAT4 uvRect;
+        XMFLOAT4 roundFill;
+    };
 #pragma endregion
 
     enum class ShaderBase {
         None,
         Lit,
         SkinnedLit,
+        SkinnedUnlit,
         Unlit,
         Ui,
         SpriteLit,
         SpriteUnlit,
         Particle,
         FullScreen,
+        DebugLine,
         MAX
     };
 
@@ -84,11 +98,13 @@ namespace ShaderDefinitions {
         "None",
         "Lit",
         "SkinnedLit",
+        "SkinnedUnlit",
         "Unlit",
         "Ui",
         "SpriteLit",
         "SpriteUnlit",
         "Particle",
         "FullScreen",
+        "DebugLine",
     };
 }

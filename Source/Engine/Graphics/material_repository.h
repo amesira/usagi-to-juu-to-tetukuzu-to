@@ -20,9 +20,6 @@ private:
 
     // デフォルトテクスチャリソース
     TextureResource* m_defaultAlbedoTexture = nullptr;
-    TextureResource* m_defaultNormalTexture = nullptr;
-    TextureResource* m_defaultEmissiveTexture = nullptr;
-    TextureResource* m_defaultAOTexture = nullptr;
 
     // マテリアルリソースのキャッシュ
     std::unordered_map<std::string, std::unique_ptr<MaterialResource>> m_materialCache;
@@ -41,7 +38,7 @@ public:
     // マテリアルの生成。
     MaterialResource* GenerateMaterial(const MaterialResource& material);
     // マテリアルの取得。キャッシュに無い場合は読み込む。
-    MaterialResource* GetMaterial(const std::string& filePath);
+    MaterialResource* GetMaterial(const std::string& materialName);
 
     // マテリアルのバインド
     void BindMaterialCB(const MaterialBufferData& material);
@@ -53,11 +50,11 @@ public:
 
 private:
     // マテリアルの読み込み
-    // Material/wood.mat.jsonのようなファイルパスにする予定。
-    MaterialResource* LoadMaterial(const std::string& filePath);
+    // 現状はマテリアル名をキーとして生成する。
+    MaterialResource* LoadMaterial(const std::string& materialName);
 
     // マテリアルの解放
-    void ReleaseMaterial(const std::string& filePath);
+    void ReleaseMaterial(const std::string& materialName);
 };
 
 #endif // MATERIAL_REPOSITORY_H

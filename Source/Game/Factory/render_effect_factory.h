@@ -9,20 +9,57 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 #include <string>
+#include <filesystem>
+#include "Game/PresBehavior/effect_handle.h"
+#include "Game/PresBehavior/attached_effect_handle.h"
+#include "Game/PresBehavior/effect_transform.h"
 
 class GameObject;
 class IScene;
-class SceneBase;
+class TransformComponent;
+class ParticleSystemComponent;
+
+struct EffectAttachmentDesc {
+    TransformComponent* target = nullptr;
+    EffectTransform localTransform{};
+    bool considerTargetRotation = true;
+    bool considerTargetScaling = false;
+};
 
 namespace RenderEffectFactory {
-    // デカールエフェクト生成
-    GameObject* CreateDecalEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
-    GameObject* CreateParticleEffect(SceneBase* scene, const XMFLOAT3& position, const std::wstring& texturePath = L"asset\\Texture\\white.bmp");
-    GameObject* CreateRunDustParticle(SceneBase* scene, std::string targetName);
-    GameObject* CreateChargeAbsorbParticle(SceneBase* scene, const XMFLOAT3& position);
-    GameObject* CreateHitEffect(IScene* scene, const XMFLOAT3& position);
-    GameObject* CreateExplosionEffect(IScene* scene, const XMFLOAT3& position);
+    // 既存のComponentへパーティクル設定とテクスチャを適用する
+    bool ApplyParticleAsset(
+        ParticleSystemComponent* particleSystem,
+        const std::filesystem::path& assetPath,
+        const std::wstring* textureOverride = nullptr);
 
+    // デカールエフェクト生成
+    GameObject* CreateDecalEffect(IScene* scene, const XMFLOAT3& position, const std::wstring& decalTexturePath);
+    
+    EffectHandle CreateParticleEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
+    EffectHandle CreateOneShotParticleEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
+    EffectHandle CreateMeshEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
+
+    /// @brief Transformへ追従するParticleEffectを生成する
+    AttachedEffectHandle CreateAttachedParticleEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectAttachmentDesc& attachment);
+
+    /// @brief Transformへ追従するMeshEffectを生成する
+    AttachedEffectHandle CreateAttachedMeshEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectAttachmentDesc& attachment);
 };
 
 #endif // !RENDER_EFFECT_FACTORY_H

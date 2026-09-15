@@ -1,0 +1,265 @@
+{
+    "data": {
+        "applyChromaticEcho": true,
+        "applyPerspective": true,
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                0.0,
+                0.9872341156005859,
+                1.0
+            ],
+            "enabled": true,
+            "offsetDistance": 1.0,
+            "opacity": 0.30000001192092896,
+            "orderInLayerOffset": -10,
+            "scale": 1.0099999904632568
+        },
+        "clearColor": [
+            0.0042552947998046875,
+            1.0,
+            0.9872884154319763
+        ],
+        "countDuration": 1.2000000476837158,
+        "failColor": [
+            1.0,
+            0.0,
+            0.0
+        ],
+        "fontSize": 32,
+        "gauge": {
+            "position": [
+                -18.0,
+                -10.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                600.0,
+                15.0
+            ]
+        },
+        "gaugeBgColor": [
+            0.17872339487075806,
+            0.17872339487075806,
+            0.17872339487075806,
+            1.0
+        ],
+        "gaugeFillColor": [
+            1.0,
+            0.995925784111023,
+            0.04255318641662598,
+            1.0
+        ],
+        "label": {
+            "position": [
+                0.0,
+                -22.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.6499999761581421,
+                0.6499999761581421
+            ]
+        },
+        "menuPlacement": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.800000011920929,
+                0.8999999761581421
+            ]
+        },
+        "perspective": {
+            "cameraDistance": 1200.0,
+            "enabled": true,
+            "maxTiltDegrees": 20.0,
+            "tiltDegrees": 22.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "rank": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                9.0,
+                9.0
+            ]
+        },
+        "rankAColor": [
+            1.0,
+            0.75,
+            0.15000000596046448
+        ],
+        "rankARewardText": "金",
+        "rankBColor": [
+            0.75,
+            0.800000011920929,
+            0.8999999761581421
+        ],
+        "rankBRewardText": "銀",
+        "rankCColor": [
+            0.800000011920929,
+            0.44999998807907104,
+            0.20000000298023224
+        ],
+        "rankCRewardText": "銅",
+        "rankDColor": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "rankDRewardText": "ただ",
+        "rankPlacement": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.699999988079071,
+                0.6000000238418579
+            ]
+        },
+        "rankRewardMaterial": {
+            "position": [
+                163.0,
+                100.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                1.0,
+                1.0
+            ]
+        },
+        "rankRewardSuffix": {
+            "position": [
+                349.0,
+                100.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                1.0,
+                1.0
+            ]
+        },
+        "rankRewardSuffixText": "の鉄屑を贈呈！",
+        "rankRewardWait": 0.800000011920929,
+        "rankSColor": [
+            0.30000001192092896,
+            1.0,
+            0.8659573793411255
+        ],
+        "rankSRewardText": "ダイヤ",
+        "rankWait": 0.800000011920929,
+        "retry": {
+            "position": [
+                160.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "rowSpacing": 70.0,
+        "scorePlacement": {
+            "position": [
+                500.0,
+                0.0
+            ],
+            "screenAnchor": [
+                0.0,
+                0.699999988079071
+            ]
+        },
+        "selectedColor": [
+            1.0,
+            0.9446808099746704,
+            0.0
+        ],
+        "selection": {
+            "position": [
+                0.0,
+                -10.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                300.0,
+                52.0
+            ]
+        },
+        "selectionColor": [
+            0.7744680643081665,
+            0.16786569356918335,
+            0.09886825084686279
+        ],
+        "selectionMoveDuration": 0.15000000596046448,
+        "selectionOpacity": 0.5,
+        "shakeAmplitude": 10.0,
+        "shakeDuration": 0.25,
+        "shakeFrequency": 24.0,
+        "smoothTime": 0.20000000298023224,
+        "status": {
+            "position": [
+                354.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.6499999761581421,
+                0.6499999761581421
+            ]
+        },
+        "statusWait": 0.10000000149011612,
+        "summary": {
+            "position": [
+                0.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "textColor": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "title": {
+            "position": [
+                -160.0,
+                0.0
+            ],
+            "rotationDegrees": 0.0,
+            "size": [
+                0.800000011920929,
+                0.800000011920929
+            ]
+        },
+        "wavePlacement": {
+            "position": [
+                500.0,
+                -282.0
+            ],
+            "screenAnchor": [
+                0.0,
+                0.6000000238418579
+            ]
+        }
+    },
+    "formatVersion": 0,
+    "name": "result_ui_settings.data",
+    "type": "ResultUiSettingsAsset"
+}

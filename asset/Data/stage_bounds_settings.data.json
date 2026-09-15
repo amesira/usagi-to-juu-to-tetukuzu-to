@@ -1,0 +1,23 @@
+{
+    "data": {
+        "enableMaxX": true,
+        "enableMaxY": true,
+        "enableMaxZ": true,
+        "enableMinX": true,
+        "enableMinY": true,
+        "enableMinZ": true,
+        "max": [
+            40.0,
+            40.0,
+            30.0
+        ],
+        "min": [
+            -40.0,
+            0.0,
+            -30.0
+        ]
+    },
+    "formatVersion": 0,
+    "name": "stage_bounds_settings.data",
+    "type": "StageBoundsSettingsAsset"
+}

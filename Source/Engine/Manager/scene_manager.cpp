@@ -9,11 +9,15 @@
 #include "Engine/Core/scene_interface.h"
 
 #include "Game/game.h"
+#include "Game/title.h"
+#include "Game/result.h"
+#include "Engine/Device/mi_fps.h"
 
 // シーン管理の初期化
 void SceneManager::Initialize()
 {
-    m_currentScene = SceneID::Game;
+    m_transition.Reset();
+    m_currentScene = SceneID::Title;
     m_nextScene = m_currentScene;
 
     // 最初のシーンをセット
@@ -29,13 +33,17 @@ void SceneManager::Finalize()
 // シーン管理の更新処理
 void SceneManager::Update()
 {
-    // シーン切り替え
-    if (m_currentScene != m_nextScene) {
+    bool switched = false;
+    if (m_currentScene != m_nextScene && (!m_transition.IsActive() || m_transition.CanSwitchScene())) {
         ReleaseScene();         // 現在のシーンの終了と破棄
         LoadScene(m_nextScene); // 次のシーンの生成と初期化
 
         m_currentScene = m_nextScene;
+        if (m_transition.CanSwitchScene()) m_transition.BeginFadeIn();
+        switched = true;
     }
+    // Keep the first frame of the new scene fully covered.
+    if (!switched) m_transition.Update(FPS_GetUnscaledDeltaTime());
 
     // 現在のシーンの更新
     if (m_pScene) {
@@ -54,8 +62,18 @@ void SceneManager::Draw()
 
 void SceneManager::ChangeScene(SceneID sceneId)
 {
+    if (m_transition.IsActive() || (sceneId != SceneID::Title && sceneId != SceneID::Game && sceneId != SceneID::Result)) return;
     // 次のシーンをセット
     m_nextScene = sceneId;
+}
+
+bool SceneManager::ChangeSceneWithFade(SceneID sceneId, float outDuration, float inDuration)
+{
+    if ((sceneId != SceneID::Title && sceneId != SceneID::Game && sceneId != SceneID::Result)
+        || sceneId == m_currentScene || m_nextScene != m_currentScene || m_transition.IsActive()) return false;
+    if (!m_transition.Start(outDuration, inDuration)) return false;
+    m_nextScene = sceneId;
+    return true;
 }
 
 IScene* SceneManager::GetCurrentScene() const
@@ -68,6 +86,7 @@ IScene* SceneManager::GetCurrentScene() const
 void SceneManager::ReleaseScene()
 {
     if (m_pScene) {
+        if (m_beforeSceneRelease) m_beforeSceneRelease();
         m_pScene->Finalize(); // シーンの終了処理
         delete m_pScene;      // シーンの破棄
         m_pScene = nullptr;
@@ -80,13 +99,13 @@ void SceneManager::LoadScene(SceneID sceneId)
     // シーンIDに応じてシーンを生成
     switch (sceneId) {
         case SceneID::Title:
-            // m_pScene = new TitleScene();
+            m_pScene = new TitleScene();
             break;
         case SceneID::Game:
             m_pScene = new GameScene();
             break;
         case SceneID::Result:
-            // m_pScene = new ResultScene();
+            m_pScene = new ResultScene();
             break;
         default:
             m_pScene = nullptr;

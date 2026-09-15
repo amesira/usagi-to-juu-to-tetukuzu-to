@@ -30,9 +30,3 @@ cbuffer MaterialBuffer : register(b8)
 
 // アルベドテクスチャ
 Texture2D g_AlbedoTexture : register(t0);
-// 法線マップ
-Texture2D g_NormalTexture : register(t1);
-// 金属度・粗さテクスチャ
-Texture2D g_MetallicRoughnessTexture : register(t2);
-// エミッシブテクスチャ
-Texture2D g_EmissiveTexture : register(t3);

@@ -26,6 +26,7 @@ private:
     unsigned int    m_id = -1;           // GameObjectのID
 
     std::string     m_name = "GameObject";    // GameObjectの名前
+    std::string     m_tag = "Untagged";      // GameObjectのタグ
     bool            m_active = true;    // アクティブフラグ
     bool            m_isDestroy = false;// 破棄予約フラグ
 
@@ -50,14 +51,16 @@ private:
     }
 
 public:
-    // シーンの取得
     IScene*         GetScene() const { return m_pScene; }
-    // IDの取得
     unsigned int    GetID() const { return m_id; }
 
     // 名前の設定・取得
-    void    SetName(const std::string& name) { m_name = name; }
-    std::string     GetName() const { return m_name; }
+    void SetName(const std::string& name) { m_name = name; }
+    const std::string& GetName() const { return m_name; }
+
+    // タグの設定・取得
+    void SetTag(const std::string& tag) { m_tag = tag; }
+    const std::string& GetTag() const { return m_tag; }
 
     // アクティブの設定・取得
     void    SetActive(bool active) { m_active = active; }

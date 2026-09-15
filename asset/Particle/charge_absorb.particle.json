@@ -1,0 +1,11 @@
+{
+    "type": "ParticleSystem", "formatVersion": 1, "name": "charge_absorb",
+    "data": {
+        "main": {"duration": 1.0, "loop": true, "playOnAwake": true, "startLifetime": {"randomBetweenTwoConstants": true, "constant": 0.15, "constantMin": 0.05, "constantMax": 0.35}, "startSpeed": {"randomBetweenTwoConstants": true, "constant": -10.5, "constantMin": -12.5, "constantMax": -7.8}, "startSize": {"randomBetweenTwoConstants": true, "constant": 1.22, "constantMin": 1.08, "constantMax": 1.32}, "startColor": {"randomBetweenTwoColors": true, "color": [1.0, 1.0, 1.0, 1.0], "colorMin": [0.25, 0.75, 1.0, 0.85], "colorMax": [0.95, 0.35, 1.0, 0.55]}, "gravity": [0.0, 0.0, 0.0], "simulationSpeed": 1.0, "simulationSpace": "Local"},
+        "emission": {"enabled": true, "rateOverTime": 60.0, "rateOverDistance": 0.0},
+        "shape": {"enabled": true, "type": "Sphere", "sphere": {"radius": 1.5, "emitFromShell": true}, "cone": {"angle": 0.7853981633974483, "radius": 1.0, "length": 5.0, "emitFromBase": true}, "randomDirectionAmount": 0.08},
+        "sizeOverLifetime": {"enabled": true, "size": {"keys": [{"time": 0.0, "value": 0.0}, {"time": 0.12, "value": 1.0}, {"time": 0.75, "value": 0.75}, {"time": 1.0, "value": 0.0}]}},
+        "textureSheetAnimation": {"enabled": true, "tileX": 11, "tileY": 1, "startFrame": 0, "frameCount": 11, "timeMode": "Lifetime", "framePerSecond": 30.0, "loop": true},
+        "renderer": {"texturePath": "asset/Texture/pika_effect_sheet.png", "uvRect": [0.0, 0.0, 1.0, 1.0], "billboardMode": "View", "blendMode": "Additive", "sortByDistance": true}
+    }
+}

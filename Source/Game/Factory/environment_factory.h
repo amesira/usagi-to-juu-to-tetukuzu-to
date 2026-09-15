@@ -11,6 +11,7 @@ using namespace DirectX;
 
 class GameObject;
 class SceneBase;
+class IScene;
 
 namespace EnvironmentFactory {
     // カメラ生成
@@ -18,10 +19,8 @@ namespace EnvironmentFactory {
     // CameraControlのアタッチ
     bool    AttachCameraControl(GameObject* camera);
 
-    // DirectionalLight生成
-    GameObject* CreateDirectionalLight(SceneBase* scene, const XMFLOAT4& direction, const XMFLOAT4& diffuse, const XMFLOAT4& ambient);
     // PointLight生成
-    GameObject* CreatePointLight(SceneBase* scene, const XMFLOAT4& diffuse, float range);
+    GameObject* CreatePointLight(IScene* scene, const XMFLOAT4& diffuse, float range);
 
 };
 

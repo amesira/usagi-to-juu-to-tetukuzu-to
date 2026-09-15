@@ -1,0 +1,167 @@
+{
+    "data": {
+        "flipbook": {
+            "enabled": false,
+            "frameCount": 1,
+            "framePerSecond": 30.0,
+            "playbackMode": "Loop",
+            "startFrame": 0,
+            "tileX": 1,
+            "tileY": 1,
+            "timeMode": "Duration"
+        },
+        "fresnel": {
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "enabled": false,
+            "intensity": 1.0,
+            "threshold": 0.0
+        },
+        "gradient": {
+            "enabled": true,
+            "gradientDirection": [
+                0.0,
+                1.0
+            ],
+            "gradientEndColor": [
+                1.0,
+                0.3211382031440735,
+                0.3211382031440735,
+                0.0
+            ],
+            "gradientEndPosition": 1.0,
+            "gradientOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueW": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 0.5,
+                        "valueW": 1.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueW": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    }
+                ]
+            },
+            "gradientStartColor": [
+                1.0,
+                1.0,
+                1.0,
+                0.8823529481887817
+            ],
+            "gradientStartPosition": 0.0
+        },
+        "main": {
+            "duration": 0.5,
+            "loop": false,
+            "playOnAwake": true,
+            "simulationSpeed": 1.0
+        },
+        "renderer": {
+            "billboardMode": "None",
+            "blendMode": "Additive",
+            "color": [
+                1.0,
+                0.707317054271698,
+                0.0,
+                1.0
+            ],
+            "intensity": 3.0,
+            "modelPath": "asset/Model/EffectModel/slash.fbx",
+            "samplerMode": "Clamp",
+            "textureMappingMode": "MeshUV",
+            "texturePath": "asset/Texture/EffectTexture/slash_A.png",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "scroll": {
+            "enabled": true,
+            "offset": [
+                0.0,
+                -1.0
+            ],
+            "scrollSpeed": [
+                0.0,
+                5.0
+            ],
+            "tiling": [
+                1.0,
+                1.0
+            ]
+        },
+        "transform": {
+            "enabled": true,
+            "rotationOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 0.0,
+                        "valueY": 0.0,
+                        "valueZ": 0.0
+                    },
+                    {
+                        "time": 1.0,
+                        "valueX": 0.0,
+                        "valueY": -20.0,
+                        "valueZ": 0.0
+                    }
+                ]
+            },
+            "scaleOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "valueX": 1.0,
+                        "valueY": 1.0,
+                        "valueZ": 1.0
+                    }
+                ]
+            }
+        },
+        "wave": {
+            "amplitudeOverDuration": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 1.0
+                    }
+                ]
+            },
+            "direction": [
+                1.0,
+                0.0
+            ],
+            "enabled": false,
+            "frequency": 10.0,
+            "speed": 1.0,
+            "type": "UV"
+        }
+    },
+    "formatVersion": 1,
+    "name": "player_slash_burst_1_effect.mesh_effect",
+    "type": "MeshEffect"
+}

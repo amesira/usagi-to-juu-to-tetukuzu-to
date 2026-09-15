@@ -76,6 +76,23 @@ struct HemiLight {
     float4  GroundColor;// 地面からの光の色
 };
 
+// 6方向の環境色を保持するライト構造体
+// 具体的な合成方法は後で実装する。
+struct CubicColorLight {
+    bool    Enable;
+    float3  padding;
+
+    float   Intensity;
+    float3  padding2;
+
+    float4  UpColor;
+    float4  DownColor;
+    float4  LeftColor;
+    float4  RightColor;
+    float4  FrontColor;
+    float4  BackColor;
+};
+
 // ライト定数バッファ
 cbuffer LightBuffer : register(b10)
 {
@@ -88,6 +105,7 @@ cbuffer LightBuffer : register(b10)
     
     RimLight g_RimLight;
     HemiLight g_HemiLight;
+    CubicColorLight g_CubicColorLight;
 }
 
 // 拡散反射の計算関数（ディレクショナルライト用）
@@ -353,9 +371,6 @@ float3 CalcSpecular_SpotLights(float3 normal, float3 posW, float3 eyePos, float 
 // リムライトの計算関数
 float3 CalcRimLight(float3 normal, float3 posW, float3 eyePos)
 {
-    if (g_RimLight.Enable == 0)
-        return float3(0.0f, 0.0f, 0.0f);
-    
     // Light方向と法線が逆行している場合 power1 = 1.0f になる
     float power1 = 0.0f;
     {
@@ -378,24 +393,54 @@ float3 CalcRimLight(float3 normal, float3 posW, float3 eyePos)
         power2 = 1.0f - power2;
     }
     
-    float rimPower = power1 * power2;
+    float rimPower = power2;
     rimPower = smoothstep(g_RimLight.Threshold, 1.0f, rimPower); // 閾値以下は0、以上は1になるように補間
     rimPower = pow(rimPower, 2.0f); // リムライトのエッジを強調するために二次関数的に強める
     
-    return g_RimLight.Color.rgb * rimPower * g_RimLight.Intensity;
+    return g_RimLight.Color.rgb * rimPower * g_RimLight.Intensity * g_RimLight.Enable;
 }
 
 // 半球ライトの計算関数
 float3 CalcHemiLight(float3 normal)
 {
-    if (g_HemiLight.Enable == 0)
-        return float3(0.0f, 0.0f, 0.0f);
-    
     float3 N = normalize(normal);
     float3 G = float3(0.0f, 1.0f, 0.0f); // 地面法線とする
     
     float NdotG = dot(N, G);
     float t = (NdotG + 1.0f) * 0.5f;
     
-    return lerp(g_HemiLight.GroundColor.rgb, g_HemiLight.SkyColor.rgb, t) * g_HemiLight.Intensity;
+    return lerp(g_HemiLight.GroundColor.rgb, g_HemiLight.SkyColor.rgb, t) * g_HemiLight.Intensity * g_HemiLight.Enable;
+}
+
+float3 CalcCubicColorLight(float3 normal)
+{   
+    float3 N = normalize(normal);
+    
+    float3 color = float3(0.0f, 0.0f, 0.0f);
+    
+    // 上方向
+    float upFactor = saturate(dot(N, float3(0.0f, 1.0f, 0.0f)));
+    color += g_CubicColorLight.UpColor.rgb * upFactor;
+    
+    // 下方向
+    float downFactor = saturate(dot(N, float3(0.0f, -1.0f, 0.0f)));
+    color += g_CubicColorLight.DownColor.rgb * downFactor;
+    
+    // 左方向
+    float leftFactor = saturate(dot(N, float3(-1.0f, 0.0f, 0.0f)));
+    color += g_CubicColorLight.LeftColor.rgb * leftFactor;
+    
+    // 右方向
+    float rightFactor = saturate(dot(N, float3(1.0f, 0.0f, 0.0f)));
+    color += g_CubicColorLight.RightColor.rgb * rightFactor;
+    
+    // 前方向
+    float frontFactor = saturate(dot(N, float3(0.0f, 0.0f, -1.0f)));
+    color += g_CubicColorLight.FrontColor.rgb * frontFactor;
+    
+    // 後方向
+    float backFactor = saturate(dot(N, float3(0.0f, 0.0f, 1.0f)));
+    color += g_CubicColorLight.BackColor.rgb * backFactor;
+    
+    return color * g_CubicColorLight.Intensity * g_CubicColorLight.Enable;
 }

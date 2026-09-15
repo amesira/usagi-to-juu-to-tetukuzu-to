@@ -28,6 +28,9 @@
     <FxCompile Include="Shader\skinned_lit_vs.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\skinned_unlit_vs.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
     <FxCompile Include="Shader\unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
@@ -49,6 +52,8 @@
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\ui_ps.hlsl" />
     <FxCompile Include="Shader\ui_vs.hlsl" />
+    <FxCompile Include="Shader\debug_line_vs.hlsl" />
+    <FxCompile Include="Shader\debug_line_ps.hlsl" />
     <FxCompile Include="Shader\sprite_lit_ps.hlsl" />
     <FxCompile Include="Shader\sprite_lit_vs.hlsl" />
     <FxCompile Include="Shader\sprite_unlit_ps.hlsl" />
@@ -74,7 +79,6 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\bloom_combine_ps.hlsl" />
-    <FxCompile Include="Shader\PostEffect\downsample_4tap_ps.hlsl" />
     <FxCompile Include="Shader\PostEffect\tone_mapping_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
@@ -102,13 +106,75 @@
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
     <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl" />
+    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl" />
+    <FxCompile Include="Shader\mesh_effect_unlit_ps.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_tree.cpp" />
+    <ClCompile Include="Source\Engine\Processor\camera_processor.cpp">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClCompile Include="Source\Engine\Processor\physics_processor.cpp">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Device\direct3d.cpp">
       <Filter>Sources\Engine\Device</Filter>
@@ -125,9 +191,6 @@
     <ClCompile Include="Source\Engine\Device\mouse.cpp">
       <Filter>Sources\Engine\Device</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Core\game_object.h">
-      <Filter>Sources\Engine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="External\stb_implementation.cpp">
       <Filter>External</Filter>
     </ClCompile>
@@ -143,44 +206,51 @@
     <ClCompile Include="Source\Game\game.cpp">
       <Filter>Sources\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Game\result.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Game\title.cpp">
+      <Filter>Sources\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\result_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\game_world.cpp">
       <Filter>Sources\Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClCompile Include="Source\Engine\Processor\behavior_processor.cpp">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\collision_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\integrate_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\resolve_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClCompile Include="Source\Engine\Processor\render_processor.cpp">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\opaque_render_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\post_effect_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\transparent_render_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\lighting_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="External\ImGui\imgui_tables.cpp">
       <Filter>External\imgui</Filter>
@@ -203,53 +273,32 @@
     <ClCompile Include="External\ImGui\imgui_impl_win32.cpp">
       <Filter>External\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp">
+    <ClCompile Include="Source\Engine\Editor\editor_imgui_backend.cpp">
       <Filter>Utility\ImguiWindow</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClCompile Include="Source\Engine\Graphics\model_animation_utility.cpp">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\Player\player_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\Player\player_animation_controller.cpp">
+      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\constraint_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\Base\health_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.cpp">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.cpp">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClCompile>
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
@@ -257,11 +306,11 @@
     <ClCompile Include="Source\Engine\Graphics\material_repository.cpp">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClCompile Include="Source\Engine\Processor\animation_processor.cpp">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\decal_render_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\Factory\factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
@@ -281,119 +330,189 @@
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp">
       <Filter>Sources\Game\Factory</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_control_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    <ClCompile Include="Source\Game\ActorBehavior\transform_constraint_behavior.cpp">
+      <Filter>Sources\Game\ActorBehavior</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\shadow_map_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\skybox_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp">
-      <Filter>Sources\Game\Behavior</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\mask_render_pass.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\transform_constraint_behavior.cpp">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Component\collider_component.cpp">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClCompile Include="Source\Engine\Component\collider_component.cpp">
+      <Filter>Sources\Engine\Component</Filter>
     </ClCompile>
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
-    <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\attack_coordinator_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Result\score_save_store.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_query.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_shape.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\overlap_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\raycast_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\sweep_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\line_render_utility.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\particle_render_utility.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\inspector_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\debug_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.cpp" />
     <ClCompile Include="Source\Engine\Manager\resource_manager.cpp" />
     <ClCompile Include="Source\Engine\Manager\scene_manager.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\scene_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\scene_view_window.cpp" />
     <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\settings_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\game_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\sprite_animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\particle_system_processor.cpp" />
+    <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_action.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_aim.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_rapid_fire.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_slash_burst.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_action.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\attached_effect_handle.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_document.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.cpp" />
+    <ClCompile Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Processor\mesh_effect_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\LevelAsset\level_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Core\scene_base.cpp" />
+    <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_window.cpp" />
+    <ClCompile Include="Source\Game\Factory\level_object_factory.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_motions.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Engine\Framework\Component\image_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClCompile Include="Source\Engine\Core\game_object.h">
+      <Filter>Sources\Engine\Core</Filter>
+    </ClCompile>
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_perspective.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_layout_settings.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\score_save_store.h" />
+    <ClInclude Include="Source\Engine\Component\image_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\light_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\light_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\model_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\model_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\line_renderer_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\line_renderer_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\particle_system_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\rect_transform_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\rect_transform_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\rigidbody_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\slider_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\slider_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\text_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\text_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\transform_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\transform_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\collider_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\collider_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\camera_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\camera_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\mask_render_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClInclude Include="Source\Engine\Processor\camera_processor.h">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\physics_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClInclude Include="Source\Engine\Processor\physics_processor.h">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\component_pool_interface.h">
       <Filter>Sources\Engine\Core</Filter>
@@ -449,8 +568,25 @@
     <ClInclude Include="Source\Game\game.h">
       <Filter>Sources\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\behavior_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Game\result.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\title.h">
+      <Filter>Sources\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_phase_motion.h" />
+    <ClInclude Include="Source\Engine\Core\scene_transition.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_blend.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\game_result.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_settings_asset.h" />
+    <ClInclude Include="Source\Engine\Component\behavior_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\engine.h">
       <Filter>Sources\Engine</Filter>
@@ -458,44 +594,41 @@
     <ClInclude Include="Source\Engine\game_world.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClInclude Include="Source\Engine\Processor\behavior_processor.h">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Core\pass.h">
       <Filter>Sources\Engine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\resolve_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\collision_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\integrate_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClInclude Include="Source\Engine\Processor\render_processor.h">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\ui_render_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\opaque_render_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\post_effect_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\transparent_render_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\lighting_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\render_view.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\Context</Filter>
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\Context</Filter>
     </ClInclude>
     <ClInclude Include="External\ImGui\imgui_internal.h">
       <Filter>External\imgui</Filter>
@@ -521,65 +654,47 @@
     <ClInclude Include="External\ImGui\imgui_impl_win32.h">
       <Filter>External\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h">
+    <ClInclude Include="Source\Engine\Editor\editor_imgui_backend.h">
       <Filter>Utility\ImguiWindow</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Editor\editor_context.h">
       <Filter>Sources\Engine</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\Graphics\model_texture_path.h">
+      <Filter>Sources\Engine\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_repository.h">
       <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClInclude Include="Source\Engine\Graphics\model_animation_utility.h">
+      <Filter>Sources\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\PhysicsPass</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_behavior.h">
+      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\joint_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_animation_controller.h">
+      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\joint_group_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\constraint_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\PhysicsPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Engine\Component\joint_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Engine\Component\joint_group_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Base\health_behavior.h">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.h">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.h">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_context.h">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.h">
-      <Filter>Sources\Game\Behavior\EnemyBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.h">
-      <Filter>Sources\Game\Behavior\BaseBehavior</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_sequence_task.h">
+      <Filter>Sources\Game\ActorBehavior\Base</Filter>
     </ClInclude>
     <ClInclude Include="Source\Engine\Graphics\model_resource.h">
       <Filter>Sources\Engine\Graphics\GraphicsResource</Filter>
@@ -602,17 +717,17 @@
     <ClInclude Include="Utility\mi_string.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\animation_processor.h">
-      <Filter>Sources\Engine\Framework\Processor</Filter>
+    <ClInclude Include="Source\Engine\Processor\animation_processor.h">
+      <Filter>Sources\Engine\Processor</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\animation_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\animation_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Component\decal_component.h">
-      <Filter>Sources\Engine\Framework\Component</Filter>
+    <ClInclude Include="Source\Engine\Component\decal_component.h">
+      <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\decal_render_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Factory\factory.h">
       <Filter>Sources\Game\Factory</Filter>
@@ -626,84 +741,88 @@
     <ClInclude Include="Source\Game\Factory\projectile_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h">
+      <Filter>Sources\Game\ActorBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior\PlayerState</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\transform_constraint_behavior.h">
+      <Filter>Sources\Game\ActorBehavior</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\shadow_map_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\skybox_pass.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\transform_constraint_behavior.h">
-      <Filter>Sources\Game\Behavior</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h">
-      <Filter>Sources\Game\Behavior\PlayerBehavior</Filter>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h">
+      <Filter>Sources\Game\ActorBehavior\Player</Filter>
     </ClInclude>
     <ClInclude Include="Source\Game\Factory\actor_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
-    <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\attack_coordinator_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_progress.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClInclude Include="Source\Engine\Editor\editor_window_manager.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_query.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_shape.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_types.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\overlap_test.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\raycast_test.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\sweep_test.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\line_render_utility.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\particle_render_utility.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h">
-      <Filter>Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility</Filter>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\sprite_render_utility.h">
+      <Filter>Sources\Engine\Processor\Pass\RenderPass\RenderUtility</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\debug_view_window.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\inspector_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_draw_command.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.h" />
     <ClInclude Include="Source\Engine\Manager\resource_manager.h" />
     <ClInclude Include="Source\Engine\Manager\scene_manager.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\scene_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\scene_view_window.h" />
     <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\tool_bar_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\enum_field_editor.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\field_editor.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\settings_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\game_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\canvas_view_window.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />
+    <ClInclude Include="Source\Engine\Component\sprite_renderer_component.h" />
+    <ClInclude Include="Source\Engine\Component\sprite_animation_component.h" />
+    <ClInclude Include="Source\Engine\Processor\sprite_animation_processor.h" />
+    <ClInclude Include="Source\Engine\Processor\particle_system_processor.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Utility\mi_signal.h" />
     <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
@@ -753,9 +872,51 @@
     <ClInclude Include="External\nlohmann\ordered_map.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_schema.h" />
     <ClInclude Include="Utility\mi_curve.h" />
+    <ClInclude Include="Utility\mi_curve_json.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\Asset\i_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.h" />
+    <ClInclude Include="Utility\mi_math_json.h" />
+    <ClInclude Include="Source\Engine\Editor\i_editor_window.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_field_editor.h" />
+    <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_input.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.h" />
+    <ClInclude Include="Utility\utility_master.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_settings_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_type_id.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_master.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_document.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_context.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_settings_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_header.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Sources">
@@ -779,10 +940,10 @@
     <Filter Include="Sources\Engine\Graphics">
       <UniqueIdentifier>{41afa458-92b2-4d1c-af5f-b684f0b7d6cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Component">
+    <Filter Include="Sources\Engine\Component">
       <UniqueIdentifier>{f09bfbe5-a506-46c6-954f-74b472eaa868}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor">
+    <Filter Include="Sources\Engine\Processor">
       <UniqueIdentifier>{3b2576a6-f35b-4295-9189-a7d8474a1f91}</UniqueIdentifier>
     </Filter>
     <Filter Include="External">
@@ -791,22 +952,22 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{a86b2725-45c8-4534-8419-2a78493f52a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior">
+    <Filter Include="Sources\Game\ActorBehavior">
       <UniqueIdentifier>{9b63bf25-6746-489e-babd-6ad31aaaabed}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\Pass">
+    <Filter Include="Sources\Engine\Processor\Pass">
       <UniqueIdentifier>{8c156ce7-68ff-44c0-9a18-c53107a44ed5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\Pass\PhysicsPass">
+    <Filter Include="Sources\Engine\Processor\Pass\PhysicsPass">
       <UniqueIdentifier>{0fc833eb-3f42-4125-a453-4ef9d1e5fd78}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass">
+    <Filter Include="Sources\Engine\Processor\Pass\RenderPass">
       <UniqueIdentifier>{2bb638b9-bea5-45ad-88a1-172ab79e3d1d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shader">
       <UniqueIdentifier>{e9660b3e-b404-4c70-9d25-8452ace99d42}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass\Context">
+    <Filter Include="Sources\Engine\Processor\Pass\RenderPass\Context">
       <UniqueIdentifier>{27fbcdb5-aeda-4b7e-b721-cba25d0149e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="External\imgui">
@@ -815,13 +976,13 @@
     <Filter Include="Utility\ImguiWindow">
       <UniqueIdentifier>{f6eed08c-fb73-4a55-89a8-f4c273ea1ea2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior\PlayerBehavior">
+    <Filter Include="Sources\Game\ActorBehavior\Player">
       <UniqueIdentifier>{4d0768cd-3d37-4572-b155-d56409e44dd8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior\BaseBehavior">
+    <Filter Include="Sources\Game\ActorBehavior\Base">
       <UniqueIdentifier>{21317434-64d7-48b9-8676-91420017e91f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior\EnemyBehavior">
+    <Filter Include="Sources\Game\ActorBehavior\Enemy">
       <UniqueIdentifier>{ef3101d5-6a3f-46bd-8c10-41eb8a635e79}</UniqueIdentifier>
     </Filter>
     <Filter Include="Sources\Engine\Graphics\GraphicsResource">
@@ -833,13 +994,13 @@
     <Filter Include="Sources\Game\Factory">
       <UniqueIdentifier>{3b348ef2-628d-4060-9707-6f89b7332e14}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior\PlayerBehavior\PlayerState">
+    <Filter Include="Sources\Game\ActorBehavior\Player\PlayerState">
       <UniqueIdentifier>{3919c7c5-7f30-44d1-8eb3-3af03f074c5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Game\Behavior\PlayerBehavior\PlayerResource">
+    <Filter Include="Sources\Game\ActorBehavior\Player\PlayerResource">
       <UniqueIdentifier>{72526588-c41a-4258-90e6-3b1cc5a20850}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Engine\Framework\Processor\Pass\RenderPass\RenderUtility">
+    <Filter Include="Sources\Engine\Processor\Pass\RenderPass\RenderUtility">
       <UniqueIdentifier>{bd6a76f8-bbf2-4cbf-851c-42403e8f67eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -850,5 +1011,158 @@
     <None Include="Source\Game\Factory\ui_factory.h">
       <Filter>Sources\Game\Factory</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_action.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_aim.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_firing.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_rapid_fire.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_slash_burst.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_action.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\attached_effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_transform.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_data.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Component\mesh_effect_component.h" />
+    <ClInclude Include="Source\Engine\Processor\mesh_effect_processor.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_muzzle_state.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\enemy_definition_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_widget.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E00_Core\enemy_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_tree.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_data.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_schema.h" />
+    <ClInclude Include="Source\Engine\Component\level_object_component.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_window.h" />
+    <ClInclude Include="Source\Game\Factory\level_object_factory.h" />
+    <ClInclude Include="Source\Engine\Core\build_config.h" />
+    <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
+    <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\behavior_detail_view.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_motions.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_agent_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_context.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_context.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_handle.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\damage_number_behavior.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\Graphics\font_repository.cpp" />
+    <ClInclude Include="Source\Engine\Graphics\font_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\font_resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\ui_shake_task.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\image_fill_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_perspective.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_settings_asset.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_widget_element.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Component\ui_chromatic_echo.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_chromatic_echo_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_resolver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.cpp" />
+    <ClInclude Include="Source\Engine\Device\audio_wave.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\audio_fade.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_settings_asset.h" />
   </ItemGroup>
 </Project>

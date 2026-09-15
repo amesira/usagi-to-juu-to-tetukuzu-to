@@ -21,8 +21,6 @@ static IDXGISwapChain*      g_pSwapChain = nullptr;
 
 // バックバッファ関連
 static ID3D11RenderTargetView*      g_pRenderTargetView = nullptr;
-static ID3D11Texture2D*             g_pDepthStencilBuffer = nullptr;
-static ID3D11DepthStencilView*      g_pDepthStencilView = nullptr;
 static D3D11_TEXTURE2D_DESC         g_BackBufferDecs{};
 static D3D11_VIEWPORT               g_Viewport{};
 
@@ -36,6 +34,8 @@ static ID3D11BlendState* bState[BLENDSTATE_MAX];
 static ID3D11DepthStencilState* g_pDepthState[DEPTHSTATE_MAX];
 // ラスタライザーステート関連
 static ID3D11RasterizerState* g_pRasterizerState[RASTERIZERSTATE_MAX];
+// サンプラーステート関連
+static ID3D11SamplerState* g_pSamplerState[SAMPLERSTATE_MAX];
 
 //===================================================
 // Direct3D初期化処理
@@ -95,20 +95,29 @@ bool Direct3D_Initialize(HWND hWnd)
 	//----------------------------------------------------
     D3D11_SAMPLER_DESC samplerDesc;
     ZeroMemory(&samplerDesc, sizeof(samplerDesc));
-    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; // リニアもある
-    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     samplerDesc.MipLODBias = 0;
     samplerDesc.MaxAnisotropy = 16;
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    ID3D11SamplerState* samplerState = NULL;
-    g_pDevice->CreateSamplerState(&samplerDesc, &samplerState);
+    {
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        g_pDevice->CreateSamplerState(&samplerDesc, &g_pSamplerState[SAMPLERSTATE_POINT_WRAP]);
+
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        g_pDevice->CreateSamplerState(&samplerDesc, &g_pSamplerState[SAMPLERSTATE_POINT_CLAMP]);
+
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        g_pDevice->CreateSamplerState(&samplerDesc, &g_pSamplerState[SAMPLERSTATE_LINEAR_CLAMP]);
+    }
 
     // サンプラーをシェーダーへセット
-    g_pDeviceContext->PSSetSamplers(0, 1, &samplerState);
+    SetSamplerState(SAMPLERSTATE_POINT_WRAP);
 
     //----------------------------------------------------
 	// ブレンドステート設定
@@ -132,6 +141,7 @@ bool Direct3D_Initialize(HWND hWnd)
 
         // αブレンド
         blendDesc.RenderTarget[0].BlendEnable = TRUE;
+        blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
         g_pDevice->CreateBlendState(&blendDesc, &bState[BLENDSTATE_ALFA]);
 
         // 加算合成
@@ -230,10 +240,9 @@ void Direct3D_Clear()
     /* バックバッファクリア */
     float clear_color[4] = { 0.2f,0.4f,0.8f,1.0f }; // クリア色設定
     g_pDeviceContext->ClearRenderTargetView(g_pRenderTargetView, clear_color);
-    g_pDeviceContext->ClearDepthStencilView(g_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     /* レンダーターゲットビューとデプスステンシルビューの設定 */
-    g_pDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, g_pDepthStencilView);
+    g_pDeviceContext->OMSetRenderTargets(1, &g_pRenderTargetView, nullptr);
 
     Direct3D_ResetViewport();
 }
@@ -241,7 +250,8 @@ void Direct3D_Clear()
 // スワップチェーンの表示
 void Direct3D_Present()
 {
-    g_pSwapChain->Present(1, 0);
+    // (1,0) は垂直同期を有効にする設定
+    g_pSwapChain->Present(0, 0);
 }
 
 // ビューポートの設定
@@ -304,42 +314,7 @@ bool configureBackBuffer()
 
     // バックバッファの状態（情報）を取得
     back_buffer_pointer->GetDesc(&g_BackBufferDecs);
-
     back_buffer_pointer->Release(); // バックバッファのポインタは不要なので開放
-
-    // デプスステンシルバッファの生成
-    D3D11_TEXTURE2D_DESC depth_stencil_desc{};
-    depth_stencil_desc.Width = g_BackBufferDecs.Width;
-    depth_stencil_desc.Height = g_BackBufferDecs.Height;
-    depth_stencil_desc.MipLevels = 1;
-    depth_stencil_desc.ArraySize = 1;
-    depth_stencil_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    depth_stencil_desc.SampleDesc.Count = 1;
-    depth_stencil_desc.SampleDesc.Quality = 0;
-    depth_stencil_desc.Usage = D3D11_USAGE_DEFAULT;
-    depth_stencil_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    depth_stencil_desc.CPUAccessFlags = 0;
-    depth_stencil_desc.MiscFlags = 0;
-    hr = g_pDevice->CreateTexture2D(&depth_stencil_desc, nullptr, &g_pDepthStencilBuffer);
-
-    if (FAILED(hr)) {
-        hal::dout << "デプスステンシルバッファの生成に失敗しました" << std::endl;
-        return false;
-    }
-
-    // デプスステンシルビューの作成
-    D3D11_DEPTH_STENCIL_VIEW_DESC depth_stencil_view_desc{};
-    depth_stencil_view_desc.Format = depth_stencil_desc.Format;
-    depth_stencil_view_desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-    depth_stencil_view_desc.Texture2D.MipSlice = 0;
-    depth_stencil_view_desc.Flags = 0;
-    hr = g_pDevice->CreateDepthStencilView(g_pDepthStencilBuffer, &depth_stencil_view_desc,
-        &g_pDepthStencilView);
-
-    if (FAILED(hr)) {
-        hal::dout << "デプスステンシルビューの生成に失敗しました" << std::endl;
-        return false;
-    }
 
     /* ビューポートの設定 */
     g_Viewport.TopLeftX = 0.0f;
@@ -360,16 +335,6 @@ void releaseBackBuffer()
         g_pRenderTargetView->Release();
         g_pRenderTargetView = nullptr;
     }
-
-    if (g_pDepthStencilBuffer) {
-        g_pDepthStencilBuffer->Release();
-        g_pDepthStencilBuffer = nullptr;
-    }
-
-    if (g_pDepthStencilView) {
-        g_pDepthStencilView->Release();
-        g_pDepthStencilView = nullptr;
-    }
 }
 
 // ブレンドステートの切り替え関数
@@ -388,6 +353,12 @@ void SetDepthState(DEPTHSTATE depth)
 void SetRasterizerState(RASTERIZERSTATE state)
 {
     g_pDeviceContext->RSSetState(g_pRasterizerState[state]);
+}
+
+// サンプラーステートの切り替え関数
+void SetSamplerState(SAMPLERSTATE state)
+{
+    g_pDeviceContext->PSSetSamplers(0, 1, &g_pSamplerState[state]);
 }
 
 // シーンテクスチャの内容をスナップショット先へコピーし、SRVを生成する関数
@@ -442,7 +413,7 @@ void Direct3D_CreateColorBuffer(
     ID3D11Texture2D** tex, 
     ID3D11RenderTargetView** rtv, 
     ID3D11ShaderResourceView** srv,
-    unsigned int width, unsigned int height)
+    unsigned int width, unsigned int height, DXGI_FORMAT format)
 {
     if (!tex && !srv && !rtv) return;
 
@@ -455,8 +426,7 @@ void Direct3D_CreateColorBuffer(
     desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
-    //desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT; // HDRレンダリング用にフォーマットを変更
+    desc.Format = format;
     desc.SampleDesc.Count = 1;
     desc.SampleDesc.Quality = 0;
     desc.Usage = D3D11_USAGE_DEFAULT;
@@ -503,7 +473,8 @@ void Direct3D_CreateColorBuffer(
 }
 
 // シーンテクスチャの深度ステンシルバッファとビューの生成
-void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv)
+void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** dsv, ID3D11ShaderResourceView** srv, 
+    unsigned int width, unsigned int height)
 {
     if (!tex || !dsv || !srv) return;
     *tex = nullptr;
@@ -511,8 +482,8 @@ void Direct3D_CreateDepthBuffer(ID3D11Texture2D** tex, ID3D11DepthStencilView** 
     *srv = nullptr;
 
     D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = g_BackBufferDecs.Width;
-    desc.Height = g_BackBufferDecs.Height;
+    desc.Width = width;
+    desc.Height = height;
     desc.MipLevels = 1;
     desc.ArraySize = 1;
     desc.Format = DXGI_FORMAT_R24G8_TYPELESS;

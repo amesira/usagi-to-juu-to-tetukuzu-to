@@ -1,0 +1,48 @@
+{
+    "data": {
+        "objects": [
+            {
+                "collider": {
+                    "boxSize": [
+                        70.0,
+                        2.0,
+                        53.599998474121094
+                    ],
+                    "center": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "sphereRadius": 0.5,
+                    "type": "Box"
+                },
+                "collisionLayer": "Field",
+                "id": "level_object_0001",
+                "modelPath": "asset/Model/cube.fbx",
+                "name": "BaseFloor",
+                "renderLayer": "Default",
+                "tag": "Untagged",
+                "transform": {
+                    "position": [
+                        0.0,
+                        -2.0,
+                        0.0
+                    ],
+                    "rotationDegrees": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        35.0,
+                        1.0,
+                        27.0
+                    ]
+                }
+            }
+        ]
+    },
+    "formatVersion": 1,
+    "name": "game",
+    "type": "Level"
+}

@@ -1,0 +1,128 @@
+#pragma once
+#include "Game/PresBehavior/UI/ui_layout_settings.h"
+#include "Engine/Asset/DataAsset/data_asset.h"
+#include "Engine/Asset/DataAsset/data_asset_type_id.h"
+#include "Engine/Editor/Schema/field_editor.h"
+#include <algorithm>
+
+namespace WaveUiSettings {
+    struct WidgetSettings {
+        UiLayoutSettings::GroupPlacement placement = {{0.5f, 0}, {0, 60}};
+        UiLayoutSettings::WidgetTransform label = {{0, 0}, {1, 1}, 0};
+        bool applyPerspective = true;
+        bool applyChromaticEcho = true;
+        int fontSize = 26;
+        DirectX::XMFLOAT3 color = {1, 1, 1};
+    };
+    struct PointsSettings {
+        WidgetSettings text;
+        UiLayoutSettings::WidgetTransform gauge = {{0, 30}, {320, 10}, 0};
+        DirectX::XMFLOAT3 gaugeColor = {0.9f, 0.9f, 0.2f};
+        float gaugeSmoothTime = 0.2f;
+    };
+    struct Data {
+        UiLayoutSettings::PerspectiveSettings perspective;
+        UiLayoutSettings::ChromaticEchoSettings chromaticEcho;
+        WidgetSettings number;
+        PointsSettings points;
+        WidgetSettings phase;
+        WidgetSettings timer;
+        UiLayoutSettings::GroupPlacement phasePlacementB = {{0.5f, 0}, {0, 165}};
+        DirectX::XMFLOAT2 phaseScaleB = {0.35f, 0.35f}; // Absolute text XY scale, like phase.label.size.
+        float phaseMoveDelay = 1.0f;
+        float phaseMoveDuration = 0.4f;
+        float pulseDuration = 0.3f;
+        float pulseScale = 1.15f;
+        bool popupEnabled = true;
+        float popupDuration = 0.8f;
+        float popupHeightOffset = 3;
+        float popupRiseDistance = 1.5f;
+        float popupScale = 1.5f;
+        DirectX::XMFLOAT3 popupColor = {1, 0.9f, 0.2f};
+        Data() {
+            perspective.enabled = false;
+            chromaticEcho.enabled = false;
+            points.text.placement.position.y = 100;
+            points.text.fontSize = 22;
+            phase.placement.position.y = 165;
+            phase.fontSize = 24;
+        }
+    };
+    inline const auto& GetWidgetSchema() {
+        static const auto schema = FieldSchema{
+            MakeStructField("placement", "Group Placement", &WidgetSettings::placement, UiLayoutSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
+            MakeStructField("label", "Text Transform", &WidgetSettings::label, UiLayoutSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeField("applyPerspective", "Apply Perspective", &WidgetSettings::applyPerspective),
+            MakeField("applyChromaticEcho", "Apply Chromatic Echo", &WidgetSettings::applyChromaticEcho),
+            MakeField("fontSize", "Font Size", &WidgetSettings::fontSize, DragFieldOptions{.dragSpeed = 1, .minValue = 1, .maxValue = 128}),
+            MakeField("color", "Color", &WidgetSettings::color, ColorFieldOptions{})
+        };
+        return schema;
+    }
+    inline const auto& GetPointsSchema() {
+        static const auto schema = FieldSchema{
+            MakeStructField("text", "Text", &PointsSettings::text, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("gauge", "Gauge Transform", &PointsSettings::gauge, UiLayoutSettings::GetWidgetTransformSchema(), DefaultFieldOptions{}),
+            MakeField("gaugeSmoothTime", "Gauge Smooth Time (s)", &PointsSettings::gaugeSmoothTime, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 5}),
+            MakeField("gaugeColor", "Gauge Color", &PointsSettings::gaugeColor, ColorFieldOptions{})
+        };
+        return schema;
+    }
+    inline const auto& GetSchema() {
+        static const auto schema = FieldSchema{
+            MakeStructField("perspective", "Perspective", &Data::perspective, UiLayoutSettings::GetPerspectiveSchema(), DefaultFieldOptions{}),
+            MakeStructField("chromaticEcho", "Chromatic Echo", &Data::chromaticEcho, UiLayoutSettings::GetEchoSchema(), DefaultFieldOptions{}),
+            MakeStructField("number", "Wave Number", &Data::number, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("points", "Points", &Data::points, GetPointsSchema(), DefaultFieldOptions{}),
+            MakeStructField("phase", "Phase", &Data::phase, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("timer", "Timer", &Data::timer, GetWidgetSchema(), DefaultFieldOptions{}),
+            MakeStructField("phasePlacementB", "Phase Placement B", &Data::phasePlacementB, UiLayoutSettings::GetGroupPlacementSchema(), DefaultFieldOptions{}),
+            MakeField("phaseScaleB", "Phase Text XY Scale B", &Data::phaseScaleB, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=100}),
+            MakeField("phaseMoveDelay", "Phase Move Delay (s)", &Data::phaseMoveDelay, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=30}),
+            MakeField("phaseMoveDuration", "Phase Move Duration (s)", &Data::phaseMoveDuration, DragFieldOptions{.dragSpeed=0.01f, .minValue=0, .maxValue=10}),
+            MakeField("pulseDuration", "Pulse Duration", &Data::pulseDuration, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0, .maxValue = 10}),
+            MakeField("pulseScale", "Pulse Scale", &Data::pulseScale, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 1, .maxValue = 3}),
+            MakeField("popupEnabled", "Defeat Popup", &Data::popupEnabled),
+            MakeField("popupDuration", "Popup Duration", &Data::popupDuration, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.01f, .maxValue = 10}),
+            MakeField("popupHeightOffset", "Popup Height Offset (world)", &Data::popupHeightOffset, DragFieldOptions{.dragSpeed = 0.1f, .minValue = -10, .maxValue = 20}),
+            MakeField("popupRiseDistance", "Popup Rise Distance (world)", &Data::popupRiseDistance, DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0, .maxValue = 20}),
+            MakeField("popupScale", "Popup Scale", &Data::popupScale, DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0.1f, .maxValue = 10}),
+            MakeField("popupColor", "Popup Color", &Data::popupColor, ColorFieldOptions{})
+        };
+        return schema;
+    }
+    inline void Sanitize(Data& data) {
+        auto finite = [](float value, float fallback) { return std::isfinite(value) ? value : fallback; };
+        data.phaseMoveDelay = (std::max)(0.0f, finite(data.phaseMoveDelay, 1));
+        data.phaseMoveDuration = (std::max)(0.0f, finite(data.phaseMoveDuration, 0.4f));
+        data.phaseScaleB.x = (std::max)(0.0f, finite(data.phaseScaleB.x, 0.35f));
+        data.phaseScaleB.y = (std::max)(0.0f, finite(data.phaseScaleB.y, 0.35f));
+        if (!UiLayoutSettings::IsValid(data.phasePlacementB)) data.phasePlacementB = {{0.5f,0},{0,165}};
+        data.points.gaugeSmoothTime = std::clamp(finite(data.points.gaugeSmoothTime, 0.2f), 0.01f, 5.0f);
+        data.pulseDuration = (std::max)(0.0f, finite(data.pulseDuration, 0.3f));
+        data.pulseScale = std::clamp(finite(data.pulseScale, 1.15f), 1.0f, 3.0f);
+        data.popupDuration = (std::max)(0.01f, finite(data.popupDuration, 0.8f));
+        data.popupHeightOffset = finite(data.popupHeightOffset, 3);
+        data.popupRiseDistance = (std::max)(0.0f, finite(data.popupRiseDistance, 1.5f));
+        data.popupScale = (std::max)(0.1f, finite(data.popupScale, 1.5f));
+        for (auto* widget : {&data.number, &data.points.text, &data.phase}) widget->fontSize = std::clamp(widget->fontSize, 1, 128);
+    }
+}
+class WaveUiSettingsAsset : public DataAsset {
+    WaveUiSettings::Data m_data;
+public:
+    WaveUiSettingsAsset() : DataAsset(DataAssetTypeID::getTypeID<WaveUiSettingsAsset>(), "WaveUiSettingsAsset", 0) {}
+    const WaveUiSettings::Data& GetData() const { return m_data; }
+    std::unique_ptr<DataAsset> CreateDefaultInstance() const override { return std::make_unique<WaveUiSettingsAsset>(); }
+    nlohmann::json SerializeData() const override { return FieldSerialization::SerializeFields(m_data, WaveUiSettings::GetSchema()); }
+    bool DeserializeDataToApply(const nlohmann::json& json) override {
+        auto data = m_data;
+        if (!FieldSerialization::DeserializeFields(json, data, WaveUiSettings::GetSchema())) return false;
+        WaveUiSettings::Sanitize(data); m_data = data; return true;
+    }
+    bool DrawDataOnEditor() override {
+        const bool changed = FieldEditor::DrawFields(m_data, WaveUiSettings::GetSchema());
+        if (changed) WaveUiSettings::Sanitize(m_data);
+        return changed;
+    }
+};

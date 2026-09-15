@@ -1,104 +1,333 @@
-// PrefabFactory.cpp
 #include "prefab_factory.h"
+
+#include "Engine/Asset/DataAsset/data_asset_loader.h"
 #include "Engine/Core/game_object.h"
-#include "Engine/Core/scene_base.h"
-
-// component
-#include "Engine/Framework/Component/transform_component.h"
-#include "Engine/Framework/Component/decal_component.h"
-#include "Engine/Framework/Component/particle_system_component.h"
-#include "Engine/Framework/Component/light_component.h"
-#include "Engine/Framework/Component/rect_transform_component.h"
-
-#include "Game/Behavior/transform_constraint_behavior.h"
-#include "Game/Behavior/PlayerBehavior/player_behavior.h"
-#include "Game/Behavior/PlayerBehavior/PlayerState/player_attack_behavior.h"
-#include "Game/Behavior/BulletBehavior/bezier_line_preview_behavior.h"
-#include "Game/Behavior/BaseBehavior/health_behavior.h"
-
+#include "Engine/Core/scene_interface.h"
 #include "Engine/engine_service_locator.h"
-#define TEXTURE_REPOSITORY EngineServiceLocator::GetTextureRepository()
+
+#include "Engine/Component/collider_component.h"
+#include "Engine/Component/model_component.h"
+#include "Engine/Component/rigidbody_component.h"
+#include "Engine/Component/transform_component.h"
+
+#include "Game/ActorBehavior/Base/health_behavior.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_behavior.h"
+#include "Game/ActorBehavior/Base/ReactionEffects/blinker_behavior.h"
+#include "Game/ActorBehavior/Player/player_behavior.h"
+#include "Game/ActorBehavior/Player/P40_Weapon/player_weapon_settings_asset.h"
+#include "Game/ActorBehavior/Player/P10_Locomotion/player_move_settings_asset.h"
+#include "Game/ActorBehavior/TrainingDummy/training_dummy_behavior.h"
+
+#include "Game/Factory/Prefab/player_prefab_settings_asset.h"
+#include "Game/Factory/Prefab/enemy_definition_asset.h"
+#include <Windows.h>
+#include "Game/Factory/Prefab/training_dummy_prefab_settings_asset.h"
+#include "Game/PresBehavior/Camera/camera_settings_asset.h"
+#include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
+#include "Game/PresBehavior/UI/Player/player_ui_settings_asset.h"
+
+#include "Game/ActorBehavior/Enemy/enemy_behavior.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move_settings_asset.h"
+#include "Game/ActorBehavior/Enemy/E30_Combat/Approach/enemy_approach_settings_asset.h"
 
 #include "actor_factory.h"
-#include "render_effect_factory.h"
-#include "projectile_factory.h"
-#include "environment_factory.h"
-#include "ui_factory.h"
 
-#include <array>
+#include <filesystem>
 
-namespace PrefabFactory
+namespace
 {
-    // TransformConstraintBehaviorのセットアップ
-    void SetupTransformConstraint(GameObject* element, 
-        TransformComponent* target, const XMFLOAT3& positionOffset, 
-        bool considerRotation = true, bool considerScale = false) 
-    {
-        TransformConstraintBehavior* constraint = element->AddComponent<TransformConstraintBehavior>();
-        constraint->SetTarget(target);
-        constraint->SetOffset(positionOffset);
-        constraint->SetConsiderRotation(considerRotation);
-        constraint->SetConsiderScaling(considerScale);
+    const std::filesystem::path PLAYER_PREFAB_SETTINGS_PATH =
+        "asset/Data/player_prefab_settings.data.json";
+    const std::filesystem::path TRAINING_DUMMY_PREFAB_SETTINGS_PATH =
+        "asset/Data/training_dummy_prefab_settings.data.json";
+}
+
+PrefabFactory::PlayerPrefab PrefabFactory::CreatePlayerPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    PlayerPrefab prefab = {};
+    if (!scene) return prefab;
+
+    PlayerPrefabSettingsAsset* settingsAsset =
+        DATA_LOADER->GetAsset<PlayerPrefabSettingsAsset>(
+            PLAYER_PREFAB_SETTINGS_PATH,
+            true);
+    if (!settingsAsset) return prefab;
+
+    prefab.player = ActorFactory::CreatePlayer(
+        scene,
+        position,
+        settingsAsset->GetData());
+    if (!prefab.player) return prefab;
+
+    if (auto* ui = prefab.player->GetComponent<PlayerUiBehavior>()) {
+        ui->Setup(DATA_LOADER->GetAsset<PlayerUiSettingsAsset>(
+            "asset/Data/player_ui_settings.data.json", true));
     }
 
-    // ----------------------------------- プレハブ生成
+    // 各種設定アセットをロードして、PlayerBehaviorに設定する
+    PlayerMoveSettingsAsset* moveSettingsAsset =
+        DATA_LOADER->GetAsset<PlayerMoveSettingsAsset>(
+            "asset/Data/player_move_settings.data.json",
+            true);
+    PlayerShotgunSettingsAsset* shotgunSettingsAsset =
+        DATA_LOADER->GetAsset<PlayerShotgunSettingsAsset>(
+            "asset/Data/player_shotgun_settings.data.json",
+            true);
+    PlayerDualPistolsSettingsAsset* dualPistolsSettingsAsset =
+        DATA_LOADER->GetAsset<PlayerDualPistolsSettingsAsset>(
+            "asset/Data/player_dual_pistols_settings.data.json",
+            true);
+    PlayerWeaponSettingsAsset* weaponSettingsAsset =
+        DATA_LOADER->GetAsset<PlayerWeaponSettingsAsset>(
+            "asset/Data/player_weapon_settings.data.json",
+            true);
+    CameraSettingsAsset* shotgunCameraSettingsAsset =
+        DATA_LOADER->GetAsset<CameraSettingsAsset>(
+            "asset/Data/camera_settings_shotgun.data.json",
+            true);
 
-    // プレイヤープレハブ生成
-    PlayerPrefab PrefabFactory::CreatePlayerPrefab(SceneBase* scene, const XMFLOAT3& position)
-    {
-        PlayerPrefab prefab;
-        prefab.player = ActorFactory::CreatePlayer(scene, position);
-        TransformComponent* playerTransform = prefab.player->GetComponent<TransformComponent>();
-        PlayerBehavior* playerBehavior = prefab.player->GetComponent<PlayerBehavior>();
-        PlayerAttackBehavior* playerAttackBehavior = prefab.player->GetComponent<PlayerAttackBehavior>();
-
-        prefab.runDustParticle = RenderEffectFactory::CreateRunDustParticle(scene, prefab.player->GetName());
-        {
-            SetupTransformConstraint(prefab.runDustParticle, playerTransform, { 0.0f, -1.0f, 0.0f }, true, false);
-        }
-        prefab.chargeEffectParticle = RenderEffectFactory::CreateChargeAbsorbParticle(scene, position);
-        {
-            SetupTransformConstraint(prefab.chargeEffectParticle, playerTransform, { 1.0f, -0.3f, 0.0f }, true, false);
-            ParticleSystemComponent* particleSystem = prefab.chargeEffectParticle->GetComponent<ParticleSystemComponent>();
-            particleSystem->Main().playOnAwake = false; // 最初は再生しない
-            playerBehavior->SetupChargeEffect(particleSystem);
-        }
-        prefab.chargeLight = EnvironmentFactory::CreatePointLight(scene, { 1.0f, 0.5f, 0.0f, 1.0f }, 3.0f);
-        {
-            SetupTransformConstraint(prefab.chargeLight, playerTransform, { 1.0f, -0.3f, -0.5f }, true, false);
-            LightComponent* lightComp = prefab.chargeLight->GetComponent<LightComponent>();
-            lightComp->SetEnable(false); // 最初はライトをオフにする
-            playerBehavior->SetupChargeLight(lightComp);
-        }
-        if (playerAttackBehavior) {
-            std::array<BezierLinePreviewBehavior*, PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT> previewLines = {};
-
-            for (int i = 0; i < PlayerAttackBehavior::MISSILE_PREVIEW_LINE_COUNT; ++i) {
-                ProjectileFactory::BezierLinePreviewCreateDesc lineDesc;
-                lineDesc.name = "MissilePreviewLine";
-                lineDesc.visibleOnCreate = false;
-                lineDesc.lineWidth = 0.08f;
-                lineDesc.lineColor = { 1.0f, 0.5f, 0.5f, 1.0f };
-
-                GameObject* lineObject = ProjectileFactory::CreateBezierLinePreview(scene, lineDesc);
-                if (!lineObject) continue;
-
-                lineObject->SetRenderLayer(RenderLayer::Player); // プレイヤーのレイヤーに設定
-                previewLines[i] = lineObject->GetComponent<BezierLinePreviewBehavior>();
-            }
-
-            playerAttackBehavior->SetupMissilePreviewLines(previewLines);
-        }
-
-        return prefab;
+    if (PlayerBehavior* playerBehavior =
+            prefab.player->GetComponent<PlayerBehavior>()) {
+        playerBehavior->SetupPlayerMove(moveSettingsAsset);
+        playerBehavior->SetupPlayerShotgun(
+            shotgunSettingsAsset,
+            shotgunCameraSettingsAsset);
+        playerBehavior->SetupPlayerDualPistols(
+            dualPistolsSettingsAsset);
+        playerBehavior->SetupPlayerWeapon(weaponSettingsAsset);
     }
 
-    EnemyPrefab PrefabFactory::CreateEnemyPrefab(SceneBase* scene, const XMFLOAT3& position)
-    {
-        EnemyPrefab prefab;
-        prefab.enemy = ActorFactory::CreateSimpleEnemy(scene, position);
-        prefab.healthBar = nullptr;
+    return prefab;
+}
 
-        return prefab;
+PrefabFactory::TrainingDummyPrefab PrefabFactory::CreateTrainingDummyPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    TrainingDummyPrefab prefab = {};
+    if (!scene) return prefab;
+
+    TrainingDummyPrefabSettingsAsset* settingsAsset =
+        DATA_LOADER->GetAsset<TrainingDummyPrefabSettingsAsset>(
+            TRAINING_DUMMY_PREFAB_SETTINGS_PATH,
+            true);
+    if (!settingsAsset) return prefab;
+
+    const TrainingDummyPrefabSettings::Data& settings =
+        settingsAsset->GetData();
+
+    GameObject* dummy = scene->CreateGameObject();
+    if (!dummy) return prefab;
+
+    // Enemyタグを付与
+    dummy->SetName("TrainingDummy");
+    dummy->SetTag("Enemy");
+    dummy->SetCollisionLayer(CollisionLayer::Enemy);
+    dummy->SetRenderLayer(RenderLayer::Enemy);
+
+    TransformComponent* transform = dummy->AddComponent<TransformComponent>();
+    CapsuleColliderComponent* collider = dummy->AddComponent<CapsuleColliderComponent>();
+    RigidbodyComponent* rigidbody = dummy->AddComponent<RigidbodyComponent>();
+    ModelComponent* model = dummy->AddComponent<ModelComponent>();
+    AnimationComponent* animation = dummy->AddComponent<AnimationComponent>();
+
+    HealthBehavior* health = dummy->AddComponent<HealthBehavior>();
+    dummy->AddComponent<HitReceiverBehavior>();
+    dummy->AddComponent<TrainingDummyBehavior>();
+    dummy->AddComponent<BlinkerBehavior>();
+
+    transform->SetPosition(position);
+    transform->SetScaling(settings.scaling);
+
+    collider->SetRadius(settings.colliderRadius);
+    collider->SetHeight(settings.colliderHeight);
+    collider->SetCenter(settings.colliderCenter);
+
+    rigidbody->SetMass(settings.mass);
+    rigidbody->SetFriction(settings.friction);
+    rigidbody->SetGravityScale(settings.gravityScale);
+
+    if (ModelResource* modelResource = MODEL_REPOSITORY->GetModel(settings.modelAssetPath)) {
+        model->SetModelResource(modelResource);
     }
+
+    health->SetMaxHealth(settings.maxHealth);
+    health->SetHealth(settings.maxHealth);
+
+    prefab.dummy = dummy;
+    return prefab;
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyFromDefinition(
+    IScene* scene, const XMFLOAT3& position, const EnemyDefinition::Data& source)
+{
+    auto definition = source;
+    EnemyDefinition::Sanitize(definition);
+    auto* agent = DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(definition.agentPath);
+    auto* move = DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(definition.movePath);
+    auto* approach = DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(definition.approachPath);
+    auto* attack = DATA_LOADER->GetAsset<EnemyAttackSettingsAsset>(definition.attackPath);
+    if (!scene || !agent || !move || !approach || !attack || move->GetData().hoverEnabled != definition.hover) {
+        OutputDebugStringA("Enemy definition: missing settings or Hover / Move settings mismatch.\n");
+        return {};
+    }
+    auto prefab = CreateEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+    auto* enemy = prefab.enemy;
+    enemy->SetName(definition.displayName);
+    auto* model = enemy->GetComponent<ModelComponent>();
+
+    // モデル・クリップのA/B管理方法は従来通り攻撃タイプで選択する。
+    if (definition.ranged) model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
+
+    auto* behavior = enemy->GetComponent<EnemyBehavior>();
+    behavior->SetupAttackType(definition.ranged ? EnemyAttackType::Ranged : EnemyAttackType::Melee);
+    behavior->SetupResolvedAiAgentSettings(EnemyDefinition::ResolveAgent(definition, agent->GetData()));
+    behavior->SetupMoveSettings(move);
+    behavior->SetupApproachSettings(approach);
+    behavior->SetupAttackSettings(attack);
+    behavior->SetElite(definition.isElite);
+
+    auto* health = enemy->GetComponent<HealthBehavior>();
+    health->SetMaxHealth(definition.maxHealth);
+    health->SetHealth(definition.maxHealth);
+    enemy->GetComponent<TransformComponent>()->SetScaling({definition.scale, definition.scale, definition.scale});
+
+    auto* collider = enemy->GetComponent<CapsuleColliderComponent>();
+    collider->SetRadius(definition.scale);
+    collider->SetHeight(definition.scale);
+    collider->SetCenter({0, 0.8f * definition.scale, 0});
+
+    for (const auto* material : {&definition.material1, &definition.material2}) {
+        if (material->targetMaterialName.empty()) continue;
+        bool found = false;
+        for (auto& slot : model->GetMaterialSlots()) {
+            if (!slot.materialResource) continue;
+
+            const auto& name = slot.materialResource->name;
+            const auto marker = name.rfind("_mat%");
+            const auto fbxName = marker == std::string::npos ? name : name.substr(marker + 5);
+            if (fbxName != material->targetMaterialName) continue;
+
+            found = true;
+            slot.isOverrideBaseColor = slot.isOverrideEmissive = true;
+            slot.overrideBaseColor = material->baseColor;
+            slot.overrideEmissiveColor = material->emissiveColor;
+            slot.overrideEmissiveIntensity = material->emissiveIntensity;
+            slot.isOverrideMetallic = slot.isOverrideRoughness = true;
+            slot.overrideMetallic = material->metallic;
+            slot.overrideRoughness = material->roughness;
+            slot.isOverrideAlbedoTexture = true;
+            slot.overrideAlbedoTexture = TEXTURE_REPOSITORY->GetTextureResource("asset/Texture/white.bmp");
+        }
+        if (!found) {
+            const auto message = "Enemy definition: FBX material not found: " + material->targetMaterialName + "\n";
+            OutputDebugStringA(message.c_str());
+        }
+    }
+    return prefab;
+}
+
+GameObject* PrefabFactory::CreateModelObject(IScene* scene, const char* modelPath, const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling)
+{
+    GameObject* modelObject = scene->CreateGameObject();
+    if (!modelObject) return nullptr;
+
+    modelObject->SetName("ModelObject");
+    modelObject->SetTag("ModelObject");
+
+    auto* transform = modelObject->AddComponent<TransformComponent>();
+    auto* model = modelObject->AddComponent<ModelComponent>();
+
+    transform->SetPosition(position);
+    transform->SetEulerAngle(rotation);
+    transform->SetScaling(scaling);
+
+    if (ModelResource* modelResource = MODEL_REPOSITORY->GetModel(modelPath)) {
+        model->SetModelResource(modelResource);
+        return modelObject;
+    }
+    modelObject->Destroy();
+
+    return nullptr;
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateEnemyPrefab(IScene* scene, const XMFLOAT3& position)
+{
+    GameObject* enemy = scene->CreateGameObject();
+
+    enemy->SetName("Enemy");
+    enemy->SetTag("Enemy");
+    enemy->SetCollisionLayer(CollisionLayer::Enemy);
+    enemy->SetRenderLayer(RenderLayer::Enemy);
+
+    auto* transform = enemy->AddComponent<TransformComponent>();
+    auto* collider = enemy->AddComponent<CapsuleColliderComponent>();
+    auto* rigidbody = enemy->AddComponent<RigidbodyComponent>();
+
+    auto* model = enemy->AddComponent<ModelComponent>();
+    model->SetModelResource(MODEL_REPOSITORY->GetModel("asset/Model/enemy_a_model.fbx"));
+    enemy->AddComponent<AnimationComponent>();
+    enemy->AddComponent<HitReceiverBehavior>();
+    enemy->AddComponent<BlinkerBehavior>();
+
+    auto* health = enemy->AddComponent<HealthBehavior>();
+    auto* behavior = enemy->AddComponent<EnemyBehavior>();
+
+    transform->SetPosition(position);
+    collider->SetRadius(1.0f);
+    collider->SetHeight(1.0f);
+    collider->SetCenter({ 0.0f, 0.5f, 0.0f });
+    rigidbody->SetMass(1.0f);
+    rigidbody->SetGravityScale(0.0f);
+
+    behavior->SetupAiAgentSettings(
+        DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
+            "asset/Data/enemy_ai_agent_settings.data.json",
+            true));
+    behavior->SetupApproachSettings(
+        DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(
+            "asset/Data/enemy_approach_settings.data.json", true));
+    behavior->SetupMoveSettings(
+        DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
+            "asset/Data/enemy_move_settings.data.json",
+            true));
+    behavior->SetupAttackSettings(
+        DATA_LOADER->GetAsset<EnemyAttackSettingsAsset>(
+            "asset/Data/enemy_attack_settings.data.json",
+            true));
+
+    return { enemy };
+}
+
+PrefabFactory::EnemyPrefab PrefabFactory::CreateHoverRangedEnemyPrefab(
+    IScene* scene,
+    const XMFLOAT3& position)
+{
+    EnemyPrefab prefab = CreateEnemyPrefab(scene, position);
+    if (!prefab.enemy) return prefab;
+
+    prefab.enemy->SetName("HoverRangedEnemy");
+    prefab.enemy->GetComponent<ModelComponent>()->SetModelResource(
+        MODEL_REPOSITORY->GetModel("asset/Model/enemy_b_model.fbx"));
+
+    if (auto* behavior = prefab.enemy->GetComponent<EnemyBehavior>()) {
+        behavior->SetupAiAgentSettings(
+            DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
+                "asset/Data/enemy_hover_ai_agent_settings.data.json",
+                true));
+        behavior->SetupMoveSettings(
+            DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
+                "asset/Data/enemy_hover_move_settings.data.json",
+                true));
+        behavior->SetupAttackType(EnemyAttackType::Ranged);
+        behavior->SetupApproachSettings(
+            DATA_LOADER->GetAsset<EnemyApproachSettingsAsset>(
+                "asset/Data/enemy_hover_approach_settings.data.json",
+                true));
+    }
+
+    return prefab;
 }

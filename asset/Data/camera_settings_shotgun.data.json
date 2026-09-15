@@ -1,0 +1,37 @@
+{
+    "data": {
+        "compositionCameraLocalOffset": [
+            2.0,
+            3.0,
+            0.0
+        ],
+        "compositionWorldOffset": [
+            0.0,
+            0.0,
+            0.0
+        ],
+        "followAnchorDownwardSmoothTime": 0.03999999910593033,
+        "followAnchorPlanarSmoothTime": 0.029999999329447746,
+        "followAnchorUpwardSmoothTime": 0.03999999910593033,
+        "followDistance": 6.0,
+        "fov": 60.0,
+        "initialPitch": 0.6981316804885864,
+        "initialYaw": 0.0,
+        "invertPitchInput": false,
+        "lookAtHeight": 0.0,
+        "maxPitch": 1.0471975803375244,
+        "maxPitchDistanceMultiplier": 1.2000000476837158,
+        "maxPitchTreshold": 0.5235987901687622,
+        "minPitch": -0.5235987901687622,
+        "minPitchDistanceMultiplier": 0.6000000238418579,
+        "minPitchTreshold": 0.0872664675116539,
+        "mouseSensitivityX": 0.004999999888241291,
+        "mouseSensitivityY": 0.004999999888241291,
+        "rotationSmoothTime": 0.029999999329447746,
+        "shakeFrequency": 35.0,
+        "this_is_header_field": null
+    },
+    "formatVersion": 0,
+    "name": "camera_settings_shotgun.data",
+    "type": "CameraSettingsAsset"
+}

@@ -15,8 +15,10 @@
 #include "scene_interface.h"
 #include "game_object.h"
 
-// シーン全体のレンダリングに関する設定を保持するクラス
-#include "Engine/Settings/scene_settings.h"
+#include "Engine/Asset/EnvironmentAsset/environment_asset.h"
+#include "Engine/Core/scene_post_effect_state.h"
+
+class LevelAsset;
 
 class SceneBase : public IScene {
 private:
@@ -33,8 +35,13 @@ private:
     // 空きスロット管理用リスト
     std::vector<size_t>         m_freeGameObjectIndices = {};
 
-    // シーン全体のレンダリング設定
-    SceneSettings         m_sceneSettings;
+    // シーン内の環境設定アセット
+    EnvironmentAsset m_environmentAsset;
+    CustomPostEffectState m_postEffectState;
+
+    // シーンが初期配置に使用しているLevelAsset。
+    std::filesystem::path m_levelAssetPath;
+    LevelAsset* m_levelAsset = nullptr;
 
 protected: // ISceneのComponentPools()を実装
     std::vector<std::unique_ptr<IComponentPool>>& ComponentPools() override {
@@ -56,11 +63,19 @@ public:
     virtual void   Draw() override = 0;
 
     void Reset() {
+        // Finalize resources before clearing owners or any component pool.
+        for (auto& obj : m_gameObjects) {
+            for (auto& pool : m_componentPools) {
+                if (auto* component = pool->GetComponentInterface(obj.GetID())) component->NotifyDestroy();
+            }
+        }
         m_gameObjects.clear();
         m_gameObjects.reserve(MAX_GAMEOBJECTS);
         m_componentPools.clear();
         m_componentPools.reserve(MAX_COMPONENTPOOLS);
         m_freeGameObjectIndices.clear();
+        m_levelAssetPath.clear();
+        m_levelAsset = nullptr;
     }
 
     // GameObjectの生成
@@ -75,7 +90,8 @@ public:
 
             m_gameObjects[index] = GameObject();
             GameObject* pGameObject = &m_gameObjects[index];
-            pGameObject->SetID(m_gameObjectCount++);
+           // pGameObject->SetID(m_gameObjectCount++);
+            pGameObject->SetID(index); // こっちじゃね　もしIDを本当に固有にしたいなら、これとは別にもつか、世代番号をもたせる必要がある
             pGameObject->SetScene(this);
 
             return pGameObject;
@@ -93,6 +109,13 @@ public:
 
     // GameObjectの破棄
     void    CollectDestroyedGameObjects() {
+        // Notify first, then remove. Cleanup may also schedule attached effects for destruction.
+        for (auto& obj : m_gameObjects) {
+            if (!obj.m_isDestroy) continue;
+            for (auto& pool : m_componentPools) {
+                if (auto* component = pool->GetComponentInterface(obj.GetID())) component->NotifyDestroy();
+            }
+        }
         for (int i = 0; i < m_gameObjects.size(); i++) {
             GameObject& obj = m_gameObjects[i];
             if (!obj.m_isDestroy)continue;
@@ -134,10 +157,13 @@ public:
         return m_componentPools;
     }
 
-    // シーン全体のレンダリング設定の取得
-    SceneSettings& GetSceneSettings() override {
-        return m_sceneSettings;
-    }
+    bool LoadLevel(const std::filesystem::path& path) override;
+    const std::filesystem::path& GetLevelAssetPath() const override { return m_levelAssetPath; }
+
+    EnvironmentAsset& GetEnvironmentAsset() override { return m_environmentAsset; }
+    const EnvironmentAsset& GetEnvironmentAsset() const override { return m_environmentAsset; }
+    CustomPostEffectState& GetPostEffectState() override { return m_postEffectState; }
+    const CustomPostEffectState& GetPostEffectState() const override { return m_postEffectState; }
 
 };
 

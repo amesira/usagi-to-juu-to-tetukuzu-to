@@ -109,6 +109,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)External;$(ProjectDir);</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,11 +124,12 @@
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <ShowIncludes>false</ShowIncludes>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)External;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)External;$(ProjectDir);</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -137,53 +139,131 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\canvas_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\game_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\settings_view_window.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_tree.cpp" />
+    <ClCompile Include="Source\Engine\Asset\DataAsset\data_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\LevelAsset\level_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Core\scene_base.cpp" />
+    <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\LevelEditor\level_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\canvas_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\game_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\settings_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\DataEditor\data_editor_window.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\sprite_animation_processor.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\particle_system_processor.cpp" />
+    <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_query.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_shape.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\collision_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\overlap_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\raycast_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\Collision\sweep_test.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\mesh_effect_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\line_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\particle_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\sprite_render_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\sprite_animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\particle_system_processor.cpp" />
     <ClCompile Include="Source\Engine\Graphics\shader_repository.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Manager\asset_manager.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_action.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_aim.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_rapid_fire.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_slash_burst.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_action.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_effects.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Enemy\enemy_motions.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\effect_handle.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\attached_effect_handle.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\custom_post_effect_controller.cpp" />
-    <ClCompile Include="Source\Game\ControllerBehavior\game_effect_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\attack_coordinator_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Result\score_save_store.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\animation_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\animation_processor.cpp" />
     <ClCompile Include="Source\Engine\Device\audio.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\behavior_processor.cpp" />
-    <ClCompile Include="Source\Game\Behavior\camera_control_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\transform_constraint_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\camera_processor.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Processor\behavior_processor.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_control_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\transform_constraint_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Processor\camera_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\collision_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\constraint_pass.cpp" />
     <ClCompile Include="Source\Game\Factory\prefab_factory.cpp" />
     <ClCompile Include="Source\Game\Factory\projectile_factory.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\camera_effect.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
     <ClCompile Include="Utility\debug_ostream.cpp" />
     <ClCompile Include="Utility\debug_renderer.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\debug_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\debug_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\decal_render_pass.cpp" />
     <ClCompile Include="Source\Engine\Device\direct3d.cpp" />
     <ClCompile Include="Source\Game\Factory\environment_factory.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BulletBehavior\missile_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\health_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Base\health_behavior.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
     <ClCompile Include="External\ImGui\imgui_demo.cpp" />
     <ClCompile Include="External\ImGui\imgui_draw.cpp" />
@@ -191,52 +271,102 @@
     <ClCompile Include="External\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\inspector_view_window.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\integrate_pass.cpp" />
     <ClCompile Include="Source\Engine\Graphics\material_repository.cpp" />
-    <ClCompile Include="Source\Engine\Editor\mi_imgui_manager.cpp" />
+    <ClCompile Include="Source\Engine\Editor\editor_imgui_backend.cpp" />
     <ClCompile Include="Source\Engine\Graphics\model_repository.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.cpp" />
+    <ClCompile Include="Source\Engine\Graphics\model_animation_utility.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\opaque_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\mask_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\post_effect_pass.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\render_effect_factory.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\render_processor.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\render_processor.cpp" />
+    <ClCompile Include="Source\Engine\Processor\PhysicsPass\resolve_pass.cpp" />
     <ClCompile Include="Source\Engine\engine.cpp" />
     <ClCompile Include="Source\Game\Factory\factory.cpp" />
+    <ClCompile Include="Source\Game\Factory\level_object_factory.cpp" />
     <ClCompile Include="Source\Engine\game_world.cpp" />
     <ClCompile Include="Source\Engine\Device\mi_fps.cpp" />
     <ClCompile Include="Source\Game\game.cpp" />
+    <ClCompile Include="Source\Game\title.cpp" />
+    <ClCompile Include="Source\Game\result.cpp" />
+    <ClCompile Include="Source\Engine\Core\scene_transition.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\title_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\result_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Core\game_object.h" />
     <ClCompile Include="Source\Engine\Device\keyboard.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Component\collider_component.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.cpp" />
+    <ClCompile Include="Source\Engine\Component\collider_component.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\lighting_pass.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Engine\Device\mouse.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\physics_processor.cpp" />
-    <ClCompile Include="Source\Game\Behavior\PlayerBehavior\player_behavior.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.cpp" />
+    <ClCompile Include="Source\Engine\Processor\physics_processor.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\player_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\Player\player_animation_controller.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.cpp" />
     <ClCompile Include="Source\Engine\Manager\resource_manager.cpp" />
     <ClCompile Include="Source\Engine\Manager\scene_manager.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\scene_view_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\scene_view_window.cpp" />
     <ClCompile Include="Source\Engine\Manager\shader_manager.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\shadow_map_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\skybox_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\transparent_render_pass.cpp" />
     <ClCompile Include="External\stb_implementation.cpp" />
     <ClCompile Include="Source\Engine\Graphics\texture_repository.cpp" />
-    <ClCompile Include="Source\Engine\Editor\EditorWindow\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\BaseEditor\tool_bar_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.cpp" />
+    <ClCompile Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.cpp" />
+    <ClCompile Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.cpp" />
     <ClCompile Include="Source\Game\Factory\ui_factory.cpp" />
-    <ClCompile Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_perspective.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_layout_settings.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\score_save_store.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E00_Core\enemy_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\enemy_move_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E10_Locomotion\Move\enemy_path_follower.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E20_Condition\enemy_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\RePosition\enemy_re_position_navigation.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Wait\enemy_wait_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_navigation.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\enemy_combat_tree.h" />
     <ClInclude Include="External\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="External\nlohmann\byte_container_with_subtype.hpp" />
     <ClInclude Include="External\nlohmann\detail\abi_macros.hpp" />
@@ -283,78 +413,189 @@
     <ClInclude Include="External\nlohmann\ordered_map.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="External\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_asset.h" />
-    <ClInclude Include="Source\Engine\Asset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\DataAsset\data_asset_type_id.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_data.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_lighting_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\EnvironmentAsset\environment_post_process_data.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_data.h" />
+    <ClInclude Include="Source\Engine\Asset\LevelAsset\level_schema.h" />
+    <ClInclude Include="Source\Engine\Component\level_object_component.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\behavior_detail_view.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_window.h" />
+    <ClInclude Include="Source\Engine\Core\build_config.h" />
+    <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
+    <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
+    <ClInclude Include="Source\Engine\Asset\i_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_data.h" />
+    <ClInclude Include="Source\Engine\Asset\MeshEffectAsset\mesh_effect_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_asset_loader.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_data.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\enum_field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_header.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_master.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_struct.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_options.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_schema.h" />
+    <ClInclude Include="Source\Engine\Asset\Schema\field_serializer.h" />
+    <ClInclude Include="Source\Engine\Asset\ParticleAsset\particle_system_field_serializer.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\sequence_task.h" />
     <ClInclude Include="Source\Engine\Core\GamePlay\tween_task.h" />
     <ClInclude Include="Source\Engine\Core\game_object_layer.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\canvas_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\game_view_window.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\settings_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\canvas_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\game_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\settings_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\DataEditor\data_editor_window.h" />
     <ClInclude Include="Source\Engine\Editor\editor_manager.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\sprite_animation_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\line_renderer_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\particle_system_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\sprite_renderer_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_query.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\Collision\collision_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\post_process.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\model_render_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\line_render_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\particle_render_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\sprite_animation_processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\particle_system_processor.h" />
+    <ClInclude Include="Source\Engine\Editor\editor_window_manager.h" />
+    <ClInclude Include="Source\Engine\Editor\i_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_field_editor.h" />
+    <ClInclude Include="Source\Engine\Component\mesh_effect_component.h" />
+    <ClInclude Include="Source\Engine\Component\sprite_animation_component.h" />
+    <ClInclude Include="Source\Engine\Component\line_renderer_component.h" />
+    <ClInclude Include="Source\Engine\Component\particle_system_component.h" />
+    <ClInclude Include="Source\Engine\Component\sprite_renderer_component.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_query.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_shape.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_types.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\collision_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\overlap_test.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\raycast_test.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\Collision\sweep_test.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\mesh_effect_processor.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\line_render_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\particle_render_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\sprite_render_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\sprite_animation_processor.h" />
+    <ClInclude Include="Source\Engine\Processor\particle_system_processor.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_definitions.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\shader_resource.h" />
-    <ClInclude Include="Source\Engine\Settings\lighting_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\post_process_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_camera_settings.h" />
-    <ClInclude Include="Source\Engine\Settings\scene_settings.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_dodge_behavior.h" />
+    <ClInclude Include="Source\Engine\Manager\asset_manager.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\damage_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\hit_receiver_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\HitReceiver\knockback_receiver.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_locomotion_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_intent.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P20_Condition\player_condition_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_aim.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_charging.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_firing.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\TrainingDummy\training_dummy_motions.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_motions.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_agent_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_context.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\attached_effect_handle.h" />
+    <ClInclude Include="Source\Game\PresBehavior\effect_transform.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_muzzle_state.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_action.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_aim.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_firing.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_settings_asset.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_rapid_fire.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\DualPistols\player_dual_pistols_slash_burst.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\Attack\Shotgun\player_shotgun_action.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_effects.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_motor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\Move\player_move_rotate.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_input.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P30_Action\player_action_machine.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_base.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_controller.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P40_Weapon\player_weapon_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\player_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\training_dummy_prefab_settings_asset.h" />
+    <ClInclude Include="Source\Game\Factory\Prefab\enemy_definition_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_widget.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageDecoration\stage_decoration_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\StageBounds\stage_bounds_resolver.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\custom_post_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\enemy_ai_world_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\meta_ai.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\attack_coordinator_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\game_controller_locator.h" />
-    <ClInclude Include="Source\Game\ControllerBehavior\game_effect_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_feedback_controller.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Wave\wave_progress.h" />
     <ClInclude Include="Source\Game\Factory\actor_factory.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\animation_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\animation_processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\behavior_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\behavior_processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\camera_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\mask_render_pass.h" />
-    <ClInclude Include="Source\Game\Behavior\camera_control_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\transform_constraint_behavior.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\camera_processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\collider_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\collision_pass.h" />
+    <ClInclude Include="Source\Engine\Component\animation_component.h" />
+    <ClInclude Include="Source\Engine\Processor\animation_processor.h" />
+    <ClInclude Include="Source\Engine\Component\behavior_component.h" />
+    <ClInclude Include="Source\Engine\Processor\behavior_processor.h" />
+    <ClInclude Include="Source\Engine\Component\camera_component.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\mask_render_pass.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_context.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_control_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\transform_constraint_behavior.h" />
+    <ClInclude Include="Source\Engine\Processor\camera_processor.h" />
+    <ClInclude Include="Source\Engine\Component\collider_component.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\collision_pass.h" />
     <ClInclude Include="Source\Engine\Core\component_pool.h" />
     <ClInclude Include="Source\Engine\Core\component_pool_interface.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\constraint_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\constraint_pass.h" />
     <ClInclude Include="Source\Game\Factory\prefab_factory.h" />
     <ClInclude Include="Source\Game\Factory\projectile_factory.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_effect.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_context.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_presentation.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_view.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\ui_handle.h" />
     <ClInclude Include="Utility\debug_renderer.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\debug_view_window.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\decal_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\decal_render_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\draw_command.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\debug_view_window.h" />
+    <ClInclude Include="Source\Engine\Component\decal_component.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\decal_render_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_draw_command.h" />
     <ClInclude Include="Source\Engine\Editor\editor_context.h" />
     <ClInclude Include="Source\Engine\engine_service_locator.h" />
     <ClInclude Include="Source\Game\Factory\environment_factory.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\afterimage_generator_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\blinker_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bullet_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\bezier_line_preview_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BulletBehavior\missile_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\base_enemy_attack_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_context.h" />
-    <ClInclude Include="Source\Game\Behavior\EnemyBehavior\enemy_state_machine_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\health_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\hit_stop_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\BaseBehavior\shake_object_behavior.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\hierarchy_view_window.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\blinker_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\damage_number_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Bullet\bullet_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\health_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Base\ReactionEffects\hit_stop_sequence_task.h" />
     <ClInclude Include="External\ImGui\imconfig.h" />
     <ClInclude Include="External\ImGui\imgui.h" />
     <ClInclude Include="External\ImGui\imgui_impl_dx11.h" />
@@ -363,79 +604,104 @@
     <ClInclude Include="External\ImGui\imstb_rectpack.h" />
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\inspector_view_window.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\integrate_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\joint_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\joint_group_component.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\integrate_pass.h" />
+    <ClInclude Include="Source\Engine\Component\joint_component.h" />
+    <ClInclude Include="Source\Engine\Component\joint_group_component.h" />
     <ClInclude Include="Source\Engine\Graphics\material_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\material_resource.h" />
-    <ClInclude Include="Source\Engine\Editor\mi_imgui_manager.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\imgui_window_interface.h" />
+    <ClInclude Include="Source\Engine\Editor\editor_imgui_backend.h" />
     <ClInclude Include="Utility\mi_curve.h" />
+    <ClInclude Include="Utility\mi_curve_json.h" />
+    <ClInclude Include="Utility\mi_math_json.h" />
     <ClInclude Include="Utility\mi_signal.h" />
     <ClInclude Include="Utility\mi_string.h" />
     <ClInclude Include="Source\Engine\Graphics\model_repository.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\opaque_render_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\post_effect_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\PostEffect\custom_post_effect.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_attack_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_combat_machine_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_context.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\PlayerState\player_move_behavior.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_state_machine_behavior.h" />
+    <ClInclude Include="Source\Engine\Graphics\model_texture_path.h" />
+    <ClInclude Include="Source\Engine\Graphics\model_animation_utility.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\opaque_render_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\post_effect_pass.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P00_Core\player_context.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\P10_Locomotion\player_move_behavior.h" />
     <ClInclude Include="Source\Game\Factory\render_effect_factory.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\render_processor.h" />
+    <ClInclude Include="Source\Engine\Processor\render_processor.h" />
     <ClInclude Include="Source\Engine\render_view.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\PhysicsPass\resolve_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\transparent_render_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\PhysicsPass\resolve_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\transparent_render_pass.h" />
     <ClInclude Include="Source\Engine\engine.h" />
     <ClInclude Include="Source\Game\Factory\factory.h" />
+    <ClInclude Include="Source\Game\Factory\level_object_factory.h" />
     <ClInclude Include="Source\Engine\game_world.h" />
     <ClInclude Include="Source\Engine\Device\mi_fps.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\image_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\light_component.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\lighting_pass.h" />
+    <ClInclude Include="Source\Engine\Component\image_component.h" />
+    <ClInclude Include="Source\Engine\Component\light_component.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\lighting_pass.h" />
     <ClInclude Include="Utility\mi_math.h" />
     <ClInclude Include="Source\Engine\Graphics\model_resource.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\model_component.h" />
+    <ClInclude Include="Source\Engine\Component\model_component.h" />
     <ClInclude Include="Source\Engine\Core\pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\physics_processor.h" />
-    <ClInclude Include="Source\Game\Behavior\PlayerBehavior\player_behavior.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\rect_transform_component.h" />
+    <ClInclude Include="Source\Engine\Processor\physics_processor.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Player\player_animation_controller.h" />
+    <ClInclude Include="Source\Engine\Component\rect_transform_component.h" />
     <ClInclude Include="Source\Engine\Device\audio.h" />
     <ClInclude Include="Source\Engine\Core\component.h" />
     <ClInclude Include="Utility\debug_ostream.h" />
     <ClInclude Include="Source\Engine\Device\direct3d.h" />
     <ClInclude Include="Source\Game\game.h" />
+    <ClInclude Include="Source\Game\title.h" />
+    <ClInclude Include="Source\Game\result.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Wave\wave_ui_phase_motion.h" />
+    <ClInclude Include="Source\Engine\Core\scene_transition.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\Camera\overview_camera_blend.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\title_controller_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\result_controller_settings_asset.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\game_result.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_settings_asset.h" />
     <ClInclude Include="Source\Engine\Device\keyboard.h" />
     <ClInclude Include="Source\Engine\Device\mouse.h" />
     <ClInclude Include="Source\Engine\Core\processor.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_font.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_image.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\UiRender\collector_slider.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_font.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_image.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\collector_slider.h" />
     <ClInclude Include="Source\Engine\Manager\resource_manager.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\rigidbody_component.h" />
+    <ClInclude Include="Source\Engine\Component\rigidbody_component.h" />
     <ClInclude Include="Source\Engine\Core\scene_base.h" />
     <ClInclude Include="Source\Engine\Core\scene_interface.h" />
     <ClInclude Include="Source\Engine\Manager\scene_manager.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\scene_view_window.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\scene_view_window.h" />
     <ClInclude Include="Source\Engine\Manager\shader_manager.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\shadow_map_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\skybox_pass.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\slider_component.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\shadow_map_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\skybox_pass.h" />
+    <ClInclude Include="Source\Engine\Component\slider_component.h" />
     <ClInclude Include="External\stb_truetype.h" />
     <ClInclude Include="Source\Engine\Graphics\texture_repository.h" />
     <ClInclude Include="Source\Engine\Graphics\texture_resource.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\text_component.h" />
-    <ClInclude Include="Source\Engine\Editor\EditorWindow\tool_bar_window.h" />
-    <ClInclude Include="Source\Engine\Framework\Component\transform_component.h" />
+    <ClInclude Include="Source\Engine\Component\text_component.h" />
+    <ClInclude Include="Source\Engine\Editor\BaseEditor\tool_bar_window.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_parameter_panel.h" />
+    <ClInclude Include="Source\Engine\Editor\ParticleEditor\particle_system_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_document.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_parameter.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_preview.h" />
+    <ClInclude Include="Source\Engine\Editor\MeshEffectEditor\mesh_effect_editor_window.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\enum_field_editor.h" />
+    <ClInclude Include="Source\Engine\Editor\Schema\field_editor.h" />
+    <ClInclude Include="Source\Engine\Component\transform_component.h" />
     <ClInclude Include="Source\Engine\Core\component_type_id.h" />
-    <ClInclude Include="Source\Engine\Framework\Processor\RenderPass\ui_render_pass.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\ui_render_pass.h" />
+    <ClInclude Include="Utility\utility_master.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shader\Common\camera.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -448,8 +714,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -462,20 +728,13 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="Shader\CustomLitShader\decal_lit_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\Common\lighting.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\CustomPostEffect\mono_mask_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -488,8 +747,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomPostEffect\radial_blur_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -502,8 +761,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomUnlitShader\hologram_unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -516,8 +775,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\CustomUnlitShader\afterimage_unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -530,8 +789,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\full_screen_ps.hlsl">
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
@@ -544,8 +803,8 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\full_screen_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
@@ -558,8 +817,16 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Shader\mesh_effect_unlit_ps.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\brightness_extract_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -572,8 +839,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\bloom_combine_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -586,22 +853,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="Shader\PostEffect\downsample_4tap_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\gaussian_blur_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -614,50 +867,43 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="Shader\CustomLitShader\liquid_surface_lit_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\lit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\lit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Common\material.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\Common\shadowing.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\Common\skinning.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\PostEffect\tone_mapping_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
@@ -670,14 +916,28 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\ui_ps.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\debug_line_ps.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -690,8 +950,22 @@
     <FxCompile Include="Shader\ui_vs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Shader\debug_line_vs.hlsl">
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -704,8 +978,8 @@
     <FxCompile Include="Shader\sprite_lit_ps.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -718,8 +992,8 @@
     <FxCompile Include="Shader\sprite_lit_vs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -732,8 +1006,8 @@
     <FxCompile Include="Shader\sprite_unlit_ps.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -746,8 +1020,8 @@
     <FxCompile Include="Shader\sprite_unlit_vs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -760,8 +1034,8 @@
     <FxCompile Include="Shader\particle_ps.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -774,8 +1048,8 @@
     <FxCompile Include="Shader\particle_vs.hlsl">
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -796,24 +1070,28 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(Filename).cso</ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Filename).cso</ObjectFileOutput>
-    </FxCompile>
-    <FxCompile Include="Shader\CustomUiShader\ttf_ui_ps.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <FxCompile Include="Shader\skinned_lit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Shader\skinned_unlit_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\Common\transform.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -822,29 +1100,80 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shader\unlit_ps.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="Shader\unlit_vs.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ShaderCompiled\%(Filename).cso</ObjectFileOutput>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="External\ImGui\imgui.ini" />
     <None Include="Source\Game\Factory\ui_factory.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ItemGroup>
+    <ClCompile Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_settings_asset.h" />
+    <ClCompile Include="Source\Game\PresBehavior\one_shot_particle_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\one_shot_particle_behavior.h" />
+  </ItemGroup>  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Engine\Graphics\font_repository.cpp" />
+    <ClInclude Include="Source\Engine\Graphics\font_repository.h" />
+    <ClInclude Include="Source\Engine\Graphics\font_resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\ui_shake_task.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\image_fill_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_perspective.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_settings_asset.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_health_bar.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_ammo_count.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_widget_element.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_crosshair.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.h" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_remaining_life.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Component\ui_chromatic_echo.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\UiRender\ui_chromatic_echo_utility.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Engine\Device\audio_wave.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\audio_fade.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_settings_asset.h" />
+  </ItemGroup>
 </Project>

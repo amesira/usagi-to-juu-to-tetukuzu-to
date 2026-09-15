@@ -12,6 +12,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <filesystem>
 
 #include <DirectXMath.h>
 using namespace DirectX;
@@ -33,7 +34,7 @@ private:
     ID3D11DeviceContext* m_pContext = nullptr;
 
     // モデルリソースのキャッシュ
-    std::unordered_map<std::string, std::unique_ptr<ModelResource>> m_modelCache;
+    std::unordered_map<std::filesystem::path, std::unique_ptr<ModelResource>> m_modelCache;
 
     // スキニングバッファ
     ConstantBufferResource* m_skinningCB = nullptr;
@@ -45,16 +46,16 @@ public:
     void Finalize();
 
     // モデルの取得。キャッシュに無い場合は読み込む。
-    ModelResource* GetModel(const std::string& filePath);
+    ModelResource* GetModel(const std::filesystem::path& filePath);
     // アニメーションの読み込み
-    int LoadAnimation(ModelResource* model, const std::string& filePath);
+    int LoadAnimation(ModelResource* model, const std::filesystem::path& filePath);
 
     // スキニングCBのバインド
     void BindSkinningCB(const std::vector<XMMATRIX>& boneMatrix);
 
 private:
     // モデルの読み込み
-    ModelResource* LoadModel(const std::string& filePath);
+    ModelResource* LoadModel(const std::filesystem::path& filePath);
     // Assimpの行列をXMMATRIXに変換
     XMMATRIX AssimpMatToXMMatrix(const aiMatrix4x4& m);
 
@@ -64,10 +65,10 @@ private:
     void SetSkinnedModelVertexInfo(SkinnedModelVertex* vertices, const aiMesh* mesh, const std::unordered_map<std::string, unsigned int>& boneNameToIndex);
 
     // aiMaterialからMaterialResourceを作成
-    MaterialResource CreateMaterialResource(aiMaterial* mat);
+    MaterialResource CreateMaterialResource(aiMaterial* mat, const std::filesystem::path& modelPath);
 
     // モデルの解放
-    void ReleaseModel(const std::string& filePath);
+    void ReleaseModel(const std::filesystem::path& filePath);
 
 };
 

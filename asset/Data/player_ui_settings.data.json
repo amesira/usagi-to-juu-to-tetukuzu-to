@@ -1,0 +1,172 @@
+{
+    "data": {
+        "ammoCount": {
+            "capacityText": {
+                "position": [
+                    25.0,
+                    38.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.699999988079071,
+                    0.699999988079071
+                ]
+            },
+            "circleGauge": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    160.0,
+                    160.0
+                ]
+            },
+            "currentText": {
+                "position": [
+                    -15.0,
+                    38.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.2000000476837158,
+                    1.2000000476837158
+                ]
+            },
+            "dualPistolsIconPath": "asset/Texture/Ui/dual_pistols_icon.png",
+            "iconShakeDuration": 0.18000000715255737,
+            "iconShakeIntensity": 4.0,
+            "placement": {
+                "position": [
+                    -200.0,
+                    -195.0
+                ],
+                "screenAnchor": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "shotgunIconPath": "asset/Texture/Ui/shotgun_icon.png",
+            "slashBurstIconPath": "asset/Texture/Ui/slash_icon.png",
+            "weaponIcon": {
+                "position": [
+                    0.0,
+                    -15.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    80.0,
+                    80.0
+                ]
+            }
+        },
+        "chromaticEcho": {
+            "center": [
+                0.5,
+                0.5
+            ],
+            "color": [
+                0.0,
+                1.0,
+                0.39999985694885254
+            ],
+            "enabled": true,
+            "offsetDistance": 0.019999999552965164,
+            "opacity": 0.6000000238418579,
+            "orderInLayerOffset": -10,
+            "scale": 1.003000020980835
+        },
+        "color1": [
+            0.21702128648757935,
+            1.0,
+            0.9900045990943909
+        ],
+        "color2": [
+            1.0,
+            1.0,
+            1.0
+        ],
+        "healthBar": {
+            "label": {
+                "position": [
+                    -140.0,
+                    5.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.800000011920929,
+                    0.800000011920929
+                ]
+            },
+            "placement": {
+                "position": [
+                    219.0,
+                    -116.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    1.0
+                ]
+            },
+            "recoveryGauge": {
+                "position": [
+                    -75.0,
+                    50.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    120.0,
+                    120.0
+                ]
+            },
+            "slider": {
+                "position": [
+                    -12.0,
+                    18.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    256.79998779296875,
+                    10.0
+                ]
+            }
+        },
+        "perspective": {
+            "cameraDistance": 1600.0,
+            "enabled": true,
+            "maxTiltDegrees": 30.0,
+            "tiltDegrees": 22.0,
+            "vanishingPoint": [
+                0.5,
+                0.5
+            ]
+        },
+        "remainingLife": {
+            "gauge": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    180.0,
+                    180.0
+                ]
+            },
+            "placement": {
+                "position": [
+                    147.0,
+                    116.0
+                ],
+                "screenAnchor": [
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    },
+    "formatVersion": 0,
+    "name": "player_ui_settings.data",
+    "type": "PlayerUiSettingsAsset"
+}

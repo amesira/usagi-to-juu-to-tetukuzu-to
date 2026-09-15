@@ -1,0 +1,123 @@
+{
+    "data": {
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 0.0,
+            "rateOverTime": 820.0
+        },
+        "main": {
+            "duration": 0.20000000298023224,
+            "gravity": [
+                0.0,
+                -0.3499999940395355,
+                0.0
+            ],
+            "loop": false,
+            "playOnAwake": true,
+            "simulationSpace": "World",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "colorMax": [
+                    1.0,
+                    0.8478723168373108,
+                    0.3500000238418579,
+                    0.699999988079071
+                ],
+                "colorMin": [
+                    1.0,
+                    0.19999998807907104,
+                    0.19999998807907104,
+                    0.949999988079071
+                ],
+                "randomBetweenTwoColors": true
+            },
+            "startLifetime": {
+                "constant": 0.30000001192092896,
+                "constantMax": 0.75,
+                "constantMin": 0.25,
+                "randomBetweenTwoConstants": false
+            },
+            "startSize": {
+                "constant": 0.3400000035762787,
+                "constantMax": 0.6200000047683716,
+                "constantMin": 0.5600000023841858,
+                "randomBetweenTwoConstants": true
+            },
+            "startSpeed": {
+                "constant": 7.5,
+                "constantMax": 31.899999618530273,
+                "constantMin": 11.5,
+                "randomBetweenTwoConstants": true
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "Additive",
+            "sortByDistance": true,
+            "texturePath": "",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 1.0
+            },
+            "enabled": true,
+            "randomDirectionAmount": 1.0,
+            "sphere": {
+                "emitFromShell": false,
+                "radius": 0.44999998807907104
+            },
+            "type": "Sphere"
+        },
+        "sizeOverLifetime": {
+            "enabled": true,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 0.15000000596046448
+                    },
+                    {
+                        "time": 0.0,
+                        "value": 0.8500000238418579
+                    },
+                    {
+                        "time": 0.30000001192092896,
+                        "value": 1.25
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 0.0
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": false,
+            "frameCount": 1,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 1,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "explosion.particle",
+    "type": "ParticleSystem"
+}
