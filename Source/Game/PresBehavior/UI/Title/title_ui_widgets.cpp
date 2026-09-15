@@ -107,3 +107,51 @@ void TitleUiHighScore::ApplySettings(const TitleUiSettings::Data& s, int score) 
     group.elements[0].layout = s.highScore.text;
     Text(group.elements[0], s.highScore.value + "  " + std::to_string(score), s);
 }
+
+void TitleUiPracticeGuide::Initialize(IScene* scene) {
+    if (!group.elements.empty()) return;
+    Add(group, UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp"), "TitleUi.PracticeGuide.Panel", 120);
+    Add(group, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.PracticeGuide.Title", 121);
+    for (const char* name : {
+        "Move.Key", "Move.Description",
+        "Camera.Key", "Camera.Description",
+        "Attack.Key", "Attack.Description",
+        "Aim.Key", "Aim.Description",
+        "Return.Key", "Return.Description"}) {
+        Add(group, UiFactory::CreateUiTextHandle(scene, u8""),
+            (std::string("TitleUi.PracticeGuide.") + name).c_str(), 121);
+    }
+}
+
+void TitleUiPracticeGuide::ApplySettings(const TitleUiSettings::Data& s) {
+    if (group.elements.size() != 12) return;
+    const auto& guide = s.practiceGuide;
+    group.settings = guide.group;
+    group.elements[0].layout = guide.panel;
+    group.elements[1].layout = guide.title;
+
+    ApplyImage(group.elements[0].handle, guide.panelImagePath,
+        guide.panelColor, guide.panelOpacity);
+
+    auto applyText = [](TitleUi::Element& element, const std::string& value,
+        int fontSize, const DirectX::XMFLOAT3& color) {
+        if (auto* text = element.handle.GetText()) {
+            text->SetText(value);
+            text->SetFontSize(fontSize);
+        }
+        element.handle.SetColor(color);
+    };
+    applyText(group.elements[1], guide.titleText, guide.titleFontSize, guide.titleColor);
+
+    const TitleUiSettings::PracticeGuideRowSettings* rows[] = {
+        &guide.move, &guide.camera, &guide.attack, &guide.aim, &guide.returnToTitle
+    };
+    for (std::size_t i = 0; i < 5; ++i) {
+        auto& key = group.elements[2 + i * 2];
+        auto& description = group.elements[3 + i * 2];
+        key.layout = rows[i]->key;
+        description.layout = rows[i]->description;
+        applyText(key, rows[i]->keyText, guide.rowFontSize, guide.keyColor);
+        applyText(description, rows[i]->descriptionText, guide.rowFontSize, guide.descriptionColor);
+    }
+}

@@ -13,7 +13,7 @@ void TitleUiBehavior::Start() {
     if (m_created || !GetOwner() || !GetOwner()->GetScene()) return;
     auto* scene = GetOwner()->GetScene();
     m_menu.Initialize(scene); m_popup.Initialize(scene);
-    m_version.Initialize(scene); m_highScore.Initialize(scene);
+    m_version.Initialize(scene); m_highScore.Initialize(scene); m_practiceGuide.Initialize(scene);
     m_created = true; m_dirty = true;
     Update();
 }
@@ -33,6 +33,7 @@ void TitleUiBehavior::ApplySettings() {
     m_menu.ApplySettings(s, m_selected); m_popup.ApplySettings(s, m_yesSelected);
     m_version.ApplySettings(s, m_hasVersionOverride ? m_versionOverride : s.version.value);
     m_highScore.ApplySettings(s, m_score);
+    m_practiceGuide.ApplySettings(s);
     m_presentation.menuSelection.MoveTo(m_menu.GetSelectionTarget(m_selected), 0);
     m_presentation.popupSelection.MoveTo(m_popup.GetSelectionTarget(m_yesSelected), 0);
 }
@@ -40,12 +41,14 @@ void TitleUiBehavior::ApplyView() {
     m_menu.group.visible = m_visible && m_menuVisible;
     m_highScore.group.visible = m_visible && m_menuVisible;
     m_popup.group.visible = m_visible && m_popupVisible;
-    m_version.group.visible = m_visible;
+    m_version.group.visible = m_visible && m_menuVisible;
+    m_practiceGuide.group.visible = m_visible && m_practiceGuideVisible;
     const auto& s = Settings();
     m_view.ApplyGroup(m_menu.group, s, m_screenSize, 0, m_presentation.menuSelection.GetPosition());
     m_view.ApplyGroup(m_popup.group, s, m_screenSize, 1, m_presentation.popupSelection.GetPosition());
     m_view.ApplyGroup(m_version.group, s, m_screenSize);
     m_view.ApplyGroup(m_highScore.group, s, m_screenSize);
+    m_view.ApplyGroup(m_practiceGuide.group, s, m_screenSize);
     m_view.ApplyDimmer(m_popup, m_screenSize);
 }
 void TitleUiBehavior::SetSelectedMenu(TitleUi::MenuItem item, bool animate) {
@@ -58,6 +61,7 @@ void TitleUiBehavior::SetSelectedMenu(TitleUi::MenuItem item, bool animate) {
     ApplyView();
 }
 void TitleUiBehavior::SetMenuVisible(bool visible) { m_menuVisible = visible; if (m_created) ApplyView(); }
+void TitleUiBehavior::SetPracticeGuideVisible(bool visible) { m_practiceGuideVisible = visible; if (m_created) ApplyView(); }
 void TitleUiBehavior::SetVisible(bool visible) { m_visible = visible; if (m_created) ApplyView(); }
 void TitleUiBehavior::SetExitPopupVisible(bool visible) {
     m_popupVisible = visible;
@@ -75,7 +79,7 @@ void TitleUiBehavior::SetHighScore(int score) { m_score = (std::max)(score, 0); 
 void TitleUiBehavior::SetVersionText(const std::string& version) { m_versionOverride = version; m_hasVersionOverride = true; m_dirty = true; }
 void TitleUiBehavior::DestroyWidgets() {
     if (!m_created) return;
-    m_menu.group.Destroy(); m_popup.Destroy(); m_version.group.Destroy(); m_highScore.group.Destroy();
+    m_menu.group.Destroy(); m_popup.Destroy(); m_version.group.Destroy(); m_highScore.group.Destroy(); m_practiceGuide.group.Destroy();
     m_presentation = {}; m_created = false; m_dirty = true;
 }
 void TitleUiBehavior::DrawComponentInspector() {
@@ -85,7 +89,9 @@ void TitleUiBehavior::DrawComponentInspector() {
         int selected = static_cast<int>(m_selected);
         if (ImGui::Combo("Menu preview", &selected, "Practice\0Start Game\0Exit\0")) SetSelectedMenu(static_cast<TitleUi::MenuItem>(selected));
         bool menu = m_menuVisible, popup = m_popupVisible, yes = m_yesSelected;
+        bool practiceGuide = m_practiceGuideVisible;
         if (ImGui::Checkbox("Show menu", &menu)) SetMenuVisible(menu);
+        if (ImGui::Checkbox("Show practice guide", &practiceGuide)) SetPracticeGuideVisible(practiceGuide);
         if (ImGui::Checkbox("Show exit popup", &popup)) SetExitPopupVisible(popup);
         if (ImGui::Checkbox("Select yes", &yes)) SetExitConfirmationSelection(yes);
         if (ImGui::Button("Reapply layout")) m_dirty = true;

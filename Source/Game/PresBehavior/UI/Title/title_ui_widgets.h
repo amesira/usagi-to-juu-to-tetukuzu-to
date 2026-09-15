@@ -46,3 +46,9 @@ public:
     void Initialize(IScene* scene);
     void ApplySettings(const TitleUiSettings::Data& settings, int score);
 };
+class TitleUiPracticeGuide {
+public:
+    TitleUi::Group group;
+    void Initialize(IScene* scene);
+    void ApplySettings(const TitleUiSettings::Data& settings);
+};

@@ -71,6 +71,7 @@ void TitleControllerBehavior::Update()
     if (m_state == State::EnteringPractice) {
         if (m_camera && m_camera->GetMode() == OverviewCameraBehavior::Mode::FollowingTps) {
             m_state = State::Practice;
+            if (m_titleUi) m_titleUi->SetPracticeGuideVisible(true);
             if (m_playerUi) m_playerUi->SetVisible(true);
         }
         return;
@@ -126,7 +127,9 @@ void TitleControllerBehavior::EnterPractice()
     if (auto* audio = Game::Audio()) audio->PlaySe(GameSe::MenuConfirm);
     m_state = State::EnteringPractice;
     if (m_titleUi) {
-        m_titleUi->SetVisible(false);
+        m_titleUi->SetVisible(true);
+        m_titleUi->SetMenuVisible(false);
+        m_titleUi->SetPracticeGuideVisible(false);
         m_titleUi->SetExitPopupVisible(false);
     }
     if (m_playerUi) m_playerUi->SetVisible(false);
@@ -140,6 +143,8 @@ void TitleControllerBehavior::ReturnToTitle()
     if (m_camera) m_camera->ReturnToOverview();
     if (m_titleUi) {
         m_titleUi->SetVisible(true);
+        m_titleUi->SetMenuVisible(true);
+        m_titleUi->SetPracticeGuideVisible(false);
         m_titleUi->SetExitPopupVisible(false);
     }
     if (m_playerUi) m_playerUi->SetVisible(false);
