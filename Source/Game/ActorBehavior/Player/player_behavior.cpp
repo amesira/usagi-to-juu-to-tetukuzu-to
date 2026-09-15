@@ -141,6 +141,17 @@ void PlayerBehavior::Update()
     SyncHealthUi();
     SyncAmmoUi();
 
+    if (m_isDead) {
+        m_input = {};
+        m_context.animationController->BeginFrame();
+        if (!m_deathAnimationStarted) {
+            m_context.animationController->PlayAnimation(PlayerAnimationController::Animation::Death);
+            m_deathAnimationStarted = true;
+        }
+        m_context.animationController->Update();
+        return;
+    }
+
     if (!m_registeredEntityToMetaAI) {
         auto* enemyAIWorld = Game::EnemyAIWorld();
         if (enemyAIWorld) {
@@ -271,6 +282,9 @@ void PlayerBehavior::OnHitReceived(
 {
     // === プレイヤー死亡演出 ===
     if (hitResult.killed) {
+        if (m_isDead) return;
+        m_isDead = true;
+        m_input = {};
         if (auto* feedback = Game::GameFeedback()) {
             feedback->PlayCameraShake(3.0f, 1.0f);
             auto redFlash = feedback->ChangeFlash(

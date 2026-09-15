@@ -65,6 +65,7 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_running.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_jump_1.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_jump_2.anim.fbx");
+        Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_dead.anim.fbx");
 
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle.anim.fbx");
         Engine::ModelRepository()->LoadAnimation(modelResource, "asset/Model/player_shotgun_idle_lower.anim.fbx");
@@ -113,6 +114,17 @@ void PlayerAnimationController::Initialize(const PlayerContext& context)
         PlayOptions falling;
         falling.priority = static_cast<int>(Priority::Airborne);
         RegisterClip(Animation::Falling, FindClipIndex(modelComponent, "player_jump_2.anim.fbx"), SubMachine::Default, falling);
+
+        PlayOptions death;
+        death.priority = static_cast<int>(Priority::Death);
+        death.loop = false;
+        death.waitForCompletion = true;
+        death.interruptible = false;
+        death.forceInterrupt = true;
+        death.restart = false;
+        death.transitionTime = 0.1f;
+        death.speed = 1.5f;
+        RegisterClip(Animation::Death, FindClipIndex(modelComponent, "player_dead.anim.fbx"), SubMachine::Any, death);
 
         PlayOptions shotgunIdle;
         shotgunIdle.priority = static_cast<int>(Priority::Weapon);

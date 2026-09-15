@@ -22,6 +22,8 @@ public:
         Jump,
         Falling,
 
+        Death,
+
         ShotgunAiming,
         DualPistolsRapidFire,
         DualPistolsSlashBurst1,
@@ -44,6 +46,7 @@ public:
         Locomotion = 10,
         Weapon = 20,
         Airborne = 30,
+        Death = 100,
     };
 
     /// @brief アニメーションの再生範囲を制限するサブマシーン

@@ -37,6 +37,8 @@ private:
     PlayerInput m_input;
 
     bool m_isInputEnabled = true;
+    bool m_isDead = false;
+    bool m_deathAnimationStarted = false;
     bool m_registeredEntityToMetaAI = false;
 
     float m_lastDisplayedHealth = -1.0f;
