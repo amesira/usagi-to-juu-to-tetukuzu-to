@@ -109,28 +109,43 @@ void TitleUiHighScore::ApplySettings(const TitleUiSettings::Data& s, int score) 
 }
 
 void TitleUiPracticeGuide::Initialize(IScene* scene) {
-    if (!group.elements.empty()) return;
-    Add(group, UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp"), "TitleUi.PracticeGuide.Panel", 120);
-    Add(group, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.PracticeGuide.Title", 121);
+    if (!basicGroup.elements.empty() || !combatGroup.elements.empty()) return;
+    Add(basicGroup, UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp"), "TitleUi.PracticeGuide.Basic.Panel", 120);
+    Add(basicGroup, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.PracticeGuide.Basic.Title", 121);
     for (const char* name : {
         "Move.Key", "Move.Description",
         "Camera.Key", "Camera.Description",
-        "Attack.Key", "Attack.Description",
-        "Aim.Key", "Aim.Description",
         "Return.Key", "Return.Description"}) {
-        Add(group, UiFactory::CreateUiTextHandle(scene, u8""),
-            (std::string("TitleUi.PracticeGuide.") + name).c_str(), 121);
+        Add(basicGroup, UiFactory::CreateUiTextHandle(scene, u8""),
+            (std::string("TitleUi.PracticeGuide.Basic.") + name).c_str(), 121);
+    }
+
+    Add(combatGroup, UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp"), "TitleUi.PracticeGuide.Combat.Panel", 120);
+    Add(combatGroup, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.PracticeGuide.Combat.Title", 121);
+    for (const char* name : {
+        "Slash.Key", "Slash.Description",
+        "DualPistols.Key", "DualPistols.Description",
+        "Aim.Key", "Aim.Description",
+        "Shotgun.Key", "Shotgun.Description",
+        "ShotgunCharge.Key", "ShotgunCharge.Description"}) {
+        Add(combatGroup, UiFactory::CreateUiTextHandle(scene, u8""),
+            (std::string("TitleUi.PracticeGuide.Combat.") + name).c_str(), 121);
     }
 }
 
 void TitleUiPracticeGuide::ApplySettings(const TitleUiSettings::Data& s) {
-    if (group.elements.size() != 12) return;
+    if (basicGroup.elements.size() != 8 || combatGroup.elements.size() != 12) return;
     const auto& guide = s.practiceGuide;
-    group.settings = guide.group;
-    group.elements[0].layout = guide.panel;
-    group.elements[1].layout = guide.title;
+    basicGroup.settings = guide.basicGroup;
+    combatGroup.settings = guide.combatGroup;
+    basicGroup.elements[0].layout = guide.basicPanel;
+    basicGroup.elements[1].layout = guide.basicTitle;
+    combatGroup.elements[0].layout = guide.combatPanel;
+    combatGroup.elements[1].layout = guide.combatTitle;
 
-    ApplyImage(group.elements[0].handle, guide.panelImagePath,
+    ApplyImage(basicGroup.elements[0].handle, guide.panelImagePath,
+        guide.panelColor, guide.panelOpacity);
+    ApplyImage(combatGroup.elements[0].handle, guide.panelImagePath,
         guide.panelColor, guide.panelOpacity);
 
     auto applyText = [](TitleUi::Element& element, const std::string& value,
@@ -141,17 +156,31 @@ void TitleUiPracticeGuide::ApplySettings(const TitleUiSettings::Data& s) {
         }
         element.handle.SetColor(color);
     };
-    applyText(group.elements[1], guide.titleText, guide.titleFontSize, guide.titleColor);
+    applyText(basicGroup.elements[1], guide.basicTitleText, guide.titleFontSize, guide.titleColor);
+    applyText(combatGroup.elements[1], guide.combatTitleText, guide.titleFontSize, guide.titleColor);
 
-    const TitleUiSettings::PracticeGuideRowSettings* rows[] = {
-        &guide.move, &guide.camera, &guide.attack, &guide.aim, &guide.returnToTitle
+    const TitleUiSettings::PracticeGuideRowSettings* basicRows[] = {
+        &guide.move, &guide.camera, &guide.returnToTitle
     };
-    for (std::size_t i = 0; i < 5; ++i) {
-        auto& key = group.elements[2 + i * 2];
-        auto& description = group.elements[3 + i * 2];
-        key.layout = rows[i]->key;
-        description.layout = rows[i]->description;
-        applyText(key, rows[i]->keyText, guide.rowFontSize, guide.keyColor);
-        applyText(description, rows[i]->descriptionText, guide.rowFontSize, guide.descriptionColor);
-    }
+    const TitleUiSettings::PracticeGuideRowSettings* combatRows[] = {
+        &guide.slash, &guide.dualPistols, &guide.aim, &guide.shotgun, &guide.shotgunCharge
+    };
+    auto applyRows = [&](TitleUi::Group& group,
+        const TitleUiSettings::PracticeGuideRowSettings* const* rows, std::size_t rowCount) {
+        for (std::size_t i = 0; i < rowCount; ++i) {
+            auto& key = group.elements[2 + i * 2];
+            auto& description = group.elements[3 + i * 2];
+            key.layout = rows[i]->key;
+            description.layout = rows[i]->description;
+            applyText(key, rows[i]->keyText, guide.rowFontSize, guide.keyColor);
+            applyText(description, rows[i]->descriptionText, guide.rowFontSize, guide.descriptionColor);
+        }
+    };
+    applyRows(basicGroup, basicRows, std::size(basicRows));
+    applyRows(combatGroup, combatRows, std::size(combatRows));
+}
+
+void TitleUiPracticeGuide::Destroy() {
+    basicGroup.Destroy();
+    combatGroup.Destroy();
 }

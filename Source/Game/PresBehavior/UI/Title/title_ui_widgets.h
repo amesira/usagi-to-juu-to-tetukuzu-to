@@ -48,7 +48,9 @@ public:
 };
 class TitleUiPracticeGuide {
 public:
-    TitleUi::Group group;
+    TitleUi::Group basicGroup;
+    TitleUi::Group combatGroup;
     void Initialize(IScene* scene);
     void ApplySettings(const TitleUiSettings::Data& settings);
+    void Destroy();
 };

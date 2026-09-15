@@ -205,8 +205,8 @@
             "aim": {
                 "description": {
                     "position": [
-                        60.0,
-                        85.0
+                        110.0,
+                        0.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -217,8 +217,8 @@
                 "descriptionText": "エイム",
                 "key": {
                     "position": [
-                        -120.0,
-                        85.0
+                        -100.0,
+                        0.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -226,66 +226,9 @@
                         0.699999988079071
                     ]
                 },
-                "keyText": "RIGHT CLICK"
+                "keyText": "右クリック長押し"
             },
-            "attack": {
-                "description": {
-                    "position": [
-                        60.0,
-                        25.0
-                    ],
-                    "rotationDegrees": 0.0,
-                    "size": [
-                        0.699999988079071,
-                        0.699999988079071
-                    ]
-                },
-                "descriptionText": "攻撃",
-                "key": {
-                    "position": [
-                        -120.0,
-                        25.0
-                    ],
-                    "rotationDegrees": 0.0,
-                    "size": [
-                        0.699999988079071,
-                        0.699999988079071
-                    ]
-                },
-                "keyText": "LEFT CLICK"
-            },
-            "camera": {
-                "description": {
-                    "position": [
-                        60.0,
-                        -35.0
-                    ],
-                    "rotationDegrees": 0.0,
-                    "size": [
-                        0.699999988079071,
-                        0.699999988079071
-                    ]
-                },
-                "descriptionText": "カメラ操作",
-                "key": {
-                    "position": [
-                        -120.0,
-                        -35.0
-                    ],
-                    "rotationDegrees": 0.0,
-                    "size": [
-                        0.699999988079071,
-                        0.699999988079071
-                    ]
-                },
-                "keyText": "MOUSE"
-            },
-            "descriptionColor": [
-                1.0,
-                1.0,
-                1.0
-            ],
-            "group": {
+            "basicGroup": {
                 "applyChromaticEcho": true,
                 "applyPerspective": true,
                 "placement": {
@@ -299,6 +242,123 @@
                     ]
                 }
             },
+            "basicPanel": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    430.0,
+                    350.0
+                ]
+            },
+            "basicTitle": {
+                "position": [
+                    0.0,
+                    -125.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "basicTitleText": "基本操作",
+            "camera": {
+                "description": {
+                    "position": [
+                        65.0,
+                        10.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "カメラ操作",
+                "key": {
+                    "position": [
+                        -100.0,
+                        10.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "MOUSE"
+            },
+            "combatGroup": {
+                "applyChromaticEcho": true,
+                "applyPerspective": true,
+                "placement": {
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "screenAnchor": [
+                        0.8399999737739563,
+                        0.5
+                    ]
+                }
+            },
+            "combatPanel": {
+                "position": [
+                    0.0,
+                    -15.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    430.0,
+                    450.0
+                ]
+            },
+            "combatTitle": {
+                "position": [
+                    0.0,
+                    -190.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    1.0,
+                    1.0
+                ]
+            },
+            "combatTitleText": "攻撃操作",
+            "descriptionColor": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "dualPistols": {
+                "description": {
+                    "position": [
+                        110.0,
+                        -60.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "二丁拳銃",
+                "key": {
+                    "position": [
+                        -100.0,
+                        -60.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "左クリック長押し"
+            },
             "keyColor": [
                 1.0,
                 0.9300000071525574,
@@ -307,8 +367,8 @@
             "move": {
                 "description": {
                     "position": [
-                        60.0,
-                        -95.0
+                        65.0,
+                        -60.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -319,8 +379,8 @@
                 "descriptionText": "移動",
                 "key": {
                     "position": [
-                        -120.0,
-                        -95.0
+                        -100.0,
+                        -60.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -329,17 +389,6 @@
                     ]
                 },
                 "keyText": "WASD"
-            },
-            "panel": {
-                "position": [
-                    0.0,
-                    0.0
-                ],
-                "rotationDegrees": 0.0,
-                "size": [
-                    500.0,
-                    440.0
-                ]
             },
             "panelColor": [
                 0.06337708979845047,
@@ -351,8 +400,8 @@
             "returnToTitle": {
                 "description": {
                     "position": [
-                        60.0,
-                        145.0
+                        65.0,
+                        80.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -363,8 +412,8 @@
                 "descriptionText": "タイトルへ戻る",
                 "key": {
                     "position": [
-                        -120.0,
-                        145.0
+                        -100.0,
+                        80.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -374,25 +423,91 @@
                 },
                 "keyText": "BACK SPACE"
             },
-            "rowFontSize": 26,
-            "title": {
-                "position": [
-                    0.0,
-                    -170.0
-                ],
-                "rotationDegrees": 0.0,
-                "size": [
-                    1.0,
-                    1.0
-                ]
+            "rowFontSize": 25,
+            "shotgun": {
+                "description": {
+                    "position": [
+                        110.0,
+                        60.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "ショットガン",
+                "key": {
+                    "position": [
+                        -100.0,
+                        60.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "エイム + 左クリック短押し"
+            },
+            "shotgunCharge": {
+                "description": {
+                    "position": [
+                        110.0,
+                        120.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "ショットガンチャージ",
+                "key": {
+                    "position": [
+                        -100.0,
+                        120.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "エイム + 左クリック長押し"
+            },
+            "slash": {
+                "description": {
+                    "position": [
+                        110.0,
+                        -120.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "斬撃",
+                "key": {
+                    "position": [
+                        -100.0,
+                        -120.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "左クリック短押し"
             },
             "titleColor": [
                 1.0,
                 1.0,
                 1.0
             ],
-            "titleFontSize": 36,
-            "titleText": "操作方法"
+            "titleFontSize": 36
         },
         "selectedTextColor": [
             1.0,

@@ -42,13 +42,15 @@ void TitleUiBehavior::ApplyView() {
     m_highScore.group.visible = m_visible && m_menuVisible;
     m_popup.group.visible = m_visible && m_popupVisible;
     m_version.group.visible = m_visible && m_menuVisible;
-    m_practiceGuide.group.visible = m_visible && m_practiceGuideVisible;
+    m_practiceGuide.basicGroup.visible = m_visible && m_practiceGuideVisible;
+    m_practiceGuide.combatGroup.visible = m_visible && m_practiceGuideVisible;
     const auto& s = Settings();
     m_view.ApplyGroup(m_menu.group, s, m_screenSize, 0, m_presentation.menuSelection.GetPosition());
     m_view.ApplyGroup(m_popup.group, s, m_screenSize, 1, m_presentation.popupSelection.GetPosition());
     m_view.ApplyGroup(m_version.group, s, m_screenSize);
     m_view.ApplyGroup(m_highScore.group, s, m_screenSize);
-    m_view.ApplyGroup(m_practiceGuide.group, s, m_screenSize);
+    m_view.ApplyGroup(m_practiceGuide.basicGroup, s, m_screenSize);
+    m_view.ApplyGroup(m_practiceGuide.combatGroup, s, m_screenSize);
     m_view.ApplyDimmer(m_popup, m_screenSize);
 }
 void TitleUiBehavior::SetSelectedMenu(TitleUi::MenuItem item, bool animate) {
@@ -79,7 +81,7 @@ void TitleUiBehavior::SetHighScore(int score) { m_score = (std::max)(score, 0); 
 void TitleUiBehavior::SetVersionText(const std::string& version) { m_versionOverride = version; m_hasVersionOverride = true; m_dirty = true; }
 void TitleUiBehavior::DestroyWidgets() {
     if (!m_created) return;
-    m_menu.group.Destroy(); m_popup.Destroy(); m_version.group.Destroy(); m_highScore.group.Destroy(); m_practiceGuide.group.Destroy();
+    m_menu.group.Destroy(); m_popup.Destroy(); m_version.group.Destroy(); m_highScore.group.Destroy(); m_practiceGuide.Destroy();
     m_presentation = {}; m_created = false; m_dirty = true;
 }
 void TitleUiBehavior::DrawComponentInspector() {
