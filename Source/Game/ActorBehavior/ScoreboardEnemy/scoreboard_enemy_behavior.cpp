@@ -3,11 +3,14 @@
 #include "Game/ControllerBehavior/game_controller_locator.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
 #include "Game/ControllerBehavior/EnemyAI/enemy_ai_agent_settings_asset.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move_intent.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move_settings_asset.h"
 #include "Engine/Core/game_object.h"
 #include "Engine/Core/scene_interface.h"
 #include "Engine/Component/transform_component.h"
 #include "Engine/Component/model_component.h"
 #include "Engine/Component/animation_component.h"
+#include "Engine/Component/rigidbody_component.h"
 #include "Engine/Component/image_component.h"
 #include "Engine/Component/text_component.h"
 #include "Engine/Device/mi_fps.h"
@@ -38,10 +41,17 @@ void ScoreboardEnemyBehavior::Start() {
     if (!m_settings || !GetOwner() || !GetOwner()->GetScene()) return;
     m_transform = GetOwner()->GetComponent<TransformComponent>();
     if (!m_transform) return;
-    m_pathFollower.Initialize(m_settings->GetData().waypointReachDistance);
-    m_animationContext.scene = GetOwner()->GetScene();
-    m_animationContext.transform = m_transform;
-    m_animation.Initialize(m_animationContext);
+    m_context.scene = GetOwner()->GetScene();
+    m_context.transform = m_transform;
+    m_context.rigidbody = GetOwner()->GetComponent<RigidbodyComponent>();
+    m_context.aiWorld = Game::EnemyAIWorld();
+    m_context.aiAgentSettingsAsset = DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(
+        m_settings->GetData().agentSettingsPath, true);
+    m_moveSettings = DATA_LOADER->GetAsset<EnemyMoveSettingsAsset>(
+        m_settings->GetData().moveSettingsPath, true);
+    if (!m_context.rigidbody || !m_context.aiAgentSettingsAsset || !m_moveSettings) return;
+    m_move.Initialize(m_context, m_moveSettings);
+    m_animation.Initialize(m_context);
     if (auto* model = GetOwner()->GetComponent<ModelComponent>()) {
         const auto color = RankColor();
         for (auto& slot : model->GetMaterialSlots()) {
@@ -57,12 +67,16 @@ void ScoreboardEnemyBehavior::Start() {
 void ScoreboardEnemyBehavior::CreateBoard() {
     auto* scene = GetOwner()->GetScene();
     const auto& s = m_settings->GetData();
+
     auto* panel = scene->CreateGameObject(); panel->SetName("ScoreboardEnemy.Panel");
-    auto* pt = panel->AddComponent<TransformComponent>(); pt->SetScaling(s.panelScale);
+    auto* pt = panel->AddComponent<TransformComponent>(); 
+    pt->SetScaling(s.panelScale);
     auto* image = panel->AddComponent<ImageComponent>();
     image->SetTextureResource(TEXTURE_REPOSITORY->GetTextureResource(L"asset/Texture/white.bmp"));
-    image->SetColor(s.panelColor); image->SetWorldSpaceType(ImageComponent::WorldSpaceType::Billboard);
+    image->SetColor(s.panelColor);
+    image->SetWorldSpaceType(ImageComponent::WorldSpaceType::Billboard);
     m_uiIds[0] = panel->GetID();
+
     auto makeText = [&](int index, const std::string& value, float y, int size, DirectX::XMFLOAT4 color) {
         auto* object = scene->CreateGameObject(); object->SetName("ScoreboardEnemy.Text");
         object->AddComponent<TransformComponent>()->SetScaling({1,1,1});
@@ -70,8 +84,8 @@ void ScoreboardEnemyBehavior::CreateBoard() {
         text->SetFontSize(size); text->SetFontPath("asset/Font/Makinas-4-Square.otf"); text->SetColor(color);
         m_uiIds[index] = object->GetID();
     };
-    makeText(1, m_label, 0.25f, 32, s.textColor);
-    makeText(2, std::to_string(m_record.totalScore) + "  RANK " + RankLetter(m_record.rank), -0.3f, 28, RankColor());
+    makeText(1, m_label, 1.0f, 12, s.textColor);
+    makeText(2, std::to_string(m_record.totalScore) + "  RANK " + RankLetter(m_record.rank), 0, 16, RankColor());
     UpdateBoard();
 }
 
@@ -98,35 +112,47 @@ void ScoreboardEnemyBehavior::Update() {
     const auto target = ai->GetMetaAI().GetPlayerPosition();
     const float dx = target.x-current.x, dz = target.z-current.z;
     const float distance = std::hypot(dx, dz);
-    DirectX::XMFLOAT3 velocity{};
+    EnemyMoveIntent moveIntent;
+    moveIntent.useGravity = true;
     if (distance > m_settings->GetData().stopDistance) {
         m_repathTimer -= dt;
-        if (m_repathTimer <= 0 || !m_pathFollower.HasPath() || m_pathFollower.HasReachedGoal()) {
-            auto* asset = DATA_LOADER->GetAsset<EnemyAiAgentSettingsAsset>(m_settings->GetData().agentSettingsPath, true);
-            if (asset) {
-                auto result = ai->FindPath(current, target, asset->GetData().navigationAgent,
+        auto& pathFollower = m_move.GetPathFollower();
+        if (m_repathTimer <= 0 || !pathFollower.HasPath() || pathFollower.HasReachedGoal()) {
+            if (m_context.aiAgentSettingsAsset) {
+                auto result = ai->FindPath(current, target,
+                    m_context.aiAgentSettingsAsset->GetData().navigationAgent,
                     static_cast<int>(GetOwner()->GetID()));
-                if (result.status == EnemyAiWorld::PathQueryStatus::Success) m_pathFollower.SetPath(std::move(result.path));
+                if (result.status == EnemyAiWorld::PathQueryStatus::Success)
+                    pathFollower.SetPath(std::move(result.path));
             }
             m_repathTimer = (std::max)(0.05f, m_settings->GetData().repathInterval);
         }
 
-        // Transformを更新する純粋な移動
-        m_pathFollower.Update(current);
-        const auto direction = m_pathFollower.GetMoveDirection();
-        velocity = MiMath::Multiply(direction, (std::max)(0.0f, m_settings->GetData().moveSpeed));
-        m_transform->SetPosition(MiMath::Add(current, MiMath::Multiply(velocity, dt)));
-        if (std::hypot(direction.x, direction.z) > 0.001f)
-            m_transform->SetRotation(MiMath::LookRotation(direction, {0,1,0}));
+        pathFollower.Update(current);
+        const auto direction = pathFollower.GetMoveDirection();
+        moveIntent.moveDirection = direction;
+        moveIntent.rotateDirection = direction;
+        moveIntent.movementMode = EnemyMovementMode::ControlVelocity;
+        moveIntent.moveSpeedMultiplier = (std::max)(0.0f, m_settings->GetData().moveSpeed)
+            / (std::max)(0.001f, m_moveSettings->GetData().moveSpeed);
     }
-    m_animationContext.runtimeState.controlVelocity = velocity;
-    m_animation.Update(m_animationContext);
+    else {
+        m_move.GetPathFollower().ClearPath();
+        moveIntent.movementMode = EnemyMovementMode::StopHorizontal;
+        moveIntent.canMove = false;
+        moveIntent.canRotate = false;
+    }
+    m_context.aiWorld = ai;
+    m_move.UpdateMove(m_context, moveIntent, dt);
+    m_animation.Update(m_context);
     UpdateBoard();
 }
 
 void ScoreboardEnemyBehavior::OnDestroy() {
     if (m_registered) if (auto* ai = Game::EnemyAIWorld()) ai->GetMetaAI().UnregisterEnemy(GetOwner()->GetID());
-    m_registered = false; m_animation.Finalize();
+    m_registered = false;
+    m_move.Finalize();
+    m_animation.Finalize();
     if (GetOwner() && GetOwner()->GetScene()) for (auto id : m_uiIds) {
         if (id == InvalidObjectId) continue;
         if (auto* object = GetOwner()->GetScene()->GetGameObjectByID(id)) object->Destroy();

@@ -3,12 +3,13 @@
 #include <limits>
 #include <string>
 #include "Engine/Component/behavior_component.h"
-#include "Game/ActorBehavior/Enemy/E10_Locomotion/Move/enemy_path_follower.h"
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
+#include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_move.h"
 #include "Game/ActorBehavior/Enemy/enemy_animation_controller.h"
 #include "Game/ControllerBehavior/Result/score_save_store.h"
 
 class ScoreboardEnemySettingsAsset;
+class EnemyMoveSettingsAsset;
 class TransformComponent;
 
 class ScoreboardEnemyBehavior : public BehaviorComponent {
@@ -17,8 +18,9 @@ class ScoreboardEnemyBehavior : public BehaviorComponent {
     ScoreRecord m_record;
     std::string m_label;
     TransformComponent* m_transform = nullptr;
-    EnemyPathFollower m_pathFollower;
-    EnemyContext m_animationContext;
+    const EnemyMoveSettingsAsset* m_moveSettings = nullptr;
+    EnemyContext m_context;
+    EnemyMove m_move;
     EnemyAnimationController m_animation;
     std::array<unsigned int, 3> m_uiIds{InvalidObjectId, InvalidObjectId, InvalidObjectId};
     float m_repathTimer = 0;

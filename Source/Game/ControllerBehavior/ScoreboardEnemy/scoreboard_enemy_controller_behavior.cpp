@@ -36,7 +36,9 @@ void ScoreboardEnemyControllerBehavior::CreateEnemies() {
         auto* collider = object->AddComponent<CapsuleColliderComponent>();
         collider->SetRadius(settings.modelScale); collider->SetHeight(settings.modelScale);
         collider->SetCenter({0, 0.8f * settings.modelScale, 0});
-        auto* body = object->AddComponent<RigidbodyComponent>(); body->SetGravityScale(0); body->SetIsKinematic(true);
+        auto* body = object->AddComponent<RigidbodyComponent>();
+        body->SetGravityScale(0);
+        body->SetIsKinematic(false);
         auto* model = object->AddComponent<ModelComponent>();
         if (auto* resource = MODEL_REPOSITORY->GetModel(settings.modelPath)) model->SetModelResource(resource);
         object->AddComponent<AnimationComponent>();

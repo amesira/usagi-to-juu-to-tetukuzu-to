@@ -10,12 +10,12 @@ namespace ScoreboardEnemySettings {
 struct Data {
     std::string modelPath = "asset/Model/enemy_a_model.fbx";
     std::string agentSettingsPath = "asset/Data/enemy_ai_agent_settings.data.json";
+    std::string moveSettingsPath = "asset/Data/enemy_move_settings.data.json";
     DirectX::XMFLOAT3 highScoreSpawn = {-6, 2, 5};
     DirectX::XMFLOAT3 previousScoreSpawn = {6, 2, 5};
     float moveSpeed = 3.0f;
     float stopDistance = 3.0f;
     float repathInterval = 0.5f;
-    float waypointReachDistance = 0.35f;
     float modelScale = 1.0f;
     DirectX::XMFLOAT3 boardOffset = {0, 2.5f, 0};
     DirectX::XMFLOAT3 panelScale = {4.0f, 1.4f, 1};
@@ -33,12 +33,12 @@ inline const auto& GetSchema() {
     static const auto schema = FieldSchema{
         MakeField("modelPath", "Model Path", &D::modelPath),
         MakeField("agentSettingsPath", "Agent Settings Path", &D::agentSettingsPath),
+        MakeField("moveSettingsPath", "Move Settings Path", &D::moveSettingsPath),
         MakeField("highScoreSpawn", "High Score Spawn", &D::highScoreSpawn, DragFieldOptions{.dragSpeed=.1f, .minValue=-1000, .maxValue=1000}),
         MakeField("previousScoreSpawn", "Previous Score Spawn", &D::previousScoreSpawn, DragFieldOptions{.dragSpeed=.1f, .minValue=-1000, .maxValue=1000}),
         MakeField("moveSpeed", "Move Speed", &D::moveSpeed, DragFieldOptions{.dragSpeed=.05f, .minValue=0, .maxValue=100}),
         MakeField("stopDistance", "Stop Distance", &D::stopDistance, DragFieldOptions{.dragSpeed=.05f, .minValue=0, .maxValue=100}),
         MakeField("repathInterval", "Repath Interval", &D::repathInterval, DragFieldOptions{.dragSpeed=.01f, .minValue=.01f, .maxValue=10}),
-        MakeField("waypointReachDistance", "Waypoint Reach Distance", &D::waypointReachDistance, DragFieldOptions{.dragSpeed=.01f, .minValue=.01f, .maxValue=10}),
         MakeField("modelScale", "Model Scale", &D::modelScale, DragFieldOptions{.dragSpeed=.01f, .minValue=.01f, .maxValue=100}),
         MakeField("boardOffset", "Board Offset", &D::boardOffset, DragFieldOptions{.dragSpeed=.05f, .minValue=-100, .maxValue=100}),
         MakeField("panelScale", "Panel Scale", &D::panelScale, DragFieldOptions{.dragSpeed=.05f, .minValue=.01f, .maxValue=100}),

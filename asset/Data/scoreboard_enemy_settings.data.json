@@ -1,24 +1,75 @@
 {
     "data": {
-        "agentSettingsPath": "asset/Data/enemy_ai_agent_settings.data.json",
-        "boardOffset": [0.0, 2.5, 0.0],
-        "emissiveIntensity": 2.0,
-        "highScoreSpawn": [-6.0, 2.0, 5.0],
+        "agentSettingsPath": "asset/Data/enemy_s_ai_agent_settings.data.json",
+        "boardOffset": [
+            0.0,
+            3.0,
+            0.0
+        ],
+        "emissiveIntensity": 0.6000000238418579,
+        "highScoreSpawn": [
+            7.0,
+            7.0,
+            5.0
+        ],
         "modelPath": "asset/Model/enemy_a_model.fbx",
-        "modelScale": 1.0,
-        "moveSpeed": 3.0,
-        "panelColor": [0.03, 0.03, 0.05, 0.85],
-        "panelScale": [4.0, 1.4, 1.0],
-        "previousScoreSpawn": [6.0, 2.0, 5.0],
-        "rankAColor": [1.0, 0.75, 0.12, 1.0],
-        "rankBColor": [0.75, 0.8, 0.85, 1.0],
-        "rankCColor": [0.75, 0.35, 0.12, 1.0],
-        "rankDColor": [0.45, 0.45, 0.45, 1.0],
-        "rankSColor": [0.35, 0.95, 1.0, 1.0],
+        "modelScale": 0.699999988079071,
+        "moveSettingsPath": "asset/Data/enemy_move_settings.data.json",
+        "moveSpeed": 7.0,
+        "panelColor": [
+            0.0313725508749485,
+            0.0313725508749485,
+            0.05098039284348488,
+            0.0
+        ],
+        "panelScale": [
+            4.0,
+            1.399999976158142,
+            1.0
+        ],
+        "previousScoreSpawn": [
+            7.0,
+            7.0,
+            3.0
+        ],
+        "rankAColor": [
+            1.0,
+            0.75,
+            0.11999999731779099,
+            1.0
+        ],
+        "rankBColor": [
+            0.75,
+            0.800000011920929,
+            0.8500000238418579,
+            1.0
+        ],
+        "rankCColor": [
+            0.75,
+            0.3499999940395355,
+            0.11999999731779099,
+            1.0
+        ],
+        "rankDColor": [
+            0.42978721857070923,
+            0.42978721857070923,
+            0.42978721857070923,
+            1.0
+        ],
+        "rankSColor": [
+            0.3499999940395355,
+            0.949999988079071,
+            1.0,
+            1.0
+        ],
         "repathInterval": 0.5,
-        "stopDistance": 3.0,
-        "textColor": [1.0, 1.0, 1.0, 1.0],
-        "waypointReachDistance": 0.35
+        "stopDistance": 5.0,
+        "textColor": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+        ]
     },
     "formatVersion": 0,
     "name": "scoreboard_enemy_settings.data",
