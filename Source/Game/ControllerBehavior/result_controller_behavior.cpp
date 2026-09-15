@@ -11,6 +11,7 @@
 #include "Engine/engine_service_locator.h"
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/game_controller_locator.h"
+#include "Game/ControllerBehavior/Result/score_save_store.h"
 
 const ResultControllerSettings::Data& ResultControllerBehavior::Settings() const
 {
@@ -33,17 +34,28 @@ void ResultControllerBehavior::Start()
     }
     m_resultTextTransform = resultTextObject ? resultTextObject->GetComponent<TransformComponent>() : nullptr;
 
-    m_settingsAssetRivision = m_settings ? m_settings->GetRevision() : -1;
+    m_settingsAssetRevision = m_settings ? m_settings->GetRevision() : 0;
     if (auto* object = GetOwner()->GetScene()->GetGameObjectByName("ResultUi")) {
         m_resultUi = object->GetComponent<ResultUiBehavior>();
-        if (m_resultUi) m_resultUi->SetResult(GameResultStore::lastRun, ResultScoring::Calculate(GameResultStore::lastRun, Settings().scoring));
+        if (m_resultUi) {
+            const ResultScoring::Score score = ResultScoring::Calculate(
+                GameResultStore::lastRun, Settings().scoring);
+            ScoreSaveStore::RegisterResult({
+                .totalScore = score.total,
+                .rank = score.rank,
+                .completed = GameResultStore::lastRun.completed,
+                .clearTime = GameResultStore::lastRun.elapsedTime,
+            });
+            ScoreSaveStore::Save();
+            m_resultUi->SetResult(GameResultStore::lastRun, score);
+        }
     }
 }
 
 void ResultControllerBehavior::Update()
 {
-    if (m_settings && m_settings->GetRevision() != m_settingsAssetRivision) {
-        m_settingsAssetRivision = m_settings->GetRevision();
+    if (m_settings && m_settings->GetRevision() != m_settingsAssetRevision) {
+        m_settingsAssetRevision = m_settings->GetRevision();
 
         if (m_resultTextTransform) {
             m_resultTextTransform->SetPosition(Settings().resultTextObject.position);

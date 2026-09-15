@@ -11,6 +11,7 @@
 #include "Game/Factory/prefab_factory.h"
 #include "Engine/Component/transform_component.h"
 #include "External/ImGui/imgui.h"
+#include "Game/ControllerBehavior/Result/score_save_store.h"
 
 const TitleControllerSettings::Data& TitleControllerBehavior::Settings() const
 {
@@ -31,6 +32,10 @@ void TitleControllerBehavior::Start()
     }
     m_settingsAssetRevision = m_settings ? static_cast<int>(m_settings->GetRevision()) : -1;
     if (auto* object = scene->GetGameObjectByName("TitleUi")) m_titleUi = object->GetComponent<TitleUiBehavior>();
+    if (m_titleUi) {
+        const ScoreSaveData& saveData = ScoreSaveStore::Get();
+        m_titleUi->SetHighScore(saveData.hasHighScore ? saveData.highScore.totalScore : 0);
+    }
     if (auto* object = scene->GetGameObjectByName("Player")) m_playerUi = object->GetComponent<PlayerUiBehavior>();
     if (auto* object = scene->GetGameObjectByName("TitleViewCamera")) m_camera = object->GetComponent<OverviewCameraBehavior>();
     if (m_playerUi) m_playerUi->SetVisible(false);

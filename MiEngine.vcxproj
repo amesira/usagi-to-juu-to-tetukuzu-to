@@ -232,6 +232,7 @@
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Result\score_save_store.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.cpp" />
     <ClCompile Include="Source\Game\Factory\actor_factory.cpp" />
     <ClCompile Include="Source\Engine\Processor\animation_processor.cpp" />
@@ -336,6 +337,7 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\score_save_store.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_animation_controller.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\enemy_behavior.h" />

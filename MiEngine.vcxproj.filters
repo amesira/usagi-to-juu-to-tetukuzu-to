@@ -354,6 +354,7 @@
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\navigation_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\EnemyAI\tactical_query_system.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\game_feedback_controller.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\Result\score_save_store.cpp" />
     <ClCompile Include="Source\Game\ControllerBehavior\Wave\wave_controller_behavior.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_manager.cpp" />
     <ClCompile Include="Source\Engine\Editor\editor_window_manager.cpp" />
@@ -467,6 +468,7 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_presentation.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Result\result_ui_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\Result\score_save_store.h" />
     <ClInclude Include="Source\Engine\Component\image_component.h">
       <Filter>Sources\Engine\Component</Filter>
     </ClInclude>
