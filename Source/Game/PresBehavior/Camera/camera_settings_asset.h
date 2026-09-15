@@ -29,8 +29,8 @@ namespace CameraSettings {
         float fov = 80.0f;
 
         // 入力
-        float mouseSensitivityX = 0.6f;
-        float mouseSensitivityY = 0.6f;
+        float mouseSensitivityX = 0.01f;
+        float mouseSensitivityY = 0.01f;
         bool invertPitchInput = false;
 
         // 補間
@@ -109,17 +109,17 @@ namespace CameraSettings {
                 "Mouse Sensitivity X",
                 &CameraSettingsData::mouseSensitivityX,
                 DragFieldOptions{
-                    .dragSpeed = 0.01f,
+                    .dragSpeed = 0.001f,
                     .minValue = 0.0f,
-                    .maxValue = 10.0f }),
+                    .maxValue = 1.0f }),
             MakeField(
                 "mouseSensitivityY",
                 "Mouse Sensitivity Y",
                 &CameraSettingsData::mouseSensitivityY,
                 DragFieldOptions{
-                    .dragSpeed = 0.01f,
+                    .dragSpeed = 0.0001f,
                     .minValue = 0.0f,
-                    .maxValue = 10.0f }),
+                    .maxValue = 0.1f }),
             MakeField(
                 "invertPitchInput",
                 "Invert Pitch Input",

@@ -25,7 +25,6 @@ static Mouse_State        gState = {};
 static HWND               gWindow = NULL;
 static Mouse_PositionMode gMode = MOUSE_POSITION_MODE_ABSOLUTE;
 static HANDLE             gScrollWheelValue = NULL;
-static HANDLE             gRelativeRead = NULL;
 static HANDLE             gAbsoluteMode = NULL;
 static HANDLE             gRelativeMode = NULL;
 static int                gLastX = 0;
@@ -57,7 +56,6 @@ void Mouse_Initialize(HWND window)
     gMode = MOUSE_POSITION_MODE_ABSOLUTE;
 
     if (!gScrollWheelValue) { gScrollWheelValue = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE); }
-    if (!gRelativeRead) { gRelativeRead = CreateEventEx(nullptr, nullptr, CREATE_EVENT_MANUAL_RESET, EVENT_MODIFY_STATE | SYNCHRONIZE); }
     if (!gAbsoluteMode) { gAbsoluteMode = CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE); }
     if (!gRelativeMode) { gRelativeMode = CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE); }
 
@@ -72,7 +70,6 @@ void Mouse_Initialize(HWND window)
 void Mouse_Finalize(void)
 {
     SAFE_CLOSEHANDLE(gScrollWheelValue);
-    SAFE_CLOSEHANDLE(gRelativeRead);
     SAFE_CLOSEHANDLE(gAbsoluteMode);
     SAFE_CLOSEHANDLE(gRelativeMode);
 }
@@ -91,17 +88,9 @@ void Mouse_GetState(Mouse_State* pState)
     }
 
     if (pState->positionMode == MOUSE_POSITION_MODE_RELATIVE) {
-
-        Result = WaitForSingleObjectEx(gRelativeRead, 0, FALSE);
-        if (Result == WAIT_FAILED) { return; }
-
-        if (Result == WAIT_OBJECT_0) {
-            pState->x = 0;
-            pState->y = 0;
-        }
-        else {
-            SetEvent(gRelativeRead);
-        }
+        // 相対移動量は取得時に消費し、次の入力が来るまで0を返す。
+        gState.x = 0;
+        gState.y = 0;
     }
 }
 
@@ -198,8 +187,6 @@ void Mouse_ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
     case (WAIT_OBJECT_0 + 2):
     {
-        ResetEvent(gRelativeRead);
-
         gMode = MOUSE_POSITION_MODE_RELATIVE;
         gState.x = gState.y = 0;
         gRelativeX = INT32_MAX;
@@ -249,10 +236,9 @@ void Mouse_ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
 
                 if (!(raw.data.mouse.usFlags & MOUSE_MOVE_ABSOLUTE)) {
 
-                    gState.x = raw.data.mouse.lLastX;
-                    gState.y = raw.data.mouse.lLastY;
-
-                    ResetEvent(gRelativeRead);
+                    // 1フレーム内に届いたすべてのRaw Inputを累積する。
+                    gState.x += raw.data.mouse.lLastX;
+                    gState.y += raw.data.mouse.lLastY;
                 }
                 else if (raw.data.mouse.usFlags & MOUSE_VIRTUAL_DESKTOP) {
 
@@ -267,14 +253,13 @@ void Mouse_ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam)
                         gState.x = gState.y = 0;
                     }
                     else {
-                        gState.x = x - gRelativeX;
-                        gState.y = y - gRelativeY;
+                        gState.x += x - gRelativeX;
+                        gState.y += y - gRelativeY;
                     }
 
                     gRelativeX = x;
                     gRelativeY = y;
 
-                    ResetEvent(gRelativeRead);
                 }
             }
         }

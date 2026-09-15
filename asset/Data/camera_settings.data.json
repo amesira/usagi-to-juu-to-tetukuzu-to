@@ -25,8 +25,8 @@
         "minPitch": -0.5235987901687622,
         "minPitchDistanceMultiplier": 0.699999988079071,
         "minPitchTreshold": 0.0,
-        "mouseSensitivityX": 0.6000000238418579,
-        "mouseSensitivityY": 0.6000000238418579,
+        "mouseSensitivityX": 0.006000000052154064,
+        "mouseSensitivityY": 0.006000000052154064,
         "rotationSmoothTime": 0.05000000074505806,
         "shakeFrequency": 35.0,
         "this_is_header_field": null
