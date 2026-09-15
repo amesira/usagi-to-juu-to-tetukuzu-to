@@ -1176,4 +1176,11 @@
     <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_controller_behavior.h" />
     <ClInclude Include="Source\Game\ControllerBehavior\Audio\game_audio_settings_asset.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Game\ActorBehavior\ScoreboardEnemy\scoreboard_enemy_behavior.h" />
+    <ClCompile Include="Source\Game\ActorBehavior\ScoreboardEnemy\scoreboard_enemy_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_controller_behavior.h" />
+    <ClCompile Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_controller_behavior.cpp" />
+    <ClInclude Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_settings_asset.h" />
+  </ItemGroup>
 </Project>

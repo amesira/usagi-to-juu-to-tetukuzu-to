@@ -80,6 +80,7 @@ namespace TitleUiSettings {
         PopupSettings popup;
         PracticeGuideSettings practiceGuide;
         TextSettings version = {{{{1, 1}, {-130, -35}}, false, false}, {{0, 0}, {0.6f, 0.6f}, 0}, "Ver. 0.1.0"};
+        TextSettings selectGuide = { {{{0.5f, 0.9f}, {0, 0}}, true, true}, {{0, 0}, {0.8f, 0.8f}, 0}, "矢印キーで選択 / Enterで決定" };
         TextSettings highScore = {{{{0.75f, 0.32f}, {0, 0}}, true, true}, {{0, 0}, {0.8f, 0.8f}, 0}, "HIGH SCORE"};
         PerspectiveSettings perspective;
         ChromaticEchoSettings chromaticEcho;
@@ -177,6 +178,7 @@ namespace TitleUiSettings {
             MakeStructField("popup", "popup", &Data::popup, GetPopupSettingsSchema(), DefaultFieldOptions{}),
             MakeStructField("practiceGuide", "Practice Guide", &Data::practiceGuide, GetPracticeGuideSchema(), DefaultFieldOptions{}),
             MakeStructField("version", "version", &Data::version, GetTextSettingsSchema(), DefaultFieldOptions{}),
+            MakeStructField("selectGuide", "selectGuide", &Data::selectGuide, GetTextSettingsSchema(), DefaultFieldOptions{}),
             MakeStructField("highScore", "highScore", &Data::highScore, GetTextSettingsSchema(), DefaultFieldOptions{}),
             MakeStructField("perspective", "perspective", &Data::perspective, GetPerspectiveSchema(), DefaultFieldOptions{}),
             MakeStructField("chromaticEcho", "chromaticEcho", &Data::chromaticEcho, GetEchoSchema(), DefaultFieldOptions{}),

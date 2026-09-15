@@ -14,6 +14,9 @@
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ControllerBehavior/ScoreboardEnemy/scoreboard_enemy_controller_behavior.h"
+#include "Game/ControllerBehavior/ScoreboardEnemy/scoreboard_enemy_settings_asset.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 

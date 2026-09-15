@@ -14,6 +14,9 @@
 #include "Game/ControllerBehavior/game_feedback_controller.h"
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/custom_post_effect_controller.h"
+#include "Game/ControllerBehavior/EnemyAI/enemy_ai_world_controller.h"
+#include "Game/ControllerBehavior/ScoreboardEnemy/scoreboard_enemy_controller_behavior.h"
+#include "Game/ControllerBehavior/ScoreboardEnemy/scoreboard_enemy_settings_asset.h"
 
 #include "Game/ControllerBehavior/game_controller_locator.h"
 
@@ -47,6 +50,9 @@ void TitleScene::Initialize()
         DATA_LOADER->GetAsset<GameAudioSettingsAsset>("asset/Data/game_audio_settings.data.json", true), GameBgm::Title);
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
+    controller->AddComponent<EnemyAIWorldController>()->Setup(false);
+    controller->AddComponent<ScoreboardEnemyControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<ScoreboardEnemySettingsAsset>("asset/Data/scoreboard_enemy_settings.data.json", true));
     controller->AddComponent<StageBoundsControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(

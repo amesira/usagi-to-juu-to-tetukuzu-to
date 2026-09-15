@@ -8,12 +8,23 @@ const TitleUiSettings::Data& TitleUiBehavior::Settings() const {
     static const TitleUiSettings::Data defaults;
     return m_settings ? m_settings->GetData() : defaults;
 }
-void TitleUiBehavior::Setup(const TitleUiSettingsAsset* settings) { m_settings = settings; m_dirty = true; }
+
+void TitleUiBehavior::Setup(const TitleUiSettingsAsset* settings) { 
+    m_settings = settings;
+    m_dirty = true;
+}
+
 void TitleUiBehavior::Start() {
     if (m_created || !GetOwner() || !GetOwner()->GetScene()) return;
     auto* scene = GetOwner()->GetScene();
-    m_menu.Initialize(scene); m_popup.Initialize(scene);
-    m_version.Initialize(scene); m_highScore.Initialize(scene); m_practiceGuide.Initialize(scene);
+    m_menu.Initialize(scene); 
+    m_popup.Initialize(scene);
+
+    m_version.Initialize(scene); 
+    // m_highScore.Initialize(scene);
+    m_practiceGuide.Initialize(scene);
+    m_selectGuide.Initialize(scene);
+
     m_created = true; m_dirty = true;
     Update();
 }
@@ -28,27 +39,35 @@ void TitleUiBehavior::Update() {
     m_presentation.Update(FPS_GetUnscaledDeltaTime());
     ApplyView();
 }
+
 void TitleUiBehavior::ApplySettings() {
     const auto& s = Settings();
-    m_menu.ApplySettings(s, m_selected); m_popup.ApplySettings(s, m_yesSelected);
+    m_menu.ApplySettings(s, m_selected); 
+    m_popup.ApplySettings(s, m_yesSelected);
+
     m_version.ApplySettings(s, m_hasVersionOverride ? m_versionOverride : s.version.value);
-    m_highScore.ApplySettings(s, m_score);
+   // m_highScore.ApplySettings(s, m_score);
     m_practiceGuide.ApplySettings(s);
+    m_selectGuide.ApplySettings(s);
+
     m_presentation.menuSelection.MoveTo(m_menu.GetSelectionTarget(m_selected), 0);
     m_presentation.popupSelection.MoveTo(m_popup.GetSelectionTarget(m_yesSelected), 0);
 }
 void TitleUiBehavior::ApplyView() {
     m_menu.group.visible = m_visible && m_menuVisible;
-    m_highScore.group.visible = m_visible && m_menuVisible;
+   // m_highScore.group.visible = m_visible && m_menuVisible;
     m_popup.group.visible = m_visible && m_popupVisible;
     m_version.group.visible = m_visible && m_menuVisible;
+    m_selectGuide.group.visible = m_visible && m_menuVisible;
     m_practiceGuide.basicGroup.visible = m_visible && m_practiceGuideVisible;
     m_practiceGuide.combatGroup.visible = m_visible && m_practiceGuideVisible;
     const auto& s = Settings();
     m_view.ApplyGroup(m_menu.group, s, m_screenSize, 0, m_presentation.menuSelection.GetPosition());
     m_view.ApplyGroup(m_popup.group, s, m_screenSize, 1, m_presentation.popupSelection.GetPosition());
     m_view.ApplyGroup(m_version.group, s, m_screenSize);
-    m_view.ApplyGroup(m_highScore.group, s, m_screenSize);
+  //  m_view.ApplyGroup(m_highScore.group, s, m_screenSize);
+    m_view.ApplyGroup(m_selectGuide.group, s, m_screenSize);
+
     m_view.ApplyGroup(m_practiceGuide.basicGroup, s, m_screenSize);
     m_view.ApplyGroup(m_practiceGuide.combatGroup, s, m_screenSize);
     m_view.ApplyDimmer(m_popup, m_screenSize);
@@ -77,12 +96,31 @@ void TitleUiBehavior::SetExitConfirmationSelection(bool yesSelected, bool animat
     m_presentation.popupSelection.MoveTo(m_popup.GetSelectionTarget(yesSelected), animate ? Settings().selectionMoveDuration : 0);
     ApplyView();
 }
-void TitleUiBehavior::SetHighScore(int score) { m_score = (std::max)(score, 0); m_dirty = true; }
-void TitleUiBehavior::SetVersionText(const std::string& version) { m_versionOverride = version; m_hasVersionOverride = true; m_dirty = true; }
+
+void TitleUiBehavior::SetHighScore(int score) { 
+    m_score = (std::max)(score, 0); 
+    m_dirty = true;
+}
+
+void TitleUiBehavior::SetVersionText(const std::string& version) { 
+    m_versionOverride = version;
+    m_hasVersionOverride = true; 
+    m_dirty = true;
+}
+
 void TitleUiBehavior::DestroyWidgets() {
     if (!m_created) return;
-    m_menu.group.Destroy(); m_popup.Destroy(); m_version.group.Destroy(); m_highScore.group.Destroy(); m_practiceGuide.Destroy();
-    m_presentation = {}; m_created = false; m_dirty = true;
+
+    m_menu.group.Destroy();
+    m_popup.Destroy();
+    m_version.group.Destroy(); 
+   // m_highScore.group.Destroy();
+    m_practiceGuide.Destroy();
+    m_selectGuide.group.Destroy();
+
+    m_presentation = {}; 
+    m_created = false; 
+    m_dirty = true;
 }
 void TitleUiBehavior::DrawComponentInspector() {
     ImGui::PushID(this);

@@ -57,7 +57,7 @@ void EnemyAIWorldController::Start()
     m_metaAI.Initialize(m_context);
     m_navigation.Initialize(m_context);
     m_tacticalQuery.Initialize(m_context);
-    m_attackCoordinator.Initialize(m_context);
+    if (m_attackCoordinatorEnabled) m_attackCoordinator.Initialize(m_context);
 
     m_isInitialized = true;
 }
@@ -69,7 +69,7 @@ void EnemyAIWorldController::Update()
     const float deltaTime = FPS_GetDeltaTime();
 
     m_metaAI.Update(m_context, deltaTime);
-    m_attackCoordinator.Update(m_context, deltaTime);
+    if (m_attackCoordinatorEnabled) m_attackCoordinator.Update(m_context, deltaTime);
     m_tacticalQuery.Update(m_context, deltaTime);
 
     m_navigation.DrawDebugGrid();
@@ -79,6 +79,7 @@ void EnemyAIWorldController::DrawComponentInspector()
 {
     if (BehaviorDetailView::BeginSection(this, "Enemy AI Controller")) {
         ImGui::Text("Initialized: %s", m_isInitialized ? "Yes" : "No");
+        ImGui::Text("Attack Coordinator: %s", m_attackCoordinatorEnabled ? "Enabled" : "Disabled");
         ImGui::TextUnformatted("MetaAI / NavigationSystem / TacticalQuerySystem");
         ImGui::Text("Attack: %zu waiting / %zu permitted / %zu active",
             m_attackCoordinator.GetWaitingRequests().size(),
