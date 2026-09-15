@@ -114,6 +114,7 @@ void TitleUiPracticeGuide::Initialize(IScene* scene) {
     Add(basicGroup, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.PracticeGuide.Basic.Title", 121);
     for (const char* name : {
         "Move.Key", "Move.Description",
+        "Jump.Key", "Jump.Description",
         "Camera.Key", "Camera.Description",
         "Return.Key", "Return.Description"}) {
         Add(basicGroup, UiFactory::CreateUiTextHandle(scene, u8""),
@@ -134,7 +135,7 @@ void TitleUiPracticeGuide::Initialize(IScene* scene) {
 }
 
 void TitleUiPracticeGuide::ApplySettings(const TitleUiSettings::Data& s) {
-    if (basicGroup.elements.size() != 8 || combatGroup.elements.size() != 12) return;
+    if (basicGroup.elements.size() != 10 || combatGroup.elements.size() != 12) return;
     const auto& guide = s.practiceGuide;
     basicGroup.settings = guide.basicGroup;
     combatGroup.settings = guide.combatGroup;
@@ -160,7 +161,7 @@ void TitleUiPracticeGuide::ApplySettings(const TitleUiSettings::Data& s) {
     applyText(combatGroup.elements[1], guide.combatTitleText, guide.titleFontSize, guide.titleColor);
 
     const TitleUiSettings::PracticeGuideRowSettings* basicRows[] = {
-        &guide.move, &guide.camera, &guide.returnToTitle
+        &guide.move, &guide.jump, &guide.camera, &guide.returnToTitle
     };
     const TitleUiSettings::PracticeGuideRowSettings* combatRows[] = {
         &guide.slash, &guide.dualPistols, &guide.aim, &guide.shotgun, &guide.shotgunCharge

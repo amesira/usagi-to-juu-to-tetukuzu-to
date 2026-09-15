@@ -56,6 +56,7 @@ namespace TitleUiSettings {
         WidgetTransform combatPanel = {{0, 0}, {700, 480}, 0};
         WidgetTransform combatTitle = {{0, -190}, {1, 1}, 0};
         PracticeGuideRowSettings move = {{{-100, -60}, {0.7f, 0.7f}, 0}, {{65, -60}, {0.7f, 0.7f}, 0}, "WASD", "移動"};
+        PracticeGuideRowSettings jump = { {{-100, 0}, {0.7f, 0.7f}, 0}, {{65, 0}, {0.7f, 0.7f}, 0}, "SPACE", "ジャンプ" };
         PracticeGuideRowSettings camera = {{{-100, 10}, {0.7f, 0.7f}, 0}, {{65, 10}, {0.7f, 0.7f}, 0}, "MOUSE", "カメラ操作"};
         PracticeGuideRowSettings returnToTitle = {{{-100, 80}, {0.7f, 0.7f}, 0}, {{65, 80}, {0.7f, 0.7f}, 0}, "BACK SPACE", "タイトルへ戻る"};
         PracticeGuideRowSettings slash = {{{-150, -120}, {0.65f, 0.65f}, 0}, {{190, -120}, {0.65f, 0.65f}, 0}, "左クリック短押し", "斬撃"};
@@ -150,6 +151,7 @@ namespace TitleUiSettings {
             MakeStructField("combatPanel", "Combat Panel", &PracticeGuideSettings::combatPanel, GetWidgetTransformSchema(), DefaultFieldOptions{}),
             MakeStructField("combatTitle", "Combat Title", &PracticeGuideSettings::combatTitle, GetWidgetTransformSchema(), DefaultFieldOptions{}),
             MakeStructField("move", "Move", &PracticeGuideSettings::move, GetPracticeGuideRowSchema(), DefaultFieldOptions{}),
+            MakeStructField("jump", "Jump", &PracticeGuideSettings::jump, GetPracticeGuideRowSchema(), DefaultFieldOptions{}),
             MakeStructField("camera", "Camera", &PracticeGuideSettings::camera, GetPracticeGuideRowSchema(), DefaultFieldOptions{}),
             MakeStructField("returnToTitle", "Return To Title", &PracticeGuideSettings::returnToTitle, GetPracticeGuideRowSchema(), DefaultFieldOptions{}),
             MakeStructField("slash", "Slash", &PracticeGuideSettings::slash, GetPracticeGuideRowSchema(), DefaultFieldOptions{}),

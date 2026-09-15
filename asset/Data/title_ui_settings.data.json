@@ -269,7 +269,7 @@
                 "description": {
                     "position": [
                         65.0,
-                        10.0
+                        40.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -281,7 +281,7 @@
                 "key": {
                     "position": [
                         -100.0,
-                        10.0
+                        40.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -359,6 +359,32 @@
                 },
                 "keyText": "左クリック長押し"
             },
+            "jump": {
+                "description": {
+                    "position": [
+                        65.0,
+                        -10.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "descriptionText": "ジャンプ",
+                "key": {
+                    "position": [
+                        -100.0,
+                        -10.0
+                    ],
+                    "rotationDegrees": 0.0,
+                    "size": [
+                        0.699999988079071,
+                        0.699999988079071
+                    ]
+                },
+                "keyText": "SPACE"
+            },
             "keyColor": [
                 1.0,
                 0.9300000071525574,
@@ -401,7 +427,7 @@
                 "description": {
                     "position": [
                         65.0,
-                        80.0
+                        90.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
@@ -413,7 +439,7 @@
                 "key": {
                     "position": [
                         -100.0,
-                        80.0
+                        90.0
                     ],
                     "rotationDegrees": 0.0,
                     "size": [
