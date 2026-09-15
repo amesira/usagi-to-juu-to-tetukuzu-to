@@ -30,6 +30,7 @@ public:
     ~CameraControlBehavior() = default;
     void Start() override;
     void Update() override;
+    void OnDestroy() override;
     void DrawComponentInspector() override;
 
     /// @brief 使用するカメラ設定を切り替える。現在のカメラ角度は維持する。
@@ -44,8 +45,9 @@ public:
 
 private:
     void ApplyCurrentSettings();
+    void SetCameraInputEnabled(bool enabled);
     void UpdateCameraInputActivation();
-    void UpdateTargetYawPitchFromInput(float deltaTime);
+    void UpdateTargetYawPitchFromInput();
 
     // カメラの基底ベクトルの構築
     void BuildCameraBasis(XMFLOAT3& outForward, XMFLOAT3& outRight) const;

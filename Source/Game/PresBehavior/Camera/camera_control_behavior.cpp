@@ -43,6 +43,7 @@ void CameraControlBehavior::Start()
     if (m_context.settingsAsset == nullptr) return;
 
     m_context.runtimeState.Initialize(m_context.settings());
+    SetCameraInputEnabled(true);
     ApplyCurrentSettings();
 
     // 仮：DataAssetのロード完了時に呼ばれるコールバックを登録
@@ -112,7 +113,7 @@ void CameraControlBehavior::Update()
 
     // 1.カメラ回転処理
     if (state.isInputEnabled) {
-        UpdateTargetYawPitchFromInput(deltaTime);
+        UpdateTargetYawPitchFromInput();
     }
     state.targetPitch = MiMath::Clamp(state.targetPitch, settings.minPitch, settings.maxPitch);
 
@@ -147,6 +148,12 @@ void CameraControlBehavior::Update()
     // 5.適用
     m_context.transform->SetPosition(cameraPosition);
     m_context.camera->SetAtPosition(lookAtPosition);
+}
+
+void CameraControlBehavior::OnDestroy()
+{
+    // シーン遷移後もカーソルの非表示・固定が残らないように復元する。
+    SetCameraInputEnabled(false);
 }
 
 // ImGuiを使ったインスペクタの描画
@@ -251,33 +258,47 @@ void CameraControlBehavior::PlayCameraShake(float duration, float magnitude)
 
 // ----- private method -----
 
+/// @brief カメラ入力とカーソルの状態をまとめて切り替える
+void CameraControlBehavior::SetCameraInputEnabled(bool enabled)
+{
+    m_context.runtimeState.isInputEnabled = enabled;
+
+    if (enabled) {
+        // 相対座標モードではカーソルが非表示になり、ゲームウィンドウ内に固定される。
+        Mouse_SetMode(Mouse_PositionMode::MOUSE_POSITION_MODE_RELATIVE);
+    }
+    else {
+        // 相対座標モードへ移る直前の位置へカーソルを戻す。
+        Mouse_SetMode(Mouse_PositionMode::MOUSE_POSITION_MODE_ABSOLUTE);
+        Mouse_SetVisible(true);
+    }
+}
+
 /// @brief 入力の有効・無効を切り替える操作を処理
 void CameraControlBehavior::UpdateCameraInputActivation()
 {
     if (Keyboard_IsKeyDownTrigger(CAMERA_INPUT_DISABLE_KEY)) {
-        if (m_context.runtimeState.isInputEnabled) {
-            m_context.runtimeState.isInputEnabled = false;
-        }
-        else {
-            m_context.runtimeState.isInputEnabled = true;
-        }
+        SetCameraInputEnabled(!m_context.runtimeState.isInputEnabled);
     }
 }
 
 /// @brief カメラ回転のターゲット値の入力による更新
-void CameraControlBehavior::UpdateTargetYawPitchFromInput(float deltaTime)
+void CameraControlBehavior::UpdateTargetYawPitchFromInput()
 {
     CameraRuntimeState& state = m_context.runtimeState;
     const CameraSettings::Data& settings = m_context.settings();
 
-    // マウス入力から回転のターゲット値を計算
-    float mouseX = Mouse_GetPositionX() - Mouse_GetOldPositionX();
-    float mouseY = Mouse_GetPositionY() - Mouse_GetOldPositionY();
+    // Mouse_GetStateを通して相対入力を読み取り済みにする。
+    // 入力がない次のフレームではx、yが0になり、最後の移動量が残り続けない。
+    Mouse_State mouseState{};
+    Mouse_GetState(&mouseState);
+    const float mouseX = static_cast<float>(mouseState.x);
+    const float mouseY = static_cast<float>(mouseState.y);
 
-    state.targetYaw += mouseX * settings.mouseSensitivityX * deltaTime;
+    state.targetYaw += mouseX * settings.mouseSensitivityX;
 
     const float pitchDirection = settings.invertPitchInput ? -1.0f : 1.0f;
-    state.targetPitch += mouseY * settings.mouseSensitivityY * pitchDirection * deltaTime;
+    state.targetPitch += mouseY * settings.mouseSensitivityY * pitchDirection;
 }
 
 // カメラの前方と右方向のベクトルを構築
