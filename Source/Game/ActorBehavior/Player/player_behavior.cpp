@@ -55,6 +55,12 @@ void PlayerBehavior::Start()
     m_context.uiBehavior = owner->GetComponent<PlayerUiBehavior>();
 
     m_context.hitReceiver = owner->GetComponent<HitReceiverBehavior>();
+    if (m_context.hitReceiver) {
+        m_context.hitReceiver->SetOnHitCallback(
+            [this](const HitReceiver::HitData& hitData, const HitReceiver::HitResult& hitResult) {
+                this->OnHitReceived(hitData, hitResult);
+            });
+    }
     m_context.healthBehavior = owner->GetComponent<HealthBehavior>();
     if (m_context.healthBehavior) {
         m_context.healthBehavior->SetUiActive(false);
@@ -255,4 +261,38 @@ PlayerInput PlayerBehavior::UpdateInput()
     input.releaseAttackCommand = Mouse_IsButtonUpTrigger(Mouse_Button::LEFT);
 
     return input;
+}
+
+void PlayerBehavior::OnHitReceived(
+    const HitReceiver::HitData& hitData,
+    const HitReceiver::HitResult& hitResult)
+{
+    if (hitResult.killed) {
+        if (auto* feedback = Game::GameFeedback()) {
+            feedback->PlayCameraShake(3.0f, 1.0f);
+            auto redFlash = feedback->ChangeFlash(
+                L"asset/Texture/white.bmp",
+                { 1.0f, 0.0f, 0.0f, 0.45f },
+                0.05f);
+            auto crackFlash = feedback->ChangeFlash(
+                L"asset/Texture/crack.png",
+                { 1.0f, 1.0f, 1.0f, 0.5f },
+                0.05f);
+        }
+        return;
+    }
+
+    if (auto* feedback = Game::GameFeedback()) {
+        feedback->PlayCameraShake(1.0f, 0.2f);
+        auto redFlash = feedback->PlayFlash(
+            L"asset/Texture/white.bmp",
+            { 1.0f, 0.0f, 0.0f, 0.15f },
+            0.05f,
+            0.08f);
+        auto crackFlash = feedback->PlayFlash(
+            L"asset/Texture/crack.png",
+            { 1.0f, 1.0f, 1.0f, 0.3f },
+            0.05f,
+            0.08f);
+    }
 }

@@ -9,6 +9,8 @@
 #define PLAYER_BEHAVIOR_H
 
 #include "Engine/Component/behavior_component.h"
+#include "Game/ActorBehavior/Base/HitReceiver/hit_receiver_context.h"
+
 #include "Game/ActorBehavior/Player/player_animation_controller.h"
 
 #include "Game/ActorBehavior/Player/P00_Core/player_context.h"
@@ -75,22 +77,23 @@ public:
     void SetupPlayerMove(PlayerMoveSettingsAsset* settings) {
         m_moveSettings = settings;
     }
-
     void SetupPlayerShotgun(
         PlayerShotgunSettingsAsset* settings,
         const CameraSettingsAsset* cameraSettings) {
         m_shotgunSettings = settings;
         m_shotgunCameraSettings = cameraSettings;
     }
-
     void SetupPlayerDualPistols(
         PlayerDualPistolsSettingsAsset* settings) {
         m_dualPistolsSettings = settings;
     }
-
     void SetupPlayerWeapon(const PlayerWeaponSettingsAsset* settings) {
         m_weaponSettings = settings;
     }
+
+    void OnHitReceived(
+        const HitReceiver::HitData& hitData,
+        const HitReceiver::HitResult& hitResult);
 
 private:
     /// @brief HealthBehaviorの状態をプレイヤーUIへ同期する

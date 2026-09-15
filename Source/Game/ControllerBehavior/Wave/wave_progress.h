@@ -15,8 +15,8 @@ struct WaveSettings {
     float intermissionDuration = 5.0f;
     float corpseDuration = 0.5f;
     float cleanupDelay = 0.05f;
-    float clearResultTransitionDelay = 2.0f;
-    float gameOverResultTransitionDelay = 2.0f;
+    float clearResultTransitionDelay = 4.0f;
+    float gameOverResultTransitionDelay = 4.0f;
     float waveClearSlowScale = 0.2f;
     float waveClearSlowBlendDuration = 0.5f;
     float waveClearSlowHoldDuration = 1.0f;

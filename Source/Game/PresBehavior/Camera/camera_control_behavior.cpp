@@ -153,7 +153,7 @@ void CameraControlBehavior::Update()
 void CameraControlBehavior::OnDestroy()
 {
     // シーン遷移後もカーソルの非表示・固定が残らないように復元する。
-    SetCameraInputEnabled(false);
+    // SetCameraInputEnabled(false);
 }
 
 // ImGuiを使ったインスペクタの描画

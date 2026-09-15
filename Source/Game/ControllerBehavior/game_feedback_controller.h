@@ -10,10 +10,19 @@
 #include "Engine/Device/direct3d.h"
 using namespace DirectX;
 #include "Engine/Core/GamePlay/sequence_task.h"
+#include "Game/PresBehavior/UI/ui_handle.h"
+
+#include <cstdint>
+#include <string>
+#include <vector>
 
 class CameraControlBehavior;
 
 class GameFeedbackController : public BehaviorComponent {
+public:
+    using FlashId = std::uint64_t;
+    static constexpr FlashId InvalidFlashId = 0;
+
 private:
     // カメラコントロールビヘイビアへの参照
     CameraControlBehavior* m_cameraControl = nullptr;
@@ -24,6 +33,7 @@ public:
 
     void Start() override;
     void Update() override;
+    void OnDestroy() override;
     void DrawComponentInspector() override;
 
 private:
@@ -43,6 +53,33 @@ private:
     };
     ChangeTimeScaleTask m_changeTimeScaleTask;
 
+    enum class FlashState {
+        FadeIn,
+        Hold,
+        Keep,
+        FadeOut,
+    };
+
+    struct FlashLayer {
+        FlashId id = InvalidFlashId;
+        UiHandle image;
+        XMFLOAT4 color = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float startAlpha = 0.0f;
+        float duration = 0.0f;
+        float holdDuration = 0.0f;
+        float timer = 0.0f;
+        FlashState state = FlashState::FadeIn;
+        bool temporary = false;
+    };
+
+    std::vector<FlashLayer> m_flashLayers;
+    FlashId m_nextFlashId = 1;
+
+    FlashId CreateFlash(const std::wstring& texturePath, const XMFLOAT4& color,
+        float duration, float holdDuration, bool temporary);
+    void UpdateFlashLayers(float deltaTime);
+    void DestroyFlashLayersImmediate();
+
 public:
     // タイムスケール変更
     void ChangeTimeScale(float timeScale, float duration);
@@ -59,8 +96,15 @@ public:
     // カメラシェイク再生
     void PlayCameraShake(float duration, float magnitude);
 
-    //// フラッシュエフェクトの再生
-    //void PlayFlashEffect(const XMFLOAT4& color, float duration);
+    // 一時フラッシュ。フェードイン後に保持し、同じdurationでフェードアウトする。
+    FlashId PlayFlash(const std::wstring& texturePath, const XMFLOAT4& color,
+        float duration, float holdDuration);
+    // 指定画像をフェードインし、解除されるまで保持する。
+    FlashId ChangeFlash(const std::wstring& texturePath, const XMFLOAT4& color,
+        float duration);
+    // 指定したフラッシュ、または全フラッシュをフェードアウトして破棄する。
+    void ResetFlash(FlashId id, float duration);
+    void ResetAllFlashes(float duration);
 
 };
 
