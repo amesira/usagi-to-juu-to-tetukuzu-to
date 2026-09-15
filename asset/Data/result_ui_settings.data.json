@@ -208,7 +208,7 @@
         "shakeAmplitude": 10.0,
         "shakeDuration": 0.25,
         "shakeFrequency": 24.0,
-        "smoothTime": 0.10000000149011612,
+        "smoothTime": 0.20000000298023224,
         "status": {
             "position": [
                 354.0,
@@ -220,7 +220,7 @@
                 0.6499999761581421
             ]
         },
-        "statusWait": 0.05000000074505806,
+        "statusWait": 0.10000000149011612,
         "summary": {
             "position": [
                 0.0,
