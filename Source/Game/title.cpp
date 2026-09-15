@@ -50,7 +50,7 @@ void TitleScene::Initialize()
     controller->AddComponent<StageBoundsControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(
-        DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/title_decoration_settings.data.json", true));
+        DATA_LOADER->GetAsset<StageDecorationSettingsAsset>("asset/Data/stage_decoration_settings.data.json", true));
 
     // camera
     GameObject* camera = EnvironmentFactory::CreateCamera(this, { 0.0f,20.0f,-1.0f }, { 0.0f,0.0f,8.0f });
