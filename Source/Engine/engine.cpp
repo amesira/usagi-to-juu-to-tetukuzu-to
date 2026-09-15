@@ -11,6 +11,7 @@
 #include "Engine/Device/mi_fps.h"
 
 #include "Engine/Core/scene_interface.h"
+#include "Engine/Core/build_config.h"
 
 #include "Utility/debug_renderer.h"
 
@@ -40,6 +41,13 @@ bool MiEngine::Initialize(HWND hWnd)
     // Editorの初期化
     m_editorManager.Initialize(hWnd);
     m_editorContext = &(m_editorManager.GetEditorContext());
+
+#if MI_GAME_BUILD
+    // ゲームビルドでは起動直後からゲームを更新し、Game Viewだけを表示する。
+    m_editorContext->currentEditorMode = EditorContext::EditorMode::Play;
+    m_editorContext->mainViewMode = EditorContext::MainViewMode::Game;
+    m_editorContext->toolbarExpanded = false;
+#endif
 
     // GameWorldの初期化
     m_gameWorld.Initialize();
@@ -100,10 +108,15 @@ void MiEngine::Update()
     // デバッグ描画のバッファリセット
     DebugRenderer_ResetBuffer();
 
+    // ゲームビルドではエディターのモードにかかわらずGameWorldを更新する。
+#if MI_GAME_BUILD
+    m_gameWorld.Update();
+#else
     // PlayモードのときのみGameWorldを更新
     if (m_editorContext->currentEditorMode == EditorContext::EditorMode::Play) {
         m_gameWorld.Update();
     }
+#endif
 }
 
 // MiEngineの描画処理

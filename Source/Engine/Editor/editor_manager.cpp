@@ -7,6 +7,7 @@
 // ・Engineから呼び出され、エディターの初期化、描画、終了処理を行う
 //===================================================
 #include "editor_manager.h"
+#include "Engine/Core/build_config.h"
 
 void EditorManager::Initialize(HWND hWnd)
 {
@@ -29,6 +30,10 @@ void EditorManager::Render()
     m_imguiBackend.BeginFrame();
 
     // Main Viewを最初に描画し、各ツールをその上へ重ねる。
+#if MI_GAME_BUILD
+    m_editorContext.mainViewMode = EditorContext::MainViewMode::Game;
+    DrawMainView();
+#else
     DrawMainView();
     DrawToolbar();
     SyncWindowLifecycle();
@@ -36,6 +41,7 @@ void EditorManager::Render()
     if (m_editorContext.toolbarExpanded) {
         m_windowManager.DrawAll();
     }
+#endif
 
     m_imguiBackend.EndFrame();
 }
@@ -154,8 +160,14 @@ void EditorManager::SyncWindowLifecycle()
 void EditorManager::DrawMainView()
 {
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
+#if MI_GAME_BUILD
+    // ツールバーを表示しないため、ビューポート全体をGame Viewとして使用する。
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+#else
     ImGui::SetNextWindowPos(viewport->WorkPos);
     ImGui::SetNextWindowSize(viewport->WorkSize);
+#endif
 
     constexpr ImGuiWindowFlags flags =
         ImGuiWindowFlags_NoDecoration |

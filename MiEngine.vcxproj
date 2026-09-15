@@ -429,6 +429,7 @@
     <ClInclude Include="Source\Engine\Editor\LevelEditor\behavior_detail_view.h" />
     <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_document.h" />
     <ClInclude Include="Source\Engine\Editor\LevelEditor\level_editor_window.h" />
+    <ClInclude Include="Source\Engine\Core\build_config.h" />
     <ClInclude Include="Source\Engine\Core\scene_post_effect_state.h" />
     <ClInclude Include="Source\Engine\Editor\scene_view_camera_state.h" />
     <ClInclude Include="Source\Engine\Asset\i_asset.h" />
