@@ -5,6 +5,8 @@
 #include "Game/ActorBehavior/Player/player_behavior.h"
 #include "Game/ActorBehavior/Base/health_behavior.h"
 #include "Game/Factory/prefab_factory.h"
+#include "Game/Factory/render_effect_factory.h"
+#include "Utility/mi_math.h"
 #include "Game/Factory/Prefab/enemy_definition_asset.h"
 #include <cstdio>
 #include "Engine/Core/game_object.h"
@@ -93,6 +95,18 @@ void WaveControllerBehavior::CollectEnemies(IScene* scene, EnemyAIWorldControlle
         if (aiWorld) {
             aiWorld->CancelAttackRequest(static_cast<int>(enemy.id));
             aiWorld->GetMetaAI().UnregisterEnemy(enemy.id);
+        }
+        auto* behavior = object->GetComponent<EnemyBehavior>();
+        const bool waveCleanup = behavior
+            && behavior->GetDeathReason() == EnemyDeathReason::WaveCleanup;
+        if (!enemy.destroyEffectPath.empty()
+            && (!waveCleanup || enemy.playDestroyEffectOnWaveCleanup)) {
+            DirectX::XMFLOAT3 position = {};
+            if (auto* transform = object->GetComponent<TransformComponent>())
+                position = MiMath::Add(transform->GetPosition(), enemy.destroyEffectOffset);
+            RenderEffectFactory::CreateOneShotParticleEffect(
+                scene, enemy.destroyEffectPath,
+                EffectTransform{.position = position, .scaling = enemy.destroyEffectScale});
         }
         health->SetUiActive(false);
         object->SetActive(false);
@@ -226,7 +240,9 @@ bool WaveControllerBehavior::TrySpawnEnemy(IScene* scene, EnemyAIWorldController
         }
         const std::string name = "WaveEnemy_" + std::to_string(++m_spawnSerial);
         prefab.enemy->SetName(name);
-        m_enemies.push_back({prefab.enemy->GetID(), name, static_cast<WaveEnemyType>(typeIndex), definition.defeatPoints});
+        m_enemies.push_back({prefab.enemy->GetID(), name, static_cast<WaveEnemyType>(typeIndex),
+            definition.defeatPoints, definition.destroyEffectPath, definition.destroyEffectOffset,
+            definition.destroyEffectScale, definition.playDestroyEffectOnWaveCleanup});
         m_status = "Enemy type " + std::to_string(typeIndex) + " spawned";
         return true;
     }

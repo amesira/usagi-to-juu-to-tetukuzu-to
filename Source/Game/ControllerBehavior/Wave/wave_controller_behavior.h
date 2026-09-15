@@ -38,6 +38,10 @@ class WaveControllerBehavior : public BehaviorComponent {
         std::string name; // IDスロットの再利用を識別する生成時トークン
         WaveEnemyType type;
         int defeatPoints;
+        std::string destroyEffectPath;
+        DirectX::XMFLOAT3 destroyEffectOffset = {};
+        DirectX::XMFLOAT3 destroyEffectScale = {1, 1, 1};
+        bool playDestroyEffectOnWaveCleanup = false;
         bool credited = false;
         float deadTime = 0.0f;
     };

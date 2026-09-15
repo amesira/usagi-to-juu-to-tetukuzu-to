@@ -40,6 +40,10 @@ namespace RenderEffectFactory {
         IScene* scene,
         const std::filesystem::path& assetPath,
         const EffectTransform& transform = {});
+    EffectHandle CreateOneShotParticleEffect(
+        IScene* scene,
+        const std::filesystem::path& assetPath,
+        const EffectTransform& transform = {});
     EffectHandle CreateMeshEffect(
         IScene* scene,
         const std::filesystem::path& assetPath,

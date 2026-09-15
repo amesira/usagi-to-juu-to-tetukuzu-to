@@ -14,6 +14,7 @@
 #include "Engine/Component/mesh_effect_component.h"
 #include "Engine/Component/transform_component.h"
 #include "Game/ActorBehavior/transform_constraint_behavior.h"
+#include "Game/PresBehavior/one_shot_particle_behavior.h"
 #include "Engine/engine_service_locator.h"
 #include "Utility/mi_string.h"
 
@@ -167,6 +168,17 @@ EffectHandle RenderEffectFactory::CreateParticleEffect(
         "ParticleEffect",
         assetPath,
         transform);
+    return EffectHandle(effect);
+}
+
+EffectHandle RenderEffectFactory::CreateOneShotParticleEffect(
+    IScene* scene,
+    const std::filesystem::path& assetPath,
+    const EffectTransform& transform)
+{
+    GameObject* effect = CreateParticleObject(
+        scene, "OneShotParticleEffect", assetPath, transform);
+    if (effect) effect->AddComponent<OneShotParticleBehavior>();
     return EffectHandle(effect);
 }
 

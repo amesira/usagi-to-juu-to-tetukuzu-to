@@ -4,8 +4,20 @@
         "approachPath": "asset/Data/enemy_hover_approach_settings.data.json",
         "attackPath": "asset/Data/enemy_hover_attack_settings.data.json",
         "defeatPoints": 15,
+        "destroyEffectOffset": [
+            0.0,
+            1.0,
+            0.0
+        ],
+        "destroyEffectPath": "asset/Particle/explosion.particle.json",
+        "destroyEffectScale": [
+            1.0,
+            1.0,
+            1.0
+        ],
         "displayName": "hover_ranged",
         "hover": true,
+        "isElite": false,
         "material1": {
             "baseColor": [
                 0.0,
@@ -42,6 +54,7 @@
         },
         "maxHealth": 50.0,
         "movePath": "asset/Data/enemy_hover_move_settings.data.json",
+        "playDestroyEffectOnWaveCleanup": true,
         "ranged": true,
         "scale": 1.0
     },

@@ -1133,6 +1133,8 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.cpp" />
     <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_settings_asset.h" />
+    <ClCompile Include="Source\Game\PresBehavior\one_shot_particle_behavior.cpp" />
+    <ClInclude Include="Source\Game\PresBehavior\one_shot_particle_behavior.h" />
   </ItemGroup>  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

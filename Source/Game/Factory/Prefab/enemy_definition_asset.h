@@ -29,6 +29,10 @@ namespace EnemyDefinition {
         std::string movePath = "asset/Data/enemy_move_settings.data.json";
         std::string approachPath = "asset/Data/enemy_approach_settings.data.json";
         std::string attackPath = "asset/Data/enemy_attack_settings.data.json";
+        std::string destroyEffectPath = "asset/Particle/explosion.particle.json";
+        DirectX::XMFLOAT3 destroyEffectOffset = {0, 1, 0};
+        DirectX::XMFLOAT3 destroyEffectScale = {1, 1, 1};
+        bool playDestroyEffectOnWaveCleanup = false;
         MaterialSettings material1;
         MaterialSettings material2;
     };
@@ -56,6 +60,12 @@ namespace EnemyDefinition {
             MakeField("movePath", "Move Settings", &Data::movePath),
             MakeField("approachPath", "Approach Settings", &Data::approachPath),
             MakeField("attackPath", "Attack Settings", &Data::attackPath),
+            MakeField("destroyEffectPath", "Destroy Effect", &Data::destroyEffectPath),
+            MakeField("destroyEffectOffset", "Destroy Effect Offset", &Data::destroyEffectOffset,
+                DragFieldOptions{.dragSpeed = 0.1f, .minValue = -100, .maxValue = 100}),
+            MakeField("destroyEffectScale", "Destroy Effect Scale", &Data::destroyEffectScale,
+                DragFieldOptions{.dragSpeed = 0.1f, .minValue = 0, .maxValue = 100}),
+            MakeField("playDestroyEffectOnWaveCleanup", "Play On Wave Cleanup", &Data::playDestroyEffectOnWaveCleanup),
             MakeStructField("material1", "Material 1", &Data::material1, GetMaterialSchema(), DefaultFieldOptions{}),
             MakeStructField("material2", "Material 2", &Data::material2, GetMaterialSchema(), DefaultFieldOptions{})
         };
@@ -66,6 +76,12 @@ namespace EnemyDefinition {
         data.maxHealth = (std::max)(1.0f, finite(data.maxHealth, 100));
         data.defeatPoints = (std::max)(0, data.defeatPoints);
         data.scale = std::clamp(finite(data.scale, 1), 0.1f, 10.0f);
+        auto& offset = data.destroyEffectOffset;
+        offset = {finite(offset.x, 0), finite(offset.y, 1), finite(offset.z, 0)};
+        auto& effectScale = data.destroyEffectScale;
+        effectScale = {(std::max)(0.0f, finite(effectScale.x, 1)),
+            (std::max)(0.0f, finite(effectScale.y, 1)),
+            (std::max)(0.0f, finite(effectScale.z, 1))};
         for (auto* material : {&data.material1, &data.material2}) {
             auto& c = material->baseColor;
             c = {std::clamp(finite(c.x, 1), 0.0f, 1.0f), std::clamp(finite(c.y, 1), 0.0f, 1.0f), std::clamp(finite(c.z, 1), 0.0f, 1.0f), std::clamp(finite(c.w, 1), 0.0f, 1.0f)};

@@ -28,7 +28,7 @@ void ResultScene::Initialize()
     // 読み込み失敗時はEnvironmentDataのデフォルト値を使用する。
     if (EnvironmentAssetLoader* loader = EngineServiceLocator::EnvironmentLoader()) {
         loader->Load(
-            "asset/Environment/default.environment.json",
+            "asset/Environment/result.environment.json",
             GetEnvironmentAsset());
     }
 
