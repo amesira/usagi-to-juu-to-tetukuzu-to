@@ -17,7 +17,7 @@
 void SceneManager::Initialize()
 {
     m_transition.Reset();
-    m_currentScene = SceneID::Result;
+    m_currentScene = SceneID::Title;
     m_nextScene = m_currentScene;
 
     // 最初のシーンをセット

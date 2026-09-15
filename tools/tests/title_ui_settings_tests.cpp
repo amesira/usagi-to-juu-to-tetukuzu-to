@@ -1,4 +1,5 @@
 #include "Game/PresBehavior/UI/Title/title_ui_settings_asset.h"
+#include "Game/ControllerBehavior/title_controller_settings_asset.h"
 #include "Game/PresBehavior/UI/Title/title_ui_presentation.h"
 #include "Game/PresBehavior/Camera/overview_camera_blend.h"
 #include "Game/PresBehavior/Camera/overview_camera_settings_asset.h"
@@ -29,6 +30,12 @@ int main(int argc, char**) {
     OverviewCameraSettings::Data cameraSettings;
     assert(FieldSerialization::DeserializeFields(cameraJson.at("data"),cameraSettings,OverviewCameraSettings::GetSchema()));
     assert(cameraSettings.blendDuration > 0 && cameraSettings.position.y > cameraSettings.lookAt.y);
+    std::ifstream titleControllerFile("asset/Data/title_controller_settings.data.json");
+    const auto titleControllerJson = nlohmann::json::parse(titleControllerFile);
+    TitleControllerSettings::Data titleControllerSettings;
+    assert(FieldSerialization::DeserializeFields(titleControllerJson.at("data"), titleControllerSettings,
+        TitleControllerSettings::GetSchema()));
+    assert(titleControllerSettings.titleLogoObject.scale.x > 0);
     TitleUiSettings::Data data;
     const auto saved = FieldSerialization::SerializeFields(data, TitleUiSettings::GetSchema());
     TitleUiSettings::Data restored;

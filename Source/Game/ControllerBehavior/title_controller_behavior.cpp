@@ -8,11 +8,28 @@
 #include "Game/PresBehavior/UI/Title/title_ui_behavior.h"
 #include "Game/PresBehavior/UI/Player/player_ui_behavior.h"
 #include "Game/PresBehavior/Camera/overview_camera_behavior.h"
+#include "Game/Factory/prefab_factory.h"
+#include "Engine/Component/transform_component.h"
 #include "External/ImGui/imgui.h"
+
+const TitleControllerSettings::Data& TitleControllerBehavior::Settings() const
+{
+    static const TitleControllerSettings::Data defaults;
+    return m_settings ? m_settings->GetData() : defaults;
+}
 
 void TitleControllerBehavior::Start()
 {
     auto* scene = GetOwner()->GetScene();
+    const auto& logo = Settings().titleLogoObject;
+    GameObject* titleLogoObject = PrefabFactory::CreateModelObject(
+        scene, "asset/Model/title_logo.fbx", logo.position, logo.rotation, logo.scale);
+    if (titleLogoObject) {
+        titleLogoObject->SetName("TitleLogoObject");
+        titleLogoObject->SetRenderLayer(RenderLayer::Particle);
+        m_titleLogoTransform = titleLogoObject->GetComponent<TransformComponent>();
+    }
+    m_settingsAssetRevision = m_settings ? static_cast<int>(m_settings->GetRevision()) : -1;
     if (auto* object = scene->GetGameObjectByName("TitleUi")) m_titleUi = object->GetComponent<TitleUiBehavior>();
     if (auto* object = scene->GetGameObjectByName("Player")) m_playerUi = object->GetComponent<PlayerUiBehavior>();
     if (auto* object = scene->GetGameObjectByName("TitleViewCamera")) m_camera = object->GetComponent<OverviewCameraBehavior>();
@@ -21,6 +38,15 @@ void TitleControllerBehavior::Start()
 
 void TitleControllerBehavior::Update()
 {
+    if (m_settings && static_cast<int>(m_settings->GetRevision()) != m_settingsAssetRevision) {
+        m_settingsAssetRevision = static_cast<int>(m_settings->GetRevision());
+        if (m_titleLogoTransform) {
+            const auto& logo = Settings().titleLogoObject;
+            m_titleLogoTransform->SetPosition(logo.position);
+            m_titleLogoTransform->SetEulerRawAngle(logo.rotation);
+            m_titleLogoTransform->SetScaling(logo.scale);
+        }
+    }
     if (m_state == State::QuitRequested || m_state == State::StartingGame) return;
     if (m_state == State::ExitConfirm) {
         if (Keyboard_IsKeyDownTrigger(KK_BACK)) {

@@ -37,7 +37,8 @@ void TitleScene::Initialize()
 
     GameObject* controller = CreateGameObject();
     controller->SetName("TitleController");
-    controller->AddComponent<TitleControllerBehavior>();
+    controller->AddComponent<TitleControllerBehavior>()->Setup(
+        DATA_LOADER->GetAsset<TitleControllerSettingsAsset>("asset/Data/title_controller_settings.data.json", true));
     GameObject* titleUi = CreateGameObject();
     titleUi->SetName("TitleUi");
     titleUi->AddComponent<TitleUiBehavior>()->Setup(
