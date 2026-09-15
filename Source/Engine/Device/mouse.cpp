@@ -135,10 +135,6 @@ bool Mouse_IsVisible(void)
 
 void Mouse_SetVisible(bool visible)
 {
-    if (gMode == MOUSE_POSITION_MODE_RELATIVE) {
-        return;
-    }
-
     CURSORINFO info = { sizeof(CURSORINFO), 0, nullptr, {} };
     GetCursorInfo(&info);
 
