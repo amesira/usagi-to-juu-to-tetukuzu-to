@@ -18,6 +18,8 @@
 #include <cmath>
 
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Game/ControllerBehavior/game_feedback_controller.h"
+#include "Game/ControllerBehavior/custom_post_effect_controller.h"
 
 WaveControllerBehavior::~WaveControllerBehavior()
 {
@@ -253,7 +255,8 @@ void WaveControllerBehavior::Update()
         if (auto* health = object.GetComponent<HealthBehavior>()) playerDead = health->IsDead();
         break;
     }
-    if (playerDead && m_progress.state != WaveProgress::State::Complete && m_progress.state != WaveProgress::State::GameOver) {
+    if (playerDead && m_progress.state != WaveProgress::State::ClearImpact
+        && m_progress.state != WaveProgress::State::Complete && m_progress.state != WaveProgress::State::GameOver) {
         m_progress.RecordCurrentWave(false);
         m_progress.state = WaveProgress::State::GameOver;
     }
@@ -264,12 +267,52 @@ void WaveControllerBehavior::Update()
     const auto previousState = m_progress.state;
     const int previousWave = m_progress.waveNumber;
     m_progress.Update(deltaTime, ready, static_cast<int>(m_enemies.size()), m_settings);
+    if (m_progress.state == WaveProgress::State::ClearImpact) {
+        bool startedThisFrame = false;
+        if (!m_clearFeedbackPlayed) {
+            startedThisFrame = true;
+            m_clearFeedbackPlayed = true;
+            m_clearImpactElapsed = 0.0f;
+            m_progress.CloseClearImpactScoring();
+            StopAllEnemies(scene, aiWorld);
+
+            // 撃破演出
+            const float scale = std::isfinite(m_settings.waveClearSlowScale)
+                ? std::clamp(m_settings.waveClearSlowScale, 0.0f, 1.0f) : 0.2f;
+            const float blend = std::isfinite(m_settings.waveClearSlowBlendDuration)
+                ? (std::max)(m_settings.waveClearSlowBlendDuration, 0.0f) : 0.0f;
+            const float hold = std::isfinite(m_settings.waveClearSlowHoldDuration)
+                ? (std::max)(m_settings.waveClearSlowHoldDuration, 0.0f) : 0.0f;
+
+            if (auto* feedback = Game::GameFeedback()) {
+                
+                feedback->ChangeTimeScaleTemporary(scale, blend, hold);
+                feedback->PlayCameraShake(0.3f, 1.5f);
+            }
+            if (auto* postEffect = Game::CustomPostEffect()) {
+                postEffect->PlayEffect(CustomPostEffectType::RadialBlur, 0.5f, blend, hold);
+            }
+        }
+        if (!startedThisFrame) {
+            const float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
+            if (std::isfinite(unscaledDeltaTime) && unscaledDeltaTime > 0.0f)
+                m_clearImpactElapsed += unscaledDeltaTime;
+        }
+        if (m_clearImpactElapsed < GetWaveClearImpactDuration(m_settings)) return;
+        m_progress.FinishClearImpact(m_settings);
+        m_clearFeedbackPlayed = false;
+        m_clearImpactElapsed = 0.0f;
+    }
     if (m_progress.state == WaveProgress::State::Complete || m_progress.state == WaveProgress::State::GameOver) {
         if (!m_resultSaved) {
             GameResultStore::lastRun = {m_progress.results, m_progress.elapsedTime, m_progress.state == WaveProgress::State::Complete};
             m_resultSaved = true;
             StopAllEnemies(scene, aiWorld);
         }
+        const float unscaledDeltaTime = FPS_GetUnscaledDeltaTime();
+        if (std::isfinite(unscaledDeltaTime) && unscaledDeltaTime > 0.0f)
+            m_resultTransitionElapsed += unscaledDeltaTime;
+        if (m_resultTransitionElapsed < GetResultTransitionDelay(m_progress.state, m_settings)) return;
         EngineServiceLocator::ChangeSceneWithFade(SceneManager::SceneID::Result);
         return;
     }
@@ -299,7 +342,7 @@ void WaveControllerBehavior::Update()
 void WaveControllerBehavior::DrawComponentInspector()
 {
     if (BehaviorDetailView::BeginSection(this, "Wave Controller")) {
-        const char* states[] = {"Waiting", "Preparing", "Battle", "Intermission", "Complete", "Game Over"};
+        const char* states[] = {"Waiting", "Preparing", "Battle", "Clear Impact", "Intermission", "Complete", "Game Over"};
         ImGui::Text("State: %s", states[static_cast<int>(m_progress.state)]);
         ImGui::Text("Wave: %d / %d", m_progress.waveNumber, m_settings.waveCount);
         ImGui::Text("Points: %d / %d | Total: %d", m_progress.wavePoints, m_progress.targetPoints, m_progress.totalScore);
@@ -348,6 +391,11 @@ void WaveControllerBehavior::DrawComponentInspector()
         ImGui::SliderFloat("Preparation", &m_settings.preparationDuration, 0.0f, 10.0f);
         ImGui::SliderFloat("Intermission", &m_settings.intermissionDuration, 0.0f, 10.0f);
         ImGui::SliderFloat("Cleanup Delay", &m_settings.cleanupDelay, 0.0f, 10.0f);
+        ImGui::SliderFloat("Clear Result Transition Delay", &m_settings.clearResultTransitionDelay, 0.0f, 10.0f);
+        ImGui::SliderFloat("Game Over Result Transition Delay", &m_settings.gameOverResultTransitionDelay, 0.0f, 10.0f);
+        ImGui::SliderFloat("Wave Clear Slow Scale", &m_settings.waveClearSlowScale, 0.0f, 1.0f);
+        ImGui::SliderFloat("Wave Clear Slow Blend", &m_settings.waveClearSlowBlendDuration, 0.0f, 2.0f);
+        ImGui::SliderFloat("Wave Clear Slow Hold", &m_settings.waveClearSlowHoldDuration, 0.0f, 5.0f);
         if (ImGui::TreeNode("Spawn Points (XZ; Y resolved from navigation)")) {
             for (size_t i = 0; i < m_spawnPoints.size(); ++i) {
                 ImGui::PushID(static_cast<int>(i));

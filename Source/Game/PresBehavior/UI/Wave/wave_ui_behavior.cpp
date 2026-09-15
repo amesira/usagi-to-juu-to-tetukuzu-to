@@ -91,6 +91,9 @@ void WaveUiBehavior::Update()
             }
             break;
         }
+        case WaveProgress::State::ClearImpact:
+            phase = "討伐成功！";
+            break;
         case WaveProgress::State::Intermission:
             phase = progress.waveNumber >= controller->GetWaveCount() ? "WAVE クリア！"
                 : "WAVE クリア！ / 次の WAVE まで  " + std::to_string(seconds);

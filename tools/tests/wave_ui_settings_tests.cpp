@@ -19,6 +19,9 @@ int main() {
     assert(motion.GetBlend(1,0.4f) == 0); // A new battle restarts at A.
     motion.Update(1);
     assert(motion.GetBlend(1,0) == 1);
+    motion.Begin(WaveProgress::State::ClearImpact);
+    motion.Update(1);
+    assert(motion.GetBlend(0,1) == 1);
     motion.Begin(WaveProgress::State::Intermission);
     motion.Update(10);
     assert(motion.GetBlend(0,0) == 0);

@@ -4,6 +4,12 @@
 #include <limits>
 int main() {
     WaveSettings settings;
+    settings.clearResultTransitionDelay = 3.0f;
+    settings.gameOverResultTransitionDelay = 4.0f;
+    assert(GetResultTransitionDelay(WaveProgress::State::Complete, settings) == 3.0f);
+    assert(GetResultTransitionDelay(WaveProgress::State::GameOver, settings) == 4.0f);
+    settings.clearResultTransitionDelay = -1.0f;
+    assert(GetResultTransitionDelay(WaveProgress::State::Complete, settings) == 0.0f);
     settings.waveCount = 2;
     settings.firstTargetPoints = 20;
     settings.targetPointsIncrement = 10;
@@ -18,6 +24,9 @@ int main() {
     progress.Update(1, true, 0, settings);
     assert(progress.waveNumber == 1 && progress.targetPoints == 20);
     progress.AddDefeatPoints(20, settings);
+    assert(progress.state == WaveProgress::State::ClearImpact);
+    assert(GetWaveClearImpactDuration(settings) == 0.6f);
+    progress.FinishClearImpact(settings);
     assert(progress.state == WaveProgress::State::Intermission);
     progress.Update(1, true, 1, settings);
     progress.AddDefeatPoints(10, settings);
@@ -35,6 +44,8 @@ int main() {
     assert(progress.state == WaveProgress::State::Battle && progress.waveNumber == 2);
     assert(progress.wavePoints == 0 && progress.targetPoints == 30);
     progress.AddDefeatPoints(30, settings);
+    assert(progress.state == WaveProgress::State::ClearImpact);
+    progress.FinishClearImpact(settings);
     progress.Update(1, true, 1, settings);
     progress.AddDefeatPoints(10, settings);
     assert(progress.totalScore == 70);
@@ -57,6 +68,8 @@ int main() {
     settings.intermissionDuration = 5;
     other.Update(0, true, 0, settings);
     other.AddDefeatPoints(20, settings);
+    assert(other.state == WaveProgress::State::ClearImpact);
+    other.FinishClearImpact(settings);
     assert(other.ShouldCleanupEnemies());
     other.MarkCleanupIssued();
     other.Update(4, true, 0, settings);
