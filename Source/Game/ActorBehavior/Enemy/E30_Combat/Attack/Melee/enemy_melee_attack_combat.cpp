@@ -11,6 +11,18 @@
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 #include "Game/ActorBehavior/Enemy/enemy_animation_controller.h"
 
+void EnemyMeleeAttackCombat::Initialize(EnemyContext& context)
+{
+    EnemyAttackCombat::Initialize(context);
+    m_effects.Initialize(getContext());
+}
+
+void EnemyMeleeAttackCombat::Finalize(EnemyContext& context)
+{
+    m_slash.Cancel();
+    m_effects.Finalize();
+}
+
 void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
 {
     // ピカーンって感じのエフェクトと効果音
@@ -138,7 +150,6 @@ void EnemyMeleeAttackCombat::BeginSlash(EnemyContext& context)
     }
 
     m_slash.Start(getContext());
-    m_effects.Initialize(getContext());
     m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::Slash);
 
     // ジャンプアニメーション
@@ -159,5 +170,5 @@ EnemyCombatStatus EnemyMeleeAttackCombat::UpdateSlash(EnemyContext& context, flo
 void EnemyMeleeAttackCombat::ClearAttackEffects(EnemyContext& context)
 {
     m_slash.Cancel();
-    m_effects.Finalize();
+    m_effects.StopSlash();
 }

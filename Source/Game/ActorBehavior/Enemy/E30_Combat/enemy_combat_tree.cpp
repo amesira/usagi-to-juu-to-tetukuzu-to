@@ -19,7 +19,12 @@ void EnemyCombatTree::Initialize(EnemyContext& context)
 
 void EnemyCombatTree::Finalize(EnemyContext& context)
 {
-    ClearBehaviors(context);
+    Cancel(context);
+    for (auto* behavior : m_combatBehaviors) {
+        if (behavior) behavior->Finalize(context);
+    }
+    m_combatBehaviors.clear();
+    m_attackCombat = nullptr;
 }
 
 void EnemyCombatTree::RegisterBehavior(EnemyAttackCombat& behavior)

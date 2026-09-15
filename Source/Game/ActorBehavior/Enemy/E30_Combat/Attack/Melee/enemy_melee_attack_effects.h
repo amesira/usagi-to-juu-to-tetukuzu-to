@@ -1,5 +1,7 @@
 #pragma once
 #include "Game/PresBehavior/attached_effect_handle.h"
+#include <cstdint>
+#include <limits>
 
 struct EnemyAttackContext;
 namespace EnemyAttackSettings { struct Data; }
@@ -7,7 +9,7 @@ namespace EnemyAttackSettings { struct Data; }
 class EnemyMeleeAttackEffects {
 private:
     AttachedEffectHandle m_slashEffect;
-    int m_revisionAsset = -1;
+    std::uint64_t m_revisionAsset = (std::numeric_limits<std::uint64_t>::max)();
 
 public:
     enum class EffectsType { Slash };

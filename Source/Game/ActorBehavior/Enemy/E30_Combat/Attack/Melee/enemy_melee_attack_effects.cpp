@@ -18,6 +18,10 @@ void EnemyMeleeAttackEffects::Initialize(const EnemyAttackContext& context)
             .target = context.transform,
             .considerTargetRotation = true,
         });
+
+    // 新しく生成したエフェクトには、AssetのRevisionが同じでもTransformを適用する。
+    m_revisionAsset = (std::numeric_limits<std::uint64_t>::max)();
+    SynchronizeAsset(context);
 }
 
 void EnemyMeleeAttackEffects::Update(const EnemyAttackContext& context)
@@ -48,11 +52,12 @@ void EnemyMeleeAttackEffects::Finalize()
 {
     m_slashEffect.Stop();
     m_slashEffect.Destroy();
+    m_revisionAsset = (std::numeric_limits<std::uint64_t>::max)();
 }
 
 void EnemyMeleeAttackEffects::SynchronizeAsset(const EnemyAttackContext& context)
 {
-    const int currentRevision = context.settingsAsset->GetRevision();
+    const std::uint64_t currentRevision = context.settingsAsset->GetRevision();
     if (m_revisionAsset != currentRevision) {
         m_revisionAsset = currentRevision;
 

@@ -23,6 +23,7 @@ public:
     virtual ~EnemyCombatBase() = default;
 
     virtual void Initialize(EnemyContext& context) {}
+    virtual void Finalize(EnemyContext& context) {}
 
     /// @brief 非実行中の行動を開始できるか。
     virtual bool CanStart(const EnemyContext& context) const = 0;

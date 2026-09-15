@@ -32,6 +32,9 @@ class EnemyMeleeAttackCombat : public EnemyAttackCombat {
     DirectX::XMFLOAT3 m_jumpVelocity = {};
 
 protected:
+    void Initialize(EnemyContext& context) override;
+    void Finalize(EnemyContext& context) override;
+
     void BeginWindup(EnemyContext& context) override;
     void EndWindup(EnemyContext& context) override;
 
