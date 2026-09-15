@@ -10,7 +10,8 @@ class TitleUiBehavior : public BehaviorComponent {
     TitleUiMenu m_menu;
     TitleUiExitPopup m_popup;
     TitleUiVersion m_version;
-    TitleUiHighScore m_highScore;
+    TitleUiSelectGuide m_selectGuide;
+   // TitleUiHighScore m_highScore;
     TitleUiPracticeGuide m_practiceGuide;
     TitleUiView m_view;
     TitleUiPresentation m_presentation;

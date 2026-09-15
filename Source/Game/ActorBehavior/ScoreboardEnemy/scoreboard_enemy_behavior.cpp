@@ -84,7 +84,7 @@ void ScoreboardEnemyBehavior::CreateBoard() {
         text->SetFontSize(size); text->SetFontPath("asset/Font/Makinas-4-Square.otf"); text->SetColor(color);
         m_uiIds[index] = object->GetID();
     };
-    makeText(1, m_label, 1.0f, 12, s.textColor);
+    makeText(1, m_label, 0.25f, 10, s.textColor);
     makeText(2, std::to_string(m_record.totalScore) + "  RANK " + RankLetter(m_record.rank), 0, 16, RankColor());
     UpdateBoard();
 }

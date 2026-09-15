@@ -24,7 +24,7 @@
                 "placement": {
                     "position": [
                         -219.0,
-                        132.0
+                        164.0
                     ],
                     "screenAnchor": [
                         1.0,
@@ -535,6 +535,34 @@
             ],
             "titleFontSize": 36
         },
+        "selectGuide": {
+            "group": {
+                "applyChromaticEcho": true,
+                "applyPerspective": false,
+                "placement": {
+                    "position": [
+                        0.0,
+                        -40.0
+                    ],
+                    "screenAnchor": [
+                        0.5,
+                        1.0
+                    ]
+                }
+            },
+            "text": {
+                "position": [
+                    0.0,
+                    0.0
+                ],
+                "rotationDegrees": 0.0,
+                "size": [
+                    0.5,
+                    0.5
+                ]
+            },
+            "value": "矢印キーで選択 / Enterで決定"
+        },
         "selectedTextColor": [
             1.0,
             0.9275690317153931,
@@ -559,11 +587,11 @@
                 "placement": {
                     "position": [
                         -130.0,
-                        -35.0
+                        105.0
                     ],
                     "screenAnchor": [
                         1.0,
-                        1.0
+                        0.0
                     ]
                 }
             },

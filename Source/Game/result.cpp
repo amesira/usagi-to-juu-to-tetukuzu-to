@@ -50,9 +50,6 @@ void ResultScene::Initialize()
         DATA_LOADER->GetAsset<GameAudioSettingsAsset>("asset/Data/game_audio_settings.data.json", true), GameBgm::Result);
     controller->AddComponent<GameFeedbackController>();
     controller->AddComponent<CustomPostEffectController>();
-    controller->AddComponent<EnemyAIWorldController>()->Setup(false);
-    controller->AddComponent<ScoreboardEnemyControllerBehavior>()->Setup(
-        DATA_LOADER->GetAsset<ScoreboardEnemySettingsAsset>("asset/Data/scoreboard_enemy_settings.data.json", true));
     controller->AddComponent<StageBoundsControllerBehavior>()->Setup(
         DATA_LOADER->GetAsset<StageBoundsSettingsAsset>("asset/Data/stage_bounds_settings.data.json", true));
     controller->AddComponent<StageDecorationControllerBehavior>()->Setup(

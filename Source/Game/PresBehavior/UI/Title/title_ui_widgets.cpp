@@ -108,6 +108,16 @@ void TitleUiHighScore::ApplySettings(const TitleUiSettings::Data& s, int score) 
     Text(group.elements[0], s.highScore.value + "  " + std::to_string(score), s);
 }
 
+void TitleUiSelectGuide::Initialize(IScene* scene) {
+    if (group.elements.empty()) Add(group, UiFactory::CreateUiTextHandle(scene, u8""), "TitleUi.SelectGuide", 110);
+}
+
+void TitleUiSelectGuide::ApplySettings(const TitleUiSettings::Data& s) {
+    group.settings = s.selectGuide.group;
+    group.elements[0].layout = s.selectGuide.text;
+    Text(group.elements[0], s.selectGuide.value, s);
+}
+
 void TitleUiPracticeGuide::Initialize(IScene* scene) {
     if (!basicGroup.elements.empty() || !combatGroup.elements.empty()) return;
     Add(basicGroup, UiFactory::CreateUiImageHandle(scene, L"asset/Texture/white.bmp"), "TitleUi.PracticeGuide.Basic.Panel", 120);
