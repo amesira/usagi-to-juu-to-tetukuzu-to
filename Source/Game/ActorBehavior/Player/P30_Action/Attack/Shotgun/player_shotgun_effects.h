@@ -9,6 +9,7 @@
 #include <DirectXMath.h>
 #include "Game/PresBehavior/attached_effect_handle.h"
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
+#include "Engine/Core/GamePlay/tween_task.h"
 
 struct PlayerShotgunContext;
 
@@ -21,6 +22,9 @@ public:
         ResetCharge,  // チャージリセット
         ChargeComplete, // チャージ完了
         Fire,         // 発射
+
+        ChargeCompleteFire, // チャージ完了状態での発射
+        ChargeCompleteFireFinish, // チャージ完了状態での発射後のエフェクト終了
     };
 
 private:
@@ -31,6 +35,9 @@ private:
     AttachedEffectHandle m_muzzleFlashEffect;
 
     AudioLoopHandle m_chargeLoopSe;
+
+    WaitAndCallbackTask m_chargeCompleteEffectTask;
+    bool m_playChargeCompleteFireFinishEffect = false;
 
     bool m_initialized = false;
 

@@ -8,6 +8,8 @@
 #include "player_shotgun_effects.h"
 #include "player_shotgun_context.h"
 
+#include "Engine/Device/mi_fps.h"
+
 #include "Engine/Component/particle_system_component.h"
 #include "Engine/Component/light_component.h"
 #include "Engine/Component/mesh_effect_component.h"
@@ -30,6 +32,7 @@ namespace {
     const std::filesystem::path MUZZLE_FLASH_EFFECT_ASSET =
         "asset/Particle/player_shotgun_fire.particle.json";
 
+    float infinity = std::numeric_limits<float>::infinity();
 }
 
 void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
@@ -71,12 +74,19 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
             },
         });
 
+    m_chargeCompleteEffectTask.m_waitDuration = 0.2f;
+    m_chargeCompleteEffectTask.m_callback = [this]() {
+        m_playChargeCompleteFireFinishEffect = true;
+        };
+
     m_initialized = true;
 }
 
 void PlayerShotgunEffects::Update(PlayerShotgunContext& context)
 {
     if (!m_initialized) return;
+
+    float deltaTime = FPS_GetUnscaledDeltaTime();
 
     // === デバッグ用：Revision Counterが変化した場合、エフェクトの位置を更新する ===
     if (m_settingsRevisionCounter != context.settingsAsset->GetRevision()) {
@@ -90,6 +100,15 @@ void PlayerShotgunEffects::Update(PlayerShotgunContext& context)
         });
 
         m_muzzleFlashEffect.SetLocalPosition(context.settings().muzzleFlashEffectOffset);
+    }
+
+    if (!m_chargeCompleteEffectTask.IsFinished()) {
+        m_chargeCompleteEffectTask.Update(deltaTime);
+    }
+
+    if (m_playChargeCompleteFireFinishEffect) {
+        m_playChargeCompleteFireFinishEffect = false;
+        context.effects.PlayEffects(context, EffectsType::ChargeCompleteFireFinish);
     }
 }
 
@@ -158,6 +177,44 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
         m_muzzleFlashEffect.Play();
         Game::GameFeedback()->PlayCameraShake(0.2f, 1.0f);
         Game::Audio()->PlaySe(GameSe::Shotgun);
+
+        PlayEffects(context, EffectsType::ResetCharge);
+        break;
+    }
+    case EffectsType::ChargeCompleteFire: {
+        m_chargeEffect.Stop();
+        m_muzzleFlashEffect.Play();
+
+        Game::GameFeedback()->ChangeFOVTemporary(
+            context.settings().chargeFOV - 5.0f, 
+            0.05f, infinity
+        );
+        Game::GameFeedback()->PlayCameraShake(0.2f, 1.5f);
+        Game::CustomPostEffect()->PlayEffect(
+            CustomPostEffectType::RadialBlur,
+            0.6f,
+            0.05f, infinity
+        );
+
+        Game::GameFeedback()->ChangeTimeScaleTemporary(
+            0.2f, 0.05f, infinity
+        );
+
+        // ライトなどをフラッシュさせたい
+        m_chargeCompleteEffectTask.Start();
+
+        Game::Audio()->PlaySe(GameSe::Shotgun);
+        break;
+    }
+    case EffectsType::ChargeCompleteFireFinish: {
+        Game::CustomPostEffect()->PlayEffect(
+            CustomPostEffectType::RadialBlur,
+            0.0f,
+            0.1f, 0.0f
+        );
+        Game::GameFeedback()->ResetTimeScale(0.1f);
+
+        PlayEffects(context, EffectsType::ResetCharge);
         break;
     }
     default: break;

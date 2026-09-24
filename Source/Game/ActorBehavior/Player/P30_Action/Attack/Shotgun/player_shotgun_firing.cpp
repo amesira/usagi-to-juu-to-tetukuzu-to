@@ -57,5 +57,10 @@ void PlayerShotgunFiring::Fire(PlayerShotgunContext& context, const FireRequest&
 
     ProjectileFactory::CreateBullet(context.scene, bulletDesc);
 
-    context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::Fire);
+    if (request.chargeRate < 1.0f) {
+        context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::Fire);
+    }
+    else {
+        context.effects.PlayEffects(context, PlayerShotgunEffects::EffectsType::ChargeCompleteFire);
+    }
 }
