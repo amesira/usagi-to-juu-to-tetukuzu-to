@@ -136,7 +136,7 @@ void CameraControlBehavior::Update()
     XMFLOAT3 targetFollowAnchorPosition = CalculateTargetFollowAnchorPosition();
     UpdateFollowAnchorPosition(targetFollowAnchorPosition, deltaTime);
 
-    // 絶対的なオフセットをここで加算（補間を行ないたくないパラメータ）
+    // 絶対的なオフセットをここで加算（アンカー位置更新の後）
     XMFLOAT3 lookAtPosition = MiMath::Add(
         state.followAnchorPosition,
         CalculateCompositionOffset()

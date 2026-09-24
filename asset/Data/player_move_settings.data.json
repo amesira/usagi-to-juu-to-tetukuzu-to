@@ -33,6 +33,8 @@
         },
         "smoothTime": 0.10000000149011612,
         "stopAirSmoothTime": 0.30000001192092896,
+        "stopSmoothTime": 0.019999999552965164,
+        "this_is_header_field": null,
         "uiVanishingPointOffset": [
             0.10000000149011612,
             0.30000001192092896
@@ -40,9 +42,7 @@
         "uiVanishingPointSmoothTime": [
             0.10000000149011612,
             0.5
-        ],
-        "stopSmoothTime": 0.019999999552965164,
-        "this_is_header_field": null
+        ]
     },
     "formatVersion": 0,
     "name": "player_move_settings.data",

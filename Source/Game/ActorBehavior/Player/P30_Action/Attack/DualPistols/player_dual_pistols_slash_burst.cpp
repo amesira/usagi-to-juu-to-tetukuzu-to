@@ -273,7 +273,11 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .overrideMovementSource = false,
                 },
                 .attackType = HitReceiver::AttackType::Slash,
-                .hitStop = { .duration = 0.05f, .affectAttacker = true, .affectReceiver = true },
+                .hitStop = {
+                    .duration = context.settings().hitStopDuration, 
+                    .affectAttacker = true, 
+                    .affectReceiver = true
+                },
             };
             const auto result = hitReceiver->ReceiveHit(hitData);
             if (result.WasAccepted() && hitData.hitStop.affectAttacker) {

@@ -106,6 +106,7 @@ void GameWorld::Render()
 
         RenderView& view = m_gameRenderViews[i];
         //view.enableDebugDraw = true; // デバッグ描画を有効化
+        //view.enableUI = false; // UI描画を無効化
         m_renderProcessor.BindRenderView(&view);
         m_renderProcessor.Process(scene);
         m_renderProcessor.DrawBlackFade(m_sceneManager.GetTransition().GetAlpha());

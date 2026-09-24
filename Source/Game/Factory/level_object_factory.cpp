@@ -70,7 +70,7 @@ GameObject* LevelObjectFactory::CreateObject(
             .name = "FieldMaterial",
             .renderMode = RenderMode::Opaque,
             .shaderProgram = Engine::GetShaderRepository()->GetShaderProgramResource(ShaderBase::Lit),
-            .baseColor = { 0.3f, 0.3f, 0.3f, 1.0f },
+            .baseColor = { 1.0f, 1.0f, 1.0f, 1.0f },
             .metallic = 0.0f,
             .roughness = 0.7f,
             .emissiveColor = { 0.0f, 0.0f, 0.0f },

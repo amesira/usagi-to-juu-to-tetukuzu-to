@@ -64,6 +64,7 @@ namespace PlayerDualPistolsSettings {
         float inputBufferStartTime = 0.1f;
         float chainTime = 0.1f;
         float endTime = 0.5f;
+        float hitStopDuration = 0.05f;
 
         // === Slash Burst Effects ===
         std::string slashBurstEffectAssetPath =
@@ -148,6 +149,8 @@ namespace PlayerDualPistolsSettings {
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("endTime", "End Time", &Data::endTime,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("hitStopDuration", "Hit Stop Duration", &Data::hitStopDuration,
+                DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
 
             // === Slash Burst Effects ===
             MakeHeaderField("Slash Burst Effects"),
