@@ -41,6 +41,7 @@ void CustomPostEffectController::Start()
 void CustomPostEffectController::Update()
 {
     float deltaTime = FPS_GetUnscaledDeltaTime();
+    m_state.horrorNoise.time += deltaTime;
 
     // 各エフェクトのTweeningタスクを更新し、状態に反映させる
     for (int i = 0; i < static_cast<int>(CustomPostEffectType::MAX); i++) {
@@ -56,6 +57,18 @@ void CustomPostEffectController::Update()
                 break;
             case CustomPostEffectType::MonoMask:
                 m_state.monoMask.strength = tweenTask.m_currentValue;
+                break;
+            case CustomPostEffectType::Mosaic:
+                m_state.mosaic.strength = tweenTask.m_currentValue;
+                break;
+            case CustomPostEffectType::ChromaticAberration:
+                m_state.chromaticAberration.strength = tweenTask.m_currentValue;
+                break;
+            case CustomPostEffectType::Posterize:
+                m_state.posterize.strength = tweenTask.m_currentValue;
+                break;
+            case CustomPostEffectType::HorrorNoise:
+                m_state.horrorNoise.strength = tweenTask.m_currentValue;
                 break;
             default: break;
             }
@@ -123,6 +136,45 @@ void CustomPostEffectController::DrawComponentInspector()
             ImGui::TreePop();
         }
 
+        if (ImGui::TreeNode("Mosaic")) {
+            ImGui::DragFloat("Mosaic Size", &m_state.mosaic.mosaicSize, 1.0f, 1.0f, 256.0f);
+            ImGui::DragFloat("Mosaic Strength", &m_state.mosaic.strength, 0.01f, 0.0f, 1.0f);
+            if (ImGui::Button("Play Mosaic")) PlayEffect(CustomPostEffectType::Mosaic, 1.0f, 0.2f, 0.1f);
+            ImGui::SameLine();
+            if (ImGui::Button("Reset Mosaic")) m_state.mosaic.strength = 0.0f;
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Chromatic Aberration")) {
+            ImGui::DragFloat("Red Shift Pixels", &m_state.chromaticAberration.redShiftPixels, 0.1f, -64.0f, 64.0f);
+            ImGui::DragFloat("Blue Shift Pixels", &m_state.chromaticAberration.blueShiftPixels, 0.1f, -64.0f, 64.0f);
+            ImGui::DragFloat("Chromatic Strength", &m_state.chromaticAberration.strength, 0.01f, 0.0f, 1.0f);
+            if (ImGui::Button("Play Chromatic Aberration")) PlayEffect(CustomPostEffectType::ChromaticAberration, 1.0f, 0.2f, 0.1f);
+            ImGui::SameLine();
+            if (ImGui::Button("Reset Chromatic Aberration")) m_state.chromaticAberration.strength = 0.0f;
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Posterize")) {
+            ImGui::DragInt("Posterize Levels", &m_state.posterize.levels, 1.0f, 2, 256);
+            ImGui::DragFloat("Posterize Strength", &m_state.posterize.strength, 0.01f, 0.0f, 1.0f);
+            if (ImGui::Button("Play Posterize")) PlayEffect(CustomPostEffectType::Posterize, 1.0f, 0.2f, 0.1f);
+            ImGui::SameLine();
+            if (ImGui::Button("Reset Posterize")) m_state.posterize.strength = 0.0f;
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Horror Noise")) {
+            ImGui::DragFloat("Noise Min", &m_state.horrorNoise.noiseMin, 0.01f, -1.0f, 1.0f);
+            ImGui::DragFloat("Noise Max", &m_state.horrorNoise.noiseMax, 0.01f, -1.0f, 1.0f);
+            ImGui::DragFloat("Contrast Pow", &m_state.horrorNoise.contrastPow, 0.01f, 0.001f, 8.0f);
+            ImGui::DragFloat("Horror Strength", &m_state.horrorNoise.strength, 0.01f, 0.0f, 1.0f);
+            if (ImGui::Button("Play Horror Noise")) PlayEffect(CustomPostEffectType::HorrorNoise, 1.0f, 0.2f, 0.1f);
+            ImGui::SameLine();
+            if (ImGui::Button("Reset Horror Noise")) m_state.horrorNoise.strength = 0.0f;
+            ImGui::TreePop();
+        }
+
         if (ImGui::Button("Reset All Custom Effects")) {
             m_state.Reset();
             m_state.radialBlur.sampleCount = 4;
@@ -153,6 +205,18 @@ void CustomPostEffectController::PlayEffect(
             break;
         case CustomPostEffectType::MonoMask:
             tweenTask.m_startValue = m_state.monoMask.strength;
+            break;
+        case CustomPostEffectType::Mosaic:
+            tweenTask.m_startValue = m_state.mosaic.strength;
+            break;
+        case CustomPostEffectType::ChromaticAberration:
+            tweenTask.m_startValue = m_state.chromaticAberration.strength;
+            break;
+        case CustomPostEffectType::Posterize:
+            tweenTask.m_startValue = m_state.posterize.strength;
+            break;
+        case CustomPostEffectType::HorrorNoise:
+            tweenTask.m_startValue = m_state.horrorNoise.strength;
             break;
         default: break;
     }

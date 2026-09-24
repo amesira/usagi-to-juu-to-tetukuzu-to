@@ -10,9 +10,12 @@ struct PS_INPUT
 };
 
 cbuffer HorrorNoiseBuffer : register(b0) {
-    float noiseMin;
-    float noiseMax;
-    float contrastPow;
+    float g_NoiseMin;
+    float g_NoiseMax;
+    float g_ContrastPow;
+    float g_Strength;
+    float g_Time;
+    float3 g_Padding;
 };
 
 float Rand(float2 coord){
@@ -21,11 +24,12 @@ float Rand(float2 coord){
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float4 tex = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
+    float4 original = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
+    float4 tex = original;
     
     // ノイズの生成・輝度調整
-    float noise = Rand(ps_in.texcoord * 1000.0f);
-    tex.rgb += noise * (noiseMax - noiseMin) + noiseMin;
+    float noise = Rand(ps_in.texcoord * 1000.0f + float2(g_Time, g_Time * 0.37f));
+    tex.rgb += noise * (g_NoiseMax - g_NoiseMin) + g_NoiseMin;
     
     float4 color;
     color.rgb = saturate(tex.rgb);
@@ -34,7 +38,8 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     // グレースケール
     color.rgb = dot(color.rgb, float3(0.299f, 0.587f, 0.114f));
     // コントラスト調整
-    color.rgb = pow(color.rgb, contrastPow);
+    color.rgb = pow(saturate(color.rgb), max(g_ContrastPow, 0.001f));
+    color.rgb = lerp(original.rgb, color.rgb, saturate(g_Strength));
     
     return color;
 }

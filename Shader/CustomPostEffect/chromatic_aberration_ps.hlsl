@@ -10,21 +10,23 @@ struct PS_INPUT
 };
 
 cbuffer ChromaticAberrationBuffer : register(b0) {
-    float rShift;
-    float bShift;
+    float2 g_InvScreenSize;
+    float g_RShiftPixels;
+    float g_BShiftPixels;
+    float g_Strength;
+    float3 g_Padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float4 color;
-    
     float2 uv = ps_in.texcoord;
-    
-    color.r = g_Texture.Sample(g_SamplerState, uv + float2(rShift, 0.0f)).r;
+    float2 rOffset = float2(g_RShiftPixels * g_Strength, 0.0f) * g_InvScreenSize;
+    float2 bOffset = float2(g_BShiftPixels * g_Strength, 0.0f) * g_InvScreenSize;
+
+    float4 color;
+    color.r = g_Texture.Sample(g_SamplerState, uv + rOffset).r;
     color.g = g_Texture.Sample(g_SamplerState, uv).g;
-    color.b = g_Texture.Sample(g_SamplerState, uv + float2(bShift, 0.0f)).b;
-    
+    color.b = g_Texture.Sample(g_SamplerState, uv + bOffset).b;
     color.a = g_Texture.Sample(g_SamplerState, uv).a;
-    
     return color;
 }

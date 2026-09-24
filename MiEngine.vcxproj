@@ -187,6 +187,10 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\mosaic_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\chromatic_aberration_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\posterize_effect.cpp" />
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\horror_noise_effect.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.cpp" />
     <ClCompile Include="Source\Engine\Processor\mesh_effect_processor.cpp" />
     <ClCompile Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.cpp" />
@@ -480,6 +484,10 @@
     <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\bloom_effect.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\mono_mask_effect.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\radial_blur_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\mosaic_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\chromatic_aberration_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\posterize_effect.h" />
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\horror_noise_effect.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\mesh_effect_render_utility.h" />
     <ClInclude Include="Source\Engine\Processor\mesh_effect_processor.h" />
     <ClInclude Include="Source\Engine\Processor\RenderPass\RenderUtility\model_render_utility.h" />

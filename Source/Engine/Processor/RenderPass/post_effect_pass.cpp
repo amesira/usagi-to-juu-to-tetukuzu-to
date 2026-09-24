@@ -34,6 +34,10 @@ void PostEffectPass::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pCon
     m_bloomEffect.Initialize(m_pDevice, m_pContext);
     m_monoMaskEffect.Initialize(m_pDevice, m_pContext);
     m_radialBlurEffect.Initialize(m_pDevice, m_pContext);
+    m_mosaicEffect.Initialize(m_pDevice, m_pContext);
+    m_chromaticAberrationEffect.Initialize(m_pDevice, m_pContext);
+    m_posterizeEffect.Initialize(m_pDevice, m_pContext);
+    m_horrorNoiseEffect.Initialize(m_pDevice, m_pContext);
 }
 
 // ポストエフェクト終了
@@ -63,7 +67,31 @@ void PostEffectPass::Process(IScene* pScene, const RenderView& view)
         state.monoMask.monoColor,
         state.monoMask.strength);
 
-    // 3. RadialBlur
+    // 3. Mosaic
+    m_mosaicEffect.Process(
+        m_tempSRV[1].Get(), m_tempRTV[0].Get(),
+        state.mosaic.mosaicSize, state.mosaic.strength);
+
+    // 4. Posterize
+    m_posterizeEffect.Process(
+        m_tempSRV[0].Get(), m_tempRTV[1].Get(),
+        state.posterize.levels, state.posterize.strength);
+
+    // 5. HorrorNoise
+    m_horrorNoiseEffect.Process(
+        m_tempSRV[1].Get(), m_tempRTV[0].Get(),
+        state.horrorNoise.noiseMin, state.horrorNoise.noiseMax,
+        state.horrorNoise.contrastPow, state.horrorNoise.strength,
+        state.horrorNoise.time);
+
+    // 6. ChromaticAberration
+    m_chromaticAberrationEffect.Process(
+        m_tempSRV[0].Get(), m_tempRTV[1].Get(),
+        state.chromaticAberration.redShiftPixels,
+        state.chromaticAberration.blueShiftPixels,
+        state.chromaticAberration.strength);
+
+    // 7. RadialBlur
     m_radialBlurEffect.Process(
         m_tempSRV[1].Get(),
         view.postEffectRTV.Get(),

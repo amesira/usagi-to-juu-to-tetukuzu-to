@@ -10,17 +10,19 @@ struct PS_INPUT
 };
 
 cbuffer PosterizeBuffer : register(b0) {
-    int levels; // ポスタリゼーションのレベル数
+    int g_Levels; // ポスタリゼーションのレベル数
+    float g_Strength;
+    float2 g_Padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
     float4 color = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
     
-    // ポスタライズ処理
-    float div = 1.0f / (levels - 1);
-    color.rgb = floor(color.rgb / div + 0.5f) * div;
-    color.rgb = saturate(color.rgb);
+    int safeLevels = max(g_Levels, 2);
+    float div = 1.0f / (safeLevels - 1);
+    float3 posterized = floor(color.rgb / div + 0.5f) * div;
+    color.rgb = lerp(color.rgb, saturate(posterized), saturate(g_Strength));
     
     // MEMO 各諧調の中間をとるための+0.5f
     

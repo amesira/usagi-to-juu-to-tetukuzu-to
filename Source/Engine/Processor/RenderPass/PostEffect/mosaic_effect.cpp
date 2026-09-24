@@ -1,0 +1,47 @@
+#include "mosaic_effect.h"
+
+#include <algorithm>
+#include "Engine/engine_service_locator.h"
+
+void MosaicEffect::Initialize(ID3D11Device* device, ID3D11DeviceContext* context)
+{
+    m_context = context;
+    m_constantBuffer = SHADER_REPOSITORY->GenerateConstantBufferResource(
+        "MosaicBuffer", 0, sizeof(ConstantBufferData), false, true, ConstantBufferUsage::Dynamic);
+
+    ShaderProgramResource resource;
+    resource.name = "MosaicEffect";
+    resource.baseShader = SHADER_REPOSITORY->GetShaderProgramResource(ShaderBase::FullScreen);
+    resource.overridePixelShader = SHADER_REPOSITORY->GetPixelShaderResource("mosaic_ps.cso");
+    resource.additionalConstantBuffers.push_back(m_constantBuffer);
+    m_shader = SHADER_REPOSITORY->GenerateShaderProgramResource(resource);
+}
+
+void MosaicEffect::Process(ID3D11ShaderResourceView* inputSRV, ID3D11RenderTargetView* outputRTV,
+    float mosaicSize, float strength)
+{
+    if (!m_context || !inputSRV || !outputRTV || !m_constantBuffer || !m_shader) return;
+
+    ConstantBufferData data = {};
+    data.screenSize = { static_cast<float>(Direct3D_GetBackBufferWidth()),
+        static_cast<float>(Direct3D_GetBackBufferHeight()) };
+    data.mosaicSize = (std::max)(mosaicSize, 1.0f);
+    data.strength = strength;
+
+    D3D11_MAPPED_SUBRESOURCE mapped = {};
+    if (SUCCEEDED(m_context->Map(m_constantBuffer->buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped))) {
+        *static_cast<ConstantBufferData*>(mapped.pData) = data;
+        m_context->Unmap(m_constantBuffer->buffer.Get(), 0);
+    }
+
+    SetSamplerState(SAMPLERSTATE_LINEAR_CLAMP);
+    Direct3D_ResetViewport();
+    Direct3D_SetSceneTarget(outputRTV, nullptr);
+    SetBlendState(BLENDSTATE_NONE);
+    SetDepthState(DEPTHSTATE_DISABLE);
+    EngineServiceLocator::BindShader(m_shader);
+    m_context->PSSetShaderResources(0, 1, &inputSRV);
+    m_context->Draw(3, 0);
+    ID3D11ShaderResourceView* nullSRV = nullptr;
+    m_context->PSSetShaderResources(0, 1, &nullSRV);
+}

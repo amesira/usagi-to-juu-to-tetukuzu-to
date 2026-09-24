@@ -15,6 +15,10 @@
 enum class CustomPostEffectType {
     RadialBlur,
     MonoMask,
+    Mosaic,
+    ChromaticAberration,
+    Posterize,
+    HorrorNoise,
 
     MAX,
 };
@@ -44,6 +48,17 @@ public:
     void SetMonoMask_MonoColor(XMFLOAT4 color) { m_state.monoMask.monoColor = color; }
     // MonoMaskテクスチャ用テクスチャ設定
     void SetMonoMask_Mask(ID3D11ShaderResourceView* srv) { m_state.monoMaskTextureSRV = srv; }
+    void SetMosaic_Size(float size) { m_state.mosaic.mosaicSize = size; }
+    void SetChromaticAberration_Shift(float redPixels, float bluePixels) {
+        m_state.chromaticAberration.redShiftPixels = redPixels;
+        m_state.chromaticAberration.blueShiftPixels = bluePixels;
+    }
+    void SetPosterize_Levels(int levels) { m_state.posterize.levels = levels; }
+    void SetHorrorNoise_Parameters(float noiseMin, float noiseMax, float contrastPow) {
+        m_state.horrorNoise.noiseMin = noiseMin;
+        m_state.horrorNoise.noiseMax = noiseMax;
+        m_state.horrorNoise.contrastPow = contrastPow;
+    }
 
 };
 

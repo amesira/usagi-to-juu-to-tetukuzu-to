@@ -11,28 +11,20 @@ struct PS_INPUT
 };
 
 cbuffer MosaicBuffer : register(b0) {
-    float2 screenSize; // 画面サイズ
-    float2 mosaicSize; // モザイクのサイズ
+    float2 g_ScreenSize; // 画面サイズ
+    float g_MosaicSize;  // 1ブロックのピクセル数
+    float g_Strength;    // モザイクの強さ（0～1）
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
 {
-    float uv = ps_in.texcoord;
+    float2 screenSize = max(g_ScreenSize, float2(1.0f, 1.0f));
+    float mosaicSize = max(g_MosaicSize, 1.0f);
     
-    float2 len = float2(0.5f, 0.5f);
-    len -= ps_in.texcoord;
-    len.x *= screenSize.x / screenSize.y;
-    len = length(len);
-    
-    if (len.x < 0.0f)
-    {
-        uv *= screenSize;
-        uv /= mosaicSize;
-        uv = floor(uv) * mosaicSize;
-        uv /= screenSize;
-    }
-    
-    // テクスチャのサンプリング
-    uv = clamp(uv, 0.001f, 0.999f);
-    return g_Texture.Sample(g_SamplerState, uv);
+    float2 mosaicUv = floor(ps_in.texcoord * screenSize / mosaicSize) * mosaicSize / screenSize;
+    mosaicUv = clamp(mosaicUv, 0.001f, 0.999f);
+
+    float4 originalColor = g_Texture.Sample(g_SamplerState, ps_in.texcoord);
+    float4 mosaicColor = g_Texture.Sample(g_SamplerState, mosaicUv);
+    return lerp(originalColor, mosaicColor, saturate(g_Strength));
 }

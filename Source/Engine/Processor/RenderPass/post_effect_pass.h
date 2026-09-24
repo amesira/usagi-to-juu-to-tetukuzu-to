@@ -12,6 +12,10 @@
 #include "./PostEffect/bloom_effect.h"
 #include "./PostEffect/mono_mask_effect.h"
 #include "./PostEffect/radial_blur_effect.h"
+#include "./PostEffect/mosaic_effect.h"
+#include "./PostEffect/chromatic_aberration_effect.h"
+#include "./PostEffect/posterize_effect.h"
+#include "./PostEffect/horror_noise_effect.h"
 
 class PostEffectPass : public Pass {
 private:
@@ -22,6 +26,10 @@ private:
     BloomEffect m_bloomEffect;
     MonoMaskEffect m_monoMaskEffect;
     RadialBlurEffect m_radialBlurEffect;
+    MosaicEffect m_mosaicEffect;
+    ChromaticAberrationEffect m_chromaticAberrationEffect;
+    PosterizeEffect m_posterizeEffect;
+    HorrorNoiseEffect m_horrorNoiseEffect;
 
     // 一時バッファ用のテクスチャ
     ComPtr<ID3D11Texture2D> m_tempTexture[2];
