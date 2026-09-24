@@ -111,14 +111,8 @@ bool PlayerDualPistolsSlashBurst::StartNextStep(PlayerDualPistolsContext& contex
 /// @brief 攻撃の更新処理
 void PlayerDualPistolsSlashBurst::Update(PlayerDualPistolsContext& context, float deltaTime)
 {
-    // ヒットストップタスク更新
     if (m_hitStopTask.IsRunning()) {
-        m_hitStopTask.Update(FPS_GetUnscaledDeltaTime());
-        if (m_hitStopTask.IsRunning()) {
-            HoldPosition(context);
-            return;
-        }
-        EndHitStop();
+        return;
     }
 
     m_attackTimer += deltaTime;
@@ -205,6 +199,21 @@ void PlayerDualPistolsSlashBurst::Cancel(PlayerDualPistolsContext& context)
     }
 }
 
+void PlayerDualPistolsSlashBurst::UpdateBackground(PlayerDualPistolsContext& context)
+{
+    float deltaTime = FPS_GetUnscaledDeltaTime();
+
+    // ヒットストップタスク更新
+    if (m_hitStopTask.IsRunning()) {
+        m_hitStopTask.Update(deltaTime);
+        if (m_hitStopTask.IsRunning()) {
+            HoldPosition(context);
+            return;
+        }
+        EndHitStop();
+    }
+}
+
 /// @brief 攻撃中の移動ステップを更新する
 void PlayerDualPistolsSlashBurst::UpdateStepMovement(PlayerDualPistolsContext& context, float deltaTime)
 {
@@ -268,6 +277,7 @@ bool PlayerDualPistolsSlashBurst::HandleSlashBurstAttack(PlayerDualPistolsContex
                     .overrideStartPosition = true,
                     .startPosition = knockbackStartPosition,
                     .targetPosition = knockbackEndPosition,
+                    .delay = context.settings().hitStopDuration,
                     .duration = context.settings().slashBurstKnockbackDuration,
                     .mode = HitReceiver::KnockbackMode::TargetPosition,
                     .overrideMovementSource = false,

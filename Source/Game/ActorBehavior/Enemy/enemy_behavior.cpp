@@ -228,7 +228,7 @@ void EnemyBehavior::OnHitReceived(const HitData& hitData, const HitResult& hitRe
     // エリート敵はスタンしないようにする
     if (!m_isElite){
         const float stunDuration = hitData.knockback.enabled
-            ? hitData.knockback.duration
+            ? hitData.knockback.delay + hitData.knockback.duration
             : 0.2f;
         StartStun(stunDuration);
     }

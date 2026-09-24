@@ -193,6 +193,11 @@ void PlayerDualPistolsAction::Finish(PlayerContext& context, const PlayerInput& 
     }
 }
 
+void PlayerDualPistolsAction::UpdateBackground(PlayerContext& context, const PlayerInput& input, float deltaTime)
+{
+    m_context.slashBurst.UpdateBackground(m_context);
+}
+
 void PlayerDualPistolsAction::ChangePhase(PlayerDualPistolsRuntimeState::Phase newPhase)
 {
     if (m_context.runtimeState.phase == newPhase) {

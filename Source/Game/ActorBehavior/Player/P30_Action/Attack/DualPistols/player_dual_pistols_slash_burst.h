@@ -53,6 +53,8 @@ public:
     bool IsActive() const { return m_isActive; }
     bool IsFinished() const { return m_isFinished; }
 
+    void UpdateBackground(PlayerDualPistolsContext& context);
+
 private:
     /// @brief 攻撃中の移動ステップを更新する
     void UpdateStepMovement(PlayerDualPistolsContext& context, float deltaTime);

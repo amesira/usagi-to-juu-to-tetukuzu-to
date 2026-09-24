@@ -53,6 +53,7 @@ namespace HitReceiver
         DirectX::XMFLOAT3 targetPosition = { 0.0f, 0.0f, 0.0f };
         DirectX::XMFLOAT3 direction = { 0.0f, 0.0f, 0.0f };
         float distance = 0.0f;
+        float delay = 0.0f;
         float duration = 0.0f;
 
         KnockbackMode mode = KnockbackMode::RelativeDistance;

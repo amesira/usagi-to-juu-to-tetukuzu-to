@@ -34,7 +34,7 @@ void HitReceiverBehavior::Update()
 {
     const float deltaTime = FPS_GetDeltaTime();
 
-    m_knockbackReceiver.Update(deltaTime);
+    m_knockbackReceiver.Update(deltaTime, FPS_GetUnscaledDeltaTime());
 }
 
 void HitReceiverBehavior::DrawComponentInspector()

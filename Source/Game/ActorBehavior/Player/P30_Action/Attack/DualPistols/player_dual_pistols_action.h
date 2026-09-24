@@ -27,6 +27,8 @@ public:
     void Update(PlayerContext& context, const PlayerInput& input, float deltaTime) override;
     void Finish(PlayerContext& context, const PlayerInput& input) override;
 
+    void UpdateBackground(PlayerContext& context, const PlayerInput& input, float deltaTime) override;
+
 private:
     void UpdateMuzzleStates();
     void ChangePhase(PlayerDualPistolsRuntimeState::Phase newPhase);
