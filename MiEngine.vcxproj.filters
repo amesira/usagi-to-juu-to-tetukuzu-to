@@ -145,6 +145,10 @@
     <FxCompile Include="Shader\mesh_effect_unlit_ps.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="Shader\CustomPostEffect\mosaic_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\chromatic_aberration_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\horror_noise_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\posterize_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
@@ -455,6 +459,11 @@
     <ClCompile Include="Source\Game\PresBehavior\UI\Player\player_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\ui_handle.cpp" />
     <ClCompile Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.cpp" />
+    <ClCompile Include="Source\Game\PresBehavior\one_shot_particle_behavior.cpp" />
+    <ClCompile Include="Source\Game\ActorBehavior\ScoreboardEnemy\scoreboard_enemy_behavior.cpp" />
+    <ClCompile Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_controller_behavior.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\game_object.h">
@@ -1115,6 +1124,13 @@
     <ClInclude Include="Source\Game\PresBehavior\UI\Player\player_ui_view.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\ui_handle.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_effects.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\game_pause_controller_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_behavior.h" />
+    <ClInclude Include="Source\Game\PresBehavior\UI\GamePause\game_pause_ui_settings_asset.h" />
+    <ClInclude Include="Source\Game\PresBehavior\one_shot_particle_behavior.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\ScoreboardEnemy\scoreboard_enemy_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_controller_behavior.h" />
+    <ClInclude Include="Source\Game\ControllerBehavior\ScoreboardEnemy\scoreboard_enemy_settings_asset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game\PresBehavior\UI\damage_number_behavior.cpp" />
