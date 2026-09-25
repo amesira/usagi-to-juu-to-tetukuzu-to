@@ -49,6 +49,7 @@ protected:
 
     // === 派生クラスで実装する必要があるメソッド ===
     virtual void BeginWindup(EnemyContext&) {}
+    virtual void UpdateWindup(EnemyContext&, float) {}
     virtual void EndWindup(EnemyContext&) {}
     virtual void BeginAttack(EnemyContext& context) = 0;
     virtual EnemyCombatStatus UpdateAttack(EnemyContext& context, float deltaTime) = 0;

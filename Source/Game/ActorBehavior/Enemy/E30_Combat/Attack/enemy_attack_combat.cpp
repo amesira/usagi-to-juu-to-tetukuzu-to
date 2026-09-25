@@ -92,7 +92,7 @@ EnemyCombatStatus EnemyAttackCombat::Update(EnemyContext& context, float deltaTi
         if (enteredPhase) {
             BeginWindup(context);
         }
-
+        UpdateWindup(context, dt);
         state.aimPosition = context.runtimeState.combatTargetPosition;
         if (state.phaseElapsed >= settings().windupDuration) {
             EndWindup(context);

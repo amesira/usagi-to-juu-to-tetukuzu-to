@@ -36,6 +36,7 @@ protected:
     void Finalize(EnemyContext& context) override;
 
     void BeginWindup(EnemyContext& context) override;
+    void UpdateWindup(EnemyContext& context, float deltaTime) override;
     void EndWindup(EnemyContext& context) override;
 
     void BeginAttack(EnemyContext& context) override;

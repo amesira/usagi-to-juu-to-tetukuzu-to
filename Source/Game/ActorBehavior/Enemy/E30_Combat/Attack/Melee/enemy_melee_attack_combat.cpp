@@ -25,12 +25,21 @@ void EnemyMeleeAttackCombat::Finalize(EnemyContext& context)
 
 void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
 {
-    // ピカーンって感じのエフェクトと効果音
+    // 震える処理
+
+    // エフェクト再生
+}
+
+void EnemyMeleeAttackCombat::UpdateWindup(EnemyContext& context, float deltaTime)
+{
+
 }
 
 void EnemyMeleeAttackCombat::EndWindup(EnemyContext& context)
 {
+    // 震えを止める処理
 
+    // エフェクト停止
 }
 
 void EnemyMeleeAttackCombat::BeginAttack(EnemyContext& context)
