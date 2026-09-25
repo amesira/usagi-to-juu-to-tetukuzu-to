@@ -47,6 +47,16 @@
         "targetHeightOffset": 1.0,
         "this_is_header_field": null,
         "windupDuration": 0.699999988079071,
+        "windupEffectPosition": [
+            0.0,
+            1.0,
+            1.0
+        ],
+        "windupEffectRotation": [
+            0.0,
+            0.0,
+            0.0
+        ],
         "windupShakeAxis": [
             1.0,
             0.4000000059604645,

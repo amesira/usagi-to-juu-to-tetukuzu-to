@@ -8,12 +8,22 @@
 #include "Game/ControllerBehavior/Audio/game_audio_controller_behavior.h"
 #include "Game/ControllerBehavior/game_controller_locator.h"
 
+#include "Engine/Component/transform_component.h"
+#include "Engine/Component/particle_system_component.h"
+
 void EnemyMeleeAttackEffects::Initialize(const EnemyAttackContext& context)
 {
     if (!context.scene || !context.transform || context.settings().slashEffectAssetPath.empty()) return;
 
     m_slashEffect = RenderEffectFactory::CreateAttachedMeshEffect(
         context.scene, context.settings().slashEffectAssetPath, 
+        EffectAttachmentDesc{
+            .target = context.transform,
+            .considerTargetRotation = true,
+        });
+
+    m_windupEffect = RenderEffectFactory::CreateAttachedParticleEffect(
+        context.scene, "asset/Particle/enemy_charge.particle.json",
         EffectAttachmentDesc{
             .target = context.transform,
             .considerTargetRotation = true,
@@ -40,6 +50,15 @@ void EnemyMeleeAttackEffects::PlayEffects(EffectsType type)
         Game::Audio()->PlaySe(GameSe::EnemySlash);
         break;
     }
+    case EffectsType::BeginWindup: {
+        m_windupEffect.GetParticleSystem()->Emission().enabled = true;
+        m_windupEffect.Play();
+        break;
+    }
+    case EffectsType::EndWindup: {
+        m_windupEffect.GetParticleSystem()->Emission().enabled = false;
+        break;
+    }
     default: break;
     }
 }
@@ -61,7 +80,7 @@ void EnemyMeleeAttackEffects::SynchronizeAsset(const EnemyAttackContext& context
     if (m_revisionAsset != currentRevision) {
         m_revisionAsset = currentRevision;
 
-        // ローカルTransformを設定する
+        // SlashEffect
         DirectX::XMFLOAT4 rotation;
         DirectX::XMStoreFloat4(&rotation, DirectX::XMQuaternionRotationRollPitchYaw(
             DirectX::XMConvertToRadians(context.settings().slashEffectRotation.x),
@@ -72,6 +91,17 @@ void EnemyMeleeAttackEffects::SynchronizeAsset(const EnemyAttackContext& context
             .position = context.settings().slashEffectPosition,
             .rotation = rotation,
             .scaling = { scale, scale, scale },
+            });
+
+        // WindupEffect
+        DirectX::XMStoreFloat4(&rotation, DirectX::XMQuaternionRotationRollPitchYaw(
+            DirectX::XMConvertToRadians(context.settings().windupEffectRotation.x),
+            DirectX::XMConvertToRadians(context.settings().windupEffectRotation.y),
+            DirectX::XMConvertToRadians(context.settings().windupEffectRotation.z)));
+        m_windupEffect.SetLocalTransform({
+            .position = context.settings().windupEffectPosition,
+            .rotation = rotation,
+            .scaling = { 1.0f, 1.0f, 1.0f },
             });
     }
 }

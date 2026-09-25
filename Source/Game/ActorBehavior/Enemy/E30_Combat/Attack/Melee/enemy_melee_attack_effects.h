@@ -9,10 +9,17 @@ namespace EnemyAttackSettings { struct Data; }
 class EnemyMeleeAttackEffects {
 private:
     AttachedEffectHandle m_slashEffect;
+    AttachedEffectHandle m_windupEffect;
+
     std::uint64_t m_revisionAsset = (std::numeric_limits<std::uint64_t>::max)();
 
 public:
-    enum class EffectsType { Slash };
+    enum class EffectsType { 
+        Slash,
+        BeginWindup,
+        EndWindup
+    };
+
     void Initialize(const EnemyAttackContext& context);
     void Update(const EnemyAttackContext& context);
     void PlayEffects(EffectsType type);

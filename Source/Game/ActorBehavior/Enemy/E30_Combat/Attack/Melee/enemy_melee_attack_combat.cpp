@@ -16,6 +16,14 @@ void EnemyMeleeAttackCombat::Initialize(EnemyContext& context)
 {
     EnemyAttackCombat::Initialize(context);
     m_effects.Initialize(getContext());
+
+
+    // 移動要求：ジャンプ中はForceMoveにより移動するので、LocomotionRequestでは移動を無効化
+    m_locomotionRequest.priority = 50;
+    m_locomotionRequest.canMove = false;
+    m_locomotionRequest.canRotate = true;
+    m_locomotionRequest.useGravity = false;
+    
 }
 
 void EnemyMeleeAttackCombat::Finalize(EnemyContext& context)
@@ -35,12 +43,22 @@ void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
     m_windupShakeTask.Start();
 
     // エフェクト再生
+    m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::BeginWindup);
+
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
+    m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
 }
 
 void EnemyMeleeAttackCombat::UpdateWindup(EnemyContext& context, float deltaTime)
 {
     m_windupShakeTask.Update(deltaTime);
     ApplyWindupShakeOffset(context, m_windupShakeTask.m_offset);
+
+    // 速度方向に回転更新
+    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
+    m_locomotionRequest.rotateDirection.targetPosition = GetAimPosition();
+    context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest);
 }
 
 void EnemyMeleeAttackCombat::EndWindup(EnemyContext& context)
@@ -48,6 +66,7 @@ void EnemyMeleeAttackCombat::EndWindup(EnemyContext& context)
     ClearWindupShake(context);
 
     // エフェクト停止
+    m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::EndWindup);
 }
 
 void EnemyMeleeAttackCombat::ApplyWindupShakeOffset(
@@ -137,15 +156,6 @@ void EnemyMeleeAttackCombat::ChangeAttackPhase(EnemyMeleeAttackPhase newPhase)
 
 void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
 {
-    // 移動要求：ジャンプ中はForceMoveにより移動するので、LocomotionRequestでは移動を無効化
-    m_locomotionRequest.priority = 50;
-    m_locomotionRequest.canMove = false;
-    m_locomotionRequest.canRotate = true;
-    m_locomotionRequest.useGravity = false;
-    m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
-    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
-    m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
-
     m_jumpStartPosition = context.transform->GetPosition();
     m_landingPosition = GetAimPosition();
 

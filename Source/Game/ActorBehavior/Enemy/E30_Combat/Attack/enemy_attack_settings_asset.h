@@ -39,6 +39,8 @@ namespace EnemyAttackSettings {
         DirectX::XMFLOAT3 slashEffectPosition = {};
         DirectX::XMFLOAT3 slashEffectRotation = {}; // ローカルEuler角（度）
         float slashEffectScale = 1.0f;
+        DirectX::XMFLOAT3 windupEffectPosition = {};
+        DirectX::XMFLOAT3 windupEffectRotation = {}; // ローカルEuler角（度）
 
         // === Ranged用の追加設定 ===
         int shotCount = 3;
@@ -54,56 +56,6 @@ namespace EnemyAttackSettings {
         float projectileSpawnForwardOffset = 0.2f;
         float targetHeightOffset = 1.0f;
     };
-
-    inline void Sanitize(Data& data) {
-        data.minDistance = std::isfinite(data.minDistance) ? (std::max)(0.0f, data.minDistance) : 0.0f;
-        data.maxDistance = std::isfinite(data.maxDistance) ? (std::max)(0.0f, data.maxDistance) : 2.0f;
-        data.windupDuration = std::isfinite(data.windupDuration) ? (std::max)(0.0f, data.windupDuration) : 0.3f;
-        data.recoveryDuration = std::isfinite(data.recoveryDuration) ? (std::max)(0.0f, data.recoveryDuration) : 0.5f;
-        data.restartCooldown = std::isfinite(data.restartCooldown) ? (std::max)(0.0f, data.restartCooldown) : 1.0f;
-        data.jumpDuration = std::isfinite(data.jumpDuration) ? (std::max)(0.0f, data.jumpDuration) : 0.6f;
-        data.jumpGravity = std::isfinite(data.jumpGravity) ? (std::max)(0.0f, data.jumpGravity) : 9.8f;
-        data.windupShakeMagnitude = std::isfinite(data.windupShakeMagnitude)
-            ? (std::max)(0.0f, data.windupShakeMagnitude) : 0.08f;
-        data.windupShakeFrequency = std::isfinite(data.windupShakeFrequency)
-            ? (std::max)(0.01f, data.windupShakeFrequency) : 25.0f;
-        data.slashDuration = std::isfinite(data.slashDuration) ? (std::max)(0.0f, data.slashDuration) : 0.3f;
-        data.slashBurstTime = std::isfinite(data.slashBurstTime)
-            ? (std::clamp)(data.slashBurstTime, 0.0f, data.slashDuration) : data.slashDuration * 0.5f;
-        const auto nonNegative = [](float value, float fallback) {
-            return std::isfinite(value) ? (std::max)(0.0f, value) : fallback;
-        };
-        data.slashDamage = nonNegative(data.slashDamage, 10.0f);
-        data.slashEffectScale = nonNegative(data.slashEffectScale, 1.0f);
-        data.slashBoxSize.x = (std::max)(0.01f, nonNegative(data.slashBoxSize.x, 3.0f));
-        data.slashBoxSize.y = (std::max)(0.01f, nonNegative(data.slashBoxSize.y, 2.0f));
-        data.slashBoxSize.z = (std::max)(0.01f, nonNegative(data.slashBoxSize.z, 2.0f));
-        const auto finiteVector = [](DirectX::XMFLOAT3& value) {
-            if (!std::isfinite(value.x)) value.x = 0.0f;
-            if (!std::isfinite(value.y)) value.y = 0.0f;
-            if (!std::isfinite(value.z)) value.z = 0.0f;
-        };
-        finiteVector(data.slashBoxOffset);
-        finiteVector(data.windupShakeAxis);
-        data.windupShakeAxis.x = (std::max)(0.0f, data.windupShakeAxis.x);
-        data.windupShakeAxis.y = (std::max)(0.0f, data.windupShakeAxis.y);
-        data.windupShakeAxis.z = (std::max)(0.0f, data.windupShakeAxis.z);
-        finiteVector(data.slashEffectPosition);
-        finiteVector(data.slashEffectRotation);
-        data.shotInterval = std::isfinite(data.shotInterval) ? (std::max)(0.0f, data.shotInterval) : 0.3f;
-        data.maxDistance = (std::max)(data.minDistance, data.maxDistance);
-        data.shotCount = (std::clamp)(data.shotCount, 1, 100);
-        data.shotInterval = (std::max)(0.01f, data.shotInterval);
-        data.firstShotDelay = (std::min)(nonNegative(data.firstShotDelay, 0.1f), data.shotInterval);
-        data.shotPlaybackSpeed = (std::max)(0.01f, nonNegative(data.shotPlaybackSpeed, 1.0f));
-        data.projectileSpeed = nonNegative(data.projectileSpeed, 30.0f);
-        data.projectileRadius = nonNegative(data.projectileRadius, 0.2f);
-        data.projectileLifeTime = nonNegative(data.projectileLifeTime, 5.0f);
-        data.projectileDamage = nonNegative(data.projectileDamage, 10.0f);
-        data.projectileSpawnForwardOffset = nonNegative(data.projectileSpawnForwardOffset, 0.2f);
-        data.targetHeightOffset = std::isfinite(data.targetHeightOffset)
-            ? data.targetHeightOffset : 1.0f;
-    }
 
     inline const auto& GetSchema() {
         static const auto schema = FieldSchema{
@@ -139,6 +91,11 @@ namespace EnemyAttackSettings {
             MakeField("slashEffectPosition", "Local Position", &Data::slashEffectPosition, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
             MakeField("slashEffectRotation", "Local Rotation (degrees)", &Data::slashEffectRotation, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
             MakeField("slashEffectScale", "Scale", &Data::slashEffectScale, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1000.0f }),
+            MakeField("windupEffectPosition", "Windup Effect Local Position", 
+                &Data::windupEffectPosition, DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
+            MakeField("windupEffectRotation", "Windup Effect Local Rotation (degrees)",
+                &Data::windupEffectRotation, DragFieldOptions{.dragSpeed = 0.01f, .minValue = -360.0f, .maxValue = 1000.0f }),
+
             // === Ranged用の追加設定 ===
             MakeHeaderField("Ranged Attack Settings"),
             MakeField("firstShotDelay", "Shot Clip Fire Delay (s)", &Data::firstShotDelay, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
@@ -170,13 +127,11 @@ public:
     bool DeserializeDataToApply(const nlohmann::json& jsonData) override {
         auto loaded = m_data;
         if (!FieldSerialization::DeserializeFields(jsonData, loaded, EnemyAttackSettings::GetSchema())) return false;
-        EnemyAttackSettings::Sanitize(loaded);
         m_data = loaded;
         return true;
     }
     bool DrawDataOnEditor() override {
         const bool changed = FieldEditor::DrawFields(m_data, EnemyAttackSettings::GetSchema());
-        if (changed) EnemyAttackSettings::Sanitize(m_data);
         return changed;
     }
 };

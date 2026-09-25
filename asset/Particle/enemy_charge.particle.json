@@ -1,0 +1,119 @@
+{
+    "data": {
+        "emission": {
+            "enabled": true,
+            "rateOverDistance": 0.0,
+            "rateOverTime": 24.0
+        },
+        "main": {
+            "duration": 3.0,
+            "gravity": [
+                0.0,
+                -0.25,
+                0.0
+            ],
+            "loop": true,
+            "playOnAwake": true,
+            "simulationSpace": "Local",
+            "simulationSpeed": 1.0,
+            "startColor": {
+                "color": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "colorMax": [
+                    1.0,
+                    0.949999988079071,
+                    0.3499999940395355,
+                    0.44999998807907104
+                ],
+                "colorMin": [
+                    1.0,
+                    0.44999998807907104,
+                    0.11999999731779099,
+                    0.8500000238418579
+                ],
+                "randomBetweenTwoColors": true
+            },
+            "startLifetime": {
+                "constant": 1.2000000476837158,
+                "constantMax": 1.7999999523162842,
+                "constantMin": 0.800000011920929,
+                "randomBetweenTwoConstants": true
+            },
+            "startSize": {
+                "constant": 0.3499999940395355,
+                "constantMax": 0.949999988079071,
+                "constantMin": 0.6000000238418579,
+                "randomBetweenTwoConstants": true
+            },
+            "startSpeed": {
+                "constant": 1.5,
+                "constantMax": 2.4000000953674316,
+                "constantMin": 0.800000011920929,
+                "randomBetweenTwoConstants": true
+            }
+        },
+        "renderer": {
+            "billboardMode": "View",
+            "blendMode": "Additive",
+            "sortByDistance": true,
+            "texturePath": "asset/Texture/white.bmp",
+            "uvRect": [
+                0.0,
+                0.0,
+                1.0,
+                1.0
+            ]
+        },
+        "shape": {
+            "cone": {
+                "angle": 0.7853981852531433,
+                "emitFromBase": true,
+                "length": 5.0,
+                "radius": 0.3499999940395355
+            },
+            "enabled": true,
+            "randomDirectionAmount": 0.20000000298023224,
+            "sphere": {
+                "emitFromShell": false,
+                "radius": 1.0
+            },
+            "type": "Cone"
+        },
+        "sizeOverLifetime": {
+            "enabled": true,
+            "size": {
+                "keys": [
+                    {
+                        "time": 0.0,
+                        "value": 0.3499999940395355
+                    },
+                    {
+                        "time": 0.25,
+                        "value": 1.0
+                    },
+                    {
+                        "time": 1.0,
+                        "value": 0.0
+                    }
+                ]
+            }
+        },
+        "textureSheetAnimation": {
+            "enabled": false,
+            "frameCount": 1,
+            "framePerSecond": 30.0,
+            "loop": true,
+            "startFrame": 0,
+            "tileX": 1,
+            "tileY": 1,
+            "timeMode": "Lifetime"
+        }
+    },
+    "formatVersion": 1,
+    "name": "enemy_charge.particle",
+    "type": "ParticleSystem"
+}

@@ -2,16 +2,16 @@
     "hasHighScore": true,
     "hasPreviousScore": true,
     "highScore": {
-        "clearTime": 160.09645080566406,
-        "completed": false,
-        "rank": 3,
-        "totalScore": 565
+        "clearTime": 137.98590087890625,
+        "completed": true,
+        "rank": 5,
+        "totalScore": 1905
     },
     "previousScore": {
-        "clearTime": 160.09645080566406,
-        "completed": false,
-        "rank": 3,
-        "totalScore": 565
+        "clearTime": 137.98590087890625,
+        "completed": true,
+        "rank": 5,
+        "totalScore": 1905
     },
     "version": 1
 }
