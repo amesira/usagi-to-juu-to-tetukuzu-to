@@ -10,6 +10,7 @@
 #include "Game/ActorBehavior/Enemy/E00_Core/enemy_context.h"
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 #include "Game/ActorBehavior/Enemy/enemy_animation_controller.h"
+#include "Utility/mi_math.h"
 
 void EnemyMeleeAttackCombat::Initialize(EnemyContext& context)
 {
@@ -19,27 +20,59 @@ void EnemyMeleeAttackCombat::Initialize(EnemyContext& context)
 
 void EnemyMeleeAttackCombat::Finalize(EnemyContext& context)
 {
+    ClearWindupShake(context);
     m_slash.Cancel();
     m_effects.Finalize();
 }
 
 void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
 {
-    // 震える処理
+    ClearWindupShake(context);
+    m_windupShakeTask.m_duration = settings().windupDuration;
+    m_windupShakeTask.m_magnitude = settings().windupShakeMagnitude;
+    m_windupShakeTask.m_frequency = settings().windupShakeFrequency;
+    m_windupShakeTask.m_axis = settings().windupShakeAxis;
+    m_windupShakeTask.Start();
 
     // エフェクト再生
 }
 
 void EnemyMeleeAttackCombat::UpdateWindup(EnemyContext& context, float deltaTime)
 {
-
+    m_windupShakeTask.Update(deltaTime);
+    ApplyWindupShakeOffset(context, m_windupShakeTask.m_offset);
 }
 
 void EnemyMeleeAttackCombat::EndWindup(EnemyContext& context)
 {
-    // 震えを止める処理
+    ClearWindupShake(context);
 
     // エフェクト停止
+}
+
+void EnemyMeleeAttackCombat::ApplyWindupShakeOffset(
+    EnemyContext& context, const DirectX::XMFLOAT3& offset)
+{
+    if (!context.transform) {
+        m_appliedWindupShakeOffset = {};
+        return;
+    }
+
+    // 前回加えた分を除いてから今回分を加え、オフセットの累積を防ぐ。
+    auto position = context.transform->GetPosition();
+    position = MiMath::Subtract(position, m_appliedWindupShakeOffset);
+    position = MiMath::Add(position, offset);
+    context.locomotionController->AddForceMoveRequest({
+        .priority = 100,
+        .targetPosition = position
+        });
+    m_appliedWindupShakeOffset = offset;
+}
+
+void EnemyMeleeAttackCombat::ClearWindupShake(EnemyContext& context)
+{
+    ApplyWindupShakeOffset(context, {});
+    m_windupShakeTask.Cancel();
 }
 
 void EnemyMeleeAttackCombat::BeginAttack(EnemyContext& context)

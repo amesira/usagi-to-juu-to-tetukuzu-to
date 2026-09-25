@@ -1094,6 +1094,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_shake_task.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_context.h" />

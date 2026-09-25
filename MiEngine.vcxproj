@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Engine\Processor\RenderPass\PostEffect\gaussian.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_view.cpp" />
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_behavior.cpp" />
@@ -333,6 +334,7 @@
     <ClCompile Include="Source\Engine\Processor\RenderPass\ui_render_pass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Engine\Processor\RenderPass\PostEffect\gaussian.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\ui_perspective.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\ui_layout_settings.h" />
     <ClInclude Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.h" />
@@ -365,6 +367,7 @@
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Approach\enemy_approach_locomotion.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_combat.h" />
+    <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_shake_task.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Melee\enemy_melee_attack_slash.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\Ranged\enemy_ranged_attack_combat.h" />
     <ClInclude Include="Source\Game\ActorBehavior\Enemy\E30_Combat\Attack\enemy_attack_context.h" />

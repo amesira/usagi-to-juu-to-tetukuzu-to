@@ -10,6 +10,7 @@
 #include "Game/ActorBehavior/Enemy/E10_Locomotion/enemy_locomotion_controller.h"
 #include "enemy_melee_attack_slash.h"
 #include "enemy_melee_attack_effects.h"
+#include "enemy_melee_attack_shake_task.h"
 
 enum class EnemyMeleeAttackPhase {
     Idle, 
@@ -23,6 +24,8 @@ class EnemyMeleeAttackCombat : public EnemyAttackCombat {
     bool m_enteredAttackPhase = false;
     EnemyMeleeAttackSlash m_slash;
     EnemyMeleeAttackEffects m_effects;
+    EnemyMeleeAttackShakeTask m_windupShakeTask;
+    DirectX::XMFLOAT3 m_appliedWindupShakeOffset = {};
 
     EnemyLocomotionController::LocomotionRequest m_locomotionRequest = {};
     int m_locomotionRequestId = -1;
@@ -52,5 +55,7 @@ protected:
 
 private:
     void ChangeAttackPhase(EnemyMeleeAttackPhase newPhase);
+    void ApplyWindupShakeOffset(EnemyContext& context, const DirectX::XMFLOAT3& offset);
+    void ClearWindupShake(EnemyContext& context);
 
 };

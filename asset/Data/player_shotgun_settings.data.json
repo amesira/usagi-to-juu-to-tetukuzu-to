@@ -20,6 +20,7 @@
             0.0
         ],
         "chargeCompleteEffectScale": 2.5,
+        "chargeCompleteFireEffectsHoldTime": 0.05000000074505806,
         "chargeDamageMultiplier": 4.0,
         "chargeEffectOffset": [
             1.0,

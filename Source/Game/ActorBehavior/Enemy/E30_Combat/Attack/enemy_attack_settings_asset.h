@@ -27,6 +27,9 @@ namespace EnemyAttackSettings {
         // === Melee用の追加設定 ===
         float jumpDuration = 0.6f;
         float jumpGravity = 9.8f;
+        float windupShakeMagnitude = 0.08f;
+        float windupShakeFrequency = 25.0f;
+        DirectX::XMFLOAT3 windupShakeAxis = { 1.0f, 0.35f, 1.0f };
         float slashDuration = 0.3f;
         float slashBurstTime = 0.15f;
         float slashDamage = 10.0f;
@@ -60,6 +63,10 @@ namespace EnemyAttackSettings {
         data.restartCooldown = std::isfinite(data.restartCooldown) ? (std::max)(0.0f, data.restartCooldown) : 1.0f;
         data.jumpDuration = std::isfinite(data.jumpDuration) ? (std::max)(0.0f, data.jumpDuration) : 0.6f;
         data.jumpGravity = std::isfinite(data.jumpGravity) ? (std::max)(0.0f, data.jumpGravity) : 9.8f;
+        data.windupShakeMagnitude = std::isfinite(data.windupShakeMagnitude)
+            ? (std::max)(0.0f, data.windupShakeMagnitude) : 0.08f;
+        data.windupShakeFrequency = std::isfinite(data.windupShakeFrequency)
+            ? (std::max)(0.01f, data.windupShakeFrequency) : 25.0f;
         data.slashDuration = std::isfinite(data.slashDuration) ? (std::max)(0.0f, data.slashDuration) : 0.3f;
         data.slashBurstTime = std::isfinite(data.slashBurstTime)
             ? (std::clamp)(data.slashBurstTime, 0.0f, data.slashDuration) : data.slashDuration * 0.5f;
@@ -77,6 +84,10 @@ namespace EnemyAttackSettings {
             if (!std::isfinite(value.z)) value.z = 0.0f;
         };
         finiteVector(data.slashBoxOffset);
+        finiteVector(data.windupShakeAxis);
+        data.windupShakeAxis.x = (std::max)(0.0f, data.windupShakeAxis.x);
+        data.windupShakeAxis.y = (std::max)(0.0f, data.windupShakeAxis.y);
+        data.windupShakeAxis.z = (std::max)(0.0f, data.windupShakeAxis.z);
         finiteVector(data.slashEffectPosition);
         finiteVector(data.slashEffectRotation);
         data.shotInterval = std::isfinite(data.shotInterval) ? (std::max)(0.0f, data.shotInterval) : 0.3f;
@@ -113,6 +124,9 @@ namespace EnemyAttackSettings {
             MakeHeaderField("Melee Attack Settings"),
             MakeField("jumpDuration", "Jump Duration", &Data::jumpDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             MakeField("jumpGravity", "Jump Gravity", &Data::jumpGravity, DragFieldOptions{.dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
+            MakeField("windupShakeMagnitude", "Windup Shake Magnitude", &Data::windupShakeMagnitude, DragFieldOptions{ .dragSpeed = 0.001f, .minValue = 0.0f, .maxValue = 10.0f }),
+            MakeField("windupShakeFrequency", "Windup Shake Frequency", &Data::windupShakeFrequency, DragFieldOptions{ .dragSpeed = 0.1f, .minValue = 0.01f, .maxValue = 100.0f }),
+            MakeField("windupShakeAxis", "Windup Shake Axis", &Data::windupShakeAxis, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
             MakeField("slashDuration", "Slash Duration", &Data::slashDuration, DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 100.0f }),
             // === Slashの判定と演出 ===
             MakeHeaderField("Slash Burst"),

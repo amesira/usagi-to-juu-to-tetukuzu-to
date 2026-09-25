@@ -30,7 +30,7 @@
             2.0
         ],
         "slashBurstTime": 0.05000000074505806,
-        "slashDamage": 10.0,
+        "slashDamage": 16.0,
         "slashDuration": 0.30000001192092896,
         "slashEffectAssetPath": "asset/MeshEffect/player_slash_burst_2_effect.mesh_effect.json",
         "slashEffectPosition": [
@@ -46,7 +46,14 @@
         "slashEffectScale": 3.0,
         "targetHeightOffset": 1.0,
         "this_is_header_field": null,
-        "windupDuration": 0.30000001192092896
+        "windupDuration": 0.699999988079071,
+        "windupShakeAxis": [
+            1.0,
+            0.4000000059604645,
+            1.0
+        ],
+        "windupShakeFrequency": 10.0,
+        "windupShakeMagnitude": 2.0
     },
     "formatVersion": 0,
     "name": "enemy_attack_settings.data",
