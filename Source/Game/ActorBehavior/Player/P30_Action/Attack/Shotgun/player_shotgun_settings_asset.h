@@ -51,6 +51,7 @@ namespace PlayerShotgunSettings {
         float   aimExitRadialBlurStrength = 0.3f;
         float   aimRadialBlurHoldTime = 0.01f;
         float   chargeMonoMaskStrength = 0.6f;
+        float   chargeCompleteFireEffectsHoldTime = 0.1f;
 
         // === ダメージ設定 ===
         float   bulletDamage = 5.0f;
@@ -214,6 +215,8 @@ namespace PlayerShotgunSettings {
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }),
             MakeField("chargeMonoMaskStrength", "Charge Mono Mask Strength", &Data::chargeMonoMaskStrength,
                 DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 1.0f }),
+            MakeField("chargeCompleteFireEffectsHoldTime", "Charge Complete Fire Effects Hold Time", &Data::chargeCompleteFireEffectsHoldTime,
+            DragFieldOptions{ .dragSpeed = 0.01f, .minValue = 0.0f, .maxValue = 10.0f }), 
 
             // === Shotgun Damage Settings ===
             MakeHeaderField("Shotgun Damage Settings"),

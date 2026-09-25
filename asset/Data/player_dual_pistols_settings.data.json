@@ -11,7 +11,7 @@
         "finalStepMoveDistance": 6.0,
         "finalStepMoveDuration": 0.30000001192092896,
         "fireTime": 0.10000000149011612,
-        "hitStopDuration": 0.15000000596046448,
+        "hitStopDuration": 0.10000000149011612,
         "inputBufferStartTime": 0.15000000596046448,
         "rapidFireAimBlendDownFullDirectionY": -0.5,
         "rapidFireAimBlendDownStartDirectionY": -0.4000000059604645,

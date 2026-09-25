@@ -1,9 +1,7 @@
 // mosaic_ps.hlsl
-
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体
 struct PS_INPUT
 {
     float4 posH : SV_Position;

@@ -41,8 +41,8 @@ private:
     HitCallback m_onHit = nullptr;  // ヒットコールバック関数
 
     // === 演出関連 ===
-    HitStopTask m_hitStopTask;
-    BlinkerBehavior* m_blinkerBehavior = nullptr;
+   /* HitStopTask m_hitStopTask;
+    BlinkerBehavior* m_blinkerBehavior = nullptr;*/
 
 public:
     BulletBehavior() = default;
@@ -87,7 +87,7 @@ public:
     const RaycastHit& GetLastHit() const { return m_lastHit; }
 
     // 弾の寿命切れ処理
-    void Finalize(bool isHitStop = false);
+    void Finalize();
 };
 
 #endif // BULLET_BEHAVIOR_H

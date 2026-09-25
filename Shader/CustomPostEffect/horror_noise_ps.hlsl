@@ -2,7 +2,6 @@
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体
 struct PS_INPUT
 {
     float4 posH : SV_Position;
@@ -15,7 +14,8 @@ cbuffer HorrorNoiseBuffer : register(b0) {
     float g_ContrastPow;
     float g_Strength;
     float g_Time;
-    float3 g_Padding;
+    
+    float3 padding;
 };
 
 float Rand(float2 coord){

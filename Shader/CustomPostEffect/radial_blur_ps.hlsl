@@ -8,7 +8,6 @@
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体
 struct PS_INPUT
 {
     float4 posH : SV_Position;
@@ -18,6 +17,8 @@ struct PS_INPUT
 cbuffer RadialBlurBuffer : register(b0) {
     int     g_SampleCount;  // サンプル数
     float   g_Strength;     // ブラーの強さ
+    
+    float2 padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
@@ -40,6 +41,5 @@ float4 main(PS_INPUT ps_in) : SV_TARGET
     }
 
     color /= g_SampleCount;
-    
     return color;
 }

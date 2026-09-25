@@ -149,6 +149,8 @@
     <FxCompile Include="Shader\CustomPostEffect\chromatic_aberration_ps.hlsl" />
     <FxCompile Include="Shader\CustomPostEffect\horror_noise_ps.hlsl" />
     <FxCompile Include="Shader\CustomPostEffect\posterize_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\gaussian_v_ps.hlsl" />
+    <FxCompile Include="Shader\CustomPostEffect\gaussian_h_ps.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Game\PresBehavior\UI\Title\title_ui_widgets.cpp" />

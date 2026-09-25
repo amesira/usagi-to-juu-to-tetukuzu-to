@@ -31,16 +31,13 @@ void BulletBehavior::Start()
     if (!m_transform) {
         m_transform = GetOwner()->AddComponent<TransformComponent>();
     }
-    m_hitStopTask.Reset();
-    m_blinkerBehavior = GetOwner()->GetComponent<BlinkerBehavior>();
+
     // 半径に応じてスケーリングを設定
     SetRadius(m_radius);
 }
 
 void BulletBehavior::Update()
 {
-    // 終了演出中もタスクを進め、終了コールバックまで実行する。
-    m_hitStopTask.Update(FPS_GetUnscaledDeltaTime());
     if (m_isExpired) return; // すでに寿命切れの場合は処理しない
 
     const float deltaTime = FPS_GetDeltaTime();
@@ -110,7 +107,7 @@ void BulletBehavior::Update()
             }
 
             // 終了処理
-            Finalize(isHitStop);
+            Finalize();
             return;
         }
     }
@@ -152,7 +149,6 @@ void BulletBehavior::Initialize(
     m_damage = (std::max)(0.0f, damage);
     m_attackType = attackType;
     m_lifeTimer = 0.0f;
-    m_hitStopTask.Reset();
     m_isExpired = false;
     m_hasHit = false;
     m_lastHit = {};
@@ -174,30 +170,19 @@ void BulletBehavior::SetRadius(float radius)
 }
 
 // 弾の終了処理
-void BulletBehavior::Finalize(bool isHitStop)
+void BulletBehavior::Finalize()
 {
     if (m_isExpired) return;
     m_isExpired = true;
 
-    if (isHitStop) {
-        // ヒットストップ処理
-        m_hitStopTask.RequestHitStop(
-            0.5f,
-            [this]() {
-                m_blinkerBehavior->Flash({ 1.0f, 0.1f, 0.1f }, 1.0f, 0.5f);
-            },
-            nullptr,
-            [this]() {
-                //RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
-                if (GetOwner()) {
-                    GetOwner()->Destroy();
-                }
-            });
-    }
-    else {
-        //RenderEffectFactory::CreateHitEffect(GetOwner()->GetScene(), m_transform->GetPosition());
-        if (GetOwner()) {
-            GetOwner()->Destroy();
-        }
+    // エフェクト
+    RenderEffectFactory::CreateOneShotParticleEffect(
+        GetOwner()->GetScene(),
+        "asset/Particle/hit.particle.json",
+        EffectTransform{ .position = m_transform->GetPosition() }
+    );
+
+    if (GetOwner()) {
+        GetOwner()->Destroy();
     }
 }

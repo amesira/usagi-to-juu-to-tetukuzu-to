@@ -74,7 +74,7 @@ void PlayerShotgunEffects::Initialize(PlayerShotgunContext& context)
             },
         });
 
-    m_chargeCompleteEffectTask.m_waitDuration = 0.2f;
+    // チャージ完了発射後のエフェクト終了時に呼び出すコールバックを設定
     m_chargeCompleteEffectTask.m_callback = [this]() {
         m_playChargeCompleteFireFinishEffect = true;
         };
@@ -200,10 +200,12 @@ void PlayerShotgunEffects::PlayEffects(PlayerShotgunContext& context, EffectsTyp
             0.2f, 0.05f, infinity
         );
 
-        // ライトなどをフラッシュさせたい
-        m_chargeCompleteEffectTask.Start();
-
         Game::Audio()->PlaySe(GameSe::Shotgun);
+
+        // ライトなどをフラッシュさせたい
+
+        m_chargeCompleteEffectTask.m_waitDuration = context.settings().chargeCompleteFireEffectsHoldTime;
+        m_chargeCompleteEffectTask.Start();
         break;
     }
     case EffectsType::ChargeCompleteFireFinish: {

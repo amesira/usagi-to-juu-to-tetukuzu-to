@@ -2,7 +2,6 @@
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体
 struct PS_INPUT
 {
     float4 posH : SV_Position;
@@ -12,7 +11,8 @@ struct PS_INPUT
 cbuffer PosterizeBuffer : register(b0) {
     int g_Levels; // ポスタリゼーションのレベル数
     float g_Strength;
-    float2 g_Padding;
+    
+    float2 padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET

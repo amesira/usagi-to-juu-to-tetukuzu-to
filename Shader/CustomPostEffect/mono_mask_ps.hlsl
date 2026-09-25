@@ -8,7 +8,6 @@
 Texture2D g_Texture : register(t0);
 SamplerState g_SamplerState : register(s0);
 
-// 入力用構造体
 struct PS_INPUT
 {
     float4 posH : SV_Position;
@@ -20,6 +19,8 @@ Texture2D g_MaskTexture : register(t1);
 cbuffer MonoMaskBuffer : register(b0) {
     float4 g_MonoColor; // モノクロに乗算する色
     float g_Strength; // モノクロの強さ（0～1）
+    
+    float3 padding;
 };
 
 float4 main(PS_INPUT ps_in) : SV_TARGET
