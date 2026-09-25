@@ -57,7 +57,7 @@ void EnemyMeleeAttackCombat::UpdateWindup(EnemyContext& context, float deltaTime
 
     // 速度方向に回転更新
     m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
-    m_locomotionRequest.rotateDirection.targetPosition = GetAimPosition();
+    m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
     context.locomotionController->UpdateRequest(m_locomotionRequestId, m_locomotionRequest);
 }
 
@@ -157,7 +157,7 @@ void EnemyMeleeAttackCombat::ChangeAttackPhase(EnemyMeleeAttackPhase newPhase)
 void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
 {
     m_jumpStartPosition = context.transform->GetPosition();
-    m_landingPosition = GetAimPosition();
+    m_landingPosition = context.runtimeState.combatTargetPosition;
 
     // ジャンプ時間から初速度を計算する。重力はY軸負方向。
     const float jumpDuration = settings().jumpDuration;
