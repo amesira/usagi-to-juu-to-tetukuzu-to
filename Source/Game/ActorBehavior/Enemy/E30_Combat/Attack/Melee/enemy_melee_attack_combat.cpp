@@ -45,6 +45,10 @@ void EnemyMeleeAttackCombat::BeginWindup(EnemyContext& context)
     // エフェクト再生
     m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::BeginWindup);
 
+    if (m_locomotionRequestId != EnemyLocomotionController::INVALID_REQUEST_HANDLE) {
+        context.locomotionController->RemoveRequest(m_locomotionRequestId);
+    }
+    m_locomotionRequest.canRotate = true;
     m_locomotionRequest.rotateDirection.source = EnemyLocomotionController::DirectionSource::TargetPosition;
     m_locomotionRequest.rotateDirection.targetPosition = context.runtimeState.combatTargetPosition;
     m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
@@ -67,6 +71,9 @@ void EnemyMeleeAttackCombat::EndWindup(EnemyContext& context)
 
     // エフェクト停止
     m_effects.PlayEffects(EnemyMeleeAttackEffects::EffectsType::EndWindup);
+
+    context.locomotionController->RemoveRequest(m_locomotionRequestId);
+    m_locomotionRequestId = EnemyLocomotionController::INVALID_REQUEST_HANDLE;
 }
 
 void EnemyMeleeAttackCombat::ApplyWindupShakeOffset(
@@ -156,6 +163,12 @@ void EnemyMeleeAttackCombat::ChangeAttackPhase(EnemyMeleeAttackPhase newPhase)
 
 void EnemyMeleeAttackCombat::BeginJump(EnemyContext& context)
 {
+    if (m_locomotionRequestId != EnemyLocomotionController::INVALID_REQUEST_HANDLE) {
+        context.locomotionController->RemoveRequest(m_locomotionRequestId);
+    }
+    m_locomotionRequest.canRotate = true;
+    m_locomotionRequestId = context.locomotionController->AddRequest(m_locomotionRequest);
+
     m_jumpStartPosition = context.transform->GetPosition();
     m_landingPosition = context.runtimeState.combatTargetPosition;
 
